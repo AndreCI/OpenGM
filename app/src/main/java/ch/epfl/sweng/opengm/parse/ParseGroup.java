@@ -30,7 +30,7 @@ public class ParseGroup extends ParseEntity {
         mRoles = new HashMap<>(roles);
     }
 
-    public ParseGroup(Map<String, Role> roles, String id) {
+    private ParseGroup(Map<String, Role> roles, String id) {
         super(id, PARSE_TABLE_GROUP);
         if (roles == null || roles.isEmpty()) {
             throw new IllegalArgumentException("Group is null or empty");
@@ -54,7 +54,7 @@ public class ParseGroup extends ParseEntity {
         mRoles = userAndRoles(users, roles);
     }
 
-    public boolean addUserToGroup(String u) {
+    private boolean addUserToGroup(String u) {
         if (containUser(u)) {
             return true;
         }
@@ -66,7 +66,7 @@ public class ParseGroup extends ParseEntity {
         return addUserToGroup(u.getId());
     }
 
-    public boolean deleteUserToGroup(String u) throws IllegalArgumentException {
+    private boolean deleteUserToGroup(String u) throws IllegalArgumentException {
         if (!containUser(u)) {
             throw new IllegalArgumentException("The user with id " + u + " doesn't belong to this group");
         }
@@ -127,7 +127,7 @@ public class ParseGroup extends ParseEntity {
 
     public static class Builder extends ParseEntity.Builder {
 
-        private Map<String, Role> mRoles;
+        private final Map<String, Role> mRoles;
 
         public Builder(String id) {
             super(id, PARSE_TABLE_GROUP);

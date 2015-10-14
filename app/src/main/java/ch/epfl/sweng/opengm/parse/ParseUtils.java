@@ -1,6 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
-public class ParseUtils {
+class ParseUtils {
 
     public static String objectToString(Object o) throws ServerException {
         if (o == null) {

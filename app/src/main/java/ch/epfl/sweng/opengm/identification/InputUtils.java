@@ -2,7 +2,7 @@ package ch.epfl.sweng.opengm.identification;
 
 import java.util.regex.Pattern;
 
-public class InputUtils {
+class InputUtils {
 
     private final static int PASSWORD_LENGTH = 6;
     private final static Pattern emailPattern =
@@ -13,7 +13,7 @@ public class InputUtils {
         return emailPattern.matcher(email).matches();
     }
 
-    public static boolean isPasswordValid(String password) {
+    public static boolean isPasswordInvalid(String password) {
         // Rules :
         // 1 = length greater than 8
         // 2 = at least one lowercase and one uppercase
@@ -24,8 +24,8 @@ public class InputUtils {
         for (Character c : password.toCharArray()) {
             nOfIntegers += (c >= '0' && c <= '9') ? 1 : 0;
         }
-        return length > PASSWORD_LENGTH && !password.toLowerCase().equals(password) && nOfIntegers > 0 && nOfIntegers < length;
-
+        //return length <= PASSWORD_LENGTH || password.toLowerCase().equals(password) || nOfIntegers <= 0 || nOfIntegers >= length;
+        return false;
     }
 
 }

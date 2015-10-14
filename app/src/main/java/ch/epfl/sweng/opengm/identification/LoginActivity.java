@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.identification;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.utils.Utils;
 
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
@@ -52,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             mEditPassword.setError(getString(R.string.empty_password_activity_register));
             focusView = mEditPassword;
             cancel = true;
-        } else if (!InputUtils.isPasswordValid(password)) {
+        } else if (InputUtils.isPasswordInvalid(password)) {
             mEditPassword.setError(getString(R.string.short_password_activity_register));
             focusView = mEditPassword;
             cancel = true;
@@ -61,15 +63,19 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
+            final ProgressDialog dialog = Utils.getProgressDialog(this);
+
             ParseUser.logInInBackground(username, password, new LogInCallback() {
                 public void done(ParseUser user, ParseException e) {
                     if (user != null) {
+                        dialog.hide();
                         Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
                         startActivity(intent);
                     } else {
+                        dialog.hide();
                         switch (e.getCode()) {
                             case 101:
-                                mEditPassword.setError(getString(R.string.incorrect_activity_register));
+                                mEditPassword.setError(getString(R.string.incorrect_activity_login));
                                 mEditPassword.requestFocus();
                                 break;
                             default:

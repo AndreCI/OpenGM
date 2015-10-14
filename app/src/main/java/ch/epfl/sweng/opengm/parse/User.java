@@ -27,7 +27,7 @@ public class User extends ParseEntity {
     private final String mPhoneNumber;
     private final List<String> mGroups;
 
-    public User(String id, String username, String firstname, String lastname, String phoneNumber, List<String> groups) {
+    private User(String id, String username, String firstname, String lastname, String phoneNumber, List<String> groups) {
         super(id, PARSE_TABLE_USER);
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("Username is null or empty");
@@ -90,7 +90,7 @@ public class User extends ParseEntity {
         private String mFirstName;
         private String mLastName;
         private String mPhoneNumber;
-        private List<String> mGroups;
+        private final List<String> mGroups;
 
         public Builder() {
             this(null);

@@ -1,19 +1,22 @@
 package ch.epfl.sweng.opengm.parse;
 
-public abstract class ParseEntity {
+abstract class ParseEntity {
 
     private final String mId;
     private final String mParseTable;
 
-    public ParseEntity(String id, String tableName) {
+    ParseEntity(String id, String tableName) {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("Id is null or empty");
+        }
+        if (tableName == null || tableName.isEmpty()) {
+            throw new IllegalArgumentException("Table name is null or empty");
         }
         mId = id;
         mParseTable = tableName;
     }
 
-    public String getId() {
+    String getId() {
         return this.mId;
     }
 
@@ -33,16 +36,13 @@ public abstract class ParseEntity {
 
         ParseEntity that = (ParseEntity) o;
 
-        if (mId != null ? !mId.equals(that.mId) : that.mId != null) {
-            return false;
-        }
-        return !(mParseTable != null ? !mParseTable.equals(that.mParseTable) : that.mParseTable != null);
+        return mId.equals(that.mId) && mParseTable.equals(that.mParseTable);
 
     }
 
     @Override
     public int hashCode() {
-        int result = mId != null ? mId.hashCode() : 0;
+        int result = mId.hashCode();
         result = 31 * result + (mParseTable != null ? mParseTable.hashCode() : 0);
         return result;
     }
@@ -50,7 +50,7 @@ public abstract class ParseEntity {
     public static abstract class Builder {
 
         private final String mParseTable;
-        protected String mId;
+        String mId;
 
         public Builder(String parseTable) {
             this(null, parseTable);

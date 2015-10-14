@@ -1,10 +1,25 @@
 <resources>
     <string name="app_name">OpenGM</string>
 
+    <string name="loading_dialog">Loading. Please wait &#8230;.</string>
+
     <string name="title_activity_login">LoginActivity</string>
-    <string name="incorrect_activity_register">Invalid username or password</string>
+    <string name="incorrect_activity_login">Invalid username or password</string>
+    <string name="login_now_activity_login">Login</string>
+    <string name="forgotten_password_activity_login"><u>Forgot your password?</u></string>
+    <string name="register_now_activity_login">Don\'t have any account yet? Register now</string>
+
 
     <string name="title_activity_register">RegisterActivity</string>
+
+    <string name="hint_username_activity_register">Username</string>
+    <string name="hint_password_activity_register">Password</string>
+    <string name="hint_firstname_activity_register">First name</string>
+    <string name="hint_lastname_activity_register">Last name</string>
+    <string name="hint_email_activity_register">Email</string>
+    <string name="hint_confirm_password_activity_register">Confirm password</string>
+    <string name="sign_up_activity_register">Sign up</string>
+
     <string name="emtpy_username_activity_register">Username should not be empty</string>
     <string name="empty_password_activity_register">Password should not be empty</string>
     <string name="empty_email_activity_register">Email should not be empty</string>

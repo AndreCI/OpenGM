@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.identification;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,12 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.utils.Utils;
 
 import static ch.epfl.sweng.opengm.parse.ParseConstants.*;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
@@ -103,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
             mEditEmail.setError(getString(R.string.incorrect_email_activity_register));
             focusView = mEditEmail;
             cancel = true;
-        } else if (!InputUtils.isPasswordValid(password1)) {
+        } else if (InputUtils.isPasswordInvalid(password1)) {
             mEditPassword1.setError(getString(R.string.short_password_activity_register));
             focusView = mEditPassword1;
             cancel = true;
@@ -117,6 +123,8 @@ public class RegisterActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             // First : SignUp the user in the _User table
+            final ProgressDialog dialog = Utils.getProgressDialog(this);
+
             final ParseUser user = new ParseUser();
             user.setUsername(username);
             user.setPassword(password1);
@@ -131,23 +139,23 @@ public class RegisterActivity extends AppCompatActivity {
                                                 parseObject.put(USER_TABLE_FIRST_NAME, firstname);
                                                 parseObject.put(USER_TABLE_LAST_NAME, lastname);
                                                 parseObject.put(USER_TABLE_PHONE_NUMBER, "");
-                                                parseObject.put(USER_TABLE_GROUPS, new String[1]);
-                                                parseObject.put(USER_TABLE_PICTURE, null);
                                                 parseObject.put(USER_TABLE_ABOUT, "Hey there !");
 
                                                 parseObject.saveInBackground(new SaveCallback() {
                                                     @Override
                                                     public void done(ParseException e) {
+                                                        dialog.hide();
                                                         if (e == null) {
                                                             Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
                                                             startActivity(intent);
                                                         } else {
                                                             // error while updating the User table
-                                                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(getApplicationContext(), "SECOND   " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
                                             } else {
+                                                dialog.hide();
                                                 // error while updating the _User table
                                                 switch (e.getCode()) {
                                                     case EMAIL_TAKEN:
@@ -159,7 +167,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                         mEditUsername.requestFocus();
                                                         break;
                                                     default:
-                                                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getApplicationContext(), "FIRST   " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }
