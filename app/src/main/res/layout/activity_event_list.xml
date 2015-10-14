@@ -7,10 +7,19 @@
     tools:context="ch.epfl.sweng.opengm.ch.epfl.sweng.opengm.events.EventListActivity">
 
     <ScrollView
-        android:layout_width="20dp"
+        android:layout_width="fill_parent"
         android:layout_height="400dp"
         android:id="@+id/scrollViewEventList"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/addButton"
+        android:text="@string/addButtonText"
+        android:layout_below="@+id/scrollViewEventList"
+        android:layout_centerHorizontal="true"/>
+
 
 </RelativeLayout>
