@@ -74,7 +74,7 @@ public class ParseGroup extends ParseEntity {
         return true;
     }
 
-    public boolean delteUserToGroup(User u) throws IllegalArgumentException {
+    public boolean deleteUserToGroup(User u) throws IllegalArgumentException {
         return deleteUserToGroup(u.getId());
     }
 

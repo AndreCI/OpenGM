@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">OpenGM</string>
+
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="incorrect_activity_register">Invalid username or password</string>
+
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="emtpy_username_activity_register">Username should not be empty</string>
+    <string name="empty_password_activity_register">Password should not be empty</string>
+    <string name="empty_email_activity_register">Email should not be empty</string>
+    <string name="empty_firstname_activity_register">First name should not be empty</string>
+    <string name="empty_lastname_activity_register">Last name should not be empty</string>
+    <string name="incorrect_email_activity_register">Email has not a correct format</string>
+    <string name="incorrect_password_activity_register">Passwords don\'t match</string>
+    <string name="short_password_activity_register">Passwords are too short</string>
+    <string name="taken_username_activity_register">Username %s already taken</string>
+    <string name="taken_email_activity_register">Email %s already taken</string>
+
 </resources>

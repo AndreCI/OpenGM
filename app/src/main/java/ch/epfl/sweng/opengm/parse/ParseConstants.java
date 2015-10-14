@@ -16,6 +16,8 @@ public class ParseConstants {
     public static final String USER_TABLE_LAST_NAME = "lastName";
     public static final String USER_TABLE_PHONE_NUMBER = "phoneNumer";
     public static final String USER_TABLE_GROUPS = "groups";
+    public static final String USER_TABLE_PICTURE = "profilePicture";
+    public static final String USER_TABLE_ABOUT = "description";
 
     public static final String GROUP_TABLE_NAME = "Group";
     public static final String GROUP_TABLE_USERS = "users";
