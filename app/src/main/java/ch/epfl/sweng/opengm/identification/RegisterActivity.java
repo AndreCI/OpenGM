@@ -138,7 +138,6 @@ public class RegisterActivity extends AppCompatActivity {
                                                 parseObject.put(USER_TABLE_USERNAME, username);
                                                 parseObject.put(USER_TABLE_FIRST_NAME, firstname);
                                                 parseObject.put(USER_TABLE_LAST_NAME, lastname);
-                                                parseObject.put(USER_TABLE_PHONE_NUMBER, "");
                                                 parseObject.put(USER_TABLE_ABOUT, "Hey there !");
 
                                                 parseObject.saveInBackground(new SaveCallback() {
@@ -150,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                             startActivity(intent);
                                                         } else {
                                                             // error while updating the User table
-                                                            Toast.makeText(getApplicationContext(), "SECOND   " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
@@ -167,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                         mEditUsername.requestFocus();
                                                         break;
                                                     default:
-                                                        Toast.makeText(getApplicationContext(), "FIRST   " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         }
