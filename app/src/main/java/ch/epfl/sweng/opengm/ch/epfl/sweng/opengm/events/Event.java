@@ -73,7 +73,7 @@ public class Event {
 
 
 
-    private class OpenGMMember{
-
+    public class OpenGMMember{
+        public String getName() {return "";}
     }
 }
