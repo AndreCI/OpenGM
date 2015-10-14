@@ -18,6 +18,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ch.epfl.sweng.opengm.events.EventListActivity"
+            android:label="@string/title_activity_event_list" >
+        </activity>
+        <activity
+            android:name=".ch.epfl.sweng.opengm.events.ShowEventActivity"
+            android:label="@string/title_activity_show_event" >
+        </activity>
+        <activity
+            android:name=".ch.epfl.sweng.opengm.events.CreateEditEventActivity"
+            android:label="@string/title_activity_create_edit_event" >
+        </activity>
+        <activity
+            android:name=".ch.epfl.sweng.opengm.events.AddRemoveParticipantsActivity"
+            android:label="@string/title_activity_add_remove_participants" >
+        </activity>
     </application>
 
 </manifest>

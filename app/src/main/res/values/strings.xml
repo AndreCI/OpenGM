@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">OpenGM</string>
+    <string name="title_activity_event_list">EventListActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_show_event">ShowEventActivity</string>
+    <string name="title_activity_create_edit_event">CreateEditEventActivity</string>
+    <string name="title_activity_add_remove_participants">AddRemoveParticipantsActivity</string>
 </resources>
