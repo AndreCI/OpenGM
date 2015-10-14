@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.ch.epfl.sweng.opengm.events;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,11 +9,13 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
 
 public class ShowEventActivity extends AppCompatActivity {
+    public final static String SHOW_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.SHOW_EVENT";
 
     private Event event;
 
@@ -20,12 +23,19 @@ public class ShowEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_event);
-        //TODO : fill event with intent
+
+        Intent intent = getIntent();
+        event = (Event) intent.getSerializableExtra("todo");
+
         displayEventInformation();
     }
 
     private void displayEventInformation() {
-
+        fillEventName();
+        fillEventPlace();
+        fillEventDate();
+        fillEventDescription();
+        fillEventParticipants();
     }
 
     private void fillEventName() {
@@ -66,6 +76,7 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     protected void onEditButtonClick() {
-        //TODO : create intent + go to create/edit event
+        Intent intent = new Intent(this, CreateEditEventActivity.class);
+        intent.putExtra(SHOW_EVENT_MESSAGE, (Serializable) event);
     }
 }

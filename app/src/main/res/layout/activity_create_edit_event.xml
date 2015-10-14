@@ -41,11 +41,11 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/EventParticipantsText"
+        android:id="@+id/EventParticipantsButton"
         android:text="@string/EventParticipantsText"
         android:textAlignment="center"
         android:clickable="true"
-        android:onClick="onParticipantsTextClick"
+        android:onClick="onParticipantsButtonClick"
         android:layout_above="@id/cancelEditButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -57,7 +57,7 @@
         android:layout_below="@+id/EventDateText"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/EventParticipantsText">
+        android:layout_above="@+id/EventParticipantsButton">
 
         <MultiAutoCompleteTextView
             android:layout_width="fill_parent"
@@ -82,7 +82,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/OKEditButton"
+        android:id="@+id/OkEditButton"
         android:textAlignment="center"
         android:text="@string/OkEditButtonText"
         android:layout_alignParentBottom="true"

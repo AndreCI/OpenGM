@@ -1,13 +1,17 @@
 package ch.epfl.sweng.opengm.ch.epfl.sweng.opengm.events;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -16,7 +20,7 @@ import java.util.List;
 import ch.epfl.sweng.opengm.R;
 
 public class CreateEditEventActivity extends AppCompatActivity {
-
+    public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
     private Event editedEvent;
     private boolean editing;
     private List<Event.OpenGMMember> participants;
@@ -26,25 +30,51 @@ public class CreateEditEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_edit_event);
 
-        //TODO : fill editedEvent, editing, participants with intent
+        //TODO : fill editedEvent, editing, participants with intent + prefill text with existing values of event
+        Intent intent = getIntent();
+        Event event = (Event) intent.getSerializableExtra("todo");
+        if(event == null) {
+            editing = false;
+            participants = new ArrayList<>();
+        } else {
+            editedEvent = event;
+            editing = true;
+            participants = editedEvent.getParticipants();
+            fillTexts(event);
+        }
     }
 
     protected void onCancelButtonClick() {
-        //TODO : go back to where you belong !!
+        //TODO : really needed? "physical" button already do that
+        finish();
     }
 
     protected void onOkButtonClick() {
-        //TODO : create intent + go back to event list
-        if(legalArguments() && participants != null) {
-
+        if(legalArguments()) {
+            if(participants != null) {
+                Intent intent = new Intent(this, EventListActivity.class);
+                intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, (Serializable) createEditEvent());
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "You must specify participants",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    protected void onParticipantsTextClick() {
-        //TODO : rename + crate intent + go to Add/Remove participants
+    protected void onParticipantsButtonClick() {
         if(legalArguments()){
-
+            Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
+            intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, (Serializable) createEditEvent());
+            startActivity(intent);
         }
+    }
+
+    private void fillTexts(Event event) {
+        ((EditText) findViewById(R.id.EventNameText)).setText(event.getName());
+        ((EditText) findViewById(R.id.EventPlaceText)).setText(event.getPlace());
+        ((MultiAutoCompleteTextView) findViewById(R.id.EventDescriptionText)).setText(event.getDescription());
+        GregorianCalendar date = event.getDate();
+        ((EditText) findViewById(R.id.EventDateText)).setText(date.DAY_OF_MONTH+'/'+date.MONTH+1+'/'+date.YEAR);
     }
 
     private Event createEditEvent() {
@@ -56,12 +86,24 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private Event createEvent() {
-        //TODO : create event with filled texts
-        return new Event();
+        int[] dateArray = getDateFromText();
+        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
+        String name = ((TextView) findViewById(R.id.EventNameText)).getText().toString();
+        String description = ((TextView) findViewById(R.id.EventDescriptionText)).getText().toString();
+        String place = ((TextView) findViewById(R.id.EventPlaceText)).getText().toString();
+        return new Event(name, place, date, description, participants);
     }
 
     private Event editEvent() {
-        //TODO : update event with filled texts
+        int[] dateArray = getDateFromText();
+        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
+        String name = ((TextView) findViewById(R.id.EventNameText)).getText().toString();
+        String description = ((TextView) findViewById(R.id.EventDescriptionText)).getText().toString();
+        String place = ((TextView) findViewById(R.id.EventPlaceText)).getText().toString();
+        editedEvent.setName(name);
+        editedEvent.setDate(date);
+        editedEvent.setDescription(description);
+        editedEvent.setPlace(place);
         return editedEvent;
     }
 
