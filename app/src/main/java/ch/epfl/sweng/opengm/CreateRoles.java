@@ -113,7 +113,27 @@ public class CreateRoles extends AppCompatActivity {
     }
 
     private void addRole(String name, Button button){
+        TextView newRoleText = new TextView(getApplicationContext());
+        newRoleText.setText(name);
 
+        Button newButton = new Button(getApplicationContext());
+        newButton.setText("-");
+        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.RIGHT;
+        params.weight = 1.0f;
+
+        TableRow newRow = new TableRow(getApplicationContext());
+        newRow.setGravity(Gravity.CENTER_VERTICAL);
+        newRow.addView(newRoleText);
+        newRow.addView(newButton);
+        newButton.setLayoutParams(params);
+
+        buttonTableRowMap.put(newButton, newRow);
+
+        // TODO: Exit keyboard if currently typing.
+        rolesAndButtons.addView(newRow);
+        rolesAndButtons.removeView(buttonTableRowMap.get(button));
+        addNewRoleRow();
     }
 
     @Override
