@@ -33,7 +33,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         //TODO : fill editedEvent, editing, participants with intent + prefill text with existing values of event
         Intent intent = getIntent();
         Event event = (Event) intent.getSerializableExtra("todo");
-        if(event == null) {
+        if (event == null) {
             editing = false;
             participants = new ArrayList<>();
         } else {
@@ -50,19 +50,19 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     protected void onOkButtonClick() {
-        if(legalArguments()) {
-            if(participants != null) {
+        if (legalArguments()) {
+            if (participants != null) {
                 Intent intent = new Intent(this, EventListActivity.class);
                 intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, (Serializable) createEditEvent());
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "You must specify participants",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     protected void onParticipantsButtonClick() {
-        if(legalArguments()){
+        if (legalArguments()) {
             Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, (Serializable) createEditEvent());
             startActivity(intent);
@@ -74,11 +74,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.EventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.EventDescriptionText)).setText(event.getDescription());
         GregorianCalendar date = event.getDate();
-        ((EditText) findViewById(R.id.EventDateText)).setText(date.DAY_OF_MONTH+'/'+date.MONTH+1+'/'+date.YEAR);
+        ((EditText) findViewById(R.id.EventDateText)).setText(date.DAY_OF_MONTH + '/' + (date.MONTH + 1) + '/' + date.YEAR);
     }
 
     private Event createEditEvent() {
-        if(editing) {
+        if (editing) {
             return editEvent();
         } else {
             return createEvent();
@@ -108,7 +108,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @return an array of int with year at index 0, month between 0 and 11 at index 1 and day at index 2
      */
     private int[] getDateFromText() {
@@ -123,7 +122,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @return true if all arguments except the list of participants are legal for building an event
      * display a toast while it's not.
      */
@@ -140,8 +138,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 throw new IllegalArgumentException("name must be specified");
             }
             return true;
-        } catch(IllegalArgumentException e) {
-            Toast.makeText(this, e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             return false;
         }
     }
