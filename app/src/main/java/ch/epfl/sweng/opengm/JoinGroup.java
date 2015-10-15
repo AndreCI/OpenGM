@@ -4,6 +4,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class JoinGroup extends AppCompatActivity {
 
@@ -11,6 +18,29 @@ public class JoinGroup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_group);
+
+        String[] groups = fetchGroups();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, groups);
+        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.enterGroupName);
+        textView.setAdapter(adapter);
+
+        Button okButton = (Button) findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                joinNewGroup();
+            }
+        });
+    }
+
+    private void joinNewGroup(){
+        // TODO: join a new group in database
+    }
+
+    private String[] fetchGroups(){
+        // TODO: fetch groups from database
+        String[] groups = {"Some group", "Another group", "Nice group"};
+        return groups;
     }
 
     @Override
