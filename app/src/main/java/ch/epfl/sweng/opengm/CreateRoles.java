@@ -5,24 +5,28 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class CreateRoles extends AppCompatActivity {
     private List<String> roles;
+    private Map<Button, TableRow> buttonTableRowMap;
     private LinearLayout rolesAndButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_roles);
+        buttonTableRowMap = new Hashtable<>();
 
         /* Grab roles from database, ideally the three default roles are
          * already there.*/
@@ -31,11 +35,12 @@ public class CreateRoles extends AppCompatActivity {
 
         rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
         fillWithRoles();
+        addNewRoleRow();
     }
 
     private void fillWithRoles() {
         int i = 0;
-        for(String role : roles){
+        for(String role : roles) {
             TextView current = new TextView(getApplicationContext());
             current.setText(role);
             current.setTag("roleText" + i);
@@ -55,15 +60,60 @@ public class CreateRoles extends AppCompatActivity {
             currentRow.addView(currentButton);
             currentButton.setLayoutParams(params);
 
+            buttonTableRowMap.put(currentButton, currentRow);
+
             rolesAndButtons.addView(currentRow);
         }
+    }
+
+    private void addNewRoleRow(){
         Button addButton = new Button(getApplicationContext());
         addButton.setText("+");
         addButton.setTag("addButton");
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addRoleEditorField((Button) v);
+            }
+        });
+
         TableRow addRow = new TableRow(getApplicationContext());
         addRow.setGravity(Gravity.CENTER_VERTICAL);
         addRow.addView(addButton);
+        buttonTableRowMap.put(addButton, addRow);
         rolesAndButtons.addView(addRow);
+    }
+
+    private void addRoleEditorField(Button button){
+        rolesAndButtons.removeView(buttonTableRowMap.get(button));
+        final EditText newRoleEdit = new EditText(getApplicationContext());
+        newRoleEdit.setHint("Enter role name.");
+
+        Button okButton = new Button(getApplicationContext());
+        okButton.setText("OK");
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String roleName = newRoleEdit.getText().toString();
+                addRole(roleName, (Button) v);
+            }
+        });
+
+        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.RIGHT;
+        params.weight = 1.0f;
+
+        TableRow newRoleRow = new TableRow(getApplicationContext());
+        newRoleRow.setGravity(Gravity.CENTER_VERTICAL);
+        newRoleRow.addView(newRoleEdit);
+        newRoleRow.addView(okButton);
+        okButton.setLayoutParams(params);
+        buttonTableRowMap.put(okButton, newRoleRow);
+        rolesAndButtons.addView(newRoleRow);
+    }
+
+    private void addRole(String name, Button button){
+
     }
 
     @Override
