@@ -20,8 +20,12 @@
         </activity>
         <activity
             android:name=".CreateRoles"
-            android:label="@string/title_activity_create_roles"
-            android:exported="true" >
+            android:exported="true"
+            android:label="@string/title_activity_create_roles" >
+        </activity>
+        <activity
+            android:name=".JoinGroup"
+            android:label="@string/title_activity_join_group" >
         </activity>
     </application>
 
