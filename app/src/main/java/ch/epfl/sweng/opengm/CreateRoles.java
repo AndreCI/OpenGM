@@ -39,7 +39,6 @@ public class CreateRoles extends AppCompatActivity {
     }
 
     private void fillWithRoles() {
-        int i = 0;
         for(String role : roles) {
             TextView current = new TextView(getApplicationContext());
             current.setText(role);
