@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">OpenGM</string>
-    <string name="title_activity_create_roles">CreateRoles</string>
+    <string name="title_activity_create_roles">Create Roles</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="done">Done</string>
 </resources>
