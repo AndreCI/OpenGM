@@ -28,7 +28,7 @@ public class CreateRoles extends AppCompatActivity {
         setContentView(R.layout.activity_create_roles);
         buttonTableRowMap = new Hashtable<>();
 
-        /* Grab roles from database, ideally the three default roles are
+        /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
         String[] rolesArray = {"Administrator", "Moderator", "User"};
         roles = Arrays.asList(rolesArray);
@@ -43,18 +43,15 @@ public class CreateRoles extends AppCompatActivity {
         for(String role : roles) {
             TextView current = new TextView(getApplicationContext());
             current.setText(role);
-            current.setTag("roleText" + i);
 
             Button currentButton = new Button(getApplicationContext());
             currentButton.setText("-");
             currentButton.setEnabled(false);
-            currentButton.setTag("roleButton" + i);
             TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.RIGHT;
             params.weight = 1.0f;
 
             TableRow currentRow = new TableRow(getApplicationContext());
-            currentRow.setTag("row" + i);
             currentRow.setGravity(Gravity.CENTER_VERTICAL);
             currentRow.addView(current);
             currentRow.addView(currentButton);
@@ -69,7 +66,6 @@ public class CreateRoles extends AppCompatActivity {
     private void addNewRoleRow(){
         Button addButton = new Button(getApplicationContext());
         addButton.setText("+");
-        addButton.setTag("addButton");
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +114,12 @@ public class CreateRoles extends AppCompatActivity {
 
         Button newButton = new Button(getApplicationContext());
         newButton.setText("-");
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeRole((Button)v);
+            }
+        });
         TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.RIGHT;
         params.weight = 1.0f;
@@ -130,10 +132,18 @@ public class CreateRoles extends AppCompatActivity {
 
         buttonTableRowMap.put(newButton, newRow);
 
+        // TODO: Add role to database
+
         // TODO: Exit keyboard if currently typing.
         rolesAndButtons.addView(newRow);
         rolesAndButtons.removeView(buttonTableRowMap.get(button));
         addNewRoleRow();
+    }
+
+    private void removeRole(Button button){
+        rolesAndButtons.removeView(buttonTableRowMap.get(button));
+
+        // TODO: Remove role from the database
     }
 
     @Override
