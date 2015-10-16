@@ -34,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);
+
+        // Add this to bypass authentication :
+//        startActivity(new Intent(LoginActivity.this, GroupsOverviewActivity.class));
     }
 
     public void onClickLogin(View v) {
