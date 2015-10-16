@@ -29,7 +29,7 @@ public class ShowEventActivity extends AppCompatActivity {
         event.setName("Event");
         event.setDescription("ça va etre bien");
         event.setDate(new Date(2015, 10, 10));
-        event.setParticipants(new ArrayList<Event.OpenGMMember>(0));
+        event.setParticipants(new ArrayList<Event.OpenGMMember>(1));
         displayEventInformation();
     }
 
@@ -42,12 +42,12 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventName() {
-        ((TextView)findViewById(R.id.ShowEventNameText)).setText(event.getName());
+        ((TextView) findViewById(R.id.ShowEventNameText)).setText(event.getName());
     }
 
     private void fillEventPlace() {
-        TextView textView =(TextView) findViewById(R.id.ShowEventPlaceText);
-        if(event.getPlace().isEmpty()) {
+        TextView textView = (TextView) findViewById(R.id.ShowEventPlaceText);
+        if (event.getPlace().isEmpty()) {
             textView.setHeight(0);
         } else {
             textView.setText(event.getPlace());
@@ -56,22 +56,24 @@ public class ShowEventActivity extends AppCompatActivity {
 
     private void fillEventDate() {
         Date date = event.getDate();
-        //((TextView)findViewById(R.id.ShowEventDateText)).setText(date.getDay() + '/' + date.getMonth() + '/' + date.getYear());
+        String dateString = Integer.toString(date.getDay()) + '/' + Integer.toString(date.getMonth()) + '/' + Integer.toString(date.getYear());
+        ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
     }
 
     private void fillEventDescription() {
-        TextView textView =(TextView) findViewById(R.id.ShowEventDescriptionText);
-        if(event.getDescription().isEmpty()) {
+        TextView textView = (TextView) findViewById(R.id.ShowEventDescriptionText);
+        if (event.getDescription().isEmpty()) {
             textView.setHeight(0);
         } else {
-            textView.setText("Description:\n" + event.getDescription());
+            String description = "Description:\n" + event.getDescription();
+            textView.setText(description);
         }
     }
 
     private void fillEventParticipants() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Participants:");
-        for(Event.OpenGMMember participant : event.getParticipants()) {
+        for (Event.OpenGMMember participant : event.getParticipants()) {
             stringBuilder.append('\n');
             stringBuilder.append(participant.getName());
         }
@@ -80,7 +82,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
     public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(SHOW_EVENT_MESSAGE, (Serializable) event);
+        intent.putExtra(SHOW_EVENT_MESSAGE, event);
         startActivity(intent);
     }
 }

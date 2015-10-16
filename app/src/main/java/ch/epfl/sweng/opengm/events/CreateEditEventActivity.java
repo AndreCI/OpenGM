@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.events;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         //TODO : fill editedEvent, editing, participants with intent + prefill text with existing values of event
         Intent intent = getIntent();
-        Event event = (Event) intent.getSerializableExtra("todo");
+        Event event = (Event) intent.getSerializableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE);
         if (event == null) {
             editing = false;
             participants = new ArrayList<>();
@@ -42,16 +43,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
     }
 
-    protected void onCancelButtonClick() {
-        //TODO : really needed? "physical" button already do that
-        finish();
-    }
-
-    protected void onOkButtonClick() {
+    public void onOkButtonClick(View v) {
         if (legalArguments()) {
             if (participants != null) {
                 Intent intent = new Intent(this, EventListActivity.class);
-                intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, (Serializable) createEditEvent());
+                intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
@@ -59,10 +55,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
     }
 
-    protected void onParticipantsButtonClick() {
+    public void onParticipantsButtonClick(View v) {
         if (legalArguments()) {
             Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
-            intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, (Serializable) createEditEvent());
+            intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
             startActivity(intent);
         }
     }
@@ -73,7 +69,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
         //GregorianCalendar date = event.getDate();
         Date date = event.getDate();
-        ((EditText) findViewById(R.id.CreateEditEventDateText)).setText(date.getDay() + '/' + (date.getMonth()) + '/' + date.getYear());
+        String dateString = Integer.toString(date.getDay()) + '/' + Integer.toString(date.getMonth()) + '/' + Integer.toString(date.getYear());
+        ((EditText) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
     private Event createEditEvent() {
@@ -85,7 +82,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private Event createEvent() {
-        int[] dateArray = getDateFromText();
+        int[] dateArray = getDateFromText((TextView) findViewById(R.id.CreateEditEventDateText));
         //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
         Date date = new Date(dateArray[0], dateArray[1], dateArray[2]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
@@ -95,7 +92,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private Event editEvent() {
-        int[] dateArray = getDateFromText();
+        int[] dateArray = getDateFromText((TextView) findViewById(R.id.CreateEditEventDateText));
         //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
         Date date = new Date(dateArray[0], dateArray[1], dateArray[2]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
@@ -111,10 +108,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
     /**
      * @return an array of int with year at index 0, month between 0 and 11 at index 1 and day at index 2
      */
-    private int[] getDateFromText() {
-        String[] dateString = ((TextView) findViewById(R.id.CreateEditEventDateText)).getText().toString().split("/");
+    private int[] getDateFromText(TextView textView) {
+        String[] dateString = textView.getText().toString().split("/");
         if (dateString.length != 3) {
-            throw new IllegalArgumentException("invalid dateString format");
+            textView.setError("Invalid date format, must be dd/mm/yyyy");
         }
         int year = Integer.parseInt(dateString[2]);
         int month = Integer.parseInt(dateString[1]) - 1; //because reasons java month are (0-11)
@@ -127,21 +124,20 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * display a toast while it's not.
      */
     private boolean legalArguments() {
-        try {
-            int[] dateArray = getDateFromText();
-            Calendar currentDate = Calendar.getInstance();
-            GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
-            if (date.before(currentDate)) {
-                throw new IllegalArgumentException("invalid date (prior to now)");
-            }
-            String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
-            if (name.isEmpty()) {
-                throw new IllegalArgumentException("name must be specified");
-            }
-            return true;
-        } catch (IllegalArgumentException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        EditText eventNameText = (EditText) findViewById(R.id.CreateEditEventNameText);
+        String name = eventNameText.getText().toString();
+        if (name.isEmpty()) {
+            eventNameText.setError("Event name should not be empty");
             return false;
         }
+        EditText eventDateText = (EditText) findViewById(R.id.CreateEditEventDateText);
+        int[] dateArray = getDateFromText(eventDateText);
+        Calendar currentDate = Calendar.getInstance();
+        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
+        if (date.before(currentDate)) {
+            eventDateText.setError("Invalid date (prior to now)");
+            return false;
+        }
+        return true;
     }
 }

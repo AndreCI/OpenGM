@@ -38,46 +38,22 @@
         android:textAlignment="center"
         android:inputType="date" />
 
-    <ScrollView
+    <MultiAutoCompleteTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/CreateEditEventDescriptionScrollView"
-        android:layout_below="@+id/CreateEditEventDateText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/CreateEditEventParticipantsButton">
-
-        <MultiAutoCompleteTextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/CreateEditEventDescriptionText"
-            android:textAlignment="center"
-            android:hint="@string/EventDescriptionTextHint"
-            android:editable="true"/>
-    </ScrollView>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cancelEditButton"
+        android:id="@+id/CreateEditEventDescriptionText"
+        android:hint="@string/EventDescriptionTextHint"
+        android:layout_below="@id/CreateEditEventDateText"
+        android:editable="true"
+        android:nestedScrollingEnabled="true"
+        android:minLines="7"
+        android:maxLines="7"
         android:textAlignment="center"
-        android:text="@string/CancelEditButtonText"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:onClick="onCancelButtonClick"
-        android:layout_alignParentLeft="true" />
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/CreateEditEventParticipantsButton"
-        android:text="@string/EventParticipantsText"
-        android:textAlignment="center"
-        android:clickable="true"
-        android:onClick="onParticipantsButtonClick"
-        android:layout_above="@id/cancelEditButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:elegantTextHeight="false"
+        android:clickable="false"
+        android:autoText="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false" />
 
     <Button
         android:layout_width="wrap_content"
@@ -88,6 +64,17 @@
         android:layout_alignParentBottom="true"
         android:clickable="true"
         android:onClick="onOkButtonClick"
-        android:layout_alignParentRight="true" />
+        android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/CreateEditEventParticipantsButton"
+        android:text="@string/EventParticipantsText"
+        android:textAlignment="center"
+        android:clickable="true"
+        android:onClick="onParticipantsButtonClick"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/CreateEditEventDescriptionText"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
