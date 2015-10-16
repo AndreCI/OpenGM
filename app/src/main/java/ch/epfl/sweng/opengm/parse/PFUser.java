@@ -32,9 +32,11 @@ public class PFUser extends PFEntity {
     private String mFirstName;
     private String mLastName;
     private String mPhoneNumber;
+    private String mAboutUser;
+    private Bitmap mPicture;
     private List<PFGroup> mGroups;
 
-    private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, List<String> groups) {
+    private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(id, PARSE_TABLE_USER);
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("Username is null or empty");
@@ -55,11 +57,8 @@ public class PFUser extends PFEntity {
         if (groups == null || groups.isEmpty()) {
             throw new IllegalArgumentException("List of groups is null or empty");
         }
+        this.mAboutUser = aboutUser;
         this.mGroups = new ArrayList<>();
-    }
-
-    public PFUser(String id, String username, String firstname, String lastname, String phoneNumber) {
-        this(id, username, firstname, lastname, phoneNumber, new ArrayList<String>());
     }
 
     @Override
@@ -92,7 +91,6 @@ public class PFUser extends PFEntity {
     }
 
     public boolean removeFromGroup(String group) {
-        // TODO update Parse db
         return mGroups.remove(group);
     }
 
@@ -106,10 +104,6 @@ public class PFUser extends PFEntity {
         private String mAboutUser;
         private Bitmap mPicture;
         private final List<String> mGroups;
-
-        public Builder() {
-            this(null);
-        }
 
         public Builder(String id) {
             super(id);
@@ -133,13 +127,15 @@ public class PFUser extends PFEntity {
         }
 
         private void addToAGroup(String group) {
-            // TODO update Parse db
             mGroups.add(group);
         }
 
         @Override
-        public void retrieveFromServer() throws PFException {
-            final String userId = (mId == null ? ParseUser.getCurrentUser().getObjectId() : mId);
+        protected void retrieveFromServer() throws PFException {
+            if (mId == null) {
+                throw new PFException();
+            }
+            final String userId = mId;
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
             query.whereEqualTo(PFConstants.USER_TABLE_USER_ID, userId);
             try {
@@ -170,8 +166,9 @@ public class PFUser extends PFEntity {
             }
         }
 
-        public PFUser build() {
-            return new PFUser(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mGroups);
+        public PFUser build() throws PFException {
+            retrieveFromServer();
+            return new PFUser(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mAboutUser, mPicture, mGroups);
         }
 
     }

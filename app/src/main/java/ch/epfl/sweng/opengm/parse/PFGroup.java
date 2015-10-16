@@ -54,6 +54,11 @@ public class PFGroup extends PFEntity {
         mRoles = userAndRoles(users, roles);
     }
 
+    @Override
+    protected void updateToServer() throws PFException {
+
+    }
+
     private boolean addUserToGroup(String u) {
         if (containUser(u)) {
             return true;
@@ -105,7 +110,7 @@ public class PFGroup extends PFEntity {
                 // TODO what to do with the error?
                 e.printStackTrace();
             }
-            roles.put(usr.build(), entry.getValue());
+            //roles.put(usr.build(), entry.getValue());
         }
         return new HashMap<>(roles);
     }
