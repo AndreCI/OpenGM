@@ -142,7 +142,7 @@ public class PFUser extends PFEntity {
     }
 
     public void setUsername(String username) {
-        if (checkArguments(username, "User name")) {
+        if (checkArguments(username, "User name") && !username.equals(mUsername)) {
             String oldUsername = mUsername;
             this.mUsername = username;
             try {
@@ -155,7 +155,7 @@ public class PFUser extends PFEntity {
     }
 
     public void setFirstName(String firstname) {
-        if (checkArguments(firstname, "First name")) {
+        if (checkArguments(firstname, "First name") && !firstname.equals(mFirstName)) {
             String oldFirstname = mFirstName;
             this.mFirstName = firstname;
             try {
@@ -168,7 +168,7 @@ public class PFUser extends PFEntity {
     }
 
     public void setLastName(String lastname) {
-        if (checkArguments(lastname, "Last name")) {
+        if (checkArguments(lastname, "Last name") && !lastname.equals(mLastName)) {
             String oldLastname = mFirstName;
             this.mLastName = lastname;
             try {
@@ -181,9 +181,9 @@ public class PFUser extends PFEntity {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        if (checkArguments(phoneNumber, "Phone number")) {
+        if (checkArguments(phoneNumber, "Phone number") && !phoneNumber.equals(mPhoneNumber)) {
             String oldPhoneNumber = mPhoneNumber;
-            this.mLastName = phoneNumber;
+            this.mPhoneNumber = phoneNumber;
             try {
                 updateToServer();
             } catch (PFException e) {
@@ -194,26 +194,28 @@ public class PFUser extends PFEntity {
     }
 
     public void setAboutUser(String aboutUser) {
-        if (checkArguments(aboutUser, "User's description")) {
-            String oldAboutUser = mPhoneNumber;
-            this.mPhoneNumber = aboutUser;
+        if (checkArguments(aboutUser, "User's description") && !aboutUser.equals(mAboutUser)) {
+            String oldAboutUser = mAboutUser;
+            this.mAboutUser = aboutUser;
             try {
                 updateToServer();
             } catch (PFException e) {
-                this.mPhoneNumber = oldAboutUser;
+                this.mAboutUser = oldAboutUser;
                 Alert.displayAlert("Error while updating the phone number to the server.");
             }
         }
     }
 
-    public void setPicture(Bitmap mPicture) {
-        Bitmap oldPicture = mPicture;
-        this.mPicture = mPicture;
-        try {
-            updateToServer();
-        } catch (PFException e) {
-            this.mPicture = oldPicture;
-            Alert.displayAlert("Error while updating the picture to the server.");
+    public void setPicture(Bitmap picture) {
+        if (!mPicture.equals(picture)) {
+            Bitmap oldPicture = mPicture;
+            this.mPicture = picture;
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                this.mPicture = oldPicture;
+                Alert.displayAlert("Error while updating the picture to the server.");
+            }
         }
     }
 
