@@ -1,18 +1,18 @@
 package ch.epfl.sweng.opengm.parse;
 
-class ServerException extends Exception {
+class PFException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public ServerException() {
+    public PFException() {
         super();
     }
 
-    public ServerException(String message) {
+    public PFException(String message) {
         super(message);
     }
 
-    public ServerException(Throwable throwable) {
+    public PFException(Throwable throwable) {
         super(throwable);
     }
 

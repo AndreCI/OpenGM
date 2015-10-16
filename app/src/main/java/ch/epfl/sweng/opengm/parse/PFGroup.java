@@ -7,21 +7,21 @@ import com.parse.ParseQuery;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ch.epfl.sweng.opengm.parse.ParseConstants.GROUP_TABLE_ROLES;
-import static ch.epfl.sweng.opengm.parse.ParseConstants.GROUP_TABLE_USERS;
-import static ch.epfl.sweng.opengm.parse.ParseConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 
-import static ch.epfl.sweng.opengm.parse.ParseUtils.objectToArray;
-import static ch.epfl.sweng.opengm.parse.ParseUtils.objectToString;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 
-public class ParseGroup extends ParseEntity {
+public class PFGroup extends PFEntity {
 
-    private final static String PARSE_TABLE_GROUP = ParseConstants.GROUP_TABLE_NAME;
+    private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
     private final int nOfUsers;
-    private final Map<User, Role> mRoles;
+    private final Map<PFUser, Role> mRoles;
 
-    public ParseGroup(String id, Map<User, Role> roles) {
+    public PFGroup(String id, Map<PFUser, Role> roles) {
         super(id, PARSE_TABLE_GROUP);
         if (roles == null || roles.isEmpty()) {
             throw new IllegalArgumentException("Group is null or empty");
@@ -30,7 +30,7 @@ public class ParseGroup extends ParseEntity {
         mRoles = new HashMap<>(roles);
     }
 
-    private ParseGroup(Map<String, Role> roles, String id) {
+    private PFGroup(Map<String, Role> roles, String id) {
         super(id, PARSE_TABLE_GROUP);
         if (roles == null || roles.isEmpty()) {
             throw new IllegalArgumentException("Group is null or empty");
@@ -39,7 +39,7 @@ public class ParseGroup extends ParseEntity {
         mRoles = userAndRoles(roles);
     }
 
-    public ParseGroup(String id, String[] users, int[] roles) {
+    public PFGroup(String id, String[] users, int[] roles) {
         super(id, PARSE_TABLE_GROUP);
         if (users == null || roles == null) {
             throw new IllegalArgumentException("Arrays arr null");
@@ -62,7 +62,7 @@ public class ParseGroup extends ParseEntity {
         return false;
     }
 
-    public boolean addUserToGroup(User u) {
+    public boolean addUserToGroup(PFUser u) {
         return addUserToGroup(u.getId());
     }
 
@@ -74,12 +74,12 @@ public class ParseGroup extends ParseEntity {
         return true;
     }
 
-    public boolean deleteUserToGroup(User u) throws IllegalArgumentException {
+    public boolean deleteUserToGroup(PFUser u) throws IllegalArgumentException {
         return deleteUserToGroup(u.getId());
     }
 
     private boolean containUser(String id) {
-        for (User s : mRoles.keySet()) {
+        for (PFUser s : mRoles.keySet()) {
             if (s.getId().equals(id)) {
                 return true;
             }
@@ -87,7 +87,7 @@ public class ParseGroup extends ParseEntity {
         return false;
     }
 
-    private Map<User, Role> userAndRoles(String[] users, int[] r) {
+    private Map<PFUser, Role> userAndRoles(String[] users, int[] r) {
         Map<String, Role> roles = new HashMap<>();
         for (int i = 0; i < nOfUsers; i++) {
             roles.put(users[i], Role.getRole(r[i]));
@@ -95,13 +95,13 @@ public class ParseGroup extends ParseEntity {
         return userAndRoles(roles);
     }
 
-    private Map<User, Role> userAndRoles(Map<String, Role> r) {
-        Map<User, Role> roles = new HashMap<>();
+    private Map<PFUser, Role> userAndRoles(Map<String, Role> r) {
+        Map<PFUser, Role> roles = new HashMap<>();
         for (Map.Entry<String, Role> entry : r.entrySet()) {
-            User.Builder usr = new User.Builder(entry.getKey());
+            PFUser.Builder usr = new PFUser.Builder(entry.getKey());
             try {
-                usr.retrieveFromParse();
-            } catch (ServerException e) {
+                usr.retrieveFromServer();
+            } catch (PFException e) {
                 // TODO what to do with the error?
                 e.printStackTrace();
             }
@@ -125,12 +125,12 @@ public class ParseGroup extends ParseEntity {
         }
     }
 
-    public static class Builder extends ParseEntity.Builder {
+    public static class Builder extends PFEntity.Builder {
 
         private final Map<String, Role> mRoles;
 
         public Builder(String id) {
-            super(id, PARSE_TABLE_GROUP);
+            super(id);
             this.mRoles = new HashMap<>();
         }
 
@@ -143,7 +143,7 @@ public class ParseGroup extends ParseEntity {
         }
 
         @Override
-        public void retrieveFromParse() throws ServerException {
+        public void retrieveFromServer() throws PFException {
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
             query.whereEqualTo(OBJECT_ID, mId);
             try {
@@ -156,18 +156,18 @@ public class ParseGroup extends ParseEntity {
                             addUserToGroup(objectToString(users[i]), Role.getRole(Integer.parseInt(objectToString(roles[i]))));
                         }
                     } catch (NumberFormatException e) {
-                        throw new ServerException("Parse query for id " + mId + " failed");
+                        throw new PFException("Parse query for id " + mId + " failed");
                     }
                 } else {
-                    throw new ServerException("Parse query for id " + mId + " failed");
+                    throw new PFException("Parse query for id " + mId + " failed");
                 }
             } catch (ParseException e) {
-                throw new ServerException("Parse query for id " + mId + " failed");
+                throw new PFException("Parse query for id " + mId + " failed");
             }
         }
 
-        public ParseGroup build() {
-            return new ParseGroup(mRoles, mId);
+        public PFGroup build() {
+            return new PFGroup(mRoles, mId);
         }
 
         private boolean contains(String s) {

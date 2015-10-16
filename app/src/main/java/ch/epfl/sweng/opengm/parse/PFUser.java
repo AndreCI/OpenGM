@@ -1,6 +1,12 @@
 package ch.epfl.sweng.opengm.parse;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -9,25 +15,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static ch.epfl.sweng.opengm.parse.ParseConstants.USER_TABLE_FIRST_NAME;
-import static ch.epfl.sweng.opengm.parse.ParseConstants.USER_TABLE_GROUPS;
-import static ch.epfl.sweng.opengm.parse.ParseConstants.USER_TABLE_LAST_NAME;
-import static ch.epfl.sweng.opengm.parse.ParseConstants.USER_TABLE_PHONE_NUMBER;
-import static ch.epfl.sweng.opengm.parse.ParseConstants.USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.ParseUtils.objectToArray;
-import static ch.epfl.sweng.opengm.parse.ParseUtils.objectToString;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_FIRST_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PHONE_NUMBER;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 
-public class User extends ParseEntity {
+public class PFUser extends PFEntity {
 
-    private final static String PARSE_TABLE_USER = ParseConstants.USER_TABLE_NAME;
+    private final static String PARSE_TABLE_USER = PFConstants.USER_TABLE_NAME;
 
-    private final String mUsername;
-    private final String mFirstName;
-    private final String mLastName;
-    private final String mPhoneNumber;
-    private final List<String> mGroups;
+    private String mUsername;
+    private String mFirstName;
+    private String mLastName;
+    private String mPhoneNumber;
+    private List<PFGroup> mGroups;
 
-    private User(String id, String username, String firstname, String lastname, String phoneNumber, List<String> groups) {
+    private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, List<String> groups) {
         super(id, PARSE_TABLE_USER);
         if (username == null || username.isEmpty()) {
             throw new IllegalArgumentException("Username is null or empty");
@@ -48,11 +55,16 @@ public class User extends ParseEntity {
         if (groups == null || groups.isEmpty()) {
             throw new IllegalArgumentException("List of groups is null or empty");
         }
-        this.mGroups = new ArrayList<>(groups);
+        this.mGroups = new ArrayList<>();
     }
 
-    public User(String id, String username, String firstname, String lastname, String phoneNumber) {
+    public PFUser(String id, String username, String firstname, String lastname, String phoneNumber) {
         this(id, username, firstname, lastname, phoneNumber, new ArrayList<String>());
+    }
+
+    @Override
+    public void updateToServer() throws PFException {
+
     }
 
     public String getmUsername() {
@@ -71,12 +83,13 @@ public class User extends ParseEntity {
         return mPhoneNumber;
     }
 
-    public List<String> getmGroups() {
-        return Collections.unmodifiableList(mGroups);
+    public List<PFUser> getmGroups() {
+        return Collections.emptyList();
     }
 
+
     public boolean addToAGroup(String group) {
-        return mGroups.add(group);
+        return true;
     }
 
     public boolean removeFromGroup(String group) {
@@ -84,12 +97,15 @@ public class User extends ParseEntity {
         return mGroups.remove(group);
     }
 
-    public static final class Builder extends ParseEntity.Builder {
+
+    public static final class Builder extends PFEntity.Builder {
 
         private String mUsername;
         private String mFirstName;
         private String mLastName;
         private String mPhoneNumber;
+        private String mAboutUser;
+        private Bitmap mPicture;
         private final List<String> mGroups;
 
         public Builder() {
@@ -97,57 +113,36 @@ public class User extends ParseEntity {
         }
 
         public Builder(String id) {
-            super(id, PARSE_TABLE_USER);
+            super(id);
             this.mGroups = new ArrayList<>();
         }
 
-        public boolean setUsername(String username) {
-            if (mUsername.equals(username)) {
-                return true;
-            }
+        private void setUsername(String username) {
             this.mUsername = username;
-            return false;
         }
 
-        public boolean setFirstName(String firstName) {
-            if (mFirstName.equals(firstName)) {
-                return true;
-            }
+        private void setFirstName(String firstName) {
             this.mFirstName = firstName;
-            return false;
         }
 
-        public boolean setLastName(String lastName) {
-            if (mLastName.equals(lastName)) {
-                return true;
-            }
+        private void setLastName(String lastName) {
             this.mLastName = lastName;
-            return false;
         }
 
-        public boolean setPhoneNumber(String phoneNumber) {
-            if (mPhoneNumber.equals(phoneNumber)) {
-                return true;
-            }
+        private void setPhoneNumber(String phoneNumber) {
             this.mPhoneNumber = phoneNumber;
-            return false;
         }
 
-        public boolean addToAGroup(String group) {
+        private void addToAGroup(String group) {
             // TODO update Parse db
-            return mGroups.add(group);
-        }
-
-        public boolean removeFromGroup(String group) {
-            // TODO update Parse db
-            return mGroups.remove(group);
+            mGroups.add(group);
         }
 
         @Override
-        public void retrieveFromParse() throws ServerException {
+        public void retrieveFromServer() throws PFException {
             final String userId = (mId == null ? ParseUser.getCurrentUser().getObjectId() : mId);
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseConstants.USER_TABLE_NAME);
-            query.whereEqualTo(ParseConstants.USER_TABLE_USER_ID, userId);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+            query.whereEqualTo(PFConstants.USER_TABLE_USER_ID, userId);
             try {
                 ParseObject object = query.getFirst();
                 if (object != null) {
@@ -155,20 +150,29 @@ public class User extends ParseEntity {
                     setFirstName(objectToString(object.get(USER_TABLE_FIRST_NAME)));
                     setLastName(objectToString(object.get(USER_TABLE_LAST_NAME)));
                     setPhoneNumber(objectToString(object.get(USER_TABLE_PHONE_NUMBER)));
+
+                    ParseFile fileObject = (ParseFile) object
+                            .get(USER_TABLE_PICTURE);
+                    fileObject.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            mPicture = (e == null ? null : BitmapFactory.decodeByteArray(data, 0, data.length));
+                        }
+                    });
                     Object[] groups = objectToArray(object.get(USER_TABLE_GROUPS));
                     for (Object o : groups) {
                         addToAGroup(objectToString(o));
                     }
                 } else {
-                    throw new ServerException("Parse query for id " + userId + " failed");
+                    throw new PFException("Parse query for id " + userId + " failed");
                 }
             } catch (ParseException e) {
-                throw new ServerException("Parse query for id " + userId + " failed");
+                throw new PFException("Parse query for id " + userId + " failed");
             }
         }
 
-        public User build() {
-            return new User(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mGroups);
+        public PFUser build() {
+            return new PFUser(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mGroups);
         }
 
     }

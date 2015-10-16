@@ -24,8 +24,7 @@ class InputUtils {
         for (Character c : password.toCharArray()) {
             nOfIntegers += (c >= '0' && c <= '9') ? 1 : 0;
         }
-        //return length <= PASSWORD_LENGTH || password.toLowerCase().equals(password) || nOfIntegers <= 0 || nOfIntegers >= length;
-        return false;
+        return length <= PASSWORD_LENGTH || password.toLowerCase().equals(password) || nOfIntegers <= 0 || nOfIntegers >= length;
     }
 
 }

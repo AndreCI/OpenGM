@@ -16,14 +16,10 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.utils.Utils;
 
-import static ch.epfl.sweng.opengm.parse.ParseConstants.*;
+import static ch.epfl.sweng.opengm.parse.PFConstants.*;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static com.parse.ParseException.*;
 
@@ -132,14 +128,13 @@ public class RegisterActivity extends AppCompatActivity {
             user.signUpInBackground(new SignUpCallback() {
                                         public void done(ParseException e) {
                                             if (e == null) {
-                                                // Second : create a new row for this user in the User table
+                                                // Second : create a new row for this user in the PFUser table
                                                 ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
                                                 parseObject.put(USER_TABLE_USER_ID, user.getObjectId());
                                                 parseObject.put(USER_TABLE_USERNAME, username);
                                                 parseObject.put(USER_TABLE_FIRST_NAME, firstname);
                                                 parseObject.put(USER_TABLE_LAST_NAME, lastname);
                                                 parseObject.put(USER_TABLE_ABOUT, "Hey there !");
-
                                                 parseObject.saveInBackground(new SaveCallback() {
                                                     @Override
                                                     public void done(ParseException e) {
@@ -148,7 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                             Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
                                                             startActivity(intent);
                                                         } else {
-                                                            // error while updating the User table
+                                                            // error while updating the PFUser table
                                                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }

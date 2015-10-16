@@ -1,11 +1,11 @@
 package ch.epfl.sweng.opengm.parse;
 
-abstract class ParseEntity {
+abstract class PFEntity {
 
     private final String mId;
     private final String mParseTable;
 
-    ParseEntity(String id, String tableName) {
+    PFEntity(String id, String tableName) {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("Id is null or empty");
         }
@@ -20,6 +20,8 @@ abstract class ParseEntity {
         return this.mId;
     }
 
+    public abstract void updateToServer() throws PFException;
+
     @Override
     public String toString() {
         return "[parseTable = " + mParseTable + " | id = " + mId + " ]";
@@ -33,9 +35,7 @@ abstract class ParseEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
-        ParseEntity that = (ParseEntity) o;
-
+        PFEntity that = (PFEntity) o;
         return mId.equals(that.mId) && mParseTable.equals(that.mParseTable);
 
     }
@@ -49,27 +49,21 @@ abstract class ParseEntity {
 
     public static abstract class Builder {
 
-        private final String mParseTable;
-        String mId;
+        protected String mId;
 
-        public Builder(String parseTable) {
-            this(null, parseTable);
+        public Builder() {
+            mId = null;
         }
 
-        public Builder(String id, String parseTable) {
+        public Builder(String id) {
             mId = id;
-            mParseTable = parseTable;
         }
 
-        public boolean setId(String id) {
-            if (mId.equals(id)) {
-                return true;
-            }
+        public void setId(String id) {
             mId = id;
-            return false;
         }
 
-        public abstract void retrieveFromParse() throws ServerException;
+        public abstract void retrieveFromServer() throws PFException;
 
     }
 

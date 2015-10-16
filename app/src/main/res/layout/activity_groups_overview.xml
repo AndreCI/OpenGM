@@ -9,24 +9,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.opengm.identification.GroupsOverviewActivity">
 
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_above="@+id/email"
+    <GridLayout
+        android:id="@+id/gridLayoutGroups"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="61dp" />
+        android:columnCount="2"
+        android:layout_alignParentTop="true">
 
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="50dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Button 2"
+            android:id="@+id/button1"
+            android:layout_row="0"
+            android:layout_column="0" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Button 2"
+            android:id="@+id/button2"
+            android:layout_row="0"
+            android:layout_column="1" />
+    </GridLayout>
 </RelativeLayout>

@@ -11,8 +11,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import ch.epfl.sweng.opengm.R;
@@ -34,6 +36,18 @@ public class LoginActivity extends AppCompatActivity {
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);
+
+
+
+        ParseObject obj = new ParseObject("Poll");
+        obj.put("Background", "name");
+        obj.fetchFromLocalDatastoreInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+
+            }
+        });
+
     }
 
     public void onClickLogin(View v) {

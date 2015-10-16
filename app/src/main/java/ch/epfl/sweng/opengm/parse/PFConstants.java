@@ -1,6 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
-public class ParseConstants {
+public class PFConstants {
 
     public static final String OBJECT_ID = "objectId";
 
