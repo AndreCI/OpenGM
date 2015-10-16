@@ -2,14 +2,12 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +19,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PHONE_NUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 
@@ -36,29 +35,43 @@ public class PFUser extends PFEntity {
     private Bitmap mPicture;
     private List<PFGroup> mGroups;
 
+
+    private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, List<PFGroup> groups, Bitmap picture) {
+        super(id, PARSE_TABLE_USER);
+        checkArguments(username, "User name");
+        this.mUsername = username;
+        checkArguments(firstname, "First name");
+        this.mFirstName = firstname;
+        checkArguments(lastname, "Last name");
+        this.mLastName = lastname;
+        checkNullArguments(phoneNumber, "Phone number");
+        this.mPhoneNumber = phoneNumber;
+        checkNullArguments(aboutUser, "User's description");
+        this.mAboutUser = aboutUser;
+        checkNullArguments(aboutUser, "User's groups");
+        this.mGroups = new ArrayList<>(groups);
+        this.mPicture = picture;
+    }
+
+
     private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(id, PARSE_TABLE_USER);
-        if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("Username is null or empty");
-        }
+        checkArguments(username, "User name");
         this.mUsername = username;
-        if (firstname == null || firstname.isEmpty()) {
-            throw new IllegalArgumentException("Firstname is null or empty");
-        }
+        checkArguments(firstname, "First name");
         this.mFirstName = firstname;
-        if (lastname == null || lastname.isEmpty()) {
-            throw new IllegalArgumentException("Lastname is null or empty");
-        }
+        checkArguments(lastname, "Last name");
         this.mLastName = lastname;
-        if (phoneNumber == null || phoneNumber.isEmpty()) {
-            throw new IllegalArgumentException("Phone number is null or empty");
-        }
+        checkNullArguments(phoneNumber, "Phone number");
         this.mPhoneNumber = phoneNumber;
-        if (groups == null || groups.isEmpty()) {
-            throw new IllegalArgumentException("List of groups is null or empty");
-        }
+        checkNullArguments(aboutUser, "User's description");
         this.mAboutUser = aboutUser;
+        checkNullArguments(aboutUser, "User's groups");
         this.mGroups = new ArrayList<>();
+        for (String s : groups) {
+            addToAGroup(s);
+        }
+        this.mPicture = picture;
     }
 
     @Override
@@ -86,14 +99,78 @@ public class PFUser extends PFEntity {
         return Collections.emptyList();
     }
 
-    public boolean addToAGroup(String group) {
-        return true;
+    public String getmAboutUser() {
+        return mAboutUser;
+    }
+
+    public Bitmap getmPicture() {
+        return mPicture;
+    }
+
+    public boolean addToAGroup(String s) {
+        if (belongToGroup(s)) {
+            return false;
+        }
+        PFGroup.Builder group = new PFGroup.Builder(s);
+        return mGroups.add(group.build());
     }
 
     public boolean removeFromGroup(String group) {
+        if (!belongToGroup(group)) {
+            throw new IllegalArgumentException("User does not belong the group.")
+        }
         return mGroups.remove(group);
     }
 
+    public void setUsername(String username) {
+        checkArguments(username, "User name");
+        this.mUsername = username;
+    }
+
+    public void setFirstName(String firstname) {
+        checkArguments(firstname, "First name");
+        this.mFirstName = firstname;
+    }
+
+    public void setLastName(String lastname) {
+        checkArguments(lastname, "Last name");
+        this.mLastName = lastname;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        checkNullArguments(phoneNumber, "Phone number");
+        this.mPhoneNumber = phoneNumber;
+    }
+
+    public void setmAboutUser(String aboutUser) {
+        checkNullArguments(aboutUser, "User's description");
+        this.mAboutUser = aboutUser;
+    }
+
+    public void setmPicture(Bitmap mPicture) {
+        this.mPicture = mPicture;
+    }
+
+    private boolean belongToGroup(String id) {
+        for (PFGroup g : mGroups) {
+            if (g.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void checkArguments(String arg, String name) throws IllegalArgumentException {
+        if (arg == null || arg.isEmpty()) {
+            throw new IllegalArgumentException(name + " is null or empty.");
+        }
+    }
+
+    private void checkNullArguments(String arg, String name) throws IllegalArgumentException {
+        if (arg == null) {
+            throw new IllegalArgumentException(name + " is null.");
+        }
+    }
 
     public static final class Builder extends PFEntity.Builder {
 
@@ -126,6 +203,10 @@ public class PFUser extends PFEntity {
             this.mPhoneNumber = phoneNumber;
         }
 
+        private void setAbout(String about) {
+            this.mAboutUser = about;
+        }
+
         private void addToAGroup(String group) {
             mGroups.add(group);
         }
@@ -145,7 +226,7 @@ public class PFUser extends PFEntity {
                     setFirstName(objectToString(object.get(USER_TABLE_FIRST_NAME)));
                     setLastName(objectToString(object.get(USER_TABLE_LAST_NAME)));
                     setPhoneNumber(objectToString(object.get(USER_TABLE_PHONE_NUMBER)));
-
+                    setAbout(objectToString(object.get(USER_TABLE_ABOUT)));
                     ParseFile fileObject = (ParseFile) object
                             .get(USER_TABLE_PICTURE);
                     fileObject.getDataInBackground(new GetDataCallback() {

@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm;
 
+import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ public class OpenGMApplication extends Application {
     private final static String PARSE_APP_ID = "LiaIqx4G3cgt0LSZ6aYcZB7mGI5V2zx3fek03HGc";
     private final static String PARSE_KEY = "tQSqozHYj1d9hVhMAwKnEslDVXuzyATAQcOstEor";
 
+    private static Activity currentActivity = null;
     private static PFUser currentUser = null;
 
     @Override
@@ -33,4 +35,11 @@ public class OpenGMApplication extends Application {
         return currentUser;
     }
 
+    public static Activity getCurrentActivity() {
+        return currentActivity;
+    }
+
+    public static void setCurrentActivity(Activity currentActivity) {
+        OpenGMApplication.currentActivity = currentActivity;
+    }
 }
