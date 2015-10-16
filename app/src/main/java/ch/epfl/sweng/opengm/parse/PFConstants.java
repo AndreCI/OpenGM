@@ -20,8 +20,12 @@ public class PFConstants {
     public static final String USER_TABLE_ABOUT = "description";
 
     public static final String GROUP_TABLE_NAME = "Group";
+    public static final String GROUP_TABLE_ISPRIVATE = "isPrivate";
     public static final String GROUP_TABLE_USERS = "users";
+    public static final String GROUP_TABLE_SURNAMES = "surnames";
     public static final String GROUP_TABLE_ROLES = "roles";
-    public static final String GROUP_TABLE_FOUNDER = "createdBy";
+    public static final String GROUP_TABLE_DESCRIPTION = "description";
+    public static final String GROUP_TABLE_PICTURE = "groupPicture";
+    public static final String GROUP_TABLE_EVENTS = "events";
 
 }

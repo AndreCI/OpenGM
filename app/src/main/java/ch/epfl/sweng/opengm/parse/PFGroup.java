@@ -1,18 +1,29 @@
 package ch.epfl.sweng.opengm.parse;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static ch.epfl.sweng.opengm.parse.PFConstants.*;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_DESCRIPTION;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_EVENTS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ISPRIVATE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 
 public class PFGroup extends PFEntity {
 
@@ -54,8 +65,12 @@ public class PFGroup extends PFEntity {
         mRoles = userAndRoles(users, roles);
     }
 
+    public PFGroup(String mId, List<String> mUsers, List<String> mSurnames, List<String> mRoles, List<String> mEvents, boolean isPrivate, String mDescription, Bitmap mPicture) {
+        super();
+    }
+
     @Override
-    protected void updateToServer() throws PFException {
+    protected void updateToServer(int idx) throws PFException {
 
     }
 
@@ -115,36 +130,55 @@ public class PFGroup extends PFEntity {
         return new HashMap<>(roles);
     }
 
-    public enum Role {
-
-        FOUNDER(0), ADMINISTRATOR(1), MODERATOR(2);
-
-        private final int idx;
-
-        Role(int i) {
-            idx = i;
-        }
-
-        public static Role getRole(int i) {
-            return Role.values()[i];
-        }
-    }
-
     public static class Builder extends PFEntity.Builder {
 
-        private final Map<String, Role> mRoles;
+        private final List<String> mUsers;
+        private final List<String> mSurnames;
+        private final List<String> mRoles;
+        private final List<String> mEvents;
+
+        private String mDescription;
+        private boolean isPrivate;
+        private Bitmap mPicture;
 
         public Builder(String id) {
             super(id);
-            this.mRoles = new HashMap<>();
+            mUsers = new ArrayList<>();
+            mSurnames = new ArrayList<>();
+            mRoles = new ArrayList<>();
+            mEvents = new ArrayList<>();
         }
 
-        public boolean addUserToGroup(String u, Role r) {
-            if (contains(u)) {
-                return true;
+        private void setUsers(Object[] o) {
+            for (Object obj : o) {
+                mUsers.add((String) obj);
             }
-            mRoles.put(u, r);
-            return false;
+        }
+
+        private void setSurnames(Object[] o) {
+            for (Object obj : o) {
+                mSurnames.add((String) obj);
+            }
+        }
+
+        private void setRoles(Object[] o) {
+            for (Object obj : o) {
+                mRoles.add((String) obj);
+            }
+        }
+
+        private void setEvents(Object[] o) {
+            for (Object obj : o) {
+                mEvents.add((String) obj);
+            }
+        }
+
+        private void setPrivacy(boolean b) {
+            this.isPrivate = b;
+        }
+
+        private void setDescription(String s) {
+            this.mDescription = s;
         }
 
         @Override
@@ -154,34 +188,30 @@ public class PFGroup extends PFEntity {
             try {
                 ParseObject object = query.getFirst();
                 if (object != null) {
-                    Object[] users = objectToArray(object.get(GROUP_TABLE_USERS));
-                    Object[] roles = objectToArray(object.get(GROUP_TABLE_ROLES));
-                    try {
-                        for (int i = 0; i < Math.min(users.length, roles.length); i++) {
-                            addUserToGroup(objectToString(users[i]), Role.getRole(Integer.parseInt(objectToString(roles[i]))));
+                    setUsers(objectToArray(object.get(GROUP_TABLE_USERS)));
+                    setSurnames(objectToArray(object.get(GROUP_TABLE_SURNAMES)));
+                    setRoles(objectToArray(object.get(GROUP_TABLE_ROLES)));
+                    setEvents(objectToArray(object.get(GROUP_TABLE_EVENTS)));
+                    setPrivacy(object.getBoolean(GROUP_TABLE_ISPRIVATE));
+                    setDescription(object.getString(GROUP_TABLE_DESCRIPTION));
+                    ParseFile fileObject = (ParseFile) object
+                            .get(GROUP_TABLE_PICTURE);
+                    fileObject.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            mPicture = (e == null ? null : BitmapFactory.decodeByteArray(data, 0, data.length));
                         }
-                    } catch (NumberFormatException e) {
-                        throw new PFException("Parse query for id " + mId + " failed");
-                    }
+                    });
                 } else {
-                    throw new PFException("Parse query for id " + mId + " failed");
+                    throw new PFException("Query failed");
                 }
             } catch (ParseException e) {
-                throw new PFException("Parse query for id " + mId + " failed");
+                throw new PFException("Query failed");
             }
         }
 
         public PFGroup build() {
-            return new PFGroup(mRoles, mId);
-        }
-
-        private boolean contains(String s) {
-            for (String key : mRoles.keySet()) {
-                if (key.equals(s)) {
-                    return true;
-                }
-            }
-            return false;
+            return new PFGroup(mId, mUsers, mSurnames, mRoles, mEvents, isPrivate, mDescription, mPicture);
         }
     }
 }
