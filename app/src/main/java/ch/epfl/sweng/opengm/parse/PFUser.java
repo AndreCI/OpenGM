@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.utils.Alert;
+
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_FIRST_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
@@ -69,7 +71,8 @@ public class PFUser extends PFEntity {
         checkNullArguments(aboutUser, "User's groups");
         this.mGroups = new ArrayList<>();
         for (String s : groups) {
-            addToAGroup(s);
+            PFGroup.Builder group = new PFGroup.Builder(s);
+            mGroups.add(group.build());
         }
         this.mPicture = picture;
     }
@@ -79,76 +82,148 @@ public class PFUser extends PFEntity {
 
     }
 
-    public String getmUsername() {
+    public String getUsername() {
         return mUsername;
     }
 
-    public String getmFirstName() {
+    public String getFirstName() {
         return mFirstName;
     }
 
-    public String getmLastName() {
+    public String getLastName() {
         return mLastName;
     }
 
-    public String getmPhoneNumber() {
+    public String getPhoneNumber() {
         return mPhoneNumber;
     }
 
-    public List<PFUser> getmGroups() {
-        return Collections.emptyList();
+    public List<PFGroup> getGroups() {
+        return Collections.unmodifiableList(mGroups);
     }
 
-    public String getmAboutUser() {
+    public String getAboutUser() {
         return mAboutUser;
     }
 
-    public Bitmap getmPicture() {
+    public Bitmap getPicture() {
         return mPicture;
     }
 
-    public boolean addToAGroup(String s) {
+    public void addToAGroup(String s) {
         if (belongToGroup(s)) {
-            return false;
+            Alert.displayAlert("User already belongs to this group.");
+        } else {
+            // TODO update groups data
+            PFGroup.Builder group = new PFGroup.Builder(s);
+            mGroups.add(group.build());
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                Alert.displayAlert("Error while updating the user's groups to the server.");
+            }
         }
-        PFGroup.Builder group = new PFGroup.Builder(s);
-        return mGroups.add(group.build());
     }
 
-    public boolean removeFromGroup(String group) {
+    public void removeFromGroup(String group) {
         if (!belongToGroup(group)) {
-            throw new IllegalArgumentException("User does not belong the group.")
+            Alert.displayAlert("User does not belong the group.");
+        } else {
+            // TODO update groups data
+            PFGroup oldGroup = mGroups.get(getGroupIdx(group));
+            mGroups.remove(getGroupIdx(group));
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                mGroups.add(oldGroup);
+                Alert.displayAlert("Error while updating the user's groups to the server.");
+            }
         }
-        return mGroups.remove(group);
     }
 
     public void setUsername(String username) {
-        checkArguments(username, "User name");
-        this.mUsername = username;
+        if (checkArguments(username, "User name")) {
+            String oldUsername = mUsername;
+            this.mUsername = username;
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                this.mUsername = oldUsername;
+                Alert.displayAlert("Error while updating the username to the server.");
+            }
+        }
     }
 
     public void setFirstName(String firstname) {
-        checkArguments(firstname, "First name");
-        this.mFirstName = firstname;
+        if (checkArguments(firstname, "First name")) {
+            String oldFirstname = mFirstName;
+            this.mFirstName = firstname;
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                this.mFirstName = oldFirstname;
+                Alert.displayAlert("Error while updating the first name to the server.");
+            }
+        }
     }
 
     public void setLastName(String lastname) {
-        checkArguments(lastname, "Last name");
-        this.mLastName = lastname;
+        if (checkArguments(lastname, "Last name")) {
+            String oldLastname = mFirstName;
+            this.mLastName = lastname;
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                this.mLastName = oldLastname;
+                Alert.displayAlert("Error while updating the last name to the server.");
+            }
+        }
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        checkNullArguments(phoneNumber, "Phone number");
-        this.mPhoneNumber = phoneNumber;
+        if (checkArguments(phoneNumber, "Phone number")) {
+            String oldPhoneNumber = mPhoneNumber;
+            this.mLastName = phoneNumber;
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                this.mPhoneNumber = oldPhoneNumber;
+                Alert.displayAlert("Error while updating the phone number to the server.");
+            }
+        }
     }
 
-    public void setmAboutUser(String aboutUser) {
-        checkNullArguments(aboutUser, "User's description");
-        this.mAboutUser = aboutUser;
+    public void setAboutUser(String aboutUser) {
+        if (checkArguments(aboutUser, "User's description")) {
+            String oldAboutUser = mPhoneNumber;
+            this.mPhoneNumber = aboutUser;
+            try {
+                updateToServer();
+            } catch (PFException e) {
+                this.mPhoneNumber = oldAboutUser;
+                Alert.displayAlert("Error while updating the phone number to the server.");
+            }
+        }
     }
 
-    public void setmPicture(Bitmap mPicture) {
+    public void setPicture(Bitmap mPicture) {
+        Bitmap oldPicture = mPicture;
         this.mPicture = mPicture;
+        try {
+            updateToServer();
+        } catch (PFException e) {
+            this.mPicture = oldPicture;
+            Alert.displayAlert("Error while updating the picture to the server.");
+        }
+    }
+
+    private int getGroupIdx(String id) {
+        for (int i = 0; i < mGroups.size(); i++) {
+            if (mGroups.get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private boolean belongToGroup(String id) {
@@ -160,16 +235,20 @@ public class PFUser extends PFEntity {
         return false;
     }
 
-    private void checkArguments(String arg, String name) throws IllegalArgumentException {
+    private boolean checkArguments(String arg, String name) {
         if (arg == null || arg.isEmpty()) {
-            throw new IllegalArgumentException(name + " is null or empty.");
+            Alert.displayAlert(name + " is null or empty.");
+            return false;
         }
+        return true;
     }
 
-    private void checkNullArguments(String arg, String name) throws IllegalArgumentException {
+    private boolean checkNullArguments(String arg, String name) {
         if (arg == null) {
-            throw new IllegalArgumentException(name + " is null.");
+            Alert.displayAlert(name + " is null.");
+            return false;
         }
+        return true;
     }
 
     public static final class Builder extends PFEntity.Builder {

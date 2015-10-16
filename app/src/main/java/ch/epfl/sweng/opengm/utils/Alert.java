@@ -5,7 +5,7 @@ import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 
-class Alert {
+public class Alert {
 
     public static void displayAlert(String message) {
         Activity activity = OpenGMApplication.getCurrentActivity();
