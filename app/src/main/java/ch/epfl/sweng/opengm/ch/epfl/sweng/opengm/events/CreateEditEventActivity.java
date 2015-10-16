@@ -3,8 +3,6 @@ package ch.epfl.sweng.opengm.ch.epfl.sweng.opengm.events;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
@@ -70,11 +68,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private void fillTexts(Event event) {
-        ((EditText) findViewById(R.id.EventNameText)).setText(event.getName());
-        ((EditText) findViewById(R.id.EventPlaceText)).setText(event.getPlace());
-        ((MultiAutoCompleteTextView) findViewById(R.id.EventDescriptionText)).setText(event.getDescription());
-        GregorianCalendar date = event.getDate();
-        ((EditText) findViewById(R.id.EventDateText)).setText(date.DAY_OF_MONTH + '/' + (date.MONTH + 1) + '/' + date.YEAR);
+        ((EditText) findViewById(R.id.CreateEditEventNameText)).setText(event.getName());
+        ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
+        ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
+        //GregorianCalendar date = event.getDate();
+        Date date = event.getDate();
+        ((EditText) findViewById(R.id.CreateEditEventDateText)).setText(date.getDay() + '/' + (date.getMonth()) + '/' + date.getYear());
     }
 
     private Event createEditEvent() {
@@ -87,19 +86,21 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     private Event createEvent() {
         int[] dateArray = getDateFromText();
-        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
-        String name = ((TextView) findViewById(R.id.EventNameText)).getText().toString();
-        String description = ((TextView) findViewById(R.id.EventDescriptionText)).getText().toString();
-        String place = ((TextView) findViewById(R.id.EventPlaceText)).getText().toString();
+        //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
+        Date date = new Date(dateArray[0], dateArray[1], dateArray[2]);
+        String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
+        String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
+        String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         return new Event(name, place, date, description, participants);
     }
 
     private Event editEvent() {
         int[] dateArray = getDateFromText();
-        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
-        String name = ((TextView) findViewById(R.id.EventNameText)).getText().toString();
-        String description = ((TextView) findViewById(R.id.EventDescriptionText)).getText().toString();
-        String place = ((TextView) findViewById(R.id.EventPlaceText)).getText().toString();
+        //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
+        Date date = new Date(dateArray[0], dateArray[1], dateArray[2]);
+        String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
+        String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
+        String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         editedEvent.setName(name);
         editedEvent.setDate(date);
         editedEvent.setDescription(description);
@@ -111,7 +112,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with year at index 0, month between 0 and 11 at index 1 and day at index 2
      */
     private int[] getDateFromText() {
-        String[] dateString = ((TextView) findViewById(R.id.EventDateText)).getText().toString().split("/");
+        String[] dateString = ((TextView) findViewById(R.id.CreateEditEventDateText)).getText().toString().split("/");
         if (dateString.length != 3) {
             throw new IllegalArgumentException("invalid dateString format");
         }
@@ -133,7 +134,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (date.before(currentDate)) {
                 throw new IllegalArgumentException("invalid date (prior to now)");
             }
-            String name = ((TextView) findViewById(R.id.EventNameText)).getText().toString();
+            String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
             if (name.isEmpty()) {
                 throw new IllegalArgumentException("name must be specified");
             }

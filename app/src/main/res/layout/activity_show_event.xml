@@ -9,41 +9,42 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/EventNameText"
-        android:editable="false"
-        android:textAlignment="center" />
+        android:id="@+id/ShowEventNameText"
+        android:textSize="14sp"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/EventPlaceText"
-        android:layout_below="@+id/EventNameText"
+        android:id="@+id/ShowEventPlaceText"
+        android:layout_below="@+id/ShowEventNameText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textAlignment="center" />
+        android:textSize="14sp"
+        android:singleLine="true" />
 
 
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/EventDateText"
-        android:layout_below="@+id/EventPlaceText"
+        android:id="@+id/ShowEventDateText"
+        android:layout_below="@+id/ShowEventPlaceText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textAlignment="center"
-        android:inputType="date" />
+        android:textSize="14sp"
+        android:singleLine="true" />
 
 
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/EventDescriptionScrollView"
-        android:layout_below="@+id/EventDateText"
+        android:id="@+id/ShowEventDescriptionScrollView"
+        android:layout_below="@+id/ShowEventDateText"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/editEventButton">
+        android:layout_above="@+id/EditEventButton">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -52,19 +53,23 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/EventDescriptionText"/>
+                android:id="@+id/ShowEventDescriptionText"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/EventParticipantsButton"/>
+                android:id="@+id/ShowEventParticipants"
+                android:textSize="14sp" />
         </LinearLayout>
     </ScrollView>
 
+
+    <!--TODO : fix hard coded text-->
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editEventButton"
+        android:id="@+id/EditEventButton"
         android:textAlignment="center"
         android:text="@string/EditEventButtonText"
         android:layout_alignParentBottom="true"

@@ -3,13 +3,11 @@ package ch.epfl.sweng.opengm.ch.epfl.sweng.opengm.events;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
@@ -25,8 +23,13 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        event = (Event) intent.getSerializableExtra("todo");
-
+        //event = (Event) intent.getSerializableExtra("todo");
+        event = new Event();
+        event.setPlace("DTC");
+        event.setName("Event");
+        event.setDescription("ça va etre bien");
+        event.setDate(new Date(2015, 10, 10));
+        event.setParticipants(new ArrayList<Event.OpenGMMember>(0));
         displayEventInformation();
     }
 
@@ -39,11 +42,11 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventName() {
-        ((TextView)findViewById(R.id.EventNameText)).setText(event.getName());
+        ((TextView)findViewById(R.id.ShowEventNameText)).setText(event.getName());
     }
 
     private void fillEventPlace() {
-        TextView textView =(TextView) findViewById(R.id.EventNameText);
+        TextView textView =(TextView) findViewById(R.id.ShowEventPlaceText);
         if(event.getPlace().isEmpty()) {
             textView.setHeight(0);
         } else {
@@ -53,11 +56,11 @@ public class ShowEventActivity extends AppCompatActivity {
 
     private void fillEventDate() {
         Date date = event.getDate();
-        ((TextView)findViewById(R.id.EventDateText)).setText(date.getDay() + '/' + date.getMonth() + '/' + date.getYear());
+        //((TextView)findViewById(R.id.ShowEventDateText)).setText(date.getDay() + '/' + date.getMonth() + '/' + date.getYear());
     }
 
     private void fillEventDescription() {
-        TextView textView =(TextView) findViewById(R.id.EventNameText);
+        TextView textView =(TextView) findViewById(R.id.ShowEventDescriptionText);
         if(event.getDescription().isEmpty()) {
             textView.setHeight(0);
         } else {
@@ -72,11 +75,12 @@ public class ShowEventActivity extends AppCompatActivity {
             stringBuilder.append('\n');
             stringBuilder.append(participant.getName());
         }
-        ((TextView) findViewById(R.id.EventNameText)).setText(stringBuilder.toString());
+        ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
     }
 
-    protected void onEditButtonClick() {
+    public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
         intent.putExtra(SHOW_EVENT_MESSAGE, (Serializable) event);
+        startActivity(intent);
     }
 }
