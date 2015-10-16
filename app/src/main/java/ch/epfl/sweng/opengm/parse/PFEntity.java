@@ -20,7 +20,7 @@ abstract class PFEntity {
         return this.mId;
     }
 
-    public abstract void updateToServer() throws PFException;
+    protected abstract void updateToServer() throws PFException;
 
     @Override
     public String toString() {
@@ -63,7 +63,7 @@ abstract class PFEntity {
             mId = id;
         }
 
-        public abstract void retrieveFromServer() throws PFException;
+        protected abstract void retrieveFromServer() throws PFException;
 
     }
 

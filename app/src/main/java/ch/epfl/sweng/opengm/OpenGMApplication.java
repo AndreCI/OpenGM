@@ -4,7 +4,9 @@ import android.app.Application;
 import android.util.Log;
 
 import com.parse.Parse;
+import com.parse.ParseUser;
 
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class OpenGMApplication extends Application {
@@ -17,7 +19,12 @@ public class OpenGMApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        try {
+            PFUser builder = new PFUser.Builder(ParseUser.getCurrentUser().getObjectId()).build();
 
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, PARSE_APP_ID, PARSE_KEY);
     }
