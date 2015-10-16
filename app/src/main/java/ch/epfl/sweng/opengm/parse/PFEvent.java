@@ -16,5 +16,9 @@ public class PFEvent extends PFEntity {
         protected void retrieveFromServer() throws PFException {
 
         }
+
+        public PFEvent build() {
+            return new PFEvent();
+        }
     }
 }

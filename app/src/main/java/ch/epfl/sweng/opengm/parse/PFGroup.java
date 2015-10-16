@@ -10,9 +10,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
+import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_EVENTS;
@@ -23,50 +24,58 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.*;
 
 public class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final int nOfUsers;
-    private final Map<PFUser, Role> mRoles;
+    private final static int IDX_USERS = 0;
+    private final static int IDX_SURNAMES = 1;
+    private final static int IDX_ROLES = 2;
+    private final static int IDX_EVENTS = 3;
+    private final static int IDX_DESCRIPTION = 4;
+    private final static int IDX_PRIVACY = 5;
+    private final static int IDX_PICTURE = 6;
 
-    public PFGroup(String id, Map<PFUser, Role> roles) {
-        super(id, PARSE_TABLE_GROUP);
-        if (roles == null || roles.isEmpty()) {
-            throw new IllegalArgumentException("Group is null or empty");
-        }
-        nOfUsers = roles.size();
-        mRoles = new HashMap<>(roles);
-    }
 
-    private PFGroup(Map<String, Role> roles, String id) {
-        super(id, PARSE_TABLE_GROUP);
-        if (roles == null || roles.isEmpty()) {
-            throw new IllegalArgumentException("Group is null or empty");
-        }
-        nOfUsers = roles.size();
-        mRoles = userAndRoles(roles);
-    }
+    private final List<PFUser> mUsers;
+    private final List<String> mSurnames;
+    private final List<String[]> mRoles;
+    private final List<PFEvent> mEvents;
 
-    public PFGroup(String id, String[] users, int[] roles) {
-        super(id, PARSE_TABLE_GROUP);
-        if (users == null || roles == null) {
-            throw new IllegalArgumentException("Arrays arr null");
-        }
-        if (users.length != roles.length) {
-            throw new IllegalArgumentException("Arrays size don't match");
-        }
-        nOfUsers = users.length;
-        if (nOfUsers < 1) {
-            throw new IllegalArgumentException("Arrays are empty");
-        }
-        mRoles = userAndRoles(users, roles);
-    }
+    private String mDescription;
+    private boolean mIsPrivate;
+    private Bitmap mPicture;
 
-    public PFGroup(String mId, List<String> mUsers, List<String> mSurnames, List<String> mRoles, List<String> mEvents, boolean isPrivate, String mDescription, Bitmap mPicture) {
-        super();
+    public PFGroup(String mId, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
+        super(mId, PARSE_TABLE_GROUP);
+        if (users == null || surnames == null || roles == null || events == null ||
+                users.size() < 0 || surnames.size() < 0 || roles.size() < 0 || events.size() < 0) {
+            throw new IllegalArgumentException("One of the array has a negative size or is null");
+        }
+        mUsers = new ArrayList<>();
+        mSurnames = new ArrayList<>();
+        mRoles = new ArrayList<>();
+
+        for (int i = 0; i < users.size(); i++) {
+            try {
+                PFUser user = new PFUser.Builder(users.get(i)).build();
+                mUsers.add(user);
+                mSurnames.add(surnames.get(i));
+                mRoles.add(roles.get(i));
+            } catch (PFException e) {
+                // TODO : what to do?
+            }
+        }
+        mEvents = new ArrayList<>();
+        for (String s : events) {
+            mEvents.add(new PFEvent.Builder().build());
+        }
+        mIsPrivate = isPrivate;
+        mDescription = description;
+        mPicture = picture;
+
     }
 
     @Override
@@ -74,67 +83,96 @@ public class PFGroup extends PFEntity {
 
     }
 
-    private boolean addUserToGroup(String u) {
-        if (containUser(u)) {
-            return true;
+    public List<PFUser> getUsers() {
+        return Collections.unmodifiableList(mUsers);
+    }
+
+    public String getSurnameForUser(String user) {
+        int userIdx;
+        if ((userIdx = containsUser(user)) != -1) {
+            return mSurnames.get(userIdx);
         }
-        // TODO update the array of the group and also the groups array of this user
-        return false;
+        return null;
     }
 
-    public boolean addUserToGroup(PFUser u) {
-        return addUserToGroup(u.getId());
-    }
-
-    private boolean deleteUserToGroup(String u) throws IllegalArgumentException {
-        if (!containUser(u)) {
-            throw new IllegalArgumentException("The user with id " + u + " doesn't belong to this group");
+    public String[] getRolesForUser(String user) {
+        int userIdx;
+        if ((userIdx = containsUser(user)) != -1) {
+            return mRoles.get(userIdx);
         }
-        // TODO update the array of the group and also the groups array of this user
-        return true;
+        return null;
+
     }
 
-    public boolean deleteUserToGroup(PFUser u) throws IllegalArgumentException {
-        return deleteUserToGroup(u.getId());
+    public List<PFEvent> getmEvents() {
+        return Collections.unmodifiableList(mEvents);
     }
 
-    private boolean containUser(String id) {
-        for (PFUser s : mRoles.keySet()) {
-            if (s.getId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
+    public String getmDescription() {
+        return mDescription;
     }
 
-    private Map<PFUser, Role> userAndRoles(String[] users, int[] r) {
-        Map<String, Role> roles = new HashMap<>();
-        for (int i = 0; i < nOfUsers; i++) {
-            roles.put(users[i], Role.getRole(r[i]));
-        }
-        return userAndRoles(roles);
-    }
-
-    private Map<PFUser, Role> userAndRoles(Map<String, Role> r) {
-        Map<PFUser, Role> roles = new HashMap<>();
-        for (Map.Entry<String, Role> entry : r.entrySet()) {
-            PFUser.Builder usr = new PFUser.Builder(entry.getKey());
+    public void setDescription(String description) {
+        if (checkNullArguments(description, "Group's description")) {
+            String oldFirstname = description;
+            this.mDescription = description;
             try {
-                usr.retrieveFromServer();
+                updateToServer(IDX_DESCRIPTION);
             } catch (PFException e) {
-                // TODO what to do with the error?
-                e.printStackTrace();
+                this.mDescription = oldFirstname;
+                Alert.displayAlert("Error while updating the description to the server.");
             }
-            //roles.put(usr.build(), entry.getValue());
+
         }
-        return new HashMap<>(roles);
+    }
+
+    public boolean isPrivate() {
+        return mIsPrivate;
+    }
+
+    public void setPrivacy(boolean isPrivate) {
+        if (mIsPrivate != isPrivate) {
+            this.mIsPrivate = !mIsPrivate;
+            try {
+                updateToServer(IDX_PRIVACY);
+            } catch (PFException e) {
+                this.mIsPrivate = !mIsPrivate;
+                Alert.displayAlert("Error while changing the privacy to the server.");
+            }
+        }
+    }
+
+    public Bitmap getPicture() {
+        return mPicture;
+    }
+
+    public void setPicture(Bitmap picture) {
+        if (!mPicture.equals(picture)) {
+            Bitmap oldPicture = mPicture;
+            this.mPicture = picture;
+            try {
+                updateToServer(IDX_PICTURE);
+            } catch (PFException e) {
+                this.mPicture = oldPicture;
+                Alert.displayAlert("Error while updating the picture to the server.");
+            }
+        }
+    }
+
+    private int containsUser(String user) {
+        for (int i = 0; i < mUsers.size(); i++) {
+            if (user.equals(mUsers.get(i).getId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static class Builder extends PFEntity.Builder {
 
         private final List<String> mUsers;
         private final List<String> mSurnames;
-        private final List<String> mRoles;
+        private final List<String[]> mRoles;
         private final List<String> mEvents;
 
         private String mDescription;
@@ -163,7 +201,12 @@ public class PFGroup extends PFEntity {
 
         private void setRoles(Object[] o) {
             for (Object obj : o) {
-                mRoles.add((String) obj);
+                try {
+                    String[] roles = objectArrayToStringArray(objectToArray(obj));
+                    mRoles.add(roles);
+                } catch (PFException e) {
+                    // TODO : what to do?
+                }
             }
         }
 
@@ -213,5 +256,14 @@ public class PFGroup extends PFEntity {
         public PFGroup build() {
             return new PFGroup(mId, mUsers, mSurnames, mRoles, mEvents, isPrivate, mDescription, mPicture);
         }
+
+        private String[] objectArrayToStringArray(Object[] o) {
+            String[] out = new String[o.length];
+            for (int i = 0; i < out.length; i++) {
+                out[i] = (String) o[i];
+            }
+            return out;
+        }
+
     }
 }

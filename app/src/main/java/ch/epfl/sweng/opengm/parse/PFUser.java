@@ -26,7 +26,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
+import static ch.epfl.sweng.opengm.parse.PFUtils.*;
 
 public class PFUser extends PFEntity {
 
@@ -278,22 +278,6 @@ public class PFUser extends PFEntity {
             }
         }
         return false;
-    }
-
-    private boolean checkArguments(String arg, String name) {
-        if (arg == null || arg.isEmpty()) {
-            Alert.displayAlert(name + " is null or empty.");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkNullArguments(String arg, String name) {
-        if (arg == null) {
-            Alert.displayAlert(name + " is null.");
-            return false;
-        }
-        return true;
     }
 
     private String[] listToArray() {
