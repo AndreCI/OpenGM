@@ -24,11 +24,11 @@
         </activity>
         <activity
             android:name=".events.ShowEventActivity"
-            android:exported="true"
             android:label="@string/title_activity_show_event" >
         </activity>
         <activity
             android:name=".events.CreateEditEventActivity"
+            android:exported="true"
             android:label="@string/title_activity_create_edit_event" >
         </activity>
         <activity
