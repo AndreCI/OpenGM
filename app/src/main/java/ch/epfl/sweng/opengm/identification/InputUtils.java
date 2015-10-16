@@ -15,7 +15,7 @@ class InputUtils {
 
     public static boolean isPasswordInvalid(String password) {
         // Rules :
-        // 1 = length greater than 8
+        // 1 = length greater than 6
         // 2 = at least one lowercase and one uppercase
         // 3 = at least one number
         // 4 = contains letters and characters
