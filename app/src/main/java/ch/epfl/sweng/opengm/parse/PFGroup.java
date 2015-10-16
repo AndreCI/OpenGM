@@ -101,33 +101,79 @@ public class PFGroup extends PFEntity {
             return mRoles.get(userIdx);
         }
         return null;
-
     }
 
-    public List<PFEvent> getmEvents() {
-        return Collections.unmodifiableList(mEvents);
+    public void addUser(String user) {
+        try {
+            PFUser usr = new PFUser.Builder(user).build();
+            addUser(usr);
+        } catch (PFException e) {
+            Alert.displayAlert("Error while adding the user to the server.");
+        }
     }
 
-    public String getmDescription() {
-        return mDescription;
+    public void addUser(PFUser user) {
+        if (belongsToGroup(user.getId())) {
+            Alert.displayAlert("User already belongs to this group.");
+        } else {
+            mUsers.add(user);
+            user.addToAGroup(getId());
+            mSurnames.add(user.getUsername());
+            mRoles.add(new String[1]);
+            try {
+                updateToServer(IDX_USERS);
+            } catch (PFException e) {
+                int size = mUsers.size() - 1;
+                mUsers.remove(size);
+                mSurnames.remove(size);
+                mRoles.remove(size);
+                Alert.displayAlert("Error while updating the user's groups to the server.");
+            }
+        }
+    }
+
+    public void removeUser(String user) {
+        try {
+            PFUser usr = new PFUser.Builder(user).build();
+            removeUser(usr);
+        } catch (PFException e) {
+            Alert.displayAlert("Error while removing the user to the server.");
+        }
+    }
+
+    public void removeUser(PFUser user) {
+        if (!belongsToGroup(user.getId())) {
+            Alert.displayAlert("User does not belong to this group.");
+        } else {
+            int idx = mUsers.indexOf(user);
+            mUsers.remove(idx);
+            String oldSurname = mSurnames.remove(idx);
+            String[] oldRoles = mRoles.remove(idx);
+            user.removeFromGroup(getId());
+            try {
+                updateToServer(IDX_USERS);
+            } catch (PFException e) {
+                mUsers.add(user);
+                mSurnames.add(oldSurname);
+                mRoles.add(oldRoles);
+                Alert.displayAlert("Error while updating the user's groups to the server.");
+            }
+        }
+
     }
 
     public void setDescription(String description) {
         if (checkNullArguments(description, "Group's description")) {
-            String oldFirstname = description;
+            String oldDescription = description;
             this.mDescription = description;
             try {
                 updateToServer(IDX_DESCRIPTION);
             } catch (PFException e) {
-                this.mDescription = oldFirstname;
+                this.mDescription = oldDescription;
                 Alert.displayAlert("Error while updating the description to the server.");
             }
 
         }
-    }
-
-    public boolean isPrivate() {
-        return mIsPrivate;
     }
 
     public void setPrivacy(boolean isPrivate) {
@@ -142,10 +188,6 @@ public class PFGroup extends PFEntity {
         }
     }
 
-    public Bitmap getPicture() {
-        return mPicture;
-    }
-
     public void setPicture(Bitmap picture) {
         if (!mPicture.equals(picture)) {
             Bitmap oldPicture = mPicture;
@@ -157,6 +199,10 @@ public class PFGroup extends PFEntity {
                 Alert.displayAlert("Error while updating the picture to the server.");
             }
         }
+    }
+
+    private boolean belongsToGroup(String user) {
+        return containsUser(user) != -1;
     }
 
     private int containsUser(String user) {

@@ -157,9 +157,9 @@ public class PFUser extends PFEntity {
         if (belongToGroup(s)) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
-            // TODO update groups data
-            PFGroup.Builder group = new PFGroup.Builder(s);
-            mGroups.add(group.build());
+            PFGroup group = new PFGroup.Builder(s).build();
+            group.addUser(this);
+            mGroups.add(group);
             try {
                 updateToServer(IDX_GROUPS);
             } catch (PFException e) {
@@ -168,17 +168,17 @@ public class PFUser extends PFEntity {
         }
     }
 
-    public void removeFromGroup(String group) {
-        if (!belongToGroup(group)) {
+    public void removeFromGroup(String from) {
+        if (!belongToGroup(from)) {
             Alert.displayAlert("User does not belong the group.");
         } else {
-            // TODO update groups data
-            PFGroup oldGroup = mGroups.get(getGroupIdx(group));
-            mGroups.remove(getGroupIdx(group));
+            PFGroup group = mGroups.get(getGroupIdx(from));
+            group.removeUser(this);
+            mGroups.remove(group);
             try {
                 updateToServer(IDX_GROUPS);
             } catch (PFException e) {
-                mGroups.add(oldGroup);
+                mGroups.add(group);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
         }
