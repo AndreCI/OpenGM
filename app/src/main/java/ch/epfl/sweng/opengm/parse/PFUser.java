@@ -3,12 +3,15 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +32,15 @@ public class PFUser extends PFEntity {
 
     private final static String PARSE_TABLE_USER = PFConstants.USER_TABLE_NAME;
 
+    private final static int IDX_USERNAME = 0;
+    private final static int IDX_FIRSTNAME = 1;
+    private final static int IDX_LASTNAME = 2;
+    private final static int IDX_PHONENUMBER = 3;
+    private final static int IDX_ABOUT = 4;
+    private final static int IDX_PICTURE = 5;
+    private final static int IDX_GROUPS = 6;
+
+
     private String mUsername;
     private String mFirstName;
     private String mLastName;
@@ -36,25 +48,6 @@ public class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
     private List<PFGroup> mGroups;
-
-
-    private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, List<PFGroup> groups, Bitmap picture) {
-        super(id, PARSE_TABLE_USER);
-        checkArguments(username, "User name");
-        this.mUsername = username;
-        checkArguments(firstname, "First name");
-        this.mFirstName = firstname;
-        checkArguments(lastname, "Last name");
-        this.mLastName = lastname;
-        checkNullArguments(phoneNumber, "Phone number");
-        this.mPhoneNumber = phoneNumber;
-        checkNullArguments(aboutUser, "User's description");
-        this.mAboutUser = aboutUser;
-        checkNullArguments(aboutUser, "User's groups");
-        this.mGroups = new ArrayList<>(groups);
-        this.mPicture = picture;
-    }
-
 
     private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(id, PARSE_TABLE_USER);
@@ -78,8 +71,58 @@ public class PFUser extends PFEntity {
     }
 
     @Override
-    public void updateToServer() throws PFException {
-
+    public void updateToServer(final int idx) throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_USER);
+        query.getInBackground(getId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    if (object != null) {
+                        switch (idx) {
+                            case IDX_USERNAME:
+                                object.put(USER_TABLE_USERNAME, mUsername);
+                                break;
+                            case IDX_FIRSTNAME:
+                                object.put(USER_TABLE_FIRST_NAME, mFirstName);
+                                break;
+                            case IDX_LASTNAME:
+                                object.put(USER_TABLE_LAST_NAME, mLastName);
+                                break;
+                            case IDX_PHONENUMBER:
+                                object.put(USER_TABLE_PHONE_NUMBER, mPhoneNumber);
+                                break;
+                            case IDX_ABOUT:
+                                object.put(USER_TABLE_ABOUT, mAboutUser);
+                                break;
+                            case IDX_PICTURE:
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] image = stream.toByteArray();
+                                ParseFile file = new ParseFile(String.format("user%s.png", getId()), image);
+                                file.saveInBackground();
+                                object.put(USER_TABLE_PICTURE, mPicture);
+                                break;
+                            case IDX_GROUPS:
+                                object.put(USER_TABLE_GROUPS, listToArray());
+                                break;
+                            default:
+                                return;
+                        }
+                        object.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    // throw new ParseException("No object for the selected id.");
+                                }
+                            }
+                        });
+                    } else {
+                        // throw new ParseException("No object for the selected id.");
+                    }
+                } else {
+                    // throw new ParseException("Error while sending the request to the server");
+                }
+            }
+        });
     }
 
     public String getUsername() {
@@ -118,7 +161,7 @@ public class PFUser extends PFEntity {
             PFGroup.Builder group = new PFGroup.Builder(s);
             mGroups.add(group.build());
             try {
-                updateToServer();
+                updateToServer(IDX_GROUPS);
             } catch (PFException e) {
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
@@ -133,7 +176,7 @@ public class PFUser extends PFEntity {
             PFGroup oldGroup = mGroups.get(getGroupIdx(group));
             mGroups.remove(getGroupIdx(group));
             try {
-                updateToServer();
+                updateToServer(IDX_GROUPS);
             } catch (PFException e) {
                 mGroups.add(oldGroup);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -146,7 +189,7 @@ public class PFUser extends PFEntity {
             String oldUsername = mUsername;
             this.mUsername = username;
             try {
-                updateToServer();
+                updateToServer(IDX_USERNAME);
             } catch (PFException e) {
                 this.mUsername = oldUsername;
                 Alert.displayAlert("Error while updating the username to the server.");
@@ -159,7 +202,7 @@ public class PFUser extends PFEntity {
             String oldFirstname = mFirstName;
             this.mFirstName = firstname;
             try {
-                updateToServer();
+                updateToServer(IDX_FIRSTNAME);
             } catch (PFException e) {
                 this.mFirstName = oldFirstname;
                 Alert.displayAlert("Error while updating the first name to the server.");
@@ -172,7 +215,7 @@ public class PFUser extends PFEntity {
             String oldLastname = mFirstName;
             this.mLastName = lastname;
             try {
-                updateToServer();
+                updateToServer(IDX_LASTNAME);
             } catch (PFException e) {
                 this.mLastName = oldLastname;
                 Alert.displayAlert("Error while updating the last name to the server.");
@@ -185,7 +228,7 @@ public class PFUser extends PFEntity {
             String oldPhoneNumber = mPhoneNumber;
             this.mPhoneNumber = phoneNumber;
             try {
-                updateToServer();
+                updateToServer(IDX_PHONENUMBER);
             } catch (PFException e) {
                 this.mPhoneNumber = oldPhoneNumber;
                 Alert.displayAlert("Error while updating the phone number to the server.");
@@ -198,7 +241,7 @@ public class PFUser extends PFEntity {
             String oldAboutUser = mAboutUser;
             this.mAboutUser = aboutUser;
             try {
-                updateToServer();
+                updateToServer(IDX_ABOUT);
             } catch (PFException e) {
                 this.mAboutUser = oldAboutUser;
                 Alert.displayAlert("Error while updating the phone number to the server.");
@@ -211,7 +254,7 @@ public class PFUser extends PFEntity {
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
             try {
-                updateToServer();
+                updateToServer(IDX_PICTURE);
             } catch (PFException e) {
                 this.mPicture = oldPicture;
                 Alert.displayAlert("Error while updating the picture to the server.");
@@ -251,6 +294,14 @@ public class PFUser extends PFEntity {
             return false;
         }
         return true;
+    }
+
+    private String[] listToArray() {
+        String[] s = new String[mGroups.size()];
+        for (int i = 0; i < s.length; i++) {
+            s[i] = mGroups.get(i).getId();
+        }
+        return s;
     }
 
     public static final class Builder extends PFEntity.Builder {
