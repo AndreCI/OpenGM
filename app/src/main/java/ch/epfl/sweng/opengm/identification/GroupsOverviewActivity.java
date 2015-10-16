@@ -63,7 +63,6 @@ public class GroupsOverviewActivity extends AppCompatActivity {
 
 
 
-
         int numberOfLinearLayouts = (int) Math.ceil((double)(groups.size()+1) / (double)TILES_PER_WIDTH);   // +1 pour la tile "+" add a group // TODO: image pour la tuile +
 
         for (int i=0; i<numberOfLinearLayouts; i++) {
@@ -77,8 +76,6 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                     Button tile = new Button(this);
                     tile.setLayoutParams(llParams);
                     tile.setText(groups.get(0));    // Always get elem 0, as elements get shifted...
-//                    tile.setId();
-//                    tile.setTag();
                     tile.setWidth(screenWidth / 2);
                     tile.setHeight(screenWidth / 2);
                     tile.setGravity(Gravity.CENTER | Gravity.BOTTOM);
@@ -97,8 +94,6 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                     Button tile = new Button(this);
                     tile.setLayoutParams(llParams);
                     tile.setText("+");
-//                    tile.setId();
-//                    tile.setTag();
                     tile.setWidth(screenWidth / 2);
                     tile.setHeight(screenWidth / 2);
                     tile.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
