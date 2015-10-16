@@ -7,7 +7,7 @@ import com.parse.ParseQuery;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.*;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 
