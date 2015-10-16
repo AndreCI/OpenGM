@@ -24,6 +24,8 @@ import ch.epfl.sweng.opengm.R;
 
 public class GroupsOverviewActivity extends AppCompatActivity {
 
+    private static final int TILES_PER_WIDTH = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,13 @@ public class GroupsOverviewActivity extends AppCompatActivity {
 //            email.setText(usr.getEmail());
 //        }
 
+        // TODO: At the moment, just an array of Strings, but normally : an array of "Groups" (the Object which encapsulate all group date)
+        // real stuff : ArrayList<Group> groups = {g1, g2, ...., gn}; --> Then, g1.name, g1.members[], g1.admin, etc...
+        ArrayList<String> groups = new ArrayList<>();
+        groups.add("Satellite");
+        groups.add("Coaching");
+        groups.add("IC Travel");
+
 
         // Get screen size :
         DisplayMetrics metrics = new DisplayMetrics();
@@ -46,21 +55,12 @@ public class GroupsOverviewActivity extends AppCompatActivity {
 
         // Get base (main) layout
         LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main);
-
-
-        // TODO: SPECIAL CASE = "no groups yet ???" --> Pop-up help ??? --> groups.size() = 0
-        // TODO: put all of this inside a scrollView
-
-
-        final int TILES_PER_WIDTH = 2;
         LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        // At the moment, just an array of Strings, but normally : an array of "Groups" (the Object which encapsulate all group date)
-        ArrayList<String> groups = new ArrayList<>();
-        groups.add("Satellite");
-        groups.add("Coaching");
-//        groups.add("IC Travel");
-        // ArrayList<Group> groups = {g1, g2, ...., gn}; --> Then, g1.name, g1.members[], g1.admin, etc...
+
+        // TODO: SPECIAL CASE = AlertView "no groups yet ???" --> Pop-up help ??? --> groups.size() = 0
+        // TODO: put all of this inside a scrollView
+
 
 
 
