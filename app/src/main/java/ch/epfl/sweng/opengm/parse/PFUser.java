@@ -87,7 +87,6 @@ public class PFUser extends PFEntity {
         return Collections.emptyList();
     }
 
-
     public boolean addToAGroup(String group) {
         return true;
     }
