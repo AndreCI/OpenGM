@@ -52,7 +52,7 @@ public class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final HashMap<String, Member> mMembers;
+    private final HashMap<String, PFMember> mMembers;
     private final List<PFEvent> mEvents;
 
     private int nOfUsers;
@@ -250,7 +250,7 @@ public class PFGroup extends PFEntity {
             if (!mMembers.containsKey(user.getId())) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
-                Member member = mMembers.get(user.getId());
+                PFMember member = mMembers.get(user.getId());
                 member.addRole(role);
                 try {
                     updateToServer(GROUP_TABLE_USERS);
@@ -267,7 +267,7 @@ public class PFGroup extends PFEntity {
             if (!mMembers.containsKey(user.getId())) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
-                Member member = mMembers.get(user.getId());
+                PFMember member = mMembers.get(user.getId());
                 member.removeRole(role);
                 try {
                     updateToServer(GROUP_TABLE_USERS);
@@ -284,7 +284,7 @@ public class PFGroup extends PFEntity {
             if (!mMembers.containsKey(user.getId())) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
-                Member member = mMembers.get(user.getId());
+                PFMember member = mMembers.get(user.getId());
                 String oldSurname = member.getSurname();
                 member.changeSurname(surname);
                 try {
