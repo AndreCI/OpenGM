@@ -1,8 +1,12 @@
 package ch.epfl.sweng.opengm.parse;
 
+/**
+ * Name of the entries from the different tables of our Parse database
+ */
 public class PFConstants {
 
-    // Names of entries of the Parse Database
+    // TODO: check that entry names are the same as on Parse.com DB
+    // FIXME: "Name" entry == name of the table in the DB, not the same as "name of user", or "name of group"
 
     public static final String OBJECT_ID = "objectId";
 
@@ -37,4 +41,12 @@ public class PFConstants {
     public static final String GROUP_TABLE_PICTURE = "groupPicture";
     public static final String GROUP_TABLE_EVENTS = "events";
 
+    // Entries for "Event" table :
+
+    public static final String EVENT_TABLE_NAME = "Event";
+//    public static final String EVENT_TABLE_TITLE = "title";  // Entry yet to create
+    public static final String EVENT_TABLE_DESCRIPTION = "description";
+    public static final String EVENT_TABLE_DATE = "date";
+    public static final String EVENT_TABLE_PLACE = "place";
+    public static final String EVENT_TABLE_PARTICIPANTS = "participants";
 }
