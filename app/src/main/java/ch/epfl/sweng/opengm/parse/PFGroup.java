@@ -53,6 +53,22 @@ public class PFGroup extends PFEntity {
     private boolean mIsPrivate;
     private Bitmap mPicture;
 
+
+    public PFGroup(String mId, PFUser user) {
+        super(mId, PARSE_TABLE_GROUP);
+        mUsers = new ArrayList<>();
+        mSurnames = new ArrayList<>();
+        mRoles = new ArrayList<>();
+
+        mUsers.add(user);
+        mSurnames.add(user.getUsername());
+        mRoles.add(new String[1]);
+        mEvents = new ArrayList<>();
+        mIsPrivate = false;
+        mDescription = "";
+        mPicture = null;
+    }
+
     public PFGroup(String mId, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
         super(mId, PARSE_TABLE_GROUP);
         if (users == null || surnames == null || roles == null || events == null ||
@@ -80,7 +96,6 @@ public class PFGroup extends PFEntity {
         mIsPrivate = isPrivate;
         mDescription = description;
         mPicture = picture;
-
     }
 
     @Override
@@ -287,8 +302,23 @@ public class PFGroup extends PFEntity {
         private final List<String> mEvents;
 
         private String mDescription;
-        private boolean isPrivate;
+        private boolean mIsPrivate;
         private Bitmap mPicture;
+
+        public Builder(PFUser user) {
+            super(null);
+            mUsers = new ArrayList<>();
+            mSurnames = new ArrayList<>();
+            mRoles = new ArrayList<>();
+
+            mUsers.add(user.getId());
+            mSurnames.add(user.getUsername());
+            mRoles.add(new String[1]);
+            mEvents = new ArrayList<>();
+            mIsPrivate = false;
+            mDescription = "";
+            mPicture = null;
+        }
 
         public Builder(String id) {
             super(id);
@@ -328,7 +358,7 @@ public class PFGroup extends PFEntity {
         }
 
         private void setPrivacy(boolean b) {
-            this.isPrivate = b;
+            this.mIsPrivate = b;
         }
 
         private void setDescription(String s) {
@@ -337,35 +367,55 @@ public class PFGroup extends PFEntity {
 
         @Override
         public void retrieveFromServer() throws PFException {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
-            query.whereEqualTo(OBJECT_ID, mId);
-            try {
-                ParseObject object = query.getFirst();
-                if (object != null) {
-                    setUsers(objectToArray(object.get(GROUP_TABLE_USERS)));
-                    setSurnames(objectToArray(object.get(GROUP_TABLE_SURNAMES)));
-                    setRoles(objectToArray(object.get(GROUP_TABLE_ROLES)));
-                    setEvents(objectToArray(object.get(GROUP_TABLE_EVENTS)));
-                    setPrivacy(object.getBoolean(GROUP_TABLE_ISPRIVATE));
-                    setDescription(object.getString(GROUP_TABLE_DESCRIPTION));
-                    ParseFile fileObject = (ParseFile) object
-                            .get(GROUP_TABLE_PICTURE);
-                    fileObject.getDataInBackground(new GetDataCallback() {
-                        @Override
-                        public void done(byte[] data, ParseException e) {
-                            mPicture = (e == null ? null : BitmapFactory.decodeByteArray(data, 0, data.length));
-                        }
-                    });
-                } else {
+            if (mId != null) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
+                query.whereEqualTo(OBJECT_ID, mId);
+                try {
+                    ParseObject object = query.getFirst();
+                    if (object != null) {
+                        setUsers(objectToArray(object.get(GROUP_TABLE_USERS)));
+                        setSurnames(objectToArray(object.get(GROUP_TABLE_SURNAMES)));
+                        setRoles(objectToArray(object.get(GROUP_TABLE_ROLES)));
+                        setEvents(objectToArray(object.get(GROUP_TABLE_EVENTS)));
+                        setPrivacy(object.getBoolean(GROUP_TABLE_ISPRIVATE));
+                        setDescription(object.getString(GROUP_TABLE_DESCRIPTION));
+                        ParseFile fileObject = (ParseFile) object
+                                .get(GROUP_TABLE_PICTURE);
+                        fileObject.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+                                mPicture = (e == null ? null : BitmapFactory.decodeByteArray(data, 0, data.length));
+                            }
+                        });
+                    } else {
+                        throw new PFException("Query failed");
+                    }
+                } catch (ParseException e) {
                     throw new PFException("Query failed");
                 }
-            } catch (ParseException e) {
-                throw new PFException("Query failed");
+            } else {
+                final ParseObject object = new ParseObject(GROUP_TABLE_NAME);
+                object.put(GROUP_TABLE_USERS, mUsers.toArray());
+                object.put(GROUP_TABLE_SURNAMES, mSurnames.toArray());
+                object.put(GROUP_TABLE_ROLES, mRoles.toArray());
+                object.put(GROUP_TABLE_EVENTS, mEvents.toArray());
+                object.put(GROUP_TABLE_DESCRIPTION, mDescription);
+                object.put(GROUP_TABLE_ISPRIVATE, mIsPrivate);
+                object.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            setId(object.getObjectId());
+                        } else {
+                            // throw new PFException("Query failed");
+                        }
+                    }
+                });
             }
         }
 
         public PFGroup build() {
-            return new PFGroup(mId, mUsers, mSurnames, mRoles, mEvents, isPrivate, mDescription, mPicture);
+            return new PFGroup(mId, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
         }
 
         private String[] objectArrayToStringArray(Object[] o) {
