@@ -7,7 +7,7 @@ public class PFEvent extends PFEntity {
     }
 
     @Override
-    protected void updateToServer(int idx) throws PFException {
+    protected void updateToServer(String entry) throws PFException {
 
     }
 

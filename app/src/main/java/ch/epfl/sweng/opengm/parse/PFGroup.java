@@ -52,13 +52,6 @@ public class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final static int IDX_NAME = 0;
-    private final static int IDX_USERS = 1;
-    private final static int IDX_EVENTS = 2;
-    private final static int IDX_DESCRIPTION = 3;
-    private final static int IDX_PRIVACY = 4;
-    private final static int IDX_PICTURE = 5;
-
     private final HashMap<String, Member> mMembers;
     private final List<PFEvent> mEvents;
 
@@ -97,17 +90,17 @@ public class PFGroup extends PFEntity {
     }
 
     @Override
-    protected void updateToServer(final int idx) throws PFException {
+    protected void updateToServer(final String entry) throws PFException {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(GROUP_TABLE_NAME);
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
                     if (object != null) {
-                        switch (idx) {
-                            case IDX_NAME:
+                        switch (entry) {
+                            case GROUP_TABLE_TITLE:
                                 object.put(GROUP_TABLE_TITLE, mName);
                                 break;
-                            case IDX_USERS:
+                            case GROUP_TABLE_USERS:
                                 int idx = 0;
                                 String[] users = new String[nOfUsers];
                                 String[] surnames = new String[nOfUsers];
@@ -121,16 +114,16 @@ public class PFGroup extends PFEntity {
                                 object.put(GROUP_TABLE_SURNAMES, surnames);
                                 object.put(GROUP_TABLE_ROLES, roles);
                                 break;
-                            case IDX_EVENTS:
+                            case GROUP_TABLE_EVENTS:
                                 object.put(GROUP_TABLE_EVENTS, listToArray(mEvents));
                                 break;
-                            case IDX_DESCRIPTION:
+                            case GROUP_TABLE_DESCRIPTION:
                                 object.put(GROUP_TABLE_DESCRIPTION, mDescription);
                                 break;
-                            case IDX_PRIVACY:
+                            case GROUP_TABLE_ISPRIVATE:
                                 object.put(GROUP_TABLE_ISPRIVATE, mIsPrivate);
                                 break;
-                            case IDX_PICTURE:
+                            case GROUP_TABLE_PICTURE:
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                 mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                 byte[] image = stream.toByteArray();
@@ -212,7 +205,7 @@ public class PFGroup extends PFEntity {
             user.addToAGroup(getId());
             mMembers.put(user.getId(), member);
             try {
-                updateToServer(IDX_USERS);
+                updateToServer(GROUP_TABLE_USERS);
                 nOfUsers++;
             } catch (PFException e) {
                 mMembers.remove(user.getId());
@@ -237,7 +230,7 @@ public class PFGroup extends PFEntity {
             Member oldMember = mMembers.remove(user.getId());
             user.removeFromGroup(getId());
             try {
-                updateToServer(IDX_USERS);
+                updateToServer(GROUP_TABLE_USERS);
                 nOfUsers--;
             } catch (PFException e) {
                 mMembers.put(user.getId(), oldMember);
@@ -254,7 +247,7 @@ public class PFGroup extends PFEntity {
                 Member member = mMembers.get(user.getId());
                 member.addRole(role);
                 try {
-                    updateToServer(IDX_USERS);
+                    updateToServer(GROUP_TABLE_USERS);
                 } catch (PFException e) {
                     member.removeRole(role);
                     Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -271,7 +264,7 @@ public class PFGroup extends PFEntity {
                 Member member = mMembers.get(user.getId());
                 member.removeRole(role);
                 try {
-                    updateToServer(IDX_USERS);
+                    updateToServer(GROUP_TABLE_USERS);
                 } catch (PFException e) {
                     member.addRole(role);
                     Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -289,7 +282,7 @@ public class PFGroup extends PFEntity {
                 String oldSurname = member.getSurname();
                 member.changeSurname(surname);
                 try {
-                    updateToServer(IDX_USERS);
+                    updateToServer(GROUP_TABLE_USERS);
                 } catch (PFException e) {
                     member.changeSurname(oldSurname);
                     Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -303,7 +296,7 @@ public class PFGroup extends PFEntity {
             String oldTitle = mName;
             this.mName = name;
             try {
-                updateToServer(IDX_NAME);
+                updateToServer(GROUP_TABLE_NAME);
             } catch (PFException e) {
                 this.mName = oldTitle;
                 Alert.displayAlert("Error while updating the group's title to the server.");
@@ -316,7 +309,7 @@ public class PFGroup extends PFEntity {
             String oldDescription = description;
             this.mDescription = description;
             try {
-                updateToServer(IDX_DESCRIPTION);
+                updateToServer(GROUP_TABLE_DESCRIPTION);
             } catch (PFException e) {
                 this.mDescription = oldDescription;
                 Alert.displayAlert("Error while updating the description to the server.");
@@ -329,7 +322,7 @@ public class PFGroup extends PFEntity {
         if (mIsPrivate != isPrivate) {
             this.mIsPrivate = !mIsPrivate;
             try {
-                updateToServer(IDX_PRIVACY);
+                updateToServer(GROUP_TABLE_ISPRIVATE);
             } catch (PFException e) {
                 this.mIsPrivate = !mIsPrivate;
                 Alert.displayAlert("Error while changing the privacy to the server.");
@@ -342,7 +335,7 @@ public class PFGroup extends PFEntity {
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
             try {
-                updateToServer(IDX_PICTURE);
+                updateToServer(GROUP_TABLE_PICTURE);
             } catch (PFException e) {
                 this.mPicture = oldPicture;
                 Alert.displayAlert("Error while updating the picture to the server.");
