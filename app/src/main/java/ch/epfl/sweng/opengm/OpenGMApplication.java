@@ -21,12 +21,6 @@ public class OpenGMApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        try {
-            PFUser builder = new PFUser.Builder(ParseUser.getCurrentUser().getObjectId()).build();
-
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, PARSE_APP_ID, PARSE_KEY);
     }
@@ -36,10 +30,12 @@ public class OpenGMApplication extends Application {
     }
 
     public static PFUser setCurrentUser(ParseUser id) {
+        Log.d("USER", currentUser + "\t" + id);
         if (currentUser == null && id != null) {
             PFUser.Builder builder = new PFUser.Builder(id.getObjectId());
             try {
                 currentUser = builder.build();
+                Log.d("USER", currentUser.toString());
             } catch (PFException e) {
                 // TODO : what to do?
             }

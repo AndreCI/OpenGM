@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -42,8 +43,10 @@ public class GroupsOverviewActivity extends AppCompatActivity {
 
         // TODO: At the moment, just an array of Strings, but normally : an array of "Groups" (the Object which encapsulate all group date)
         // real stuff : ArrayList<Group> groups = {g1, g2, ...., gn}; --> Then, g1.name, g1.members[], g1.admin, etc...
-        ArrayList<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
+        //Log.v("USER", OpenGMApplication.getCurrentUser().toString());
 
+        // ArrayList<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
+        ArrayList<String> groups = new ArrayList<String>(Arrays.asList("Sat", "IC Travel", "Clic"));
         // Get screen size :
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -70,7 +73,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                 if (groups.size() != 0) {
                     Button tile = new Button(this);
                     tile.setLayoutParams(llParams);
-                    tile.setText(groups.get(0).get);    // Always get elem 0, as elements get shifted...
+                    tile.setText(groups.get(0));    // Always get elem 0, as elements get shifted...
                     tile.setWidth(screenWidth / 2);
                     tile.setHeight(screenWidth / 2);
                     tile.setGravity(Gravity.CENTER | Gravity.BOTTOM);

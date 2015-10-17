@@ -146,7 +146,7 @@ public class PFGroup extends PFEntity {
         });
     }
 
-    public String getmName() {
+    public String getName() {
         return mName;
     }
 

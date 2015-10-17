@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -54,6 +55,7 @@ public class PFUser extends PFEntity {
 
     private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(id, PARSE_TABLE_USER);
+        Log.d("PFUSER", "CONSTRUCTOR");
         checkArguments(username, "User name");
         this.mUsername = username;
         checkArguments(firstname, "First name");
@@ -68,7 +70,11 @@ public class PFUser extends PFEntity {
         this.mGroups = new ArrayList<>();
         for (String s : groups) {
             PFGroup.Builder group = new PFGroup.Builder(s);
-            mGroups.add(group.build());
+            try {
+                mGroups.add(group.build());
+            } catch (PFException e) {
+                // TODO : what to do?
+            }
         }
         this.mPicture = picture;
     }
@@ -160,11 +166,15 @@ public class PFUser extends PFEntity {
         if (belongToGroup(s)) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
-            PFGroup group = new PFGroup.Builder(s).build();
-            group.addUser(this);
-            mGroups.add(group);
             try {
-                updateToServer(IDX_GROUPS);
+                PFGroup group = new PFGroup.Builder(s).build();
+                group.addUser(this);
+                mGroups.add(group);
+                try {
+                    updateToServer(IDX_GROUPS);
+                } catch (PFException e) {
+                    Alert.displayAlert("Error while updating the user's groups to the server.");
+                }
             } catch (PFException e) {
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
@@ -327,17 +337,24 @@ public class PFUser extends PFEntity {
             if (mId == null) {
                 throw new PFException();
             }
+            Log.d("PFUSER", "RETRIEVE");
             final String userId = mId;
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
             query.whereEqualTo(PFConstants.USER_TABLE_USER_ID, userId);
             try {
                 ParseObject object = query.getFirst();
+                Log.d("PFUSER", "object\t" + object);
                 if (object != null) {
                     setUsername(objectToString(object.get(USER_TABLE_USERNAME)));
                     setFirstName(objectToString(object.get(USER_TABLE_FIRST_NAME)));
                     setLastName(objectToString(object.get(USER_TABLE_LAST_NAME)));
                     setPhoneNumber(objectToString(object.get(USER_TABLE_PHONE_NUMBER)));
                     setAbout(objectToString(object.get(USER_TABLE_ABOUT)));
+                    Log.d("PFUSER", "object\t" + mUsername);
+                    Log.d("PFUSER", "object\t" + mFirstName);
+                    Log.d("PFUSER", "object\t" + mLastName);
+                    Log.d("PFUSER", "object\t" + mPhoneNumber);
+                    Log.d("PFUSER", "object\t" + mAboutUser);
                     ParseFile fileObject = (ParseFile) object
                             .get(USER_TABLE_PICTURE);
                     fileObject.getDataInBackground(new GetDataCallback() {
@@ -349,11 +366,14 @@ public class PFUser extends PFEntity {
                     Object[] groups = objectToArray(object.get(USER_TABLE_GROUPS));
                     for (Object o : groups) {
                         addToAGroup(objectToString(o));
+                        Log.d("PFUSER", "object\t" + (String) o);
                     }
                 } else {
+                    Log.d("PFUSER", "EXCEPTION 1");
                     throw new PFException("Parse query for id " + userId + " failed");
                 }
             } catch (ParseException e) {
+                Log.d("PFUSER", "EXCEPTION 2");
                 throw new PFException("Parse query for id " + userId + " failed");
             }
         }

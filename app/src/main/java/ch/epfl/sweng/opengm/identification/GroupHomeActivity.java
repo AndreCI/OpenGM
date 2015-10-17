@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.identification;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.identification.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -7,6 +8,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -52,6 +54,9 @@ public class GroupHomeActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_group_home);
+
+        Log.d("USER", "" + OpenGMApplication.getCurrentUser());
+
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
