@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.identification.ImageOverview;
 import ch.epfl.sweng.opengm.utils.Alert;
 
@@ -66,7 +67,6 @@ public class PFGroup extends PFEntity {
     private String mDescription;
     private boolean mIsPrivate;
     private Bitmap mPicture;
-
 
     private PFGroup(String mId, String name, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
         super(mId, PARSE_TABLE_GROUP);
