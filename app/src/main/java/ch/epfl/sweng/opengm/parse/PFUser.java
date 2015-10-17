@@ -102,7 +102,7 @@ public class PFUser extends PFEntity {
                                 object.put(USER_TABLE_PICTURE, mPicture);
                                 break;
                             case IDX_GROUPS:
-                                object.put(USER_TABLE_GROUPS, listToArray());
+                                object.put(USER_TABLE_GROUPS, listToArray(mGroups));
                                 break;
                             default:
                                 return;
@@ -278,14 +278,6 @@ public class PFUser extends PFEntity {
             }
         }
         return false;
-    }
-
-    private String[] listToArray() {
-        String[] s = new String[mGroups.size()];
-        for (int i = 0; i < s.length; i++) {
-            s[i] = mGroups.get(i).getId();
-        }
-        return s;
     }
 
     public static final class Builder extends PFEntity.Builder {

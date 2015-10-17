@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
+import java.util.List;
+
 import ch.epfl.sweng.opengm.utils.Alert;
 
 class PFUtils {
@@ -24,6 +26,15 @@ class PFUtils {
         } catch (Exception e) {
             throw new PFException("Error while casting the value to an array of object");
         }
+    }
+
+    public static String[] listToArray(List<? extends PFEntity> list) {
+        // Returns an array of id
+        String[] s = new String[list.size()];
+        for (int i = 0; i < s.length; i++) {
+            s[i] = list.get(i).getId();
+        }
+        return s;
     }
 
     public static boolean checkArguments(String arg, String name) {

@@ -3,12 +3,15 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,12 +21,20 @@ import ch.epfl.sweng.opengm.utils.Alert;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ISPRIVATE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_FIRST_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PHONE_NUMBER;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.*;
 
 public class PFGroup extends PFEntity {
@@ -70,7 +81,7 @@ public class PFGroup extends PFEntity {
         }
         mEvents = new ArrayList<>();
         for (String s : events) {
-            mEvents.add(new PFEvent.Builder().build());
+            mEvents.add(new PFEvent.Builder(s).build());
         }
         mIsPrivate = isPrivate;
         mDescription = description;
@@ -79,8 +90,58 @@ public class PFGroup extends PFEntity {
     }
 
     @Override
-    protected void updateToServer(int idx) throws PFException {
-
+    protected void updateToServer(final int idx) throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(GROUP_TABLE_NAME);
+        query.getInBackground(getId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    if (object != null) {
+                        switch (idx) {
+                            case IDX_USERS:
+                                object.put(GROUP_TABLE_USERS, listToArray(mUsers));
+                                break;
+                            case IDX_SURNAMES:
+                                object.put(GROUP_TABLE_SURNAMES, mSurnames.toArray());
+                                break;
+                            case IDX_ROLES:
+                                object.put(GROUP_TABLE_ROLES, mRoles.toArray());
+                                break;
+                            case IDX_EVENTS:
+                                object.put(GROUP_TABLE_EVENTS, listToArray(mEvents));
+                                break;
+                            case IDX_DESCRIPTION:
+                                object.put(GROUP_TABLE_DESCRIPTION, mDescription);
+                                break;
+                            case IDX_PRIVACY:
+                                object.put(GROUP_TABLE_ISPRIVATE, mIsPrivate);
+                                break;
+                            case IDX_PICTURE:
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] image = stream.toByteArray();
+                                ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
+                                file.saveInBackground();
+                                object.put(GROUP_TABLE_PICTURE, mPicture);
+                                break;
+                            default:
+                                return;
+                        }
+                        object.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    // throw new ParseException("No object for the selected id.");
+                                }
+                            }
+                        });
+                    } else {
+                        // throw new ParseException("No object for the selected id.");
+                    }
+                } else {
+                    // throw new ParseException("Error while sending the request to the server");
+                }
+            }
+        });
     }
 
     public List<PFUser> getUsers() {

@@ -12,6 +12,11 @@ public class PFEvent extends PFEntity {
     }
 
     public static class Builder extends PFEntity.Builder {
+
+        public Builder(String id) {
+            super(id);
+        }
+
         @Override
         protected void retrieveFromServer() throws PFException {
 
