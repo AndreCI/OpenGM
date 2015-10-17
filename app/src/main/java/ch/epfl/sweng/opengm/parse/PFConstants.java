@@ -2,12 +2,18 @@ package ch.epfl.sweng.opengm.parse;
 
 public class PFConstants {
 
+    // Names of entries of the Parse Database
+
     public static final String OBJECT_ID = "objectId";
+
+    // Entries for "_User" table :
 
     public static final String _USER_TABLE_NAME = "_User";
     public static final String _USER_TABLE_USERNAME = "username";
     public static final String _USER_TABLE_PASSWORD = "password";
     public static final String _USER_TABLE_EMAIL = "email";
+
+    // Entries for "User" table :
 
     public static final String USER_TABLE_NAME = "User";
     public static final String USER_TABLE_USER_ID = "userId";
@@ -18,6 +24,8 @@ public class PFConstants {
     public static final String USER_TABLE_GROUPS = "groups";
     public static final String USER_TABLE_PICTURE = "profilePicture";
     public static final String USER_TABLE_ABOUT = "description";
+
+    // Entries for "Group" table :
 
     public static final String GROUP_TABLE_NAME = "Group";
     public static final String GROUP_TABLE_TITLE = "name";
