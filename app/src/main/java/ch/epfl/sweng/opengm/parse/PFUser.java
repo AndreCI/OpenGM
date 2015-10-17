@@ -1,11 +1,9 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.identification.ImageOverview;
 import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
@@ -28,9 +27,10 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
+import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public class PFUser extends PFEntity {
 
@@ -55,7 +55,7 @@ public class PFUser extends PFEntity {
 
     private PFUser(String id, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(id, PARSE_TABLE_USER);
-        Log.d("PFUSER", "CONSTRUCTOR");
+        Log.d("PFUSER", "CONSTRUCTOR belongs to " + groups.size() + " groups");
         checkArguments(username, "User name");
         this.mUsername = username;
         checkArguments(firstname, "First name");
@@ -74,6 +74,7 @@ public class PFUser extends PFEntity {
                 mGroups.add(group.build());
             } catch (PFException e) {
                 // TODO : what to do?
+                Log.d("ERORR", "==============ERRROR with group id " + s);
             }
         }
         this.mPicture = picture;
@@ -293,7 +294,7 @@ public class PFUser extends PFEntity {
         return false;
     }
 
-    public static final class Builder extends PFEntity.Builder {
+    public static final class Builder extends PFEntity.Builder implements ImageOverview {
 
         private String mUsername;
         private String mFirstName;
@@ -302,6 +303,7 @@ public class PFUser extends PFEntity {
         private String mAboutUser;
         private Bitmap mPicture;
         private final List<String> mGroups;
+        private Bitmap image;
 
         public Builder(String id) {
             super(id);
@@ -328,6 +330,10 @@ public class PFUser extends PFEntity {
             this.mAboutUser = about;
         }
 
+        public void setImage(Bitmap image) {
+            this.image = image;
+        }
+
         private void addToAGroup(String group) {
             mGroups.add(group);
         }
@@ -345,28 +351,20 @@ public class PFUser extends PFEntity {
                 ParseObject object = query.getFirst();
                 Log.d("PFUSER", "object\t" + object);
                 if (object != null) {
-                    setUsername(objectToString(object.get(USER_TABLE_USERNAME)));
-                    setFirstName(objectToString(object.get(USER_TABLE_FIRST_NAME)));
-                    setLastName(objectToString(object.get(USER_TABLE_LAST_NAME)));
-                    setPhoneNumber(objectToString(object.get(USER_TABLE_PHONE_NUMBER)));
-                    setAbout(objectToString(object.get(USER_TABLE_ABOUT)));
-                    Log.d("PFUSER", "object\t" + mUsername);
-                    Log.d("PFUSER", "object\t" + mFirstName);
-                    Log.d("PFUSER", "object\t" + mLastName);
-                    Log.d("PFUSER", "object\t" + mPhoneNumber);
-                    Log.d("PFUSER", "object\t" + mAboutUser);
-                    ParseFile fileObject = (ParseFile) object
-                            .get(USER_TABLE_PICTURE);
-                    fileObject.getDataInBackground(new GetDataCallback() {
-                        @Override
-                        public void done(byte[] data, ParseException e) {
-                            mPicture = (e == null ? null : BitmapFactory.decodeByteArray(data, 0, data.length));
-                        }
-                    });
-                    Object[] groups = objectToArray(object.get(USER_TABLE_GROUPS));
-                    for (Object o : groups) {
-                        addToAGroup(objectToString(o));
-                        Log.d("PFUSER", "object\t" + (String) o);
+                    setUsername(object.getString(USER_TABLE_USERNAME));
+                    setFirstName(object.getString(USER_TABLE_FIRST_NAME));
+                    setLastName(object.getString(USER_TABLE_LAST_NAME));
+                    setPhoneNumber(object.getString(USER_TABLE_PHONE_NUMBER));
+                    setAbout(object.getString(USER_TABLE_ABOUT));
+                    Log.d("PFUSER", "username\t" + mUsername);
+                    Log.d("PFUSER", "firstname\t" + mFirstName);
+                    Log.d("PFUSER", "lastname\t" + mLastName);
+                    Log.d("PFUSER", "phonenumber\t" + mPhoneNumber);
+                    Log.d("PFUSER", "about\t" + mAboutUser);
+                    retrieveFileFromServer(object, USER_TABLE_PICTURE, this);
+                    String[] groups = convertFromJSONArray(object.getJSONArray(USER_TABLE_GROUPS));
+                    for (String group : groups) {
+                        addToAGroup(objectToString(group));
                     }
                 } else {
                     Log.d("PFUSER", "EXCEPTION 1");

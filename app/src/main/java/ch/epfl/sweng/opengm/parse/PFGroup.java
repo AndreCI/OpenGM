@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -10,6 +11,9 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ch.epfl.sweng.opengm.identification.ImageOverview;
 import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_DESCRIPTION;
@@ -32,10 +37,15 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_TITLE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
+import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public class PFGroup extends PFEntity {
 
@@ -340,7 +350,7 @@ public class PFGroup extends PFEntity {
         }
     }
 
-    public static class Builder extends PFEntity.Builder {
+    public static class Builder extends PFEntity.Builder implements ImageOverview {
 
         private final List<String> mUsers;
         private final List<String> mSurnames;
@@ -380,27 +390,15 @@ public class PFGroup extends PFEntity {
             mEvents = new ArrayList<>();
         }
 
-        private void setUsers(Object[] o) {
-            for (Object obj : o) {
-                mUsers.add((String) obj);
-            }
+        private void setUsers(String[] o) {
+            this.mUsers.addAll(Arrays.asList(o));
         }
 
-        private void setSurnames(Object[] o) {
-            for (Object obj : o) {
-                mSurnames.add((String) obj);
-            }
+        private void setSurnames(String[] o) {
+            this.mSurnames.addAll(Arrays.asList(o));
         }
 
-        private void setRoles(Object[] o) {
-            for (Object obj : o) {
-                try {
-                    String[] roles = objectArrayToStringArray(objectToArray(obj));
-                    mRoles.add(roles);
-                } catch (PFException e) {
-                    // TODO : what to do?
-                }
-            }
+        private void setRoles(String[] o) {
         }
 
         private void setEvents(Object[] o) {
@@ -418,6 +416,11 @@ public class PFGroup extends PFEntity {
         }
 
         @Override
+        public void setImage(Bitmap bitmap) {
+            this.mPicture = bitmap;
+        }
+
+        @Override
         public void retrieveFromServer() throws PFException {
             if (mId != null) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
@@ -425,20 +428,22 @@ public class PFGroup extends PFEntity {
                 try {
                     ParseObject object = query.getFirst();
                     if (object != null) {
-                        setUsers(objectToArray(object.get(GROUP_TABLE_USERS)));
-                        setSurnames(objectToArray(object.get(GROUP_TABLE_SURNAMES)));
-                        setRoles(objectToArray(object.get(GROUP_TABLE_ROLES)));
-                        setEvents(objectToArray(object.get(GROUP_TABLE_EVENTS)));
-                        setPrivacy(object.getBoolean(GROUP_TABLE_ISPRIVATE));
+
+                        String[] users = convertFromJSONArray(object.getJSONArray(GROUP_TABLE_USERS));
+                        setUsers(users);
+
+                        String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_TABLE_SURNAMES));
+                        setSurnames(surnames);
+
+                        // setRoles(objectToArray(object.get(GROUP_TABLE_ROLES)));
+
+                        String[] events = convertFromJSONArray(object.getJSONArray(GROUP_TABLE_EVENTS));
+                        setEvents(events);
+
                         setDescription(object.getString(GROUP_TABLE_DESCRIPTION));
-                        ParseFile fileObject = (ParseFile) object
-                                .get(GROUP_TABLE_PICTURE);
-                        fileObject.getDataInBackground(new GetDataCallback() {
-                            @Override
-                            public void done(byte[] data, ParseException e) {
-                                mPicture = (e == null ? null : BitmapFactory.decodeByteArray(data, 0, data.length));
-                            }
-                        });
+
+                        retrieveFileFromServer(object, GROUP_TABLE_PICTURE, this);
+
                     } else {
                         throw new PFException("Query failed");
                     }
@@ -470,14 +475,6 @@ public class PFGroup extends PFEntity {
         public PFGroup build() throws PFException {
             retrieveFromServer();
             return new PFGroup(mId, mName, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
-        }
-
-        private String[] objectArrayToStringArray(Object[] o) {
-            String[] out = new String[o.length];
-            for (int i = 0; i < out.length; i++) {
-                out[i] = (String) o[i];
-            }
-            return out;
         }
 
     }
