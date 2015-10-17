@@ -44,7 +44,7 @@ public class PFConstants {
     // Entries for "Event" table :
 
     public static final String EVENT_TABLE_NAME = "Event";
-//    public static final String EVENT_TABLE_TITLE = "title";  // Entry yet to create
+    public static final String EVENT_TABLE_TITLE = "title";  // TODO: Entry yet to create
     public static final String EVENT_TABLE_DESCRIPTION = "description";
     public static final String EVENT_TABLE_DATE = "date";
     public static final String EVENT_TABLE_PLACE = "place";
