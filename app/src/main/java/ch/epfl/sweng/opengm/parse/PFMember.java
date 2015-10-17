@@ -15,13 +15,10 @@ import ch.epfl.sweng.opengm.identification.ImageOverview;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_FIRST_NAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PHONE_NUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public class PFMember {
@@ -47,6 +44,10 @@ public class PFMember {
         this.mAboutUser = about;
         this.mPicture = bitmap;
         this.mRoles = new ArrayList<>(roles);
+    }
+
+    public String getId() {
+        return mId;
     }
 
     public String getUsername() {
@@ -77,6 +78,9 @@ public class PFMember {
         return Collections.unmodifiableList(mRoles);
     }
 
+    public Bitmap getPicture() {
+        return mPicture;
+    }
 
     public static final class Builder implements ImageOverview {
 

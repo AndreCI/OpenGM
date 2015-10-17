@@ -48,31 +48,26 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         //empty password1
         onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_username)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
 
         //empty password2
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
 
         //empty firstname
         onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_firstname)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_firstname_activity_register), true)));
 
         //empty lastname
         onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_firstname)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_lastname)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_lastname_activity_register), true)));
 
         //empty email
         onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTRNAME));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_lastname)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_email)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_email_activity_register), true)));
 
         //bad email
@@ -83,17 +78,18 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         //bad password
         onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_email)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.short_password_activity_register), true)));
 
         //password not correct
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_password_activity_register), true)));
 
-        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
+
+        onView(withId(R.id.register_password2)).perform(clearText());
         onView(withId(R.id.button_signup)).perform(click());
+        onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
+        onView(withId(R.id.register_password2)).perform(typeText(PASSWORD_CORRECT));
 
         onView(withId(R.id.register_username)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect("", false)));
@@ -102,5 +98,4 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.register_lastname)).check(matches(isTextStyleCorrect("", false)));
         onView(withId(R.id.register_email)).check(matches(isTextStyleCorrect("", false)));
     }
-
 }

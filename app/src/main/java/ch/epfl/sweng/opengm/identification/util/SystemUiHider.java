@@ -15,7 +15,7 @@ import android.view.View;
  * {@link #getInstance} will return a {@link SystemUiHiderHoneycomb} instance,
  * while on older devices {@link #getInstance} will return a
  * {@link SystemUiHiderBase} instance.
- * <p/>
+ * <p>
  * For more on system bars, see <a href=
  * "http://developer.android.com/design/get-started/ui-overview.html#system-bars"
  * > System Bars</a>.
@@ -30,7 +30,7 @@ public abstract class SystemUiHider {
      * flag will be set on older devices, making the status bar "float" on top
      * of the activity layout. This is most useful when there are no controls at
      * the top of the activity layout.
-     * <p/>
+     * <p>
      * This flag isn't used on newer devices because the <a
      * href="http://developer.android.com/design/patterns/actionbar.html">action
      * bar</a>, the most important structural element of an Android app, should

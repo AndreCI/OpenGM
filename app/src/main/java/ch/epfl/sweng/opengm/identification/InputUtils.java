@@ -25,8 +25,8 @@ class InputUtils {
             nOfIntegers += (c >= '0' && c <= '9') ? 1 : 0;
         }
         // TODO : change this after testing
-        return length <= PASSWORD_LENGTH || password.toLowerCase().equals(password) || nOfIntegers <= 0 || nOfIntegers >= length;
-        // return false;
+        //return length <= PASSWORD_LENGTH || password.toLowerCase().equals(password) || nOfIntegers <= 0 || nOfIntegers >= length;
+        return false;
     }
 
 }
