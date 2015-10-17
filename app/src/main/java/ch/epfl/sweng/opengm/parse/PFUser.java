@@ -18,15 +18,18 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.utils.Alert;
 
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_FIRST_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PHONE_NUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
+import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.*;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 
 public class PFUser extends PFEntity {
 

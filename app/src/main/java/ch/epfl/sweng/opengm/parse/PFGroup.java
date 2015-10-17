@@ -27,15 +27,9 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
-
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_ABOUT;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_FIRST_NAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_LAST_NAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PHONE_NUMBER;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFUtils.*;
+import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
 
 public class PFGroup extends PFEntity {
 
@@ -162,6 +156,16 @@ public class PFGroup extends PFEntity {
             return mRoles.get(userIdx);
         }
         return null;
+    }
+
+    public List<String> getRoles() {
+        List<String> roles = new ArrayList<>();
+        for (String[] array : mRoles) {
+            for (String role : array) {
+                roles.add(role);
+            }
+        }
+        return roles;
     }
 
     public void addUser(String user) {
