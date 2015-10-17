@@ -72,11 +72,12 @@ public class LoginActivity extends AppCompatActivity {
                     if (user != null) {
                         dialog.hide();
                         Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
+                        intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
                         startActivity(intent);
                     } else {
                         dialog.hide();
                         switch (e.getCode()) {
-                            case 101:
+                            case ParseException.OBJECT_NOT_FOUND:
                                 mEditPassword.setError(getString(R.string.incorrect_activity_login));
                                 mEditPassword.requestFocus();
                                 break;

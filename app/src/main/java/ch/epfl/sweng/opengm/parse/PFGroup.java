@@ -25,8 +25,10 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_TITLE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
@@ -35,13 +37,14 @@ public class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final static int IDX_USERS = 0;
-    private final static int IDX_SURNAMES = 1;
-    private final static int IDX_ROLES = 2;
-    private final static int IDX_EVENTS = 3;
-    private final static int IDX_DESCRIPTION = 4;
-    private final static int IDX_PRIVACY = 5;
-    private final static int IDX_PICTURE = 6;
+    private final static int IDX_NAME = 0;
+    private final static int IDX_USERS = 1;
+    private final static int IDX_SURNAMES = 2;
+    private final static int IDX_ROLES = 3;
+    private final static int IDX_EVENTS = 4;
+    private final static int IDX_DESCRIPTION = 5;
+    private final static int IDX_PRIVACY = 6;
+    private final static int IDX_PICTURE = 7;
 
 
     private final List<PFUser> mUsers;
@@ -49,27 +52,13 @@ public class PFGroup extends PFEntity {
     private final List<String[]> mRoles;
     private final List<PFEvent> mEvents;
 
+    private String mName;
     private String mDescription;
     private boolean mIsPrivate;
     private Bitmap mPicture;
 
 
-    public PFGroup(String mId, PFUser user) {
-        super(mId, PARSE_TABLE_GROUP);
-        mUsers = new ArrayList<>();
-        mSurnames = new ArrayList<>();
-        mRoles = new ArrayList<>();
-
-        mUsers.add(user);
-        mSurnames.add(user.getUsername());
-        mRoles.add(new String[1]);
-        mEvents = new ArrayList<>();
-        mIsPrivate = false;
-        mDescription = "";
-        mPicture = null;
-    }
-
-    public PFGroup(String mId, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
+    private PFGroup(String mId, String name, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
         super(mId, PARSE_TABLE_GROUP);
         if (users == null || surnames == null || roles == null || events == null ||
                 users.size() < 0 || surnames.size() < 0 || roles.size() < 0 || events.size() < 0) {
@@ -93,6 +82,7 @@ public class PFGroup extends PFEntity {
         for (String s : events) {
             mEvents.add(new PFEvent.Builder(s).build());
         }
+        mName = name;
         mIsPrivate = isPrivate;
         mDescription = description;
         mPicture = picture;
@@ -106,6 +96,9 @@ public class PFGroup extends PFEntity {
                 if (e == null) {
                     if (object != null) {
                         switch (idx) {
+                            case IDX_NAME:
+                                object.put(GROUP_TABLE_TITLE, mName);
+                                break;
                             case IDX_USERS:
                                 object.put(GROUP_TABLE_USERS, listToArray(mUsers));
                                 break;
@@ -151,6 +144,10 @@ public class PFGroup extends PFEntity {
                 }
             }
         });
+    }
+
+    public String getmName() {
+        return mName;
     }
 
     public List<PFUser> getUsers() {
@@ -242,6 +239,21 @@ public class PFGroup extends PFEntity {
 
     }
 
+    public void setName(String name) {
+        if (checkArguments(name, "Group's name")) {
+            String oldTitle = mName;
+            this.mName = name;
+            try {
+                updateToServer(IDX_NAME);
+            } catch (PFException e) {
+                this.mName = oldTitle;
+                Alert.displayAlert("Error while updating the group's title to the server.");
+            }
+
+        }
+
+    }
+
     public void setDescription(String description) {
         if (checkNullArguments(description, "Group's description")) {
             String oldDescription = description;
@@ -301,12 +313,17 @@ public class PFGroup extends PFEntity {
         private final List<String[]> mRoles;
         private final List<String> mEvents;
 
+        private String mName;
         private String mDescription;
         private boolean mIsPrivate;
         private Bitmap mPicture;
 
-        public Builder(PFUser user) {
+        public Builder(PFUser user, String name) {
             super(null);
+            if (name == null || name.isEmpty()) {
+                throw new IllegalArgumentException("Group title should not be empty");
+            }
+
             mUsers = new ArrayList<>();
             mSurnames = new ArrayList<>();
             mRoles = new ArrayList<>();
@@ -315,6 +332,7 @@ public class PFGroup extends PFEntity {
             mSurnames.add(user.getUsername());
             mRoles.add(new String[1]);
             mEvents = new ArrayList<>();
+            mName = name;
             mIsPrivate = false;
             mDescription = "";
             mPicture = null;
@@ -399,6 +417,7 @@ public class PFGroup extends PFEntity {
                 object.put(GROUP_TABLE_SURNAMES, mSurnames.toArray());
                 object.put(GROUP_TABLE_ROLES, mRoles.toArray());
                 object.put(GROUP_TABLE_EVENTS, mEvents.toArray());
+                object.put(GROUP_TABLE_TITLE, mName);
                 object.put(GROUP_TABLE_DESCRIPTION, mDescription);
                 object.put(GROUP_TABLE_ISPRIVATE, mIsPrivate);
                 object.saveInBackground(new SaveCallback() {
@@ -414,8 +433,9 @@ public class PFGroup extends PFEntity {
             }
         }
 
-        public PFGroup build() {
-            return new PFGroup(mId, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
+        public PFGroup build() throws PFException {
+            retrieveFromServer();
+            return new PFGroup(mId, mName, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
         }
 
         private String[] objectArrayToStringArray(Object[] o) {

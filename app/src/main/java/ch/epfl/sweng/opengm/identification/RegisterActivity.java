@@ -141,6 +141,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                         dialog.hide();
                                                         if (e == null) {
                                                             Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
+                                                            intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
                                                             startActivity(intent);
                                                         } else {
                                                             // error while updating the PFUser table

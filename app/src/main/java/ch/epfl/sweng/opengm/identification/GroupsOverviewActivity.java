@@ -20,9 +20,13 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class GroupsOverviewActivity extends AppCompatActivity {
+
+    public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
 
     private static final int TILES_PER_WIDTH = 2;
 
@@ -31,22 +35,14 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups_overview);
 
-        // Retrieve and Display user information :
-//        ParseUser usr;
-//        if ((usr = ParseUser.getCurrentUser()) != null) {
-//            TextView username = (TextView) findViewById(R.id.username);
-//            username.setText(usr.getUsername());
-//            TextView email = (TextView) findViewById(R.id.email);
-//            email.setText(usr.getEmail());
-//        }
+        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser());
+
+        boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
+        // if newUser is true => user is new (register) so show the hints
 
         // TODO: At the moment, just an array of Strings, but normally : an array of "Groups" (the Object which encapsulate all group date)
         // real stuff : ArrayList<Group> groups = {g1, g2, ...., gn}; --> Then, g1.name, g1.members[], g1.admin, etc...
-        ArrayList<String> groups = new ArrayList<>();
-        groups.add("Satellite");
-        groups.add("Coaching");
-        groups.add("IC Travel");
-
+        ArrayList<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
 
         // Get screen size :
         DisplayMetrics metrics = new DisplayMetrics();
@@ -62,20 +58,19 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         // TODO: put all of this inside a scrollView
 
 
+        int numberOfLinearLayouts = (int) Math.ceil((double) (groups.size() + 1) / (double) TILES_PER_WIDTH);   // +1 pour la tile "+" add a group // TODO: image pour la tuile +
 
-        int numberOfLinearLayouts = (int) Math.ceil((double)(groups.size()+1) / (double)TILES_PER_WIDTH);   // +1 pour la tile "+" add a group // TODO: image pour la tuile +
-
-        for (int i=0; i<numberOfLinearLayouts; i++) {
+        for (int i = 0; i < numberOfLinearLayouts; i++) {
             LinearLayout ll = new LinearLayout(this);
             ll.setOrientation(LinearLayout.HORIZONTAL);
             ll.setLayoutParams(llParams);
 //            ll.setTag(new String("tileLayout" + i));  // setId() instead ???
 
-            for (int j=0; j<TILES_PER_WIDTH; j++) { // loop 2 times
+            for (int j = 0; j < TILES_PER_WIDTH; j++) { // loop 2 times
                 if (groups.size() != 0) {
                     Button tile = new Button(this);
                     tile.setLayoutParams(llParams);
-                    tile.setText(groups.get(0));    // Always get elem 0, as elements get shifted...
+                    tile.setText(groups.get(0).get);    // Always get elem 0, as elements get shifted...
                     tile.setWidth(screenWidth / 2);
                     tile.setHeight(screenWidth / 2);
                     tile.setGravity(Gravity.CENTER | Gravity.BOTTOM);
