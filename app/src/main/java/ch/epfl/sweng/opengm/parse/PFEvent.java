@@ -8,10 +8,10 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_DATE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_DESCRIPTION;
-import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_PLACE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_TITLE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DATE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
 
 public class PFEvent extends PFEntity {
 
@@ -22,7 +22,7 @@ public class PFEvent extends PFEntity {
     private String mDate;  // Gregorian Calendar Date ???
     private String mPlace;
 //    private Bitmap mPicture;
-    private List<PFMember> mParticipants;
+    private List<GroupMember> mParticipants;
 
     public PFEvent() {
         super(null, null);
@@ -36,20 +36,20 @@ public class PFEvent extends PFEntity {
                 if (e == null) {
                     if (object != null) {
                         switch (entry) {
-                            case EVENT_TABLE_TITLE:
-                                object.put(EVENT_TABLE_TITLE, mTitle);
+                            case EVENT_ENTRY_TITLE:
+                                object.put(EVENT_ENTRY_TITLE, mTitle);
                                 break;
-                            case EVENT_TABLE_DESCRIPTION:
-                                object.put(EVENT_TABLE_DESCRIPTION, mDescription);
+                            case EVENT_ENTRY_DESCRIPTION:
+                                object.put(EVENT_ENTRY_DESCRIPTION, mDescription);
                                 break;
-                            case EVENT_TABLE_DATE:
-                                object.put(EVENT_TABLE_DATE, mDate);
+                            case EVENT_ENTRY_DATE:
+                                object.put(EVENT_ENTRY_DATE, mDate);
                                 break;
-                            case EVENT_TABLE_PLACE:
-                                object.put(EVENT_TABLE_PLACE, mPlace);
+                            case EVENT_ENTRY_PLACE:
+                                object.put(EVENT_ENTRY_PLACE, mPlace);
                                 break;
-//                            case EVENT_TABLE_PARTICIPANTS:
-//                                object.put(EVENT_TABLE_PARTICIPANTS, ???);
+//                            case EVENT_ENTRY_PARTICIPANTS:
+//                                object.put(EVENT_ENTRY_PARTICIPANTS, ???);
 //                                break;
                             default:
                                 return;

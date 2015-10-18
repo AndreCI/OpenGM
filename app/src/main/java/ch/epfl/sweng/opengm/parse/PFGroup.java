@@ -1,11 +1,8 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -18,41 +15,37 @@ import org.json.JSONException;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.identification.ImageOverview;
 import ch.epfl.sweng.opengm.utils.Alert;
 
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_DESCRIPTION;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_EVENTS;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ISPRIVATE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_PICTURE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_ROLES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_SURNAMES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_TITLE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_USERS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_SURNAMES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_EMTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_GROUPS;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final HashMap<String, PFMember> mMembers;
+    private final PFUser mCurrentUser;
+
+    private final HashMap<String, GroupMember> mMembers;
     private final List<PFEvent> mEvents;
 
     private int nOfUsers;
@@ -61,29 +54,33 @@ public class PFGroup extends PFEntity {
     private boolean mIsPrivate;
     private Bitmap mPicture;
 
-    private PFGroup(String mId, String name, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
-        super(mId, PARSE_TABLE_GROUP);
-        if (users == null || surnames == null || roles == null || events == null ||
-                users.size() < 0 || surnames.size() < 0 || roles.size() < 0 || events.size() < 0) {
-            throw new IllegalArgumentException("One of the array has a negative size or is null");
+    private PFGroup(String groupId, PFUser user, String name, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
+        super(groupId, PARSE_TABLE_GROUP);
+        if ((users == null) || (surnames == null) || (roles == null) || (events == null)) {
+            throw new IllegalArgumentException("One of the array  is null");
         }
+        if ((users.size() != surnames.size()) || (users.size() != roles.size())) {
+            throw new IllegalArgumentException("Arrays' size don't match for group " + groupId + " " + users.size() + " " + surnames.size() + " " + roles.size());
+        }
+        mCurrentUser = user;
+
         nOfUsers = users.size();
         mMembers = new HashMap<>();
 
-        Log.v("DEBUT", "=======> PFGROUP NAME " + name);
-
         for (int i = 0; i < users.size(); i++) {
             try {
-                //  TODO FIX ROLE
-                PFMember member = new PFMember.Builder(users.get(i), surnames.get(i), new String[0]).build();
-                mMembers.put(users.get(i), member);
+                String userId = users.get(i);
+                String nickname = surnames.get(i);
+                String[] role = roles.get(i);
+                GroupMember member = new GroupMember.Builder(userId, nickname, role).build();
+                mMembers.put(userId, member);
             } catch (PFException e) {
                 // TODO : what to do?
             }
         }
         mEvents = new ArrayList<>();
-        for (String s : events) {
-            mEvents.add(new PFEvent.Builder(s).build());
+        for (String eventId : events) {
+            mEvents.add(new PFEvent.Builder(eventId).build());
         }
         mName = name;
         mIsPrivate = isPrivate;
@@ -99,39 +96,43 @@ public class PFGroup extends PFEntity {
                 if (e == null) {
                     if (object != null) {
                         switch (entry) {
-                            case GROUP_TABLE_TITLE:
-                                object.put(GROUP_TABLE_TITLE, mName);
+                            case GROUP_ENTRY_NAME:
+                                object.put(GROUP_ENTRY_NAME, mName);
                                 break;
-                            case GROUP_TABLE_USERS:
-                                int idx = 0;
-                                String[] users = new String[nOfUsers];
-                                String[] surnames = new String[nOfUsers];
-                                Object[] roles = new Object[nOfUsers];
-                                for (PFMember member : mMembers.values()) {
-                                    users[idx] = member.getId();
-                                    surnames[idx] = member.getSurname();
-                                    roles[idx++] = member.getRoles().toArray();
+                            case GROUP_EMTRY_USERS:
+                                JSONArray usersArray = new JSONArray();
+                                JSONArray surnamesArray = new JSONArray();
+                                JSONArray rolesArray = new JSONArray();
+                                for (GroupMember member : mMembers.values()) {
+                                    usersArray.put(member.getId());
+                                    surnamesArray.put(member.getSurname());
+                                    List<String> roles = member.getRoles();
+                                    JSONArray rolesForUser = new JSONArray();
+                                    for (int i = 0; i < roles.size(); i++) {
+                                        rolesForUser.put(roles.get(i));
+                                    }
+                                    rolesArray.put(rolesForUser);
                                 }
-                                object.put(GROUP_TABLE_USERS, users);
-                                object.put(GROUP_TABLE_SURNAMES, surnames);
-                                object.put(GROUP_TABLE_ROLES, roles);
+                                object.put(GROUP_EMTRY_USERS, usersArray);
+                                object.put(GROUP_ENTRY_SURNAMES, surnamesArray);
+                                object.put(GROUP_ENTRY_ROLES, rolesArray);
                                 break;
-                            case GROUP_TABLE_EVENTS:
-                                object.put(GROUP_TABLE_EVENTS, listToArray(mEvents));
+                            case GROUP_ENTRY_EVENTS:
+                                object.put(GROUP_ENTRY_EVENTS, listToArray(mEvents));
                                 break;
-                            case GROUP_TABLE_DESCRIPTION:
-                                object.put(GROUP_TABLE_DESCRIPTION, mDescription);
+                            case GROUP_ENTRY_DESCRIPTION:
+                                object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
                                 break;
-                            case GROUP_TABLE_ISPRIVATE:
-                                object.put(GROUP_TABLE_ISPRIVATE, mIsPrivate);
+                            case GROUP_ENTRY_ISPRIVATE:
+                                object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
                                 break;
-                            case GROUP_TABLE_PICTURE:
+                            case GROUP_ENTRY_PICTURE:
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                 mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                 byte[] image = stream.toByteArray();
                                 ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
                                 file.saveInBackground();
-                                object.put(GROUP_TABLE_PICTURE, mPicture);
+                                object.put(GROUP_ENTRY_PICTURE, mPicture);
                                 break;
                             default:
                                 return;
@@ -158,25 +159,21 @@ public class PFGroup extends PFEntity {
         return mName;
     }
 
-    /*
-        public List<PFUser> getUsers() {
-            List<PFUser> users = new ArrayList<>();
-            for (PFMember member : mMembers.values()) {
-                users.add(member.getUser());
-            }
-            return users;
-        }
-    */
-    public String getSurnameForUser(String user) {
-        PFMember member = mMembers.get(user);
+
+    public List<GroupMember> getMembers() {
+        return new ArrayList<>(mMembers.values());
+    }
+
+    public String getSurnameForUser(String userId) {
+        GroupMember member = mMembers.get(userId);
         if (member != null) {
             return member.getSurname();
         }
         return null;
     }
 
-    public List<String> getRolesForUser(String user) {
-        PFMember member = mMembers.get(user);
+    public List<String> getRolesForUser(String userId) {
+        GroupMember member = mMembers.get(userId);
         if (member != null) {
             return member.getRoles();
         }
@@ -185,152 +182,97 @@ public class PFGroup extends PFEntity {
 
     public List<String> getRoles() {
         Set<String> roles = new HashSet<>();
-        for (PFMember member : mMembers.values()) {
+        for (GroupMember member : mMembers.values()) {
             roles.addAll(member.getRoles());
         }
         return new ArrayList<>(roles);
     }
 
 
-    public void addUser(String user) {
-        try {
-            PFUser usr = new PFUser.Builder(user).build();
-            addUser(usr);
-        } catch (PFException e) {
-            Alert.displayAlert("Error while adding the user to the server.");
-        }
-    }
-
-    public void addUser(PFUser user) {
-        if (mMembers.containsKey(user.getId())) {
+    public void addUser(String userId) {
+        if (mMembers.containsKey(userId)) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
-        /*      Member member = new Member(user);
-                user.addToAGroup(getId());
-                mMembers.put(user.getId(), member);
-                */
             try {
-                updateToServer(GROUP_TABLE_USERS);
+                GroupMember member = new GroupMember.Builder(userId).build();
+                member.addToGroup(getId());
+                mMembers.put(userId, member);
+                updateToServer(GROUP_EMTRY_USERS);
                 nOfUsers++;
             } catch (PFException e) {
-                mMembers.remove(user.getId());
+                mMembers.remove(userId);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
         }
     }
 
-
-    public void removeUser(String user) {
-        try {
-            PFUser usr = new PFUser.Builder(user).build();
-            removeUser(usr);
-        } catch (PFException e) {
-            Alert.displayAlert("Error while removing the user to the server.");
-        }
-    }
-
-    public void removeUser(PFUser user) {
-        if (!mMembers.containsKey(user.getId())) {
+    public void removeUser(String userId) {
+        if (!mMembers.containsKey(userId)) {
             Alert.displayAlert("User does not belong to this group.");
         } else {
-            //                    Member oldMember = mMembers.remove(user.getId());
-            user.removeFromGroup(getId());
+            GroupMember oldMember = mMembers.remove(userId);
+            oldMember.removeFromGroup(getId());
             try {
-                updateToServer(GROUP_TABLE_USERS);
+                updateToServer(GROUP_EMTRY_USERS);
                 nOfUsers--;
             } catch (PFException e) {
-                //                          mMembers.put(user.getId(), oldMember);
+                mMembers.put(userId, oldMember);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
         }
     }
 
-//    public void addRoleToUser(String role, PFUser user) {
-//        if (checkNullArguments(role, "Role for user")) {
-//            if (!mMembers.containsKey(user.getId())) {
-//                Alert.displayAlert("User does not belong to this group.");
-//            } else {
-//                PFMember member = mMembers.get(user.getId());
-//                member.addRole(role);
-//                try {
-//                    updateToServer(GROUP_TABLE_USERS);
-//                } catch (PFException e) {
-//                    member.removeRole(role);
-//                    Alert.displayAlert("Error while updating the user's groups to the server.");
-//                }
-//            }
-//        }
-//    }
+    public void addRoleToUser(String role, String memberId) {
+        if (checkNullArguments(role, "Role for user")) {
+            if (!mMembers.containsKey(memberId)) {
+                Alert.displayAlert("User does not belong to this group.");
+            } else {
+                GroupMember member = mMembers.get(memberId);
+                member.addRole(role);
+                try {
+                    updateToServer(GROUP_EMTRY_USERS);
+                } catch (PFException e) {
+                    member.removeRole(role);
+                    Alert.displayAlert("Error while updating the user's groups to the server.");
+                }
+            }
+        }
+    }
 
-//    public void removeRoleToUser(String role, PFUser user) {
-//        if (checkNullArguments(role, "Role for user")) {
-//            if (!mMembers.containsKey(user.getId())) {
-//                Alert.displayAlert("User does not belong to this group.");
-//            } else {
-//                PFMember member = mMembers.get(user.getId());
-//                member.removeRole(role);
-//                try {
-//                    updateToServer(GROUP_TABLE_USERS);
-//                } catch (PFException e) {
-//                    member.addRole(role);
-//                    Alert.displayAlert("Error while updating the user's groups to the server.");
-//                }
-//            }
-//        }
-//    }
+    public void removeRoleToUser(String role, String memberId) {
+        if (checkNullArguments(role, "Role for user")) {
+            if (!mMembers.containsKey(memberId)) {
+                Alert.displayAlert("User does not belong to this group.");
+            } else {
+                GroupMember member = mMembers.get(memberId);
+                member.removeRole(role);
+                try {
+                    updateToServer(GROUP_EMTRY_USERS);
+                } catch (PFException e) {
+                    member.addRole(role);
+                    Alert.displayAlert("Error while updating the user's groups to the server.");
+                }
+            }
+        }
+    }
 
-//    public void setSurnameForUser(String surname, PFUser user) {
-//        if (checkNullArguments(surname, "Surname for user")) {
-//            if (!mMembers.containsKey(user.getId())) {
-//                Alert.displayAlert("User does not belong to this group.");
-//            } else {
-//                PFMember member = mMembers.get(user.getId());
-//                String oldSurname = member.getSurname();
-//                member.changeSurname(surname);
-//                try {
-//                    updateToServer(GROUP_TABLE_USERS);
-//                } catch (PFException e) {
-//                    member.changeSurname(oldSurname);
-//                    Alert.displayAlert("Error while updating the user's groups to the server.");
-//                }
-//            }
-//        }
-//    }
-
-
-//    public void addRoleToUser(String role, PFUser user) {
-//        if (checkNullArguments(role, "Role for user")) {
-//            if (!mMembers.containsKey(user.getId())) {
-//                Alert.displayAlert("User does not belong to this group.");
-//            } else {
-//                Member member = mMembers.get(user.getId());
-//                member.addRole(role);
-//                try {
-//                    updateToServer(IDX_USERS);
-//                } catch (PFException e) {
-//                    member.removeRole(role);
-//                    Alert.displayAlert("Error while updating the user's groups to the server.");
-//                }
-//            }
-//        }
-//    }
-
-//    public void removeRoleToUser(String role, PFUser user) {
-//        if (checkNullArguments(role, "Role for user")) {
-//            if (!mMembers.containsKey(user.getId())) {
-//                Alert.displayAlert("User does not belong to this group.");
-//            } else {
-//                Member member = mMembers.get(user.getId());
-//                member.removeRole(role);
-//                try {
-//                    updateToServer(IDX_USERS);
-//                } catch (PFException e) {
-//                    member.addRole(role);
-//                    Alert.displayAlert("Error while updating the user's groups to the server.");
-//                }
-//            }
-//        }
-//    }
+    public void setSurnameForUser(String surname, String memberId) {
+        if (checkNullArguments(surname, "Surname for user")) {
+            if (!mMembers.containsKey(memberId)) {
+                Alert.displayAlert("User does not belong to this group.");
+            } else {
+                GroupMember member = mMembers.get(memberId);
+                String oldSurname = member.getSurname();
+                member.setmNickname(surname);
+                try {
+                    updateToServer(GROUP_EMTRY_USERS);
+                } catch (PFException e) {
+                    member.setmNickname(oldSurname);
+                    Alert.displayAlert("Error while updating the user's groups to the server.");
+                }
+            }
+        }
+    }
 
     public void setName(String name) {
         if (checkArguments(name, "Group's name")) {
@@ -347,10 +289,10 @@ public class PFGroup extends PFEntity {
 
     public void setDescription(String description) {
         if (checkNullArguments(description, "Group's description")) {
-            String oldDescription = description;
+            String oldDescription = mDescription;
             this.mDescription = description;
             try {
-                updateToServer(GROUP_TABLE_DESCRIPTION);
+                updateToServer(GROUP_ENTRY_DESCRIPTION);
             } catch (PFException e) {
                 this.mDescription = oldDescription;
                 Alert.displayAlert("Error while updating the description to the server.");
@@ -363,7 +305,7 @@ public class PFGroup extends PFEntity {
         if (mIsPrivate != isPrivate) {
             this.mIsPrivate = !mIsPrivate;
             try {
-                updateToServer(GROUP_TABLE_ISPRIVATE);
+                updateToServer(GROUP_ENTRY_ISPRIVATE);
             } catch (PFException e) {
                 this.mIsPrivate = !mIsPrivate;
                 Alert.displayAlert("Error while changing the privacy to the server.");
@@ -376,7 +318,7 @@ public class PFGroup extends PFEntity {
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
             try {
-                updateToServer(GROUP_TABLE_PICTURE);
+                updateToServer(GROUP_ENTRY_PICTURE);
             } catch (PFException e) {
                 this.mPicture = oldPicture;
                 Alert.displayAlert("Error while updating the picture to the server.");
@@ -390,59 +332,66 @@ public class PFGroup extends PFEntity {
         private final List<String> mSurnames;
         private final List<String[]> mRoles;
         private final List<String> mEvents;
+        private final PFUser mCurrentUser;
 
         private String mName;
         private String mDescription;
         private boolean mIsPrivate;
         private Bitmap mPicture;
 
-        public Builder(PFUser user, String name) {
+        public Builder(PFUser user, String nameOrId, boolean newGroup) {
             super(null);
-            if (name == null || name.isEmpty()) {
-                throw new IllegalArgumentException("Group title should not be empty");
+            mUsers = new ArrayList<>();
+            mSurnames = new ArrayList<>();
+            mRoles = new ArrayList<>();
+            mEvents = new ArrayList<>();
+            mCurrentUser = user;
+            if (newGroup) {
+
+                if (nameOrId == null || nameOrId.isEmpty()) {
+                    throw new IllegalArgumentException("Group title should not be empty");
+                }
+                mUsers.add(user.getId());
+                mSurnames.add(user.getUsername());
+                mRoles.add(new String[1]);
+                mName = nameOrId;
+                mIsPrivate = false;
+                mDescription = "";
+                mPicture = null;
+            } else {
+                setId(nameOrId);
             }
-
-            mUsers = new ArrayList<>();
-            mSurnames = new ArrayList<>();
-            mRoles = new ArrayList<>();
-
-            mUsers.add(user.getId());
-            mSurnames.add(user.getUsername());
-            mRoles.add(new String[1]);
-            mEvents = new ArrayList<>();
-            mName = name;
-            mIsPrivate = false;
-            mDescription = "";
-            mPicture = null;
-        }
-
-        public Builder(String id) {
-            super(id);
-            Log.v("DEBUT", "BUILDER GROUP" + id);
-            mUsers = new ArrayList<>();
-            mSurnames = new ArrayList<>();
-            mRoles = new ArrayList<>();
-            mEvents = new ArrayList<>();
         }
 
         private void setName(String name) {
             this.mName = name;
         }
 
-        private void setUsers(String[] o) {
-            this.mUsers.addAll(Arrays.asList(o));
+        private void setUsers(String[] users) {
+            this.mUsers.addAll(Arrays.asList(users));
         }
 
-        private void setSurnames(String[] o) {
-            this.mSurnames.addAll(Arrays.asList(o));
+        private void setSurnames(String[] surnames) {
+            this.mSurnames.addAll(Arrays.asList(surnames));
         }
 
-        private void setRoles(String[] o) {
+        private void setRoles(JSONArray rolesArray) {
+            if (rolesArray != null) {
+                for (int i = 0; i < rolesArray.length(); i++) {
+                    try {
+                        String[] roles = convertFromJSONArray((JSONArray) rolesArray.get(i));
+                        mRoles.add(roles);
+                    } catch (JSONException | ClassCastException e) {
+                        // TODO : if object not found or cast failed ?
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
-        private void setEvents(Object[] o) {
-            for (Object obj : o) {
-                mEvents.add((String) obj);
+        private void setEvents(String[] events) {
+            if (events != null) {
+                this.mEvents.addAll(Arrays.asList(events));
             }
         }
 
@@ -450,13 +399,13 @@ public class PFGroup extends PFEntity {
             this.mIsPrivate = b;
         }
 
-        private void setDescription(String s) {
-            this.mDescription = s;
+        private void setDescription(String description) {
+            this.mDescription = description;
         }
 
         @Override
-        public void setImage(Bitmap bitmap) {
-            this.mPicture = bitmap;
+        public void setImage(Bitmap image) {
+            this.mPicture = image;
         }
 
         @Override
@@ -467,23 +416,23 @@ public class PFGroup extends PFEntity {
                 try {
                     ParseObject object = query.getFirst();
                     if (object != null) {
-                        setName(object.getString(GROUP_TABLE_TITLE));
-                        setPrivacy(object.getBoolean(GROUP_TABLE_ISPRIVATE));
+                        setName(object.getString(GROUP_ENTRY_NAME));
+                        setPrivacy(object.getBoolean(GROUP_ENTRY_ISPRIVATE));
 
-                        String[] users = convertFromJSONArray(object.getJSONArray(GROUP_TABLE_USERS));
+                        String[] users = convertFromJSONArray(object.getJSONArray(GROUP_EMTRY_USERS));
                         setUsers(users);
 
-                        String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_TABLE_SURNAMES));
+                        String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_SURNAMES));
                         setSurnames(surnames);
 
-                        // setRoles(objectToArray(object.get(GROUP_TABLE_ROLES)));
+                        setRoles(object.getJSONArray(GROUP_ENTRY_ROLES));
 
-                        String[] events = convertFromJSONArray(object.getJSONArray(GROUP_TABLE_EVENTS));
+                        String[] events = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
                         setEvents(events);
 
-                        setDescription(object.getString(GROUP_TABLE_DESCRIPTION));
+                        setDescription(object.getString(GROUP_ENTRY_DESCRIPTION));
 
-                        retrieveFileFromServer(object, GROUP_TABLE_PICTURE, this);
+                        retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, this);
 
                     } else {
                         throw new PFException("Query failed");
@@ -493,13 +442,13 @@ public class PFGroup extends PFEntity {
                 }
             } else {
                 final ParseObject object = new ParseObject(GROUP_TABLE_NAME);
-                object.put(GROUP_TABLE_USERS, mUsers.toArray());
-                object.put(GROUP_TABLE_SURNAMES, mSurnames.toArray());
-                object.put(GROUP_TABLE_ROLES, mRoles.toArray());
-                object.put(GROUP_TABLE_EVENTS, mEvents.toArray());
-                object.put(GROUP_TABLE_TITLE, mName);
-                object.put(GROUP_TABLE_DESCRIPTION, mDescription);
-                object.put(GROUP_TABLE_ISPRIVATE, mIsPrivate);
+                object.put(GROUP_EMTRY_USERS, mUsers.toArray());
+                object.put(GROUP_ENTRY_SURNAMES, mSurnames.toArray());
+                object.put(GROUP_ENTRY_ROLES, mRoles.toArray());
+                object.put(GROUP_ENTRY_EVENTS, mEvents.toArray());
+                object.put(GROUP_ENTRY_NAME, mName);
+                object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
+                object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
                 object.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -515,7 +464,7 @@ public class PFGroup extends PFEntity {
 
         public PFGroup build() throws PFException {
             retrieveFromServer();
-            return new PFGroup(mId, mName, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
+            return new PFGroup(mId, mCurrentUser, mName, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
         }
 
     }

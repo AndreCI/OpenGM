@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm;
 
 import android.app.Activity;
 import android.app.Application;
-import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseUser;

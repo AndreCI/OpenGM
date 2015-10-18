@@ -71,13 +71,13 @@ class PFUtils {
         }
     }
 
-    public static String[] listToArray(List<? extends PFEntity> list) {
+    public static JSONArray listToArray(List<? extends PFEntity> list) {
         // Returns an array of id
-        String[] s = new String[list.size()];
-        for (int i = 0; i < s.length; i++) {
-            s[i] = list.get(i).getId();
+        JSONArray array = new JSONArray();
+        for (int i = 0; i < list.size(); i++) {
+            array.put(list.get(i).getId());
         }
-        return s;
+        return array;
     }
 
     public static boolean checkArguments(String arg, String name) {

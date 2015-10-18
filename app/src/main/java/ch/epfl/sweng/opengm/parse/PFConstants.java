@@ -5,9 +5,6 @@ package ch.epfl.sweng.opengm.parse;
  */
 public class PFConstants {
 
-    // TODO: check that entry names are the same as on Parse.com DB
-    // FIXME: "Name" entry == name of the table in the DB, not the same as "name of user", or "name of group"
-
     public static final String OBJECT_ID = "objectId";
 
     // Entries for "_User" table :
@@ -20,33 +17,33 @@ public class PFConstants {
     // Entries for "User" table :
 
     public static final String USER_TABLE_NAME = "User";
-    public static final String USER_TABLE_USER_ID = "userId";
-    public static final String USER_TABLE_USERNAME = "username";
-    public static final String USER_TABLE_FIRST_NAME = "firstName";
-    public static final String USER_TABLE_LAST_NAME = "lastName";
-    public static final String USER_TABLE_PHONE_NUMBER = "phoneNumer";
-    public static final String USER_TABLE_GROUPS = "groups";
-    public static final String USER_TABLE_PICTURE = "profilePicture";
-    public static final String USER_TABLE_ABOUT = "description";
+    public static final String USER_ENTRY_USERID = "userId";
+    public static final String USER_ENTRY_USERNAME = "username";
+    public static final String USER_ENTRY_FIRSTNAME = "firstName";
+    public static final String USER_ENTRY_LASTNAME = "lastName";
+    public static final String USER_ENTRY_PHONENUMBER = "phoneNumer";
+    public static final String USER_ENTRY_GROUPS = "groups";
+    public static final String USER_ENTRY_PICTURE = "profilePicture";
+    public static final String USER_ENTRY_ABOUT = "description";
 
     // Entries for "Group" table :
 
     public static final String GROUP_TABLE_NAME = "Group";
-    public static final String GROUP_TABLE_TITLE = "name";
-    public static final String GROUP_TABLE_ISPRIVATE = "isPrivate";
-    public static final String GROUP_TABLE_USERS = "users";
-    public static final String GROUP_TABLE_SURNAMES = "surnames";
-    public static final String GROUP_TABLE_ROLES = "roles";
-    public static final String GROUP_TABLE_DESCRIPTION = "description";
-    public static final String GROUP_TABLE_PICTURE = "groupPicture";
-    public static final String GROUP_TABLE_EVENTS = "events";
+    public static final String GROUP_ENTRY_NAME = "name";
+    public static final String GROUP_ENTRY_ISPRIVATE = "isPrivate";
+    public static final String GROUP_EMTRY_USERS = "users";
+    public static final String GROUP_ENTRY_SURNAMES = "surnames";
+    public static final String GROUP_ENTRY_ROLES = "roles";
+    public static final String GROUP_ENTRY_DESCRIPTION = "description";
+    public static final String GROUP_ENTRY_PICTURE = "groupPicture";
+    public static final String GROUP_ENTRY_EVENTS = "events";
 
     // Entries for "Event" table :
 
     public static final String EVENT_TABLE_NAME = "Event";
-    public static final String EVENT_TABLE_TITLE = "title";  // TODO: Entry yet to create
-    public static final String EVENT_TABLE_DESCRIPTION = "description";
-    public static final String EVENT_TABLE_DATE = "date";
-    public static final String EVENT_TABLE_PLACE = "place";
-    public static final String EVENT_TABLE_PARTICIPANTS = "participants";
+    public static final String EVENT_ENTRY_TITLE = "title";
+    public static final String EVENT_ENTRY_DESCRIPTION = "description";
+    public static final String EVENT_ENTRY_DATE = "date";
+    public static final String EVENT_ENTRY_PLACE = "place";
+    public static final String EVENT_ENTRY_PARTICIPANTS = "participants";
 }

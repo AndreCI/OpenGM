@@ -16,8 +16,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
-import java.util.Arrays;
-
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.utils.Utils;
 
@@ -132,15 +130,15 @@ public class RegisterActivity extends AppCompatActivity {
                                             if (e == null) {
                                                 // Second : create a new row for this user in the PFUser table
                                                 ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
-                                                parseObject.put(USER_TABLE_USER_ID, user.getObjectId());
-                                                parseObject.put(USER_TABLE_USERNAME, username);
-                                                parseObject.put(USER_TABLE_FIRST_NAME, firstname);
-                                                parseObject.put(USER_TABLE_LAST_NAME, lastname);
+                                                parseObject.put(USER_ENTRY_USERID, user.getObjectId());
+                                                parseObject.put(USER_ENTRY_USERNAME, username);
+                                                parseObject.put(USER_ENTRY_FIRSTNAME, firstname);
+                                                parseObject.put(USER_ENTRY_LASTNAME, lastname);
                                                 String[] emptyArray = new String[1];
-                                                parseObject.put(USER_TABLE_GROUPS, emptyArray);
-                                                parseObject.put(USER_TABLE_PHONE_NUMBER, "");
-                                                parseObject.put(USER_TABLE_PICTURE, null);
-                                                parseObject.put(USER_TABLE_ABOUT, "Hey there !");
+                                                parseObject.put(USER_ENTRY_GROUPS, emptyArray);
+                                                parseObject.put(USER_ENTRY_PHONENUMBER, "");
+                                                parseObject.put(USER_ENTRY_PICTURE, null);
+                                                parseObject.put(USER_ENTRY_ABOUT, "Hey there !");
                                                 parseObject.saveInBackground(new SaveCallback() {
                                                     @Override
                                                     public void done(ParseException e) {
