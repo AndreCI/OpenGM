@@ -12,13 +12,20 @@ import org.json.JSONException;
 
 import java.util.List;
 
-import ch.epfl.sweng.opengm.identification.ImageOverview;
 import ch.epfl.sweng.opengm.utils.Alert;
 
-class PFUtils {
+/**
+ * This class contains some static methods that may be called for conversion, saving or checking purposes
+ */
+public final class PFUtils {
 
-
-    public final static String[] convertFromJSONArray(JSONArray jsonArray) {
+    /**
+     * Converts a JSONArray into an array of String
+     *
+     * @param jsonArray A json array containing the information you want to extract
+     * @return An array of strings with all the elements of the json array
+     */
+    public static String[] convertFromJSONArray(JSONArray jsonArray) {
         if (jsonArray == null) {
             return null;
         }
@@ -35,8 +42,17 @@ class PFUtils {
         return array;
     }
 
-    public static void retrieveFileFromServer(ParseObject object, String field, final ImageOverview builder) {
-        ParseFile fileObject = (ParseFile) object.get(field);
+    /**
+     * Downloads in background the image of a Parse object and stores them in an object
+     * that implements PFImageInterface
+     *
+     * @param object  A Parse object which contains the image we want to get
+     * @param entry   A string whose value is the entry which contains the image in our table
+     * @param builder An object which contains an image in which the downloaded data
+     *                will be stored
+     */
+    public static void retrieveFileFromServer(ParseObject object, String entry, final PFImageInterface builder) {
+        ParseFile fileObject = (ParseFile) object.get(entry);
         if (fileObject != null) {
             fileObject.getDataInBackground(new GetDataCallback() {
                 @Override
@@ -49,6 +65,13 @@ class PFUtils {
         }
     }
 
+    /**
+     * Casts the object into a string
+     *
+     * @param o An object that we want to cast
+     * @return A string of the object
+     * @throws PFException If the object in parameter is null if it could not be cast into a string
+     */
     public static String objectToString(Object o) throws PFException {
         if (o == null) {
             throw new PFException("Object was null");
@@ -60,37 +83,45 @@ class PFUtils {
         }
     }
 
-    public static Object[] objectToArray(Object o) throws PFException {
-        if (o == null) {
-            throw new PFException("Object was null");
-        }
-        try {
-            return (Object[]) o;
-        } catch (Exception e) {
-            throw new PFException("Error while casting the value to an array of object");
-        }
-    }
-
-    public static JSONArray listToArray(List<? extends PFEntity> list) {
-        // Returns an array of id
+    /**
+     * Converts a list of PFEntities into a JSonarray whose elements are the id of the entities
+     *
+     * @param entitiesList A list that contains some PFEntity we want to get the ids
+     * @return A JSONArray whose elements are the ids of the parameter
+     */
+    public static JSONArray listToArray(List<? extends PFEntity> entitiesList) {
         JSONArray array = new JSONArray();
-        for (int i = 0; i < list.size(); i++) {
-            array.put(list.get(i).getId());
+        for (int i = 0; i < entitiesList.size(); i++) {
+            array.put(entitiesList.get(i).getId());
         }
         return array;
     }
 
-    public static boolean checkArguments(String arg, String name) {
+    /**
+     * Checks if the argument is not null and not empty. If it is, displays an Toast with the message given in parameter
+     *
+     * @param arg            The string argument to be checked
+     * @param displayedError The message that will be displayed in case of error
+     * @return True if the argument is correct, false otherwise
+     */
+    public static boolean checkArguments(String arg, String displayedError) {
         if (arg == null || arg.isEmpty()) {
-            Alert.displayAlert(name + " is null or empty.");
+            Alert.displayAlert(displayedError + " is null or empty.");
             return false;
         }
         return true;
     }
 
-    public static boolean checkNullArguments(String arg, String name) {
+    /**
+     * Checks if the argument is not null. If it is, displays an Toast with the message given in parameter
+     *
+     * @param arg            The string argument to be checked
+     * @param displayedError The message that will be displayed in case of error
+     * @return True if the argument is correct, false otherwise
+     */
+    public static boolean checkNullArguments(String arg, String displayedError) {
         if (arg == null) {
-            Alert.displayAlert(name + " is null.");
+            Alert.displayAlert(displayedError + " is null.");
             return false;
         }
         return true;
