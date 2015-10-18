@@ -7,9 +7,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -27,30 +33,70 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());
         displayParticipants();
     }
 
     public void displayParticipants(){
 
-        ScrollView sv = (ScrollView) findViewById(R.id.scrollViewListOfMember);
-        for(final OpenGMMember m : members){
-            final CheckBox b = new CheckBox(this);
-            b.setText(m.getName());
-            b.setOnClickListener(new View.OnClickListener() {
+        RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.memberListLayout);
+        ScrollView scrollViewForMembers = new ScrollView(this);
+        ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
+        scrollViewForMembers.setLayoutParams(scrollViewLP);
+        LinearLayout linearLayoutListMembers = new LinearLayout(this);
+        linearLayoutListMembers.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout.LayoutParams memberListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        linearLayoutListMembers.setLayoutParams(memberListLP);
+        /**
+         * Comparator in order to sort the events by date. Maybe later we can allow multiple way
+         * to sort?
+         */
+        Collections.sort(members, new Comparator<OpenGMMember>() {
+            @Override
+            public int compare(OpenGMMember lhs, OpenGMMember rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
+
+        for(final OpenGMMember m : members) {
+            CheckBox c = new CheckBox(this);
+            c.setText(m.getName());
+            c.setLayoutParams(memberListLP);
+            c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    if (b.isChecked()) {
-                        b.setChecked(false);
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
                         membersToAdd.remove(m);
                     } else {
-                        b.setChecked(true);
                         membersToAdd.add(m);
                     }
                 }
             });
-            sv.addView(b);
+            linearLayoutListMembers.addView(c);
         }
-
+        scrollViewForMembers.addView(linearLayoutListMembers);
+        screenLayout.addView(scrollViewForMembers);
     }
     private class OpenGMMember{
         public OpenGMMember(){}
