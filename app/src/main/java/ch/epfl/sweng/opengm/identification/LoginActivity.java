@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -36,7 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
+
         mEditUsername = (EditText) findViewById(R.id.login_username);
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
@@ -102,8 +105,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onClickForgotPassword(View v) {
 
-        Log.d("INFO", "Password forgotten");
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_password_forgotten, null);
@@ -125,7 +126,6 @@ public class LoginActivity extends AppCompatActivity {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("DIALOG", "RESET2");
                 EditText editMail = (EditText) view.findViewById(R.id.editTextMail_dialog_forgot);
                 String email = editMail.getText().toString();
 
