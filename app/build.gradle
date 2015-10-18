@@ -9,7 +9,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        /*CHECK THIS, BETTER IF WE COULD REMOVE IT*/
         multiDexEnabled true
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
@@ -22,11 +21,6 @@ android {
     productFlavors {
     }
 }
-
-
-
-
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

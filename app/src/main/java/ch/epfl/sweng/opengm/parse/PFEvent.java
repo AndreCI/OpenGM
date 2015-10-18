@@ -13,7 +13,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
 
-public class PFEvent extends PFEntity {
+public final class PFEvent extends PFEntity {
 
     private final static String PARSE_TABLE_EVENT = PFConstants.EVENT_TABLE_NAME;
 

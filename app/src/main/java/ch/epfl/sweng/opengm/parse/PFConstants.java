@@ -3,7 +3,7 @@ package ch.epfl.sweng.opengm.parse;
 /**
  * Name of the entries from the different tables of our Parse database
  */
-public class PFConstants {
+public final class PFConstants {
 
     public static final String OBJECT_ID = "objectId";
 

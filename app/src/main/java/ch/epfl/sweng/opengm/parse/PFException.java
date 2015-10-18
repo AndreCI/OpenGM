@@ -1,6 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
-public class PFException extends Exception {
+public final class PFException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
