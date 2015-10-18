@@ -6,39 +6,25 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.opengm.ch.epfl.sweng.opengm.events.EventListActivity">
 
-    <ScrollView
-
-        android:id="@+id/scrollViewEventList"
-        android:clickable="true"
-        android:layout_weight="1"
-        android:layout_width="fill_parent"
-        android:layout_marginBottom="50px"
-        android:layout_height="fill_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/Screen">
+    <RelativeLayout
+        android:id="@+id/ScrollViewParentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/addButton">
+    </RelativeLayout>
+        <Button
+            android:id="@+id/addButton"
+            android:text="@string/addButtonText"
+            android:onClick="clickOnAddButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="92dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical"
-            android:id="@+id/LinearLayoytScrollViewEventList">
-            <ListView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/ListViewScrollViewEventList">
-
-            </ListView>
-        </LinearLayout>
-    </ScrollView>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/addButton"
-        android:text="@string/addButtonText"
-        android:layout_below="@+id/scrollViewEventList"
-        android:layout_centerHorizontal="true"/>
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
 
 </RelativeLayout>
