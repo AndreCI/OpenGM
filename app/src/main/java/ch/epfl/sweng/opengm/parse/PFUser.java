@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.identification.ImageOverview;
 import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
@@ -31,9 +30,15 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
-public class PFUser extends PFEntity {
+/**
+ * This class represents a user which extends PFEntity since it
+ * is linked to a table on the server
+ */
+public final class PFUser extends PFEntity {
 
     private final static String PARSE_TABLE_USER = PFConstants.USER_TABLE_NAME;
+
+    private final List<PFGroup> mGroups;
 
     private String mUsername;
     private String mFirstName;
@@ -41,7 +46,6 @@ public class PFUser extends PFEntity {
     private String mPhoneNumber;
     private String mAboutUser;
     private Bitmap mPicture;
-    private List<PFGroup> mGroups;
 
     private PFUser(String userId, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(userId, PARSE_TABLE_USER);
@@ -125,34 +129,74 @@ public class PFUser extends PFEntity {
         });
     }
 
+    /**
+     * Getter for the username of the user
+     *
+     * @return the username of the user
+     */
     public String getUsername() {
         return mUsername;
     }
 
+    /**
+     * Getter for the first name of the user
+     *
+     * @return the first name of the user
+     */
     public String getFirstName() {
         return mFirstName;
     }
 
+    /**
+     * Getter for the last name of the user
+     *
+     * @return the last name of the user
+     */
     public String getLastName() {
         return mLastName;
     }
 
+    /**
+     * Getter for the phone number of the user
+     *
+     * @return the phone number of the user
+     */
     public String getPhoneNumber() {
         return mPhoneNumber;
     }
 
+    /**
+     * Getter for the list of groups of the user
+     *
+     * @return the list of groups of the user
+     */
     public List<PFGroup> getGroups() {
         return Collections.unmodifiableList(mGroups);
     }
 
+    /**
+     * Getter for the description of the user
+     *
+     * @return the description of the user
+     */
     public String getAboutUser() {
         return mAboutUser;
     }
 
+    /**
+     * Getter for the picture of the user
+     *
+     * @return the picture of the user
+     */
     public Bitmap getPicture() {
         return mPicture;
     }
 
+    /**
+     * Add the current user to a group given its id
+     *
+     * @param groupId The id of the group whose user wil be added
+     */
     public void addToAGroup(String groupId) {
         if (belongToGroup(groupId)) {
             Alert.displayAlert("User already belongs to this group.");
@@ -172,6 +216,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Remove the current user to a group given its id
+     *
+     * @param groupId The id of the group whose user wil be removed
+     */
     public void removeFromGroup(String groupId) {
         if (!belongToGroup(groupId)) {
             Alert.displayAlert("User does not belong the group.");
@@ -188,6 +237,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Setter for the username of the current user
+     *
+     * @param username The new username of the current user
+     */
     public void setUsername(String username) {
         if (checkArguments(username, "User name") && !username.equals(mUsername)) {
             String oldUsername = mUsername;
@@ -201,6 +255,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Setter for the first name of the current user
+     *
+     * @param firstname The new first name of the current user
+     */
     public void setFirstName(String firstname) {
         if (checkArguments(firstname, "First name") && !firstname.equals(mFirstName)) {
             String oldFirstname = mFirstName;
@@ -214,6 +273,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Setter for the last name of the current user
+     *
+     * @param lastname The new last name of the current user
+     */
     public void setLastName(String lastname) {
         if (checkArguments(lastname, "Last name") && !lastname.equals(mLastName)) {
             String oldLastname = mFirstName;
@@ -227,6 +291,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Setter for the phone number of the current user
+     *
+     * @param phoneNumber The new phone number of the current user
+     */
     public void setPhoneNumber(String phoneNumber) {
         if (checkArguments(phoneNumber, "Phone number") && !phoneNumber.equals(mPhoneNumber)) {
             String oldPhoneNumber = mPhoneNumber;
@@ -240,6 +309,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Setter for the description of the current user
+     *
+     * @param aboutUser The new description of the current user
+     */
     public void setAboutUser(String aboutUser) {
         if (checkArguments(aboutUser, "User's description") && !aboutUser.equals(mAboutUser)) {
             String oldAboutUser = mAboutUser;
@@ -253,6 +327,11 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Setter for the profile picture of the current user
+     *
+     * @param picture The new picture of the current user
+     */
     public void setPicture(Bitmap picture) {
         if (!mPicture.equals(picture)) {
             Bitmap oldPicture = mPicture;
@@ -266,6 +345,12 @@ public class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Returns the id of the group given as parameter in the list of groups
+     *
+     * @param groupId The id of the group we would like to know the index
+     * @return The index of ths group in the list or -1 if the group is not in the list
+     */
     private int getGroupIdx(String groupId) {
         for (int i = 0; i < mGroups.size(); i++) {
             if (mGroups.get(i).getId().equals(groupId)) {
@@ -275,6 +360,12 @@ public class PFUser extends PFEntity {
         return -1;
     }
 
+    /**
+     * Returns true if the user belongs to the group
+     *
+     * @param groupId The id of the group we would like to know the index
+     * @return True if the user belongs to this group, false otherwise
+     */
     private boolean belongToGroup(String groupId) {
         for (PFGroup g : mGroups) {
             if (g.getId().equals(groupId)) {
@@ -284,7 +375,7 @@ public class PFUser extends PFEntity {
         return false;
     }
 
-    public static final class Builder extends PFEntity.Builder implements ImageOverview {
+    public static final class Builder extends PFEntity.Builder implements PFImageInterface {
 
         private String mUsername;
         private String mFirstName;
@@ -294,35 +385,75 @@ public class PFUser extends PFEntity {
         private Bitmap mPicture;
         private final List<String> mGroups;
 
+        /**
+         * The only constructor for building a user
+         *
+         * @param id The id of the user we would like to retrieve information
+         */
         public Builder(String id) {
             super(id);
             this.mGroups = new ArrayList<>();
         }
 
+        /**
+         * Setter for the username of the user we are building
+         *
+         * @param username The new username of the current user
+         */
         private void setUsername(String username) {
             this.mUsername = username;
         }
 
+        /**
+         * Setter for the first name of the user we are building
+         *
+         * @param firstName The new first name of the current user
+         */
         private void setFirstName(String firstName) {
             this.mFirstName = firstName;
         }
 
+        /**
+         * Setter for the last name of the user we are building
+         *
+         * @param lastName The new last name of the current user
+         */
         private void setLastName(String lastName) {
             this.mLastName = lastName;
         }
 
+        /**
+         * Setter for the phone number of the user we are building
+         *
+         * @param phoneNumber The new phone number of the current user
+         */
         private void setPhoneNumber(String phoneNumber) {
             this.mPhoneNumber = phoneNumber;
         }
 
+        /**
+         * Setter for the description of the user we are building
+         *
+         * @param about The new description of the current user
+         */
         private void setAbout(String about) {
             this.mAboutUser = about;
         }
 
+        /**
+         * Setter for the profile picture of the user we are building
+         *
+         * @param image The new picture of the current user
+         */
         public void setImage(Bitmap image) {
             this.mPicture = image;
         }
 
+        /**
+         * Add the user we are building to a group given its id
+         *
+         * @param group The id of the group whose user wil be added
+         */
         private void addToAGroup(String group) {
             mGroups.add(group);
         }
@@ -356,6 +487,12 @@ public class PFUser extends PFEntity {
             }
         }
 
+        /**
+         * Builds a new User with all its attributes.
+         *
+         * @return a new user corresponding to the object we were building
+         * @throws PFException If something went wrong while retrieving information online
+         */
         public PFUser build() throws PFException {
             retrieveFromServer();
             return new PFUser(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mAboutUser, mPicture, mGroups);
