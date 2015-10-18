@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm.identification;
+package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 
