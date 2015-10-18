@@ -145,7 +145,7 @@ public class CreateRoles extends AppCompatActivity {
 
     private Button getNewButton(String text){
         Button newButton = new Button(getApplicationContext());
-        newButton.setText("-");
+        newButton.setText(text);
         return newButton;
     }
 
