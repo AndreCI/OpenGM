@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm;
 
+import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -41,15 +42,12 @@ public class CreateRoles extends AppCompatActivity {
 
     private void fillWithRoles() {
         for(String role : roles) {
-            TextView current = new TextView(getApplicationContext());
-            current.setText(role);
+            TextView current = getNewTextView(role);
 
-            Button currentButton = new Button(getApplicationContext());
-            currentButton.setText("-");
+            Button currentButton = getNewButton("-");
             currentButton.setEnabled(false);
 
             TableRow currentRow = getNewTableRow(current, currentButton);
-
             currentButton.setLayoutParams(getParamsForTableColumn());
 
             buttonTableRowMap.put(currentButton, currentRow);
@@ -59,8 +57,7 @@ public class CreateRoles extends AppCompatActivity {
     }
 
     private void addNewRoleRow(){
-        Button addButton = new Button(getApplicationContext());
-        addButton.setText("+");
+        Button addButton = getNewButton("+");
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,9 +65,8 @@ public class CreateRoles extends AppCompatActivity {
             }
         });
 
-        TableRow addRow = new TableRow(getApplicationContext());
-        addRow.setGravity(Gravity.CENTER_VERTICAL);
-        addRow.addView(addButton);
+        TableRow addRow = getNewTableRow(addButton, null);
+
         buttonTableRowMap.put(addButton, addRow);
         rolesAndButtons.addView(addRow);
     }
@@ -80,8 +76,7 @@ public class CreateRoles extends AppCompatActivity {
         final EditText newRoleEdit = new EditText(getApplicationContext());
         newRoleEdit.setHint("Enter role name.");
 
-        Button okButton = new Button(getApplicationContext());
-        okButton.setText("OK");
+        Button okButton = getNewButton("OK");
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,11 +94,9 @@ public class CreateRoles extends AppCompatActivity {
     }
 
     private void addRole(String name, Button button){
-        TextView newRoleText = new TextView(getApplicationContext());
-        newRoleText.setText(name);
+        TextView newRoleText = getNewTextView(name);
 
-        Button newButton = new Button(getApplicationContext());
-        newButton.setText("-");
+        Button newButton = getNewButton("-");
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +118,7 @@ public class CreateRoles extends AppCompatActivity {
         addNewRoleRow();
     }
 
+    @SuppressLint("RtlHardcoded")
     private TableRow.LayoutParams getParamsForTableColumn(){
         TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.RIGHT;
@@ -137,8 +131,22 @@ public class CreateRoles extends AppCompatActivity {
         TableRow currentRow = new TableRow(getApplicationContext());
         currentRow.setGravity(Gravity.CENTER_VERTICAL);
         currentRow.addView(elem1);
-        currentRow.addView(elem2);
+        if(elem2 != null){
+            currentRow.addView(elem2);
+        }
         return currentRow;
+    }
+
+    private TextView getNewTextView(String text){
+        TextView newText = new TextView(getApplicationContext());
+        newText.setText(text);
+        return newText;
+    }
+
+    private Button getNewButton(String text){
+        Button newButton = new Button(getApplicationContext());
+        newButton.setText("-");
+        return newButton;
     }
 
     private void removeRole(Button button){
