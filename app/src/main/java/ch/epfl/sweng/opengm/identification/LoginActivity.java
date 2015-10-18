@@ -1,11 +1,15 @@
 package ch.epfl.sweng.opengm.identification;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -16,8 +20,10 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.RequestPasswordResetCallback;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.utils.Alert;
 import ch.epfl.sweng.opengm.utils.Utils;
 
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
@@ -96,7 +102,58 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onClickForgotPassword(View v) {
 
-        Log.v("INFO", "Password forgotten");
+        Log.d("INFO", "Password forgotten");
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final LayoutInflater inflater = getLayoutInflater();
+        final View view = inflater.inflate(R.layout.dialog_password_forgotten, null);
+
+        builder.setView(view)
+                .setPositiveButton(R.string.continue_dialog_password, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                })
+                .setNegativeButton(R.string.cancel_dialog_password, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Do nothing just hide this dialog
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("DIALOG", "RESET2");
+                EditText editMail = (EditText) view.findViewById(R.id.editTextMail_dialog_forgot);
+                String email = editMail.getText().toString();
+
+                editMail.setError(null);
+
+                boolean cancel = false;
+
+                if (TextUtils.isEmpty(email)) {
+                    editMail.setError(getString(R.string.empty_email_activity_register));
+                    cancel = true;
+                } else if (!InputUtils.isEmailValid(email)) {
+                    editMail.setError(getString(R.string.incorrect_email_activity_register));
+                    cancel = true;
+                }
+                if (cancel) {
+                    editMail.requestFocus();
+                } else {
+                    ParseUser.requestPasswordResetInBackground(email, new RequestPasswordResetCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            Toast.makeText(dialog.getContext(), getString(e == null ? R.string.success_dialog_password : R.string.error_dialog_password), Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        }
+                    });
+                }
+
+            }
+        });
 
     }
 

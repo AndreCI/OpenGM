@@ -9,6 +9,10 @@
     <string name="forgotten_password_activity_login"><u>Forgot your password?</u></string>
     <string name="register_now_activity_login">Don\'t have any account yet? Register now</string>
 
+    <string name="continue_dialog_password">Reset my password</string>
+    <string name="cancel_dialog_password">Cancel</string>
+    <string name="success_dialog_password">Email successfully sent</string>
+    <string name="error_dialog_password">Error while sending a new password by mail &#8230;</string>
 
     <string name="title_activity_register">RegisterActivity</string>
 
