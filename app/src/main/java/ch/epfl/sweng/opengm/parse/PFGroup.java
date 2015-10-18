@@ -245,92 +245,93 @@ public class PFGroup extends PFEntity {
         }
     }
 
-    public void addRoleToUser(String role, PFUser user) {
-        if (checkNullArguments(role, "Role for user")) {
-            if (!mMembers.containsKey(user.getId())) {
-                Alert.displayAlert("User does not belong to this group.");
-            } else {
-                PFMember member = mMembers.get(user.getId());
-                member.addRole(role);
-                try {
-                    updateToServer(GROUP_TABLE_USERS);
-                } catch (PFException e) {
-                    member.removeRole(role);
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                }
-            }
-        }
-    }
+//    public void addRoleToUser(String role, PFUser user) {
+//        if (checkNullArguments(role, "Role for user")) {
+//            if (!mMembers.containsKey(user.getId())) {
+//                Alert.displayAlert("User does not belong to this group.");
+//            } else {
+//                PFMember member = mMembers.get(user.getId());
+//                member.addRole(role);
+//                try {
+//                    updateToServer(GROUP_TABLE_USERS);
+//                } catch (PFException e) {
+//                    member.removeRole(role);
+//                    Alert.displayAlert("Error while updating the user's groups to the server.");
+//                }
+//            }
+//        }
+//    }
 
-    public void removeRoleToUser(String role, PFUser user) {
-        if (checkNullArguments(role, "Role for user")) {
-            if (!mMembers.containsKey(user.getId())) {
-                Alert.displayAlert("User does not belong to this group.");
-            } else {
-                PFMember member = mMembers.get(user.getId());
-                member.removeRole(role);
-                try {
-                    updateToServer(GROUP_TABLE_USERS);
-                } catch (PFException e) {
-                    member.addRole(role);
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                }
-            }
-        }
-    }
+//    public void removeRoleToUser(String role, PFUser user) {
+//        if (checkNullArguments(role, "Role for user")) {
+//            if (!mMembers.containsKey(user.getId())) {
+//                Alert.displayAlert("User does not belong to this group.");
+//            } else {
+//                PFMember member = mMembers.get(user.getId());
+//                member.removeRole(role);
+//                try {
+//                    updateToServer(GROUP_TABLE_USERS);
+//                } catch (PFException e) {
+//                    member.addRole(role);
+//                    Alert.displayAlert("Error while updating the user's groups to the server.");
+//                }
+//            }
+//        }
+//    }
 
-    public void setSurnameForUser(String surname, PFUser user) {
-        if (checkNullArguments(surname, "Surname for user")) {
-            if (!mMembers.containsKey(user.getId())) {
-                Alert.displayAlert("User does not belong to this group.");
-            } else {
-                PFMember member = mMembers.get(user.getId());
-                String oldSurname = member.getSurname();
-                member.changeSurname(surname);
-                try {
-                    updateToServer(GROUP_TABLE_USERS);
-                } catch (PFException e) {
-                    member.changeSurname(oldSurname);
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                }
-            }
-        }
-    }
-    /*
-                    public void addRoleToUser(String role, PFUser user) {
-                        if (checkNullArguments(role, "Role for user")) {
-                            if (!mMembers.containsKey(user.getId())) {
-                                Alert.displayAlert("User does not belong to this group.");
-                            } else {
-                                Member member = mMembers.get(user.getId());
-                                member.addRole(role);
-                                try {
-                                    updateToServer(IDX_USERS);
-                                } catch (PFException e) {
-                                    member.removeRole(role);
-                                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                                }
-                            }
-                        }
-                    }
+//    public void setSurnameForUser(String surname, PFUser user) {
+//        if (checkNullArguments(surname, "Surname for user")) {
+//            if (!mMembers.containsKey(user.getId())) {
+//                Alert.displayAlert("User does not belong to this group.");
+//            } else {
+//                PFMember member = mMembers.get(user.getId());
+//                String oldSurname = member.getSurname();
+//                member.changeSurname(surname);
+//                try {
+//                    updateToServer(GROUP_TABLE_USERS);
+//                } catch (PFException e) {
+//                    member.changeSurname(oldSurname);
+//                    Alert.displayAlert("Error while updating the user's groups to the server.");
+//                }
+//            }
+//        }
+//    }
 
-                    public void removeRoleToUser(String role, PFUser user) {
-                        if (checkNullArguments(role, "Role for user")) {
-                            if (!mMembers.containsKey(user.getId())) {
-                                Alert.displayAlert("User does not belong to this group.");
-                            } else {
-                                Member member = mMembers.get(user.getId());
-                                member.removeRole(role);
-                                try {
-                                    updateToServer(IDX_USERS);
-                                } catch (PFException e) {
-                                    member.addRole(role);
-                                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                                }
-                            }
-                        }
-                    }
-                */
+
+//    public void addRoleToUser(String role, PFUser user) {
+//        if (checkNullArguments(role, "Role for user")) {
+//            if (!mMembers.containsKey(user.getId())) {
+//                Alert.displayAlert("User does not belong to this group.");
+//            } else {
+//                Member member = mMembers.get(user.getId());
+//                member.addRole(role);
+//                try {
+//                    updateToServer(IDX_USERS);
+//                } catch (PFException e) {
+//                    member.removeRole(role);
+//                    Alert.displayAlert("Error while updating the user's groups to the server.");
+//                }
+//            }
+//        }
+//    }
+
+//    public void removeRoleToUser(String role, PFUser user) {
+//        if (checkNullArguments(role, "Role for user")) {
+//            if (!mMembers.containsKey(user.getId())) {
+//                Alert.displayAlert("User does not belong to this group.");
+//            } else {
+//                Member member = mMembers.get(user.getId());
+//                member.removeRole(role);
+//                try {
+//                    updateToServer(IDX_USERS);
+//                } catch (PFException e) {
+//                    member.addRole(role);
+//                    Alert.displayAlert("Error while updating the user's groups to the server.");
+//                }
+//            }
+//        }
+//    }
+
     public void setName(String name) {
         if (checkArguments(name, "Group's name")) {
             String oldTitle = mName;
