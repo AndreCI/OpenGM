@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.events;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -13,16 +14,16 @@ public class Event {
     //TODO : gestion serveur
     private String name;
     private String place;
-    private Date date;
+    private GregorianCalendar date;
     private String description;
     private List<OpenGMMember> participants;
 
     public Event(){
         participants = new ArrayList<>();
-        date = new Date();
+        date = new GregorianCalendar ();
     }
 
-    public Event(String name, String place, Date date, String description, List<OpenGMMember> participants){
+    public Event(String name, String place, GregorianCalendar date, String description, List<OpenGMMember> participants){
         this.name=name;
         this.participants=participants;
         this.date=date;
@@ -39,7 +40,7 @@ public class Event {
         this.place = place;
     }
 
-    public void setDate(Date date){
+    public void setDate(GregorianCalendar  date){
         this.date = date;
     }
 
@@ -59,7 +60,7 @@ public class Event {
         return place;
     }
 
-    public Date getDate() {
+    public GregorianCalendar getDate() {
         return date;
     }
 
