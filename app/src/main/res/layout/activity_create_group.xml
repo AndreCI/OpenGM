@@ -40,5 +40,6 @@
         android:id="@+id/doneGroupCreate"
         android:layout_below="@+id/enterGroupDescription"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp" />
+        android:layout_marginTop="44dp"
+        android:onClick="createGroup"/>
 </RelativeLayout>
