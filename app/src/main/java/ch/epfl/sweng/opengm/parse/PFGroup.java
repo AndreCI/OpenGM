@@ -31,7 +31,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_SURNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_EMTRY_USERS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
@@ -99,7 +99,7 @@ public class PFGroup extends PFEntity {
                             case GROUP_ENTRY_NAME:
                                 object.put(GROUP_ENTRY_NAME, mName);
                                 break;
-                            case GROUP_EMTRY_USERS:
+                            case GROUP_ENTRY_USERS:
                                 JSONArray usersArray = new JSONArray();
                                 JSONArray surnamesArray = new JSONArray();
                                 JSONArray rolesArray = new JSONArray();
@@ -113,7 +113,7 @@ public class PFGroup extends PFEntity {
                                     }
                                     rolesArray.put(rolesForUser);
                                 }
-                                object.put(GROUP_EMTRY_USERS, usersArray);
+                                object.put(GROUP_ENTRY_USERS, usersArray);
                                 object.put(GROUP_ENTRY_SURNAMES, surnamesArray);
                                 object.put(GROUP_ENTRY_ROLES, rolesArray);
                                 break;
@@ -197,7 +197,7 @@ public class PFGroup extends PFEntity {
                 GroupMember member = new GroupMember.Builder(userId).build();
                 member.addToGroup(getId());
                 mMembers.put(userId, member);
-                updateToServer(GROUP_EMTRY_USERS);
+                updateToServer(GROUP_ENTRY_USERS);
                 nOfUsers++;
             } catch (PFException e) {
                 mMembers.remove(userId);
@@ -213,7 +213,7 @@ public class PFGroup extends PFEntity {
             GroupMember oldMember = mMembers.remove(userId);
             oldMember.removeFromGroup(getId());
             try {
-                updateToServer(GROUP_EMTRY_USERS);
+                updateToServer(GROUP_ENTRY_USERS);
                 nOfUsers--;
             } catch (PFException e) {
                 mMembers.put(userId, oldMember);
@@ -230,7 +230,7 @@ public class PFGroup extends PFEntity {
                 GroupMember member = mMembers.get(memberId);
                 member.addRole(role);
                 try {
-                    updateToServer(GROUP_EMTRY_USERS);
+                    updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
                     member.removeRole(role);
                     Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -247,7 +247,7 @@ public class PFGroup extends PFEntity {
                 GroupMember member = mMembers.get(memberId);
                 member.removeRole(role);
                 try {
-                    updateToServer(GROUP_EMTRY_USERS);
+                    updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
                     member.addRole(role);
                     Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -265,7 +265,7 @@ public class PFGroup extends PFEntity {
                 String oldSurname = member.getSurname();
                 member.setmNickname(surname);
                 try {
-                    updateToServer(GROUP_EMTRY_USERS);
+                    updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
                     member.setmNickname(oldSurname);
                     Alert.displayAlert("Error while updating the user's groups to the server.");
@@ -419,7 +419,7 @@ public class PFGroup extends PFEntity {
                         setName(object.getString(GROUP_ENTRY_NAME));
                         setPrivacy(object.getBoolean(GROUP_ENTRY_ISPRIVATE));
 
-                        String[] users = convertFromJSONArray(object.getJSONArray(GROUP_EMTRY_USERS));
+                        String[] users = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_USERS));
                         setUsers(users);
 
                         String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_SURNAMES));
@@ -442,7 +442,7 @@ public class PFGroup extends PFEntity {
                 }
             } else {
                 final ParseObject object = new ParseObject(GROUP_TABLE_NAME);
-                object.put(GROUP_EMTRY_USERS, mUsers.toArray());
+                object.put(GROUP_ENTRY_USERS, mUsers.toArray());
                 object.put(GROUP_ENTRY_SURNAMES, mSurnames.toArray());
                 object.put(GROUP_ENTRY_ROLES, mRoles.toArray());
                 object.put(GROUP_ENTRY_EVENTS, mEvents.toArray());
