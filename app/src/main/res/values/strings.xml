@@ -16,4 +16,5 @@
     <string name="EventParticipantsText">Participants</string>
     <string name="EventDescriptionTextHint">Description</string>
     <string name="EditEventButtonText">edit</string>
+    <string name="EventTimeTextHint">hh:mm</string>
 </resources>

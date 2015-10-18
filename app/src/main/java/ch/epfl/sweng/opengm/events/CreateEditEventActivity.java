@@ -1,18 +1,16 @@
 package ch.epfl.sweng.opengm.events;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -23,6 +21,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private Event editedEvent;
     private boolean editing;
     private List<Event.OpenGMMember> participants;
+    private boolean timeSet = false;
+    private boolean dateSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +35,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (event == null) {
             editing = false;
             participants = new ArrayList<>();
+            timeSet = false;
+            dateSet = false;
         } else {
             editedEvent = event;
             editing = true;
             participants = editedEvent.getParticipants();
+            timeSet = true;
+            dateSet = true;
             fillTexts(event);
         }
     }
@@ -67,9 +71,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.CreateEditEventNameText)).setText(event.getName());
         ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
-        //GregorianCalendar date = event.getDate();
-        Date date = event.getDate();
-        String dateString = Integer.toString(date.getDay()) + '/' + Integer.toString(date.getMonth()) + '/' + Integer.toString(date.getYear());
+        GregorianCalendar date = event.getDate();
+        String dateString = Integer.toString(date.DAY_OF_MONTH) + '/' + Integer.toString(date.MONTH + 1) + '/' + Integer.toString(date.YEAR);
         ((EditText) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
@@ -82,9 +85,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private Event createEvent() {
-        int[] dateArray = getDateFromText((TextView) findViewById(R.id.CreateEditEventDateText));
-        //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
-        Date date = new Date(dateArray[0], dateArray[1], dateArray[2]);
+        int[] timeArray = getTimeFromText();
+        int[] dateArray = getDateFromText();
+        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
@@ -92,9 +95,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private Event editEvent() {
-        int[] dateArray = getDateFromText((TextView) findViewById(R.id.CreateEditEventDateText));
-        //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
-        Date date = new Date(dateArray[0], dateArray[1], dateArray[2]);
+        int[] timeArray = getTimeFromText();
+        int[] dateArray = getDateFromText();
+        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
@@ -106,15 +109,37 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     /**
-     * @return an array of int with year at index 0, month between 0 and 11 at index 1 and day at index 2
+     * @return an array of int with hours(24h format) at index 0 and minutes at index 1
      */
-    private int[] getDateFromText(TextView textView) {
+    private int[] getTimeFromText() {
+        TextView textView = (TextView) findViewById(R.id.CreateEditEventTimeText);
+        String[] timeString = textView.getText().toString().split(":");
+        if (timeString.length != 2) {
+            timeSet = false;
+            textView.setError("Invalid hour format, must be hh:mm");
+            return new int[]{-1, -1};
+        }
+        timeSet = true;
+        int hours = Integer.parseInt(timeString[0]);
+        int minutes = Integer.parseInt(timeString[1]);
+        ((EditText) findViewById(R.id.CreateEditEventDescriptionText)).setText(timeString[0] + " - " + Integer.toString(hours));
+        return new int[]{hours, minutes};
+    }
+
+    /**
+     * @return an array of int with year at index 0, month at index 1 and day at index 2
+     */
+    private int[] getDateFromText() {
+        TextView textView = (TextView) findViewById(R.id.CreateEditEventDateText);
         String[] dateString = textView.getText().toString().split("/");
         if (dateString.length != 3) {
+            dateSet = false;
             textView.setError("Invalid date format, must be dd/mm/yyyy");
+            return new int[]{-1, -1, -1};
         }
+        dateSet = true;
         int year = Integer.parseInt(dateString[2]);
-        int month = Integer.parseInt(dateString[1]) - 1; //because reasons java month are (0-11)
+        int month = Integer.parseInt(dateString[1]);
         int day = Integer.parseInt(dateString[0]);
         return new int[]{year, month, day};
     }
@@ -130,14 +155,46 @@ public class CreateEditEventActivity extends AppCompatActivity {
             eventNameText.setError("Event name should not be empty");
             return false;
         }
-        EditText eventDateText = (EditText) findViewById(R.id.CreateEditEventDateText);
-        int[] dateArray = getDateFromText(eventDateText);
         Calendar currentDate = Calendar.getInstance();
-        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1], dateArray[2]);
-        if (date.before(currentDate)) {
-            eventDateText.setError("Invalid date (prior to now)");
+        int[] timeArray = getTimeFromText();
+        int[] dateArray = getDateFromText();
+
+        if(!timeSet || !dateSet) {
+            if (!timeSet) {
+                ((TextView) findViewById(R.id.CreateEditEventTimeText)).setError("Time must be specified");
+            }
+            if (!dateSet) {
+                ((TextView) findViewById(R.id.CreateEditEventDateText)).setError("Date must be specified");
+            }
             return false;
         }
-        return true;
+
+        //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
+        GregorianCalendar date = buildCalendar(timeArray, dateArray);
+        boolean err = false;
+        if((timeArray[0] == -1 && timeArray[1] == -1) || date.HOUR_OF_DAY != timeArray[0] || date.MINUTE != timeArray[1]) {
+            ((TextView) findViewById(R.id.CreateEditEventTimeText)).setError("Invalid Time "+  Integer.toString(date.HOUR_OF_DAY) +"!="+ timeArray[0]+" "+ Integer.toString(date.MINUTE) +"!="+ timeArray[1]);
+            err = true;
+        }
+        if((dateArray[0] == -1 && dateArray[1] == -1 && dateArray[2] == -1) || date.YEAR != dateArray[0] || date.MONTH != dateArray[1]-1 || date.DAY_OF_MONTH != dateArray[2]) {
+            ((TextView) findViewById(R.id.CreateEditEventDateText)).setError("Invalid date " + date.YEAR +"!="+ dateArray[0]+" "+  date.MONTH +"!="+ (dateArray[1]-1)+" "+  date.DAY_OF_MONTH +"!="+ dateArray[2]);
+            err = true;
+        }
+        if (date.before(currentDate)) {
+            ((TextView) findViewById(R.id.CreateEditEventDateText)).setError("Invalid date (prior to now)");
+            err = true;
+        }
+        return !err;
+    }
+
+    private GregorianCalendar buildCalendar(int[] timeArray, int[] dateArray) {
+        GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
+        cal.set(Calendar.YEAR, dateArray[0]);
+        cal.set(Calendar.MONTH, dateArray[1]-1);
+        cal.set(Calendar.DATE, dateArray[2]);
+        cal.set(Calendar.HOUR_OF_DAY, timeArray[0]);
+        cal.set(Calendar.MINUTE, timeArray[1]);
+        
+        return cal;
     }
 }

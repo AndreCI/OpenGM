@@ -1,14 +1,13 @@
 package ch.epfl.sweng.opengm.events;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 import ch.epfl.sweng.opengm.R;
 
@@ -16,6 +15,7 @@ public class ShowEventActivity extends AppCompatActivity {
     public final static String SHOW_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.SHOW_EVENT";
 
     private Event event;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class ShowEventActivity extends AppCompatActivity {
         event.setPlace("DTC");
         event.setName("Event");
         event.setDescription("ça va etre bien");
-        event.setDate(new Date(2015, 10, 10));
+        event.setDate(new GregorianCalendar(2015, 10, 10, 18, 30));
         event.setParticipants(new ArrayList<Event.OpenGMMember>(1));
         displayEventInformation();
     }
@@ -55,8 +55,10 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventDate() {
-        Date date = event.getDate();
-        String dateString = Integer.toString(date.getDay()) + '/' + Integer.toString(date.getMonth()) + '/' + Integer.toString(date.getYear());
+        GregorianCalendar date = event.getDate();
+        String hourString = (Integer.toString(date.HOUR_OF_DAY)+':'+Integer.toString(date.MINUTE));
+        ((TextView)findViewById(R.id.ShowEventHourText)).setText(hourString);
+        String dateString = Integer.toString(date.DAY_OF_MONTH) + '/' + Integer.toString(date.MONTH+1) + '/' + Integer.toString(date.YEAR);
         ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
     }
 
@@ -84,5 +86,6 @@ public class ShowEventActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
         intent.putExtra(SHOW_EVENT_MESSAGE, event);
         startActivity(intent);
+
     }
 }
