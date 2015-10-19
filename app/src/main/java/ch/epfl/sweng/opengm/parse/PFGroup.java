@@ -28,7 +28,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_SURNAMES;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
@@ -111,7 +111,7 @@ public final class PFGroup extends PFEntity {
                                     rolesArray.put(rolesForUser);
                                 }
                                 object.put(GROUP_ENTRY_USERS, usersArray);
-                                object.put(GROUP_ENTRY_SURNAMES, surnamesArray);
+                                object.put(GROUP_ENTRY_NICKNAMES, surnamesArray);
                                 object.put(GROUP_ENTRY_ROLES, rolesArray);
                                 break;
                             case GROUP_ENTRY_EVENTS:
@@ -531,7 +531,7 @@ public final class PFGroup extends PFEntity {
                         String[] users = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_USERS));
                         setUsers(users);
 
-                        String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_SURNAMES));
+                        String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_NICKNAMES));
                         setNicknames(surnames);
 
                         setRoles(object.getJSONArray(GROUP_ENTRY_ROLES));
@@ -552,12 +552,13 @@ public final class PFGroup extends PFEntity {
             } else {
                 final ParseObject object = new ParseObject(GROUP_TABLE_NAME);
                 object.put(GROUP_ENTRY_USERS, mUsers.toArray());
-                object.put(GROUP_ENTRY_SURNAMES, mSurnames.toArray());
+                object.put(GROUP_ENTRY_NICKNAMES, mSurnames.toArray());
                 object.put(GROUP_ENTRY_ROLES, mRoles.toArray());
                 object.put(GROUP_ENTRY_EVENTS, mEvents.toArray());
                 object.put(GROUP_ENTRY_NAME, mName);
                 object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
                 object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
+                object.getDate("");
                 object.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {

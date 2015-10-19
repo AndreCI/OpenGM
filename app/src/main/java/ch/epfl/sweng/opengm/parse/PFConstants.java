@@ -32,7 +32,7 @@ public final class PFConstants {
     public static final String GROUP_ENTRY_NAME = "name";
     public static final String GROUP_ENTRY_ISPRIVATE = "isPrivate";
     public static final String GROUP_ENTRY_USERS = "users";
-    public static final String GROUP_ENTRY_SURNAMES = "surnames";
+    public static final String GROUP_ENTRY_NICKNAMES = "nicknames";
     public static final String GROUP_ENTRY_ROLES = "roles";
     public static final String GROUP_ENTRY_DESCRIPTION = "description";
     public static final String GROUP_ENTRY_PICTURE = "groupPicture";

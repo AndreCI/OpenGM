@@ -16,6 +16,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import org.json.JSONArray;
+
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.utils.Utils;
 
@@ -134,10 +136,8 @@ public class RegisterActivity extends AppCompatActivity {
                                                 parseObject.put(USER_ENTRY_USERNAME, username);
                                                 parseObject.put(USER_ENTRY_FIRSTNAME, firstname);
                                                 parseObject.put(USER_ENTRY_LASTNAME, lastname);
-                                                String[] emptyArray = new String[1];
-                                                parseObject.put(USER_ENTRY_GROUPS, emptyArray);
+                                                parseObject.put(USER_ENTRY_GROUPS, new JSONArray());
                                                 parseObject.put(USER_ENTRY_PHONENUMBER, "");
-                                                parseObject.put(USER_ENTRY_PICTURE, null);
                                                 parseObject.put(USER_ENTRY_ABOUT, "Hey there !");
                                                 parseObject.saveInBackground(new SaveCallback() {
                                                     @Override
