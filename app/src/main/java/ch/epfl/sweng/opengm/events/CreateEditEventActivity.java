@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         //TODO : fill editedEvent, editing, participants with intent + prefill text with existing values of event
         Intent intent = getIntent();
         Event event = (Event) intent.getSerializableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE);
+        //event = new Event("zert","az", new GregorianCalendar(), "", new ArrayList<Event.OpenGMMember>());
         if (event == null) {
             editing = false;
             participants = new ArrayList<>();
@@ -131,7 +133,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
             return new int[]{};
         }
         int year = Integer.parseInt(dateString[2]);
-        int month = Integer.parseInt(dateString[1]);
+        int month = Integer.parseInt(dateString[1])-1;
         int day = Integer.parseInt(dateString[0]);
         return new int[]{year, month, day};
     }
@@ -171,8 +173,20 @@ public class CreateEditEventActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid date " + date.getYear() + "!=" + dateArray[0] + " " + date.getMonth() + "!=" + (dateArray[1]) + " " + date.getDate()+ "!=" + dateArray[2], Toast.LENGTH_SHORT).show();
             err = true;
         }
-        if (Calendar.getInstance().after(date)) {
-            ((Button) findViewById(R.id.CreateEditEventDateText)).setError("Invalid date (prior to now)");
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int min = c.get(Calendar.MINUTE);
+        Date currentDate = new Date(year, month, day, hour, min);
+        if (date.before(currentDate)) {
+            if(year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
+                ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
+            } else {
+                ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
+            }
+            Toast.makeText(this, "Invalid date(prior to now)", Toast.LENGTH_SHORT).show();
             err = true;
         }
         return !err;

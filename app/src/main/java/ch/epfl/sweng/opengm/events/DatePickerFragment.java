@@ -30,7 +30,7 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        String date = Integer.toString(day) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
+        String date = Integer.toString(day) + "/" + Integer.toString(month+1) + "/" + Integer.toString(year);
         ((Button) getActivity().findViewById(R.id.CreateEditEventDateText)).setText(date);
     }
 }

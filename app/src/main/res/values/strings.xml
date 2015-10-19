@@ -12,9 +12,9 @@
     <string name="title_activity_add_remove_participants">AddRemoveParticipantsActivity</string>
     <string name="EventNameTextHint">Name</string>
     <string name="EventPlaceTextHint">Place</string>
-    <string name="EventDateTextHint">dd/mm/yyyy</string>
+    <string name="EventDateTextHint">Select a Date</string>
     <string name="EventParticipantsText">Participants</string>
     <string name="EventDescriptionTextHint">Description</string>
     <string name="EditEventButtonText">edit</string>
-    <string name="EventTimeTextHint">hh:mm</string>
+    <string name="EventTimeTextHint">Select a Time</string>
 </resources>

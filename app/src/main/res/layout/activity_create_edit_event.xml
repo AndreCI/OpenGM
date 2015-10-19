@@ -31,34 +31,45 @@
         android:minLines="1"
         android:maxLines="1" />
 
-    <Button
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/CreateEditEventTimeText"
-        android:layout_below="@+id/CreateEditEventPlaceText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/EventTimeTextHint"
-        android:textAlignment="center"
-        android:onClick="showTimePickerDialog"/>
+        android:orientation="horizontal"
+        android:id="@+id/CreateEditButtonLayout"
+        android:layout_below="@id/CreateEditEventPlaceText"
+        >
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/CreateEditEventDateText"
-        android:layout_below="@+id/CreateEditEventTimeText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/EventDateTextHint"
-        android:textAlignment="center"
-        android:onClick="showDatePickerDialog" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/CreateEditEventTimeText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:hint="@string/EventTimeTextHint"
+            android:textAlignment="center"
+            android:onClick="showTimePickerDialog"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/CreateEditEventDateText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:hint="@string/EventDateTextHint"
+            android:textAlignment="center"
+            android:onClick="showDatePickerDialog" />
+
+
+    </LinearLayout>
 
     <MultiAutoCompleteTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CreateEditEventDescriptionText"
         android:hint="@string/EventDescriptionTextHint"
-        android:layout_below="@id/CreateEditEventDateText"
+        android:layout_below="@id/CreateEditButtonLayout"
         android:editable="true"
         android:nestedScrollingEnabled="true"
         android:minLines="7"
