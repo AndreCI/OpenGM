@@ -1,24 +1,16 @@
 package ch.epfl.sweng.opengm;
 
 import android.app.Activity;
-import android.support.test.espresso.ViewInteraction;
-import android.test.ActivityInstrumentationTestCase2;
 import android.support.test.InstrumentationRegistry;
-import android.view.View;
+import android.test.ActivityInstrumentationTestCase2;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-
-import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
