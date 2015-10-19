@@ -69,5 +69,20 @@ public class CreateRolesActivityTest extends ActivityInstrumentationTestCase2<Cr
         onView(withTagValue(is((Object) "okButton"))).perform(click());
         onView(withTagValue(is((Object) "removeRole3"))).perform(click());
         onView(withTagValue(is((Object) "roleRow3"))).check(doesNotExist());
+
+        testInitialThreeRolesUnclickable();
+        testInitialThreeRoles();
+    }
+
+    public void testAddTwoRolesAndRemoveOnlyOne(){
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Another super new Role"));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "removeRole4"))).perform(click());
+        onView(withTagValue(is((Object) "roleRow4"))).check(doesNotExist());
+        onView(withTagValue(is((Object) "roleName3"))).check(matches(withText("Super new Role")));
     }
 }
