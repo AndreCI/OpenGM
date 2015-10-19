@@ -1,10 +1,9 @@
 package ch.epfl.sweng.opengm.events;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -12,15 +11,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
-
-import static android.widget.LinearLayout.*;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -91,7 +87,7 @@ public class EventListActivity extends AppCompatActivity {
     public void clickOnAddButton(View v){
         Event toAdd = new Event();
         toAdd.setName("AddByButton");
-        toAdd.setDate(new GregorianCalendar(2015,10,18));
+        toAdd.setDate(new GregorianCalendar(2015, 10, 18));
         eventList.add(toAdd);
         Toast t = Toast.makeText(getApplicationContext(), "Event Added.", Toast.LENGTH_SHORT);
         t.show();

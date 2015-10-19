@@ -1,14 +1,14 @@
 package ch.epfl.sweng.opengm.events;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
  * Created by André on 14/10/2015.
  */
-public class Event {
+public class Event implements Serializable {
 
     //TODO : gestion d'erreur
     //TODO : gestion serveur
@@ -74,7 +74,10 @@ public class Event {
 
 
 
-    private class OpenGMMember{
+    class OpenGMMember{
 
+        public String getName() {
+            return "";
+        }
     }
 }

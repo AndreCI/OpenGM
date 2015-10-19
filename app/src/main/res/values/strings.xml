@@ -5,8 +5,17 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="addButtonText">Add +</string>
-    <string name="okayButtonText">Okay</string>
+    <string name="OkEditButtonText">OK</string>
+    <string name="CancelEditButtonText">Cancel</string>
     <string name="title_activity_show_event">ShowEventActivity</string>
-    <string name="title_activity_create_edit_event">CreateEditEventActivity</string>
+    <string name="title_activity_create_edit_event">Create/Edit Event : groupe X</string>
     <string name="title_activity_add_remove_participants">AddRemoveParticipantsActivity</string>
+    <string name="EventNameTextHint">Name</string>
+    <string name="EventPlaceTextHint">Place</string>
+    <string name="EventDateTextHint">Select a Date</string>
+    <string name="EventParticipantsText">Participants</string>
+    <string name="EventDescriptionTextHint">Description</string>
+    <string name="EditEventButtonText">edit</string>
+    <string name="EventTimeTextHint">Select a Time</string>
+    <string name="okayButtonText">Ok</string>
 </resources>
