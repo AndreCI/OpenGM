@@ -69,4 +69,5 @@
         android:clickable="true"
         android:onClick="onEditButtonClick"
         android:layout_alignParentRight="true" />
+
 </RelativeLayout>
