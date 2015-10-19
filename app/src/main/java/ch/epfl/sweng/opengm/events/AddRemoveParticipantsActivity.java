@@ -11,6 +11,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +24,7 @@ import ch.epfl.sweng.opengm.R;
 
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
+    public static int geneId = 0; //TODO : used for the quickClass to test, delete it later.
     private List<OpenGMMember> members;
     private List<OpenGMMember> membersToAdd;
     @Override
@@ -54,54 +57,116 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
-        displayParticipants();
+
+        final SearchView sv = (SearchView) findViewById(R.id.searchMember);
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String query) {
+                Collections.sort(members, getComparator(query));
+                displayParticipants(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                Collections.sort(members, getComparator(newText));
+                displayParticipants(newText);
+                return true;
+            }
+        });
+        Collections.sort(members, getComparator(""));
+        displayParticipants("");
     }
 
-    public void displayParticipants(){
+    /**
+     * When click on okay button, this should return all the checked members to an other activity
+     * //TODO : code it!
+     * @param v
+     */
+    public void clickOnOkayButton(View v){
+        Toast t = Toast.makeText(getApplicationContext(), "m.size()= "+membersToAdd.size(), Toast.LENGTH_SHORT);
+        t.show();
+    }
 
-        RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.memberListLayout);
+    /**
+     * A private method to compare members, depending on their name. Maybe later we can implements
+     * others way to sort? //TODO : add comparator option to sort members
+     * @param s : if the member's name contains s, it will have a higher priority
+     * @return : the comparator
+     */
+    private Comparator<OpenGMMember> getComparator(final String s){
+        return new Comparator<OpenGMMember>() {
+            @Override
+            public int compare(OpenGMMember lhs, OpenGMMember rhs) {
+                if (lhs.getName().contains(s) && rhs.getName().contains(s)) {
+                    return lhs.getName().compareTo(rhs.getName());
+                } else if (lhs.getName().contains(s) && !rhs.getName().contains(s)) {
+                    return -1;
+                } else if (!lhs.getName().contains(s) && rhs.getName().contains(s)) {
+                    return 1;
+                } else {
+                    return lhs.getName().compareTo(rhs.getName());
+                }
+            }
+        };
+    }
+
+    /**
+     * This method display all the boxes to add or remove participants.
+     * @param query : il query is non empty, it will only show members with the query in their name.
+     */
+    private void displayParticipants(String query){
+
+        final RelativeLayout memberLayout = (RelativeLayout) findViewById(R.id.memberListLayout);
+        memberLayout.removeAllViews();
         ScrollView scrollViewForMembers = new ScrollView(this);
         ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
         scrollViewForMembers.setLayoutParams(scrollViewLP);
         LinearLayout linearLayoutListMembers = new LinearLayout(this);
         linearLayoutListMembers.setOrientation(LinearLayout.VERTICAL);
 
+
         LinearLayout.LayoutParams memberListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         linearLayoutListMembers.setLayoutParams(memberListLP);
-        /**
-         * Comparator in order to sort the events by date. Maybe later we can allow multiple way
-         * to sort?
-         */
-        Collections.sort(members, new Comparator<OpenGMMember>() {
-            @Override
-            public int compare(OpenGMMember lhs, OpenGMMember rhs) {
-                return lhs.getName().compareTo(rhs.getName());
-            }
-        });
 
         for(final OpenGMMember m : members) {
-            CheckBox c = new CheckBox(this);
-            c.setText(m.getName());
-            c.setLayoutParams(memberListLP);
-            c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        membersToAdd.remove(m);
-                    } else {
-                        membersToAdd.add(m);
+            if (m.getName().contains(query)) {
+                CheckBox c = new CheckBox(this);
+                c.setText(m.getName());
+                c.setLayoutParams(memberListLP);
+                c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            membersToAdd.add(m);
+                        } else {
+                            membersToAdd.remove(m);
+                        }
                     }
-                }
-            });
-            linearLayoutListMembers.addView(c);
+                });
+                linearLayoutListMembers.addView(c);
+            }
         }
+
         scrollViewForMembers.addView(linearLayoutListMembers);
-        screenLayout.addView(scrollViewForMembers);
+        memberLayout.addView(scrollViewForMembers);
     }
+
+    /**
+     * A quick class to test
+     * //TODO: replace it.
+     */
     private class OpenGMMember{
-        public OpenGMMember(){}
+        private int id;
+        private String name;
+        public OpenGMMember(){
+            this.id = geneId;
+            geneId++;
+            this.name="MemberTester : " + id;
+        }
+        public  void setName(String newName){name = newName;}
         public String getName(){
-            return "MemberTester";
+            return name;
         }
     }
 }
