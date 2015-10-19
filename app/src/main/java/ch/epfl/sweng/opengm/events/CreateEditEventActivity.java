@@ -1,9 +1,11 @@
 package ch.epfl.sweng.opengm.events;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -21,8 +24,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private Event editedEvent;
     private boolean editing;
     private List<Event.OpenGMMember> participants;
-    private boolean timeSet = false;
-    private boolean dateSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +36,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (event == null) {
             editing = false;
             participants = new ArrayList<>();
-            timeSet = false;
-            dateSet = false;
         } else {
             editedEvent = event;
             editing = true;
             participants = editedEvent.getParticipants();
-            timeSet = true;
-            dateSet = true;
             fillTexts(event);
         }
     }
@@ -72,8 +69,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
         GregorianCalendar date = event.getDate();
+        String timeString = Integer.toString(date.HOUR_OF_DAY) + " : " + Integer.toString(date.MINUTE);
+        ((Button) findViewById(R.id.CreateEditEventDateText)).setText(timeString);
         String dateString = Integer.toString(date.DAY_OF_MONTH) + '/' + Integer.toString(date.MONTH + 1) + '/' + Integer.toString(date.YEAR);
-        ((EditText) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
+        ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
     private Event createEditEvent() {
@@ -112,17 +111,13 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with hours(24h format) at index 0 and minutes at index 1
      */
     private int[] getTimeFromText() {
-        TextView textView = (TextView) findViewById(R.id.CreateEditEventTimeText);
-        String[] timeString = textView.getText().toString().split(":");
-        if (timeString.length != 2) {
-            timeSet = false;
-            textView.setError("Invalid hour format, must be hh:mm");
-            return new int[]{-1, -1};
+        Button button = (Button) findViewById(R.id.CreateEditEventTimeText);
+        String[] timeString = button.getText().toString().split(" : ");
+        if(timeString.length != 2) {
+            return new int[]{};
         }
-        timeSet = true;
         int hours = Integer.parseInt(timeString[0]);
         int minutes = Integer.parseInt(timeString[1]);
-        ((EditText) findViewById(R.id.CreateEditEventDescriptionText)).setText(timeString[0] + " - " + Integer.toString(hours));
         return new int[]{hours, minutes};
     }
 
@@ -130,14 +125,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with year at index 0, month at index 1 and day at index 2
      */
     private int[] getDateFromText() {
-        TextView textView = (TextView) findViewById(R.id.CreateEditEventDateText);
-        String[] dateString = textView.getText().toString().split("/");
-        if (dateString.length != 3) {
-            dateSet = false;
-            textView.setError("Invalid date format, must be dd/mm/yyyy");
-            return new int[]{-1, -1, -1};
+        Button button = (Button) findViewById(R.id.CreateEditEventDateText);
+        String[] dateString = button.getText().toString().split("/");
+        if(dateString.length != 3) {
+            return new int[]{};
         }
-        dateSet = true;
         int year = Integer.parseInt(dateString[2]);
         int month = Integer.parseInt(dateString[1]);
         int day = Integer.parseInt(dateString[0]);
@@ -155,46 +147,44 @@ public class CreateEditEventActivity extends AppCompatActivity {
             eventNameText.setError("Event name should not be empty");
             return false;
         }
-        Calendar currentDate = Calendar.getInstance();
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
 
-        if(!timeSet || !dateSet) {
-            if (!timeSet) {
-                ((TextView) findViewById(R.id.CreateEditEventTimeText)).setError("Time must be specified");
+        if(timeArray.length == 0 || dateArray.length == 0) {
+            if (timeArray.length == 0) {
+                ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
             }
-            if (!dateSet) {
-                ((TextView) findViewById(R.id.CreateEditEventDateText)).setError("Date must be specified");
+            if (dateArray.length == 0) {
+                ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
             }
+            Toast.makeText(this, "Time and Date must be specified", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        //GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
-        GregorianCalendar date = buildCalendar(timeArray, dateArray);
+        Date date = new Date(dateArray[0], dateArray[1], dateArray[2], timeArray[0], timeArray[1]);
         boolean err = false;
-        if((timeArray[0] == -1 && timeArray[1] == -1) || date.HOUR_OF_DAY != timeArray[0] || date.MINUTE != timeArray[1]) {
-            ((TextView) findViewById(R.id.CreateEditEventTimeText)).setError("Invalid Time "+  Integer.toString(date.HOUR_OF_DAY) +"!="+ timeArray[0]+" "+ Integer.toString(date.MINUTE) +"!="+ timeArray[1]);
+        if(date.getHours() != timeArray[0] || date.getMinutes() != timeArray[1]) {
+            Toast.makeText(this, "Invalid Time " + Integer.toString(date.getHours()) + "!=" + timeArray[0] + " " + Integer.toString(date.getMinutes()) + "!=" + timeArray[1], Toast.LENGTH_SHORT).show();
             err = true;
         }
-        if((dateArray[0] == -1 && dateArray[1] == -1 && dateArray[2] == -1) || date.YEAR != dateArray[0] || date.MONTH != dateArray[1]-1 || date.DAY_OF_MONTH != dateArray[2]) {
-            ((TextView) findViewById(R.id.CreateEditEventDateText)).setError("Invalid date " + date.YEAR +"!="+ dateArray[0]+" "+  date.MONTH +"!="+ (dateArray[1]-1)+" "+  date.DAY_OF_MONTH +"!="+ dateArray[2]);
+        if(date.getYear() != dateArray[0] || date.getMonth() != dateArray[1] || date.getDate()!= dateArray[2]) {
+            Toast.makeText(this, "Invalid date " + date.getYear() + "!=" + dateArray[0] + " " + date.getMonth() + "!=" + (dateArray[1]) + " " + date.getDate()+ "!=" + dateArray[2], Toast.LENGTH_SHORT).show();
             err = true;
         }
-        if (date.before(currentDate)) {
-            ((TextView) findViewById(R.id.CreateEditEventDateText)).setError("Invalid date (prior to now)");
+        if (Calendar.getInstance().after(date)) {
+            ((Button) findViewById(R.id.CreateEditEventDateText)).setError("Invalid date (prior to now)");
             err = true;
         }
         return !err;
     }
 
-    private GregorianCalendar buildCalendar(int[] timeArray, int[] dateArray) {
-        GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
-        cal.set(Calendar.YEAR, dateArray[0]);
-        cal.set(Calendar.MONTH, dateArray[1]-1);
-        cal.set(Calendar.DATE, dateArray[2]);
-        cal.set(Calendar.HOUR_OF_DAY, timeArray[0]);
-        cal.set(Calendar.MINUTE, timeArray[1]);
-        
-        return cal;
+    public void showTimePickerDialog(View view) {
+        DialogFragment dialogFragment = new TimePickerFragment();
+        dialogFragment.show(getFragmentManager(), "timePicker");
+    }
+
+    public void showDatePickerDialog(View view) {
+        DialogFragment dialogFragment = new DatePickerFragment();
+        dialogFragment.show(getFragmentManager(), "datePicker");
     }
 }
