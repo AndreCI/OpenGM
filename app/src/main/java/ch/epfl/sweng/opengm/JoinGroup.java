@@ -9,9 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class JoinGroup extends AppCompatActivity {
 
     @Override
@@ -39,8 +36,7 @@ public class JoinGroup extends AppCompatActivity {
 
     private String[] fetchGroups(){
         // TODO: fetch groups from database
-        String[] groups = {"Some group", "Another group", "Nice group"};
-        return groups;
+        return new String[] {"Some group", "Another group", "Nice group"};
     }
 
     @Override

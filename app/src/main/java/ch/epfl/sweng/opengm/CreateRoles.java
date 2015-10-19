@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm;
 
+import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,10 +23,15 @@ public class CreateRoles extends AppCompatActivity {
     private Map<Button, TableRow> buttonTableRowMap;
     private LinearLayout rolesAndButtons;
 
+    private int rowCount;
+    private int roleTextCount;
+    private int roleButtonCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_roles);
+
         buttonTableRowMap = new Hashtable<>();
 
         /* TODO: Grab roles from database, ideally the three default roles are
@@ -40,21 +46,19 @@ public class CreateRoles extends AppCompatActivity {
 
     private void fillWithRoles() {
         for(String role : roles) {
-            TextView current = new TextView(getApplicationContext());
-            current.setText(role);
+            TextView current = getNewTextView(role);
+            current.setTag("roleName" + roleTextCount);
+            roleTextCount++;
 
-            Button currentButton = new Button(getApplicationContext());
-            currentButton.setText("-");
+            Button currentButton = getNewButton("-");
             currentButton.setEnabled(false);
-            TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.RIGHT;
-            params.weight = 1.0f;
+            currentButton.setTag("removeRole" + roleButtonCount);
+            roleButtonCount++;
 
-            TableRow currentRow = new TableRow(getApplicationContext());
-            currentRow.setGravity(Gravity.CENTER_VERTICAL);
-            currentRow.addView(current);
-            currentRow.addView(currentButton);
-            currentButton.setLayoutParams(params);
+            TableRow currentRow = getNewTableRow(current, currentButton);
+            currentRow.setTag("roleRow" + rowCount);
+            rowCount++;
+            currentButton.setLayoutParams(getParamsForTableColumn());
 
             buttonTableRowMap.put(currentButton, currentRow);
 
@@ -63,8 +67,8 @@ public class CreateRoles extends AppCompatActivity {
     }
 
     private void addNewRoleRow(){
-        Button addButton = new Button(getApplicationContext());
-        addButton.setText("+");
+        Button addButton = getNewButton("+");
+        addButton.setTag("addRole");
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,9 +76,9 @@ public class CreateRoles extends AppCompatActivity {
             }
         });
 
-        TableRow addRow = new TableRow(getApplicationContext());
-        addRow.setGravity(Gravity.CENTER_VERTICAL);
-        addRow.addView(addButton);
+        TableRow addRow = getNewTableRow(addButton, null);
+        addRow.setTag("addRow");
+
         buttonTableRowMap.put(addButton, addRow);
         rolesAndButtons.addView(addRow);
     }
@@ -82,10 +86,11 @@ public class CreateRoles extends AppCompatActivity {
     private void addRoleEditorField(Button button){
         rolesAndButtons.removeView(buttonTableRowMap.get(button));
         final EditText newRoleEdit = new EditText(getApplicationContext());
+        newRoleEdit.setTag("newRoleEdit");
         newRoleEdit.setHint("Enter role name.");
 
-        Button okButton = new Button(getApplicationContext());
-        okButton.setText("OK");
+        Button okButton = getNewButton("OK");
+        okButton.setTag("okButton");
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,40 +99,35 @@ public class CreateRoles extends AppCompatActivity {
             }
         });
 
-        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.RIGHT;
-        params.weight = 1.0f;
+        TableRow newRoleRow = getNewTableRow(newRoleEdit, okButton);
+        newRoleRow.setTag("editRoleRow");
 
-        TableRow newRoleRow = new TableRow(getApplicationContext());
-        newRoleRow.setGravity(Gravity.CENTER_VERTICAL);
-        newRoleRow.addView(newRoleEdit);
-        newRoleRow.addView(okButton);
-        okButton.setLayoutParams(params);
+        okButton.setLayoutParams(getParamsForTableColumn());
+
         buttonTableRowMap.put(okButton, newRoleRow);
         rolesAndButtons.addView(newRoleRow);
     }
 
     private void addRole(String name, Button button){
-        TextView newRoleText = new TextView(getApplicationContext());
-        newRoleText.setText(name);
+        TextView newRoleText = getNewTextView(name);
+        newRoleText.setTag("roleName" + roleTextCount);
+        roleTextCount++;
 
-        Button newButton = new Button(getApplicationContext());
-        newButton.setText("-");
+        Button newButton = getNewButton("-");
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeRole((Button)v);
+                removeRole((Button) v);
             }
         });
-        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.RIGHT;
-        params.weight = 1.0f;
+        newButton.setTag("removeRole" + roleButtonCount);
+        roleButtonCount++;
 
-        TableRow newRow = new TableRow(getApplicationContext());
-        newRow.setGravity(Gravity.CENTER_VERTICAL);
-        newRow.addView(newRoleText);
-        newRow.addView(newButton);
-        newButton.setLayoutParams(params);
+        TableRow newRow = getNewTableRow(newRoleText, newButton);
+        newRow.setTag("roleRow" + rowCount);
+        rowCount++;
+
+        newButton.setLayoutParams(getParamsForTableColumn());
 
         buttonTableRowMap.put(newButton, newRow);
 
@@ -139,9 +139,42 @@ public class CreateRoles extends AppCompatActivity {
         addNewRoleRow();
     }
 
+    @SuppressLint("RtlHardcoded")
+    private TableRow.LayoutParams getParamsForTableColumn(){
+        TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.RIGHT;
+        params.weight = 1.0f;
+
+        return params;
+    }
+
+    private TableRow getNewTableRow(View elem1, View elem2){
+        TableRow currentRow = new TableRow(getApplicationContext());
+        currentRow.setGravity(Gravity.CENTER_VERTICAL);
+        currentRow.addView(elem1);
+        if(elem2 != null){
+            currentRow.addView(elem2);
+        }
+        return currentRow;
+    }
+
+    private TextView getNewTextView(String text){
+        TextView newText = new TextView(getApplicationContext());
+        newText.setText(text);
+        return newText;
+    }
+
+    private Button getNewButton(String text){
+        Button newButton = new Button(getApplicationContext());
+        newButton.setText(text);
+        return newButton;
+    }
+
     private void removeRole(Button button){
         rolesAndButtons.removeView(buttonTableRowMap.get(button));
-
+        rowCount--;
+        roleButtonCount--;
+        roleTextCount--;
         // TODO: Remove role from the database
     }
 
