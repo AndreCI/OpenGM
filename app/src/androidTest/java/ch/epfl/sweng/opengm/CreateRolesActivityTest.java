@@ -85,4 +85,9 @@ public class CreateRolesActivityTest extends ActivityInstrumentationTestCase2<Cr
         onView(withTagValue(is((Object) "roleRow4"))).check(doesNotExist());
         onView(withTagValue(is((Object) "roleName3"))).check(matches(withText("Super new Role")));
     }
+
+    public void testCantPressAddButtonWhenEditingNewRole(){
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "addRole"))).check(doesNotExist());
+    }
 }
