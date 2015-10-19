@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
 
@@ -28,7 +28,7 @@ public class ShowEventActivity extends AppCompatActivity {
         event.setPlace("DTC");
         event.setName("Event");
         event.setDescription("ça va etre bien");
-        event.setDate(new GregorianCalendar(2015, 10, 10, 18, 30));
+        event.setDate(new Date(2015, 10, 10, 18, 30));
         event.setParticipants(new ArrayList<Event.OpenGMMember>(1));
         displayEventInformation();
     }
@@ -55,10 +55,10 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventDate() {
-        GregorianCalendar date = event.getDate();
-        String hourString = (Integer.toString(date.HOUR_OF_DAY)+':'+Integer.toString(date.MINUTE));
+        Date date = event.getDate();
+        String hourString = (Integer.toString(date.getHours())+':'+Integer.toString(date.getMinutes()));
         ((TextView)findViewById(R.id.ShowEventHourText)).setText(hourString);
-        String dateString = Integer.toString(date.DAY_OF_MONTH) + '/' + Integer.toString(date.MONTH+1) + '/' + Integer.toString(date.YEAR);
+        String dateString = Integer.toString(date.getDate()) + '/' + Integer.toString(date.getMonth()+1) + '/' + Integer.toString(date.getYear());
         ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
     }
 

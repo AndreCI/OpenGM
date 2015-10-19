@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -70,10 +68,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.CreateEditEventNameText)).setText(event.getName());
         ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
-        GregorianCalendar date = event.getDate();
-        String timeString = Integer.toString(date.HOUR_OF_DAY) + " : " + Integer.toString(date.MINUTE);
+        Date date = event.getDate();
+        String timeString = Integer.toString(date.getHours()) + " : " + Integer.toString(date.getMinutes());
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(timeString);
-        String dateString = Integer.toString(date.DAY_OF_MONTH) + '/' + Integer.toString(date.MONTH + 1) + '/' + Integer.toString(date.YEAR);
+        String dateString = Integer.toString(date.getDate()) + '/' + Integer.toString(date.getMonth() + 1) + '/' + Integer.toString(date.getYear());
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
@@ -88,7 +86,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private Event createEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
-        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
+        Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
@@ -98,7 +96,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private Event editEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
-        GregorianCalendar date = new GregorianCalendar(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
+        Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();

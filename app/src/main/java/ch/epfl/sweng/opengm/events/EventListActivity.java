@@ -10,10 +10,9 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -49,17 +48,17 @@ public class EventListActivity extends AppCompatActivity {
         tester9.setName("E9");
         tester10.setName("E10");
         tester11.setName("E11");
-        tester1.setDate(new GregorianCalendar(1995, 1, 29));
-        tester2.setDate(new GregorianCalendar(2000,1,29));
-        tester3.setDate(new GregorianCalendar(1999,2,22));
-        tester4.setDate(new GregorianCalendar(1994,6,29));
-        tester5.setDate(new GregorianCalendar(1995,1,28));
-        tester6.setDate(new GregorianCalendar(1995,1,27));
-        tester7.setDate(new GregorianCalendar(1995,1,26));
-        tester8.setDate(new GregorianCalendar(1995,1,25));
-        tester9.setDate(new GregorianCalendar(1995,1,24));
-        tester10.setDate(new GregorianCalendar(1995,1,23));
-        tester11.setDate(new GregorianCalendar(1995,1,22));
+        tester1.setDate(new Date(1995, 1, 29));
+        tester2.setDate(new Date(2000,1,29));
+        tester3.setDate(new Date(1999,2,22));
+        tester4.setDate(new Date(1994,6,29));
+        tester5.setDate(new Date(1995,1,28));
+        tester6.setDate(new Date(1995,1,27));
+        tester7.setDate(new Date(1995,1,26));
+        tester8.setDate(new Date(1995,1,25));
+        tester9.setDate(new Date(1995,1,24));
+        tester10.setDate(new Date(1995,1,23));
+        tester11.setDate(new Date(1995,1,22));
         eventList.add(tester1);
         eventList.add(tester2);
         eventList.add(tester3);
@@ -87,7 +86,7 @@ public class EventListActivity extends AppCompatActivity {
     public void clickOnAddButton(View v){
         Event toAdd = new Event();
         toAdd.setName("AddByButton");
-        toAdd.setDate(new GregorianCalendar(2015, 10, 18));
+        toAdd.setDate(new Date(2015, 10, 18));
         eventList.add(toAdd);
         Toast t = Toast.makeText(getApplicationContext(), "Event Added.", Toast.LENGTH_SHORT);
         t.show();
@@ -121,7 +120,7 @@ public class EventListActivity extends AppCompatActivity {
         });
         for(Event e : eventList){
             final Button b = new Button(this);
-            b.setText(e.getName() + ":"+e.getDate().get(Calendar.YEAR)+"/"+e.getDate().get(Calendar.MONTH)+"/"+e.getDate().get(Calendar.DATE));
+            b.setText(e.getName() + ":"+e.getDate().getYear()+"/"+e.getDate().getMonth()+"/"+e.getDate().getDate());
 
             b.setLayoutParams(eventListLP);
             b.setOnClickListener(new View.OnClickListener() {

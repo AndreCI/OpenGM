@@ -2,7 +2,7 @@ package ch.epfl.sweng.opengm.events;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,16 +14,16 @@ public class Event implements Serializable {
     //TODO : gestion serveur
     private String name;
     private String place;
-    private GregorianCalendar date;
+    private Date date;
     private String description;
     private List<OpenGMMember> participants;
 
     public Event(){
         participants = new ArrayList<>();
-        date = new GregorianCalendar ();
+        date = new Date();
     }
 
-    public Event(String name, String place, GregorianCalendar date, String description, List<OpenGMMember> participants){
+    public Event(String name, String place, Date date, String description, List<OpenGMMember> participants){
         this.name=name;
         this.participants=participants;
         this.date=date;
@@ -40,7 +40,7 @@ public class Event implements Serializable {
         this.place = place;
     }
 
-    public void setDate(GregorianCalendar  date){
+    public void setDate(Date  date){
         this.date = date;
     }
 
@@ -60,7 +60,7 @@ public class Event implements Serializable {
         return place;
     }
 
-    public GregorianCalendar getDate() {
+    public Date getDate() {
         return date;
     }
 

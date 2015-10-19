@@ -12,7 +12,6 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +25,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
     private List<OpenGMMember> membersToAdd;
     private List<CheckBox> boxes;
     private LinearLayout linearLayoutListMembers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +77,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
             }
         });
         Collections.sort(members, getComparator(""));
-        for(final OpenGMMember m : members){
+        for (final OpenGMMember m : members) {
             CheckBox c = new CheckBox(this);
             c.setText(m.getName());
             c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -98,20 +98,22 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
     /**
      * When click on okay button, this should return all the checked members to an other activity
      * //TODO : code it!
+     *
      * @param v
      */
-    public void clickOnOkayButton(View v){
-        Toast t = Toast.makeText(getApplicationContext(), "m.size()= "+membersToAdd.size(), Toast.LENGTH_SHORT);
+    public void clickOnOkayButton(View v) {
+        Toast t = Toast.makeText(getApplicationContext(), "m.size()= " + membersToAdd.size(), Toast.LENGTH_SHORT);
         t.show();
     }
 
     /**
      * A private method to compare members, depending on their name. Maybe later we can implements
      * others way to sort? //TODO : add comparator option to sort members
+     *
      * @param s : if the member's name contains s, it will have a higher priority
      * @return : the comparator
      */
-    private Comparator<OpenGMMember> getComparator(final String s){
+    private Comparator<OpenGMMember> getComparator(final String s) {
         return new Comparator<OpenGMMember>() {
             @Override
             public int compare(OpenGMMember lhs, OpenGMMember rhs) {
@@ -130,21 +132,22 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
     /**
      * This method display all the boxes to add or remove participants.
+     *
      * @param query : il query is non empty, it will only show members with the query in their name.
      */
-    private void displayParticipants(String query){
+    private void displayParticipants(String query) {
         linearLayoutListMembers.removeAllViews();
         linearLayoutListMembers = new LinearLayout(this);
         linearLayoutListMembers.setOrientation(LinearLayout.VERTICAL);
         final RelativeLayout memberLayout = (RelativeLayout) findViewById(R.id.memberListLayout);
         memberLayout.removeAllViews();
         ScrollView scrollViewForMembers = new ScrollView(this);
-        ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
+        ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.MATCH_PARENT);
         scrollViewForMembers.setLayoutParams(scrollViewLP);
         LinearLayout.LayoutParams memberListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         linearLayoutListMembers.setLayoutParams(memberListLP);
 
-        for(CheckBox c : boxes) {
+        for (CheckBox c : boxes) {
             if (c.getText().toString().contains(query)) {
                 c.setLayoutParams(memberListLP);
                 linearLayoutListMembers.addView(c);
@@ -159,16 +162,21 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
      * A quick class to test
      * //TODO: replace it.
      */
-    private class OpenGMMember{
+    private class OpenGMMember {
         private int id;
         private String name;
-        public OpenGMMember(){
+
+        public OpenGMMember() {
             this.id = geneId;
             geneId++;
-            this.name="MemberTester : " + id;
+            this.name = "MemberTester : " + id;
         }
-        public  void setName(String newName){name = newName;}
-        public String getName(){
+
+        public void setName(String newName) {
+            name = newName;
+        }
+
+        public String getName() {
             return name;
         }
     }
