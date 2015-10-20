@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.groups;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+
+import ch.epfl.sweng.opengm.R;
 
 public class JoinGroup extends AppCompatActivity {
 

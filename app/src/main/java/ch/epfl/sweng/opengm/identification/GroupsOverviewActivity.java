@@ -1,26 +1,20 @@
 package ch.epfl.sweng.opengm.identification;
 
 import android.content.Intent;
-import android.graphics.Point;
-import android.net.LinkAddress;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
+import ch.epfl.sweng.opengm.groups.CreateGroup;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -101,6 +95,8 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             // TODO: petit pop-up qui part du bouton avec either "Create a group" ou "Join an existing group"
                             Log.v("INFO", "create a group / join an existing group");
+                            Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroup.class);
+                            startActivity(intent);
                         }
                     });
 

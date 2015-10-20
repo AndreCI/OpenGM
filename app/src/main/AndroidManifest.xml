@@ -34,15 +34,15 @@
             android:theme="@style/FullscreenTheme" >
         </activity>
         <activity
-            android:name=".CreateRoles"
+            android:name=".groups.CreateRoles"
             android:label="@string/title_activity_create_roles" >
         </activity>
         <activity
-            android:name=".JoinGroup"
+            android:name=".groups.JoinGroup"
             android:label="@string/title_activity_join_group" >
         </activity>
         <activity
-            android:name=".CreateGroup"
+            android:name=".groups.CreateGroup"
             android:label="@string/title_activity_create_group" >
         </activity>
     </application>
