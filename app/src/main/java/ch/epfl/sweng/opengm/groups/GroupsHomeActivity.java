@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
 import ch.epfl.sweng.opengm.identification.GroupsOverviewActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
@@ -117,6 +118,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_members:
                 break;
             case R.id.nav_events:
+                startActivity(new Intent(GroupsHomeActivity.this, CreateEditEventActivity.class));
                 break;
             case R.id.nav_messages:
                 break;
