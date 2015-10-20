@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import ch.epfl.sweng.opengm.groups.CreateGroup;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class GroupsOverviewActivity extends AppCompatActivity {
@@ -72,11 +73,13 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                     tile.setHeight(screenWidth / 2);
                     tile.setGravity(Gravity.CENTER | Gravity.BOTTOM);
 
+                    final int row = i, col = j;
+
                     // TODO: specify WHERE does the button go ? On this particular group homescreen
                     tile.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            startActivity(new Intent(GroupsOverviewActivity.this, GroupHomeActivity.class));
+                            startActivity(new Intent(GroupsOverviewActivity.this, GroupsHomeActivity.class).putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, row * TILES_PER_WIDTH + col));
                         }
                     });
 

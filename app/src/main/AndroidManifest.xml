@@ -28,12 +28,6 @@
         <activity android:name=".identification.GroupsOverviewActivity" >
         </activity>
         <activity
-            android:name=".identification.GroupHomeActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_group_home"
-            android:theme="@style/FullscreenTheme" >
-        </activity>
-        <activity
             android:name=".groups.CreateRoles"
             android:label="@string/title_activity_create_roles" >
         </activity>
@@ -61,6 +55,11 @@
         <activity
             android:name=".events.AddRemoveParticipantsActivity"
             android:label="@string/title_activity_add_remove_participants" >
+        </activity>
+        <activity
+            android:name=".groups.GroupsHomeActivity"
+            android:label="@string/title_activity_groups_home"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 
