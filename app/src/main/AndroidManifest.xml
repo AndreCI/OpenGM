@@ -6,17 +6,61 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".OpenGMApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".MainActivity" >
+        <activity
+            android:name=".identification.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".identification.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".identification.GroupsOverviewActivity" >
+        </activity>
+        <activity
+            android:name=".identification.GroupHomeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_group_home"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".groups.CreateRoles"
+            android:label="@string/title_activity_create_roles" >
+        </activity>
+        <activity
+            android:name=".groups.JoinGroup"
+            android:label="@string/title_activity_join_group" >
+        </activity>
+        <activity
+            android:name=".groups.CreateGroup"
+            android:label="@string/title_activity_create_group" >
+        </activity>
+        <activity
+            android:name=".events.EventListActivity"
+            android:label="@string/title_activity_event_list" >
+        </activity>
+        <activity
+            android:name=".events.ShowEventActivity"
+            android:label="@string/title_activity_show_event" >
+        </activity>
+        <activity
+            android:name=".events.CreateEditEventActivity"
+            android:exported="true"
+            android:label="@string/title_activity_create_edit_event" >
+        </activity>
+        <activity
+            android:name=".events.AddRemoveParticipantsActivity"
+            android:label="@string/title_activity_add_remove_participants" >
         </activity>
     </application>
 
