@@ -33,6 +33,18 @@
             android:label="@string/title_activity_group_home"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name=".CreateRoles"
+            android:label="@string/title_activity_create_roles" >
+        </activity>
+        <activity
+            android:name=".JoinGroup"
+            android:label="@string/title_activity_join_group" >
+        </activity>
+        <activity
+            android:name=".CreateGroup"
+            android:label="@string/title_activity_create_group" >
+        </activity>
     </application>
 
 </manifest>
