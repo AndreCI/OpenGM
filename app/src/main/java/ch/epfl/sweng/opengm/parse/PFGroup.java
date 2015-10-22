@@ -551,24 +551,31 @@ public final class PFGroup extends PFEntity {
                 }
             } else {
                 final ParseObject object = new ParseObject(GROUP_TABLE_NAME);
-                object.put(GROUP_ENTRY_USERS, mUsers.toArray());
-                object.put(GROUP_ENTRY_NICKNAMES, mSurnames.toArray());
-                object.put(GROUP_ENTRY_ROLES, mRoles.toArray());
-                object.put(GROUP_ENTRY_EVENTS, mEvents.toArray());
+                JSONArray usersArray = new JSONArray();
+                JSONArray surnamesArray = new JSONArray();
+
+                for (String member : mUsers) {
+                    usersArray.put(member);
+                }
+                for (String surnames : mSurnames) {
+                    surnamesArray.put(surnames);
+                }
+
+
+                object.put(GROUP_ENTRY_USERS, usersArray);
+                object.put(GROUP_ENTRY_NICKNAMES, surnamesArray);
+                object.put(GROUP_ENTRY_ROLES, new JSONArray());
+                object.put(GROUP_ENTRY_EVENTS, new JSONArray());
                 object.put(GROUP_ENTRY_NAME, mName);
                 object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
                 object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
                 object.getDate("");
-                object.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            setId(object.getObjectId());
-                        } else {
-                            // throw new PFException("Query failed");
-                        }
-                    }
-                });
+                try {
+                    object.save();
+                    setId(object.getObjectId());
+                } catch (ParseException e) {
+                    throw new PFException();
+                }
             }
         }
 

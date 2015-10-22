@@ -6,8 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class CreateGroup extends AppCompatActivity {
 
@@ -45,5 +49,21 @@ public class CreateGroup extends AppCompatActivity {
         // TODO : retrieve image from button
         // TODO : call intent for next activity
         // If next activity is group page, also call function to put new gorup in the databse
+
+        if(isGroupNameCorrect(groupName)){
+            PFGroup.Builder groupBuilder = new PFGroup.Builder(OpenGMApplication.getCurrentUser(), groupName, true);
+            try {
+                PFGroup newGroup = groupBuilder.build();
+                newGroup.setDescription(groupDescription);
+            } catch (PFException e) {
+                Toast.makeText(getApplicationContext(), "Problem when contacting the server", Toast.LENGTH_LONG);
+            }
+        } else {
+            ((EditText) findViewById(R.id.enterGroupName)).setError("Group name cannot be empty");
+        }
+    }
+
+    private boolean isGroupNameCorrect(String groupName){
+        return true;
     }
 }
