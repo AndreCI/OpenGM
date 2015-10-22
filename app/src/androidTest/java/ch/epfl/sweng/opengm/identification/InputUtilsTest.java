@@ -7,6 +7,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
@@ -32,6 +33,10 @@ public class InputUtilsTest {
 
     public void testDeclineEmailWithoutDomain(){
         assertTrue(!InputUtils.isEmailValid("good@mail"));
+    }
+
+    public void testDeclineBadChars(){
+        assertTrue(!InputUtils.isEmailValid("góód@maił.cóm"));
     }
 
 }
