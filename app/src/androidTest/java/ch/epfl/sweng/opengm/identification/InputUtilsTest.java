@@ -39,4 +39,7 @@ public class InputUtilsTest {
         assertTrue(!InputUtils.isEmailValid("góód@maił.cóm"));
     }
 
+    public void testAcceptGoodPassword(){
+        assertTrue(!InputUtils.isPasswordInvalid("GoodPassword1"));
+    }
 }
