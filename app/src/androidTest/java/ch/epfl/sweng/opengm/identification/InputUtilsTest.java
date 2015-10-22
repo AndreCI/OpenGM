@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.identification;
 
+import android.renderscript.ScriptGroup;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
@@ -15,6 +16,22 @@ public class InputUtilsTest {
     @Test
     public void testAcceptGoodEmail(){
         assertTrue(InputUtils.isEmailValid("good@mail.com"));
+    }
+
+    public void testDeclineEmailWithoutAddress(){
+        assertTrue(!InputUtils.isEmailValid("@mail.com"));
+    }
+
+    public void testDeclineEmailWithoutAt(){
+        assertTrue(!InputUtils.isEmailValid("goodmail.com"));
+    }
+
+    public void testDeclineEmailWithoutDot(){
+        assertTrue(!InputUtils.isEmailValid("good@mailcom"));
+    }
+
+    public void testDeclineEmailWithoutDomain(){
+        assertTrue(!InputUtils.isEmailValid("good@mail"));
     }
 
 }
