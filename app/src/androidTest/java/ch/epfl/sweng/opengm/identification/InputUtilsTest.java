@@ -63,4 +63,9 @@ public class InputUtilsTest {
     public void testDeclinePasswordNotBothCases() {
         assertTrue(InputUtils.isPasswordInvalid("goodpassword"));
     }
+
+    @Test
+    public void testDeclinePasswordOnlyNumbers(){
+        assertTrue(InputUtils.isPasswordInvalid("1337"));
+    }
 }
