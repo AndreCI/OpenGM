@@ -19,27 +19,48 @@ public class InputUtilsTest {
         assertTrue(InputUtils.isEmailValid("good@mail.com"));
     }
 
+    @Test
     public void testDeclineEmailWithoutAddress(){
         assertTrue(!InputUtils.isEmailValid("@mail.com"));
     }
 
+    @Test
     public void testDeclineEmailWithoutAt(){
         assertTrue(!InputUtils.isEmailValid("goodmail.com"));
     }
 
+    @Test
     public void testDeclineEmailWithoutDot(){
         assertTrue(!InputUtils.isEmailValid("good@mailcom"));
     }
 
+    @Test
     public void testDeclineEmailWithoutDomain(){
         assertTrue(!InputUtils.isEmailValid("good@mail"));
     }
 
+    @Test
     public void testDeclineBadChars(){
         assertTrue(!InputUtils.isEmailValid("góód@maił.cóm"));
     }
 
+    @Test
     public void testAcceptGoodPassword(){
         assertTrue(!InputUtils.isPasswordInvalid("GoodPassword1"));
+    }
+
+    @Test
+    public void testDeclineShortPassword(){
+        assertTrue(InputUtils.isPasswordInvalid("goodpa"));
+    }
+
+    @Test
+    public void testDeclinePasswordWithoutNumber() {
+        assertTrue(InputUtils.isPasswordInvalid("GoodPassword"));
+    }
+
+    @Test
+    public void testDeclinePasswordNotBothCases() {
+        assertTrue(InputUtils.isPasswordInvalid("goodpassword"));
     }
 }
