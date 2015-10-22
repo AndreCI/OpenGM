@@ -73,4 +73,8 @@
     <string name="add_member_hint">Type mail address...</string>
     <string name="add_member_text">Add new member</string>
     <string name="invite">Invite</string>
+
+    <string name="title_activity_modify_group">ModifyGroup</string>
+    <string name="modify_group_add">Add members</string>
+    <string name="modify_group_roles">Create new roles</string>
 </resources>

@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="ch.epfl.sweng.opengm.groups.ModifyGroup">
+
+    <ImageButton
+        android:id="@+id/modify_group_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/modify_group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/enterGroupNameHint"
+        android:layout_below="@+id/modify_group_image"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/modify_group_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:hint="@string/enterGroupDescriptionHint"
+        android:layout_below="@+id/modify_group_name"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/modify_group_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/modify_group_add"
+        android:layout_below="@id/modify_group_desc"/>
+
+    <Button
+        android:id="@+id/modify_group_roles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/modify_group_roles"
+        android:layout_alignTop="@id/modify_group_add"
+        android:layout_alignParentRight="true"/>
+
+    <Button
+        android:id="@+id/modify_group_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/done"
+        android:layout_below="@+id/modify_group_add"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

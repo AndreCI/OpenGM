@@ -66,6 +66,11 @@
             android:name=".events.AddRemoveParticipantsActivity"
             android:label="@string/title_activity_add_remove_participants" >
         </activity>
+        <activity
+            android:name=".groups.ModifyGroup"
+            android:exported="true"
+            android:label="@string/title_activity_modify_group" >
+        </activity>
     </application>
 
 </manifest>
