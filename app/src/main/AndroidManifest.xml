@@ -42,6 +42,10 @@
             android:label="@string/title_activity_join_group" >
         </activity>
         <activity
+            android:name=".groups.AddMember"
+            android:label="@string/title_activity_add_member" >
+        </activity>
+        <activity
             android:name=".groups.CreateGroup"
             android:label="@string/title_activity_create_group" >
         </activity>

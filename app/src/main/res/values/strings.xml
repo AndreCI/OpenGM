@@ -68,4 +68,9 @@
     <string name="EditEventButtonText">edit</string>
     <string name="EventTimeTextHint">Select a Time</string>
     <string name="okayButtonText">Ok</string>
+
+    <string name="title_activity_add_member">AddMember</string>
+    <string name="add_member_hint">Type mail address...</string>
+    <string name="add_member_text">Add new member</string>
+    <string name="invite">Invite</string>
 </resources>
