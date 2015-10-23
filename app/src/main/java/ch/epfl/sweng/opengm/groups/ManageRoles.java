@@ -158,6 +158,8 @@ public class ManageRoles extends AppCompatActivity {
         roleTextCount++;
 
         CheckBox box = new CheckBox(getApplicationContext());
+        box.setChecked(true);
+        box.setEnabled(false);
         box.setTag("roleBox" + roleBoxCount);
         roleBoxCount++;
 
