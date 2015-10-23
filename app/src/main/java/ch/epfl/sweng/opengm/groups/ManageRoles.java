@@ -25,14 +25,16 @@ import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
-public class CreateRoles extends AppCompatActivity {
+public class ManageRoles extends AppCompatActivity {
     private List<String> roles;
-    private Map<CheckBox, TableRow> buttonTableRowMap;
+    private Map<CheckBox, TableRow> boxesAndRows;
     private LinearLayout rolesAndButtons;
     private TableRow addRoleRow;
 
-    private int rowCount;
+    private int roleRowCount;
     private int roleTextCount;
+    private int roleBoxCount;
+
     private List<GroupMember> groupMembers;
     private PFGroup currentGroup;
 
@@ -41,9 +43,9 @@ public class CreateRoles extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_roles);
+        setContentView(R.layout.activity_manage_roles);
 
-        buttonTableRowMap = new Hashtable<>();
+        boxesAndRows = new Hashtable<>();
 
         /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
@@ -85,18 +87,20 @@ public class CreateRoles extends AppCompatActivity {
 
     private void fillWithRoles() {
         for(String role : roles) {
-            TextView current = getNewTextView(role);
-            current.setTag("roleName" + roleTextCount);
+            TextView currentRole = getNewTextView(role);
+            currentRole.setTag("roleName" + roleTextCount);
             roleTextCount++;
 
             CheckBox box = new CheckBox(getApplicationContext());
+            box.setTag("roleBox" + roleBoxCount);
             box.setChecked(true);
+            roleBoxCount++;
 
-            TableRow currentRow = getNewTableRow(box, current);
-            currentRow.setTag("roleRow" + rowCount);
-            rowCount++;
+            TableRow currentRow = getNewTableRow(box, currentRole);
+            currentRow.setTag("roleRow" + roleRowCount);
+            roleRowCount++;
 
-            buttonTableRowMap.put(box, currentRow);
+            boxesAndRows.put(box, currentRow);
 
             rolesAndButtons.addView(currentRow);
         }
@@ -150,12 +154,14 @@ public class CreateRoles extends AppCompatActivity {
         roleTextCount++;
 
         CheckBox box = new CheckBox(getApplicationContext());
+        box.setTag("roleBox" + roleBoxCount);
+        roleBoxCount++;
 
         Button newButton = getNewButton("-");
 
         final TableRow newRow = getNewTableRow(box, newRoleText);
-        newRow.setTag("roleRow" + rowCount);
-        rowCount++;
+        newRow.setTag("roleRow" + roleRowCount);
+        roleRowCount++;
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +171,7 @@ public class CreateRoles extends AppCompatActivity {
         newRow.addView(newButton);
         newButton.setLayoutParams(getParamsForTableColumn());
 
-        buttonTableRowMap.put(box, newRow);
+        boxesAndRows.put(box, newRow);
 
         rolesAndButtons.addView(newRow);
         rolesAndButtons.removeView(editRow);
@@ -183,8 +189,9 @@ public class CreateRoles extends AppCompatActivity {
 
     public void removeRole(TableRow roleRow){
         rolesAndButtons.removeView(roleRow);
-        rowCount--;
+        roleRowCount--;
         roleTextCount--;
+        roleBoxCount--;
     }
 
     private TableRow getNewTableRow(View elem1, View elem2){
@@ -212,7 +219,7 @@ public class CreateRoles extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_roles, menu);
+        getMenuInflater().inflate(R.menu.menu_manage_roles, menu);
         return true;
     }
 
@@ -231,13 +238,13 @@ public class CreateRoles extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void doneButton(View view){
-        for(CheckBox box : buttonTableRowMap.keySet()){
+    public void doneManageRoles(View view){
+        for(CheckBox box : boxesAndRows.keySet()){
             for(GroupMember member : groupMembers){
                 if(box.isChecked()){
-                    currentGroup.addRoleToUser(((TextView) buttonTableRowMap.get(box).getChildAt(1)).getText().toString(), member.getId());
+                    currentGroup.addRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
                 } else {
-                    currentGroup.removeRoleToUser(((TextView) buttonTableRowMap.get(box).getChildAt(1)).getText().toString(), member.getId());
+                    currentGroup.removeRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
                 }
             }
         }

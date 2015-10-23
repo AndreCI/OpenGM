@@ -5,7 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.LinearLayout;
 
-import ch.epfl.sweng.opengm.groups.CreateRoles;
+import ch.epfl.sweng.opengm.groups.ManageRoles;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -18,12 +18,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class CreateRolesActivityTest extends ActivityInstrumentationTestCase2<CreateRoles>{
+public class CreateRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRoles>{
     LinearLayout rolesAndButtons;
     Activity createRolesActivity;
 
     public CreateRolesActivityTest() {
-        super(CreateRoles.class);
+        super(ManageRoles.class);
     }
 
     @Override

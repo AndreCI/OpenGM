@@ -41,7 +41,7 @@
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
 
-    <string name="title_activity_create_roles">Create Roles</string>
+    <string name="title_activity_manage_roles">Manage Roles</string>
 
     <string name="done">Done</string>
     <string name="title_activity_join_group">Join Group</string>

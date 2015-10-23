@@ -34,9 +34,9 @@
             android:theme="@style/FullscreenTheme" >
         </activity>
         <activity
-            android:name=".groups.CreateRoles"
+            android:name=".groups.ManageRoles"
             android:exported="true"
-            android:label="@string/title_activity_create_roles" >
+            android:label="@string/title_activity_manage_roles" >
         </activity>
         <activity
             android:name=".groups.JoinGroup"
