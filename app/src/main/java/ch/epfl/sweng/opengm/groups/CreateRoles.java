@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -12,13 +13,19 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFUser;
+import ch.epfl.sweng.opengm.utils.Alert;
 
 public class CreateRoles extends AppCompatActivity {
     private List<String> roles;
@@ -29,6 +36,8 @@ public class CreateRoles extends AppCompatActivity {
     private int roleTextCount;
     private int roleButtonCount;
 
+    public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.creategroup.grouplist";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +47,27 @@ public class CreateRoles extends AppCompatActivity {
 
         /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
-        String[] rolesArray = {"Administrator", "Moderator", "User"};
-        roles = Arrays.asList(rolesArray);
+        // Hardcoding to make this application properly testable
+        PFUser.Builder userBuilder = new PFUser.Builder("oqMblls8Cb");
+        PFUser user = null;
+        try {
+            user = userBuilder.build();
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        //
+
+        roles = new ArrayList<>();
+        Intent intent = getIntent();
+        //Uncomment this when testing with real app
+        //int groupId = intent.getIntExtra(GROUP_LIST_KEY, -1);
+        int groupId = 0;
+        if(groupId != -1){
+            roles = user.getGroups().get(groupId).getRoles();
+        } else {
+            Alert.displayAlert("No current group");
+        }
+
 
         rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
         fillWithRoles();

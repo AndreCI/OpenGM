@@ -35,6 +35,7 @@
         </activity>
         <activity
             android:name=".groups.CreateRoles"
+            android:exported="true"
             android:label="@string/title_activity_create_roles" >
         </activity>
         <activity
