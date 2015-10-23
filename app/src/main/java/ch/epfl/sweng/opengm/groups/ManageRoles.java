@@ -22,9 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.GroupMember;
+import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class ManageRoles extends AppCompatActivity {
@@ -37,7 +38,7 @@ public class ManageRoles extends AppCompatActivity {
     private int roleTextCount;
     private int roleBoxCount;
 
-    private List<GroupMember> groupMembers;
+    private List<PFMember> groupMembers;
     private PFGroup currentGroup;
 
     //public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.createroles.grouplist";
@@ -52,23 +53,21 @@ public class ManageRoles extends AppCompatActivity {
         /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
         // Hardcoding to make this application properly testable -----------------------------------
-        PFUser.Builder userBuilder = new PFUser.Builder("oqMblls8Cb");
         PFUser user = null;
-
         try {
-            user = userBuilder.build();
+            user = PFUser.fetchExistingUser("oqMblls8Cb");
         } catch (PFException e) {
             e.printStackTrace();
         }
         try {
-            currentGroup = (new PFGroup.Builder(user, "s1WDchkWn6", false)).build();
+            currentGroup = PFGroup.fetchExistingGroup("s1WDchkWn6");
         } catch (PFException e) {
             e.printStackTrace();
         }
         //Receive this from intent
         groupMembers = new ArrayList<>();
         try {
-            groupMembers.add((new GroupMember.Builder("oqMblls8Cb")).build());
+            groupMembers.add(PFMember.fetchExistingMember("oqMblls8Cb"));
         } catch (PFException e) {
             e.printStackTrace();
         }
@@ -250,7 +249,7 @@ public class ManageRoles extends AppCompatActivity {
 
     public void doneManageRoles(View view){
         for(CheckBox box : boxesAndRows.keySet()){
-            for(GroupMember member : groupMembers){
+            for(PFMember member : groupMembers){
                 if(box.isChecked()){
                     currentGroup.addRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
                 } else {

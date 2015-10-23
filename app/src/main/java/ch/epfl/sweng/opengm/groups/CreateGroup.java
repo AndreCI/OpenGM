@@ -51,13 +51,7 @@ public class CreateGroup extends AppCompatActivity {
         // If next activity is group page, also call function to put new gorup in the databse
 
         if(isGroupNameCorrect(groupName)){
-            PFGroup.Builder groupBuilder = new PFGroup.Builder(OpenGMApplication.getCurrentUser(), groupName, true);
-            try {
-                PFGroup newGroup = groupBuilder.build();
-                newGroup.setDescription(groupDescription);
-            } catch (PFException e) {
-                Toast.makeText(getApplicationContext(), "Problem when contacting the server", Toast.LENGTH_LONG);
-            }
+            
         } else {
             ((EditText) findViewById(R.id.enterGroupName)).setError("Group name cannot be empty");
         }
