@@ -28,6 +28,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
@@ -44,6 +45,7 @@ public final class PFUser extends PFEntity {
 
     private final List<PFGroup> mGroups;
 
+    private String mEmail;
     private String mUsername;
     private String mFirstName;
     private String mLastName;
@@ -51,7 +53,7 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    private PFUser(String userId, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
+    private PFUser(String userId, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(userId, PARSE_TABLE_USER);
         checkArguments(username, "User name");
         this.mUsername = username;
@@ -133,6 +135,15 @@ public final class PFUser extends PFEntity {
     }
 
     /**
+     * Getter for the email of the user
+     *
+     * @return the email of the user
+     */
+    public String getEmail() {
+        return mEmail;
+    }
+
+    /**
      * Getter for the username of the user
      *
      * @return the username of the user
@@ -140,6 +151,7 @@ public final class PFUser extends PFEntity {
     public String getUsername() {
         return mUsername;
     }
+
 
     /**
      * Getter for the first name of the user
@@ -394,11 +406,20 @@ public final class PFUser extends PFEntity {
                 String lastName = object.getString(USER_ENTRY_LASTNAME);
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
+
+                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+
+                ParseObject mailObject = query.getFirst();
+
+                String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
+
+
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new PFUser(id, username, firstName, lastName, phoneNumber, description, picture[0], groups);
+                return new PFUser(id, email, username, firstName, lastName, phoneNumber, description, picture[0], groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -417,7 +438,7 @@ public final class PFUser extends PFEntity {
      * @return The new user that contains all the given parameters
      * @throws PFException If something wrong happened with the server
      */
-    public static PFUser createNewUser(String id, String username, String firstName, String lastName) throws PFException {
+    public static PFUser createNewUser(String id, String email, String username, String firstName, String lastName) throws PFException {
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);
         parseObject.put(USER_ENTRY_USERNAME, username);
@@ -428,7 +449,7 @@ public final class PFUser extends PFEntity {
         parseObject.put(USER_ENTRY_ABOUT, "");
         try {
             parseObject.save();
-            return new PFUser(id, username, firstName, lastName, "", "", null, new ArrayList<String>());
+            return new PFUser(id, email, username, firstName, lastName, "", "", null, new ArrayList<String>());
         } catch (ParseException e) {
             throw new PFException();
         }
