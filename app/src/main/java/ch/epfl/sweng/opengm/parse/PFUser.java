@@ -11,6 +11,7 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -375,128 +376,32 @@ public final class PFUser extends PFEntity {
         return false;
     }
 
-    public static final class Builder extends PFEntity.Builder implements PFImageInterface {
 
-        private String mUsername;
-        private String mFirstName;
-        private String mLastName;
-        private String mPhoneNumber;
-        private String mAboutUser;
-        private Bitmap mPicture;
-        private final List<String> mGroups;
-
-        /**
-         * The only constructor for building a user
-         *
-         * @param id The id of the user we would like to retrieve information
-         */
-        public Builder(String id) {
-            super(id);
-            this.mGroups = new ArrayList<>();
+    public static PFUser fetchExistingUser(String id) throws PFException {
+        if (id == null) {
+            throw new PFException();
         }
-
-        /**
-         * Setter for the username of the user we are building
-         *
-         * @param username The new username of the current user
-         */
-        private void setUsername(String username) {
-            this.mUsername = username;
-        }
-
-        /**
-         * Setter for the first name of the user we are building
-         *
-         * @param firstName The new first name of the current user
-         */
-        private void setFirstName(String firstName) {
-            this.mFirstName = firstName;
-        }
-
-        /**
-         * Setter for the last name of the user we are building
-         *
-         * @param lastName The new last name of the current user
-         */
-        private void setLastName(String lastName) {
-            this.mLastName = lastName;
-        }
-
-        /**
-         * Setter for the phone number of the user we are building
-         *
-         * @param phoneNumber The new phone number of the current user
-         */
-        private void setPhoneNumber(String phoneNumber) {
-            this.mPhoneNumber = phoneNumber;
-        }
-
-        /**
-         * Setter for the description of the user we are building
-         *
-         * @param about The new description of the current user
-         */
-        private void setAbout(String about) {
-            this.mAboutUser = about;
-        }
-
-        /**
-         * Setter for the profile picture of the user we are building
-         *
-         * @param image The new picture of the current user
-         */
-        public void setImage(Bitmap image) {
-            this.mPicture = image;
-        }
-
-        /**
-         * Add the user we are building to a group given its id
-         *
-         * @param group The id of the group whose user wil be added
-         */
-        private void addToAGroup(String group) {
-            mGroups.add(group);
-        }
-
-        @Override
-        protected void retrieveFromServer() throws PFException {
-            if (mId == null) {
-                throw new PFException();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+        try {
+            ParseObject object = query.getFirst();
+            if (object != null) {
+                String username = object.getString(USER_ENTRY_USERNAME);
+                String firstName = object.getString(USER_ENTRY_FIRSTNAME);
+                String lastName = object.getString(USER_ENTRY_LASTNAME);
+                String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
+                String description = object.getString(USER_ENTRY_ABOUT);
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
+                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+                return new PFUser(id, username, firstName, lastName, phoneNumber, description, picture[0], groups);
+            } else {
+                throw new PFException("Parse query for id " + id + " failed");
             }
-            final String userId = mId;
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-            query.whereEqualTo(PFConstants.USER_ENTRY_USERID, userId);
-            try {
-                ParseObject object = query.getFirst();
-                if (object != null) {
-                    setUsername(object.getString(USER_ENTRY_USERNAME));
-                    setFirstName(object.getString(USER_ENTRY_FIRSTNAME));
-                    setLastName(object.getString(USER_ENTRY_LASTNAME));
-                    setPhoneNumber(object.getString(USER_ENTRY_PHONENUMBER));
-                    setAbout(object.getString(USER_ENTRY_ABOUT));
-                    retrieveFileFromServer(object, USER_ENTRY_PICTURE, this);
-                    String[] groups = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
-                    for (String groupId : groups) {
-                        addToAGroup(objectToString(groupId));
-                    }
-                } else {
-                    throw new PFException("Parse query for id " + userId + " failed");
-                }
-            } catch (ParseException e) {
-                throw new PFException("Parse query for id " + userId + " failed");
-            }
+        } catch (ParseException e) {
+            throw new PFException("Parse query for id " + id + " failed");
         }
-
-        /**
-         * Builds a new User with all its attributes.
-         *
-         * @return a new user corresponding to the object we were building
-         * @throws PFException If something went wrong while retrieving information online
-         */
-        public PFUser build() throws PFException {
-            retrieveFromServer();
-            return new PFUser(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mAboutUser, mPicture, mGroups);
-        }
-
     }
+
 }
