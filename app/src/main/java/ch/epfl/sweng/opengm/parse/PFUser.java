@@ -198,19 +198,14 @@ public final class PFUser extends PFEntity {
      *
      * @param groupId The id of the group whose user wil be added
      */
-    public void addToAGroup(String groupId) {
-        if (belongToGroup(groupId)) {
+    public void addToAGroup(PFGroup group) {
+        if (belongToGroup(group.getId())) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
+            group.addUser(getId());
+            mGroups.add(group);
             try {
-                PFGroup group = new PFGroup.Builder(this, groupId, false).build();
-                group.addUser(getId());
-                mGroups.add(group);
-                try {
-                    updateToServer(USER_ENTRY_GROUPS);
-                } catch (PFException e) {
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                }
+                updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
