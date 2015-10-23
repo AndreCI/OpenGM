@@ -141,7 +141,11 @@ public class ManageRoles extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String roleName = newRoleEdit.getText().toString();
-                addRole(roleName, newRoleRow);
+                if(roleName.length() == 0){
+                    newRoleEdit.setError("Role name shouldn't be empty");
+                } else {
+                    addRole(roleName, newRoleRow);
+                }
             }
         });
 
