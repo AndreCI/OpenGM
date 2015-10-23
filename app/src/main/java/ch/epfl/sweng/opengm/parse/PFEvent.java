@@ -22,7 +22,7 @@ public final class PFEvent extends PFEntity {
     private String mDate;  // Gregorian Calendar Date ???
     private String mPlace;
 //    private Bitmap mPicture;
-    private List<GroupMember> mParticipants;
+    private List<PFMember> mParticipants;
 
     public PFEvent() {
         super(null, null);

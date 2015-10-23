@@ -32,7 +32,7 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
  * but we do not download its list of groups (otherwise we may end up with downloading all the groups)
  * just keep it so we may still be able to add it to the group or remove it.
  */
-public final class GroupMember extends PFEntity {
+public final class PFMember extends PFEntity {
 
     private final List<String> mRoles;
 
@@ -49,7 +49,7 @@ public final class GroupMember extends PFEntity {
 
     private String mNickname;
 
-    private GroupMember(String id, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
+    private PFMember(String id, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
         super(id, USER_TABLE_NAME);
         this.mUsername = username;
         this.mFirstName = firstName;
@@ -186,6 +186,23 @@ public final class GroupMember extends PFEntity {
     }
 
     /**
+     * Setter to add the member to a new group
+     *
+     * @param groupId the id of the group that the member will belong to
+     */
+    public void addToGroup(String groupId) {
+        if (!mGroups.contains(groupId)) {
+            mGroups.add(groupId);
+            try {
+                updateToServer("");
+            } catch (PFException e) {
+                mGroups.remove(groupId);
+                // TODO : what to do?
+            }
+        }
+    }
+
+    /**
      * Setter to remove the member to a new group
      *
      * @param groupId the id of the group that the member will be deleted from
@@ -229,7 +246,7 @@ public final class GroupMember extends PFEntity {
     }
 
 
-    public static GroupMember fetchExistingMember(String id, String nickName, String[] roles) throws PFException {
+    public static PFMember fetchExistingMember(String id, String nickName, String[] roles) throws PFException {
         if (id == null) {
             throw new PFException();
         }
@@ -255,7 +272,7 @@ public final class GroupMember extends PFEntity {
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new GroupMember(id, username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
+                return new PFMember(id, username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -271,7 +288,7 @@ public final class GroupMember extends PFEntity {
      * @return The user that corresponds to the given id
      * @throws PFException If something wrong happened with the server
      */
-    public static GroupMember fetchExistingMember(String id) throws PFException {
+    public static PFMember fetchExistingMember(String id) throws PFException {
         return fetchExistingMember(id, null, new String[0]);
     }
 

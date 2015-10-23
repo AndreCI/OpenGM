@@ -32,15 +32,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
@@ -55,7 +46,7 @@ public final class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final HashMap<String, GroupMember> mMembers;
+    private final HashMap<String, PFMember> mMembers;
     private final List<PFEvent> mEvents;
 
     private String mName;
@@ -78,8 +69,7 @@ public final class PFGroup extends PFEntity {
                 String userId = users.get(i);
                 String nickname = surnames.get(i);
                 String[] role = roles.get(i);
-                GroupMember member = new GroupMember.Builder(userId, nickname, role).build();
-                mMembers.put(userId, member);
+                mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
             } catch (PFException e) {
                 // TODO : what to do?
             }
@@ -109,7 +99,7 @@ public final class PFGroup extends PFEntity {
                                 JSONArray usersArray = new JSONArray();
                                 JSONArray surnamesArray = new JSONArray();
                                 JSONArray rolesArray = new JSONArray();
-                                for (GroupMember member : mMembers.values()) {
+                                for (PFMember member : mMembers.values()) {
                                     usersArray.put(member.getId());
                                     surnamesArray.put(member.getNickname());
                                     List<String> roles = member.getRoles();
@@ -175,7 +165,7 @@ public final class PFGroup extends PFEntity {
      *
      * @return A list of members in the group
      */
-    public List<GroupMember> getMembers() {
+    public List<PFMember> getMembers() {
         return new ArrayList<>(mMembers.values());
     }
 
@@ -186,7 +176,7 @@ public final class PFGroup extends PFEntity {
      * not belong to the group
      */
     public String getNicknameForUser(String userId) {
-        GroupMember member = mMembers.get(userId);
+        PFMember member = mMembers.get(userId);
         if (member != null) {
             return member.getNickname();
         }
@@ -200,7 +190,7 @@ public final class PFGroup extends PFEntity {
      * not belong to the group
      */
     public List<String> getRolesForUser(String userId) {
-        GroupMember member = mMembers.get(userId);
+        PFMember member = mMembers.get(userId);
         if (member != null) {
             return member.getRoles();
         }
@@ -214,7 +204,7 @@ public final class PFGroup extends PFEntity {
      */
     public List<String> getRoles() {
         Set<String> roles = new HashSet<>();
-        for (GroupMember member : mMembers.values()) {
+        for (PFMember member : mMembers.values()) {
             roles.addAll(member.getRoles());
         }
         return new ArrayList<>(roles);
@@ -231,7 +221,7 @@ public final class PFGroup extends PFEntity {
             Alert.displayAlert("User already belongs to this group.");
         } else {
             try {
-                GroupMember member = new GroupMember.Builder(userId).build();
+                PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
                 mMembers.put(userId, member);
                 updateToServer(GROUP_ENTRY_USERS);
@@ -252,7 +242,7 @@ public final class PFGroup extends PFEntity {
         if (!mMembers.containsKey(userId)) {
             Alert.displayAlert("User does not belong to this group.");
         } else {
-            GroupMember oldMember = mMembers.remove(userId);
+            PFMember oldMember = mMembers.remove(userId);
             oldMember.removeFromGroup(getId());
             try {
                 updateToServer(GROUP_ENTRY_USERS);
@@ -274,7 +264,7 @@ public final class PFGroup extends PFEntity {
             if (!mMembers.containsKey(memberId)) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
-                GroupMember member = mMembers.get(memberId);
+                PFMember member = mMembers.get(memberId);
                 member.addRole(role);
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
@@ -297,7 +287,7 @@ public final class PFGroup extends PFEntity {
             if (!mMembers.containsKey(memberId)) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
-                GroupMember member = mMembers.get(memberId);
+                PFMember member = mMembers.get(memberId);
                 member.removeRole(role);
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
@@ -320,7 +310,7 @@ public final class PFGroup extends PFEntity {
             if (!mMembers.containsKey(memberId)) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
-                GroupMember member = mMembers.get(memberId);
+                PFMember member = mMembers.get(memberId);
                 String oldSurname = member.getNickname();
                 member.setNickname(nickname);
                 try {
