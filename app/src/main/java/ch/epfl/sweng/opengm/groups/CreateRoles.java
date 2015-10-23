@@ -39,7 +39,7 @@ public class CreateRoles extends AppCompatActivity {
     private List<GroupMember> groupMembers;
     private PFGroup currentGroup;
 
-    public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.creategroup.grouplist";
+    public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.createroles.grouplist";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +97,7 @@ public class CreateRoles extends AppCompatActivity {
             roleTextCount++;
 
             CheckBox box = new CheckBox(getApplicationContext());
+            box.setChecked(true);
             roleCheckBoxCount++;
 
             TableRow currentRow = getNewTableRow(box, current);
@@ -165,9 +166,6 @@ public class CreateRoles extends AppCompatActivity {
 
         buttonTableRowMap.put(box, newRow);
 
-        // TODO: Add role to database
-
-        // TODO: Exit keyboard if currently typing.
         rolesAndButtons.addView(newRow);
         rolesAndButtons.removeView(editRow);
         addNewRoleRow();
@@ -204,14 +202,6 @@ public class CreateRoles extends AppCompatActivity {
         return newButton;
     }
 
-    private void removeRole(Button button){
-        rolesAndButtons.removeView(buttonTableRowMap.get(button));
-        rowCount--;
-        roleCheckBoxCount--;
-        roleTextCount--;
-        // TODO: Remove role from the database
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -236,9 +226,11 @@ public class CreateRoles extends AppCompatActivity {
 
     public void doneButton(View view){
         for(CheckBox box : buttonTableRowMap.keySet()){
-            if(box.isChecked()){
-                for(GroupMember member : groupMembers){
+            for(GroupMember member : groupMembers){
+                if(box.isChecked()){
                     currentGroup.addRoleToUser(((TextView) buttonTableRowMap.get(box).getChildAt(1)).getText().toString(), member.getId());
+                } else {
+                    currentGroup.removeRoleToUser(((TextView) buttonTableRowMap.get(box).getChildAt(1)).getText().toString(), member.getId());
                 }
             }
         }
