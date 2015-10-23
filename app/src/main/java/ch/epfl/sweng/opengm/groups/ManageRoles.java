@@ -1,12 +1,14 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -144,6 +146,8 @@ public class ManageRoles extends AppCompatActivity {
                 if(roleName.length() == 0){
                     newRoleEdit.setError("Role name shouldn't be empty");
                 } else {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(newRoleEdit.getWindowToken(), 0);
                     addRole(roleName, newRoleRow);
                 }
             }
