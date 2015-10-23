@@ -31,7 +31,7 @@ public class OpenGMApplication extends Application {
     public static PFUser setCurrentUser(ParseUser id) {
         if (currentUser == null && id != null) {
             try {
-                currentUser = PFUser.fetchExistingUser(id);
+                currentUser = PFUser.fetchExistingUser(id.getObjectId());
             } catch (PFException e) {
                 // TODO : what to do?
             }
