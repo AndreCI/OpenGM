@@ -9,7 +9,6 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +22,9 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
+import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 /**
@@ -30,9 +32,8 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
  * but we do not download its list of groups (otherwise we may end up with downloading all the groups)
  * just keep it so we may still be able to add it to the group or remove it.
  */
-public final class GroupMember {
+public final class GroupMember extends PFEntity {
 
-    private final String mId;
     private final List<String> mRoles;
 
     // Only needed when you add or remove someone from a group
@@ -41,18 +42,20 @@ public final class GroupMember {
     private final String mUsername;
     private final String mFirstName;
     private final String mLastName;
+    private final String mEmail;
     private final String mPhoneNumber;
     private final String mAboutUser;
     private final Bitmap mPicture;
 
     private String mNickname;
 
-    public GroupMember(String id, String username, String firstname, String lastname, String surname, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
-        this.mId = id;
+    private GroupMember(String id, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
+        super(id, USER_TABLE_NAME);
         this.mUsername = username;
-        this.mFirstName = firstname;
-        this.mLastName = lastname;
-        this.mNickname = surname;
+        this.mFirstName = firstName;
+        this.mLastName = lastName;
+        this.mNickname = nickname;
+        this.mEmail = email;
         this.mPhoneNumber = phoneNumber;
         this.mAboutUser = about;
         this.mPicture = bitmap;
@@ -60,13 +63,36 @@ public final class GroupMember {
         this.mGroups = new ArrayList<>(groups);
     }
 
-    /**
-     * Getter for the id of the member
-     *
-     * @return the id associated with this member
-     */
-    public String getId() {
-        return mId;
+    @Override
+    protected void updateToServer(String entry) throws PFException {
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(USER_TABLE_NAME);
+        query.getInBackground(getId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    if (object != null) {
+                        JSONArray array = new JSONArray();
+                        for (String groupId : mGroups) {
+                            array.put(groupId);
+                        }
+                        object.put(USER_ENTRY_GROUPS, array);
+                        object.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null) {
+                                    // throw new ParseException("No object for the selected id.");
+                                }
+                            }
+                        });
+                    } else {
+                        // throw new ParseException("No object for the selected id.");
+                    }
+                } else {
+                    // throw new ParseException("Error while sending the request to the server");
+                }
+            }
+        });
+
     }
 
     /**
@@ -103,6 +129,15 @@ public final class GroupMember {
      */
     public String getLastname() {
         return mLastName;
+    }
+
+    /**
+     * Getter for the email of the member
+     *
+     * @return the email associated with this member
+     */
+    public String getEmail() {
+        return mEmail;
     }
 
     /**
@@ -151,23 +186,6 @@ public final class GroupMember {
     }
 
     /**
-     * Setter to add the member to a new group
-     *
-     * @param groupId the id of the group that the member will belong to
-     */
-    public void addToGroup(String groupId) {
-        if (!mGroups.contains(groupId)) {
-            mGroups.add(groupId);
-            try {
-                updateToServer();
-            } catch (PFException e) {
-                mGroups.remove(groupId);
-                // TODO : what to do?
-            }
-        }
-    }
-
-    /**
      * Setter to remove the member to a new group
      *
      * @param groupId the id of the group that the member will be deleted from
@@ -176,7 +194,7 @@ public final class GroupMember {
         if (mGroups.contains(groupId)) {
             mGroups.remove(groupId);
             try {
-                updateToServer();
+                updateToServer("");
             } catch (PFException e) {
                 mGroups.add(groupId);
                 // TODO : what to do?
@@ -210,194 +228,51 @@ public final class GroupMember {
         }
     }
 
-    /**
-     * Private method that will update the member on the server : can only updated the list of groups
-     * ths user belong to (eg. if you are a moderator of a group and you want to delete a member you
-     * just need to update this entry not the other ones)
-     */
-    private void updateToServer() throws PFException {
+
+    public static GroupMember fetchExistingMember(String id, String nickName, String[] roles) throws PFException {
+        if (id == null) {
+            throw new PFException();
+        }
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query.getInBackground(getId(), new GetCallback<ParseObject>() {
-            public void done(ParseObject object, ParseException e) {
-                if (e == null) {
-                    if (object != null) {
-                        JSONArray array = new JSONArray();
-                        for (String groupId : mGroups) {
-                            array.put(groupId);
-                        }
-                        object.put(USER_ENTRY_GROUPS, array);
-                        object.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    // throw new ParseException("No object for the selected id.");
-                                }
-                            }
-                        });
-                    } else {
-                        // throw new ParseException("No object for the selected id.");
-                    }
-                } else {
-                    // throw new ParseException("Error while sending the request to the server");
-                }
-            }
-        });
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+        try {
+            ParseObject object = query.getFirst();
+            if (object != null) {
+                String username = object.getString(USER_ENTRY_USERNAME);
+                String firstName = object.getString(USER_ENTRY_FIRSTNAME);
+                String lastName = object.getString(USER_ENTRY_LASTNAME);
+                String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
+                String description = object.getString(USER_ENTRY_ABOUT);
 
+                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+
+                ParseObject mailObject = query.getFirst();
+
+                String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
+
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
+                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+                return new GroupMember(id, username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
+            } else {
+                throw new PFException("Parse query for id " + id + " failed");
+            }
+        } catch (ParseException e) {
+            throw new PFException("Parse query for id " + id + " failed");
+        }
     }
 
-    public static final class Builder implements PFImageInterface {
-
-        private final String mId;
-        private final List<String> mRoles;
-        private final List<String> mGroups;
-
-        private String mUsername;
-        private String mFirstName;
-        private String mLastName;
-        private String mNickname;
-        private String mPhoneNumber;
-        private String mAboutUser;
-        private Bitmap mPicture;
-
-        /**
-         * The constructor for a new member that does not have any
-         * nickname or role (default are respectively the username and an empty array)
-         *
-         * @param id the id of the member that we will retrieve information from
-         */
-        public Builder(String id) {
-            this(id, "", new String[0]);
-        }
-
-        /**
-         * The complete constructor of a GroupMember.Builder
-         *
-         * @param id       the id of the member that we will retrieve information from
-         * @param nickname the nickname that will be associated to this member
-         * @param roles    the roles that are attributed ot this user
-         */
-        public Builder(String id, String nickname, String[] roles) {
-            this.mId = id;
-            this.mNickname = nickname;
-            this.mRoles = new ArrayList<>(Arrays.asList(roles));
-            this.mGroups = new ArrayList<>();
-        }
-
-        /**
-         * Setter for the username of the member we are building
-         *
-         * @param username the new username of this member
-         */
-        private void setUsername(String username) {
-            this.mUsername = username;
-        }
-
-        /**
-         * Setter for the first name of the member we are building
-         *
-         * @param firstName the new first name of this member
-         */
-        private void setFirstName(String firstName) {
-            this.mFirstName = firstName;
-        }
-
-        /**
-         * Setter for the last name of the member we are building
-         *
-         * @param lastName the new last name of this member
-         */
-        private void setLastName(String lastName) {
-            this.mLastName = lastName;
-        }
-
-        /**
-         * Setter for the phone number of the member we are building
-         *
-         * @param phoneNumber the new phone number of this member
-         */
-        private void setPhoneNumber(String phoneNumber) {
-            this.mPhoneNumber = phoneNumber;
-        }
-
-        /**
-         * Setter for the description of the member we are building
-         *
-         * @param about the new description of this member
-         */
-        private void setAbout(String about) {
-            this.mAboutUser = about;
-        }
-
-        /**
-         * Setter for the profile picture of the member we are building
-         *
-         * @param picture the new profile picture of this member
-         */
-        public void setImage(Bitmap picture) {
-            this.mPicture = picture;
-        }
-
-        /**
-         * Setter for the list of groups this member belongs to
-         *
-         * @param groupsArray A Json array containing the ids of the groups this member belongs to.
-         * @throws PFException If something when wrong while getting informations from the json array or
-         *                     if the type of the information is not correct
-         */
-        private void setGroups(JSONArray groupsArray) throws PFException {
-            if (groupsArray != null) {
-                for (int i = 0; i < groupsArray.length(); i++) {
-                    try {
-                        mGroups.add((String) groupsArray.get(i));
-                    } catch (JSONException | ClassCastException e) {
-                        throw new PFException();
-                    }
-                }
-            }
-        }
-
-        /**
-         * A method that retrieves all the informations associated to this member with an id.
-         *
-         * @throws PFException If something went wrong while communicating with the server,
-         */
-        protected void retrieveFromServer() throws PFException {
-            if (mId == null) {
-                throw new PFException();
-            }
-            final String userId = mId;
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-            query.whereEqualTo(PFConstants.USER_ENTRY_USERID, userId);
-            try {
-                ParseObject object = query.getFirst();
-                if (object != null) {
-                    setUsername(object.getString(USER_ENTRY_USERNAME));
-                    setFirstName(object.getString(USER_ENTRY_FIRSTNAME));
-                    setLastName(object.getString(USER_ENTRY_LASTNAME));
-                    setPhoneNumber(object.getString(USER_ENTRY_PHONENUMBER));
-                    setAbout(object.getString(USER_ENTRY_ABOUT));
-                    setGroups(object.getJSONArray(USER_ENTRY_GROUPS));
-                    retrieveFileFromServer(object, USER_ENTRY_PICTURE, this);
-                } else {
-                    throw new PFException("Parse query for id " + userId + " failed");
-                }
-            } catch (ParseException e) {
-                throw new PFException("Parse query for id " + userId + " failed");
-            }
-        }
-
-        /**
-         * Builds a new Group member with all its attributes.
-         *
-         * @return a new GroupMember corresponding to the object we were building
-         * @throws PFException If something went wrong while retrieving information online
-         */
-        public GroupMember build() throws PFException {
-            retrieveFromServer();
-            if (mNickname == null || mNickname.isEmpty()) {
-                mNickname = mUsername;
-            }
-            return new GroupMember(mId, mUsername, mFirstName, mLastName, mNickname, mPhoneNumber, mAboutUser, mPicture, mRoles, mGroups);
-        }
+    /**
+     * Fetches an existing user from the server and returns the object as a PFUser
+     *
+     * @param id The id of the user we are looking for
+     * @return The user that corresponds to the given id
+     * @throws PFException If something wrong happened with the server
+     */
+    public static GroupMember fetchExistingMember(String id) throws PFException {
+        return fetchExistingMember(id, null, new String[0]);
     }
+
 }
