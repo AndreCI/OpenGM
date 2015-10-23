@@ -373,7 +373,13 @@ public final class PFUser extends PFEntity {
         return false;
     }
 
-
+    /**
+     * Fetches an existing user from the server and returns the object as a PFUser
+     *
+     * @param id The id of the user we are looking for
+     * @return The user that corresponds to the given id
+     * @throws PFException If something wrong happened with the server
+     */
     public static PFUser fetchExistingUser(String id) throws PFException {
         if (id == null) {
             throw new PFException();
@@ -401,6 +407,16 @@ public final class PFUser extends PFEntity {
         }
     }
 
+    /**
+     * Create a new user in the User table (should only be used after sign up)
+     *
+     * @param id        The given id of our user
+     * @param username  The username of the user
+     * @param firstName The first name of the user
+     * @param lastName  The last name of the user
+     * @return The new user that contains all the given parameters
+     * @throws PFException If something wrong happened with the server
+     */
     public static PFUser createNewUser(String id, String username, String firstName, String lastName) throws PFException {
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);

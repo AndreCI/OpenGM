@@ -44,11 +44,11 @@ public final class PFUtils {
     }
 
     /**
-     * Downloads in background the image of a Parse object and stores them in an object
-     * that implements PFImageInterface
+     * Downloads in background the image of a Parse object and stores it at the first index of the array given in parameter
      *
-     * @param object  A Parse object which contains the image we want to get
-     * @param entry   A string whose value is the entry which contains the image in our table
+     * @param object A Parse object which contains the image we want to get
+     * @param entry  A string whose value is the entry which contains the image in our table
+     * @param image  An array of image with only one case
      */
     public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap[] image) {
         if (image.length != 1) {

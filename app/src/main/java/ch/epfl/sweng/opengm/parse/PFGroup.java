@@ -405,6 +405,13 @@ public final class PFGroup extends PFEntity {
         }
     }
 
+    /**
+     * Fetches an existing group from the server and returns the object as a PFGroup
+     *
+     * @param id The id of the group we are looking for
+     * @return The group that corresponds to the given id
+     * @throws PFException If something wrong happened with the server
+     */
     public static PFGroup fetchExistingGroup(String id) throws PFException {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
         query.whereEqualTo(OBJECT_ID, id);
@@ -450,7 +457,16 @@ public final class PFGroup extends PFEntity {
         }
     }
 
-
+    /**
+     * Create a new Group in the Group table
+     *
+     * @param user        The user who is creating the group (automatically added)
+     * @param name        The name of the group
+     * @param description The description of the group
+     * @param picture     The profile picture associated with this group
+     * @return The new group that contains all the given parameters
+     * @throws PFException If something wrong happened with the server
+     */
     public static PFGroup createNewGroup(PFUser user, String name, String description, Bitmap picture) throws PFException {
 
         JSONArray users = new JSONArray();
@@ -471,7 +487,6 @@ public final class PFGroup extends PFEntity {
         JSONArray events = new JSONArray();
 
         String about = (description == null) ? "" : description;
-
 
         ParseObject object = new ParseObject(GROUP_TABLE_NAME);
         object.put(GROUP_ENTRY_USERS, users);
