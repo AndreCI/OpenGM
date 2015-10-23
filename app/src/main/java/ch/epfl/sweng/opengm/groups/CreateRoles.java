@@ -23,6 +23,7 @@ import java.util.Map;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.GroupMember;
 import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Alert;
 
@@ -35,6 +36,8 @@ public class CreateRoles extends AppCompatActivity {
     private int rowCount;
     private int roleTextCount;
     private int roleCheckBoxCount;
+    private List<GroupMember> groupMembers;
+    private PFGroup currentGroup;
 
     public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.creategroup.grouplist";
 
@@ -47,17 +50,28 @@ public class CreateRoles extends AppCompatActivity {
 
         /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
-        // Hardcoding to make this application properly testable
+        // Hardcoding to make this application properly testable -----------------------------------
         PFUser.Builder userBuilder = new PFUser.Builder("oqMblls8Cb");
         PFUser user = null;
+
         try {
             user = userBuilder.build();
         } catch (PFException e) {
             e.printStackTrace();
         }
+        try {
+            currentGroup = (new PFGroup.Builder(user, "s1WDchkWn6", false)).build();
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
         //Receive this from intent
-        List<GroupMember> groupMembers = new ArrayList<>();
-        //
+        groupMembers = new ArrayList<>();
+        try {
+            groupMembers.add((new GroupMember.Builder("oqMblls8Cb")).build());
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        // -----------------------------------------------------------------------------------------
 
         roles = new ArrayList<>();
         Intent intent = getIntent();
@@ -218,5 +232,15 @@ public class CreateRoles extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void doneButton(View view){
+        for(CheckBox box : buttonTableRowMap.keySet()){
+            if(box.isChecked()){
+                for(GroupMember member : groupMembers){
+                    currentGroup.addRoleToUser(((TextView) buttonTableRowMap.get(box).getChildAt(1)).getText().toString(), member.getId());
+                }
+            }
+        }
     }
 }
