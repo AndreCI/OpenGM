@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.graphics.Bitmap;
+import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,8 +12,10 @@ import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.Alert;
 
 public class CreateGroup extends AppCompatActivity {
 
@@ -51,7 +55,12 @@ public class CreateGroup extends AppCompatActivity {
         // If next activity is group page, also call function to put new gorup in the databse
 
         if(isGroupNameCorrect(groupName)){
-            
+            try {
+                PFGroup newGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), groupName, groupDescription, null);
+                OpenGMApplication.getCurrentUser().addToAGroup(newGroup);
+            } catch (PFException e) {
+                Alert.displayAlert("Couldn't create the group, there were problems when contacting the server.");
+            }
         } else {
             ((EditText) findViewById(R.id.enterGroupName)).setError("Group name cannot be empty");
         }
