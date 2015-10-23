@@ -76,7 +76,7 @@ public final class PFGroup extends PFEntity {
         }
         mEvents = new ArrayList<>();
         for (String eventId : events) {
-            mEvents.add(new PFEvent.Builder(eventId).build());
+            mEvents.add(new PFEvent());
         }
         mName = name;
         mIsPrivate = isPrivate;
