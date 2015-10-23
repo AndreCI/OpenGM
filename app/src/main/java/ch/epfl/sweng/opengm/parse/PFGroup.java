@@ -32,6 +32,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
@@ -396,192 +397,49 @@ public final class PFGroup extends PFEntity {
         }
     }
 
-    public static class Builder extends PFEntity.Builder implements PFImageInterface {
+    public static PFGroup fetchExistingGroup(String id) throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
+        query.whereEqualTo(OBJECT_ID, id);
+        try {
+            ParseObject object = query.getFirst();
+            if (object != null) {
+                String name = object.getString(GROUP_ENTRY_NAME);
+                boolean privacy = object.getBoolean(GROUP_ENTRY_ISPRIVATE);
 
-        private final List<String> mUsers;
-        private final List<String> mSurnames;
-        private final List<String[]> mRoles;
-        private final List<String> mEvents;
+                String[] usersArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_USERS));
+                List<String> users = new ArrayList<>();
+                users.addAll(Arrays.asList(usersArray));
 
-        private String mName;
-        private String mDescription;
-        private boolean mIsPrivate;
-        private Bitmap mPicture;
+                String[] nicknamesArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_NICKNAMES));
+                List<String> nickNames = new ArrayList<>();
+                nickNames.addAll(Arrays.asList(nicknamesArray));
 
-        /**
-         * The only constructor for building a group
-         *
-         * @param user     The user that is building this group (in case of a new group, it is add by default)
-         * @param nameOrId The name of the group in case of a creation, the id if the group already exists
-         * @param newGroup A boolean that is true if we create the group, false if the group already exists
-         */
-        public Builder(PFUser user, String nameOrId, boolean newGroup) {
-            super(null);
-            mUsers = new ArrayList<>();
-            mSurnames = new ArrayList<>();
-            mRoles = new ArrayList<>();
-            mEvents = new ArrayList<>();
-            if (newGroup) {
-                if (nameOrId == null || nameOrId.isEmpty()) {
-                    throw new IllegalArgumentException("Group title should not be empty");
-                }
-                mUsers.add(user.getId());
-                mSurnames.add(user.getUsername());
-                mRoles.add(new String[1]);
-                mName = nameOrId;
-                mIsPrivate = false;
-                mDescription = "";
-                mPicture = null;
-            } else {
-                setId(nameOrId);
-            }
-        }
-
-        /**
-         * Setter for the name of the group we are building
-         *
-         * @param name The new name of the group
-         */
-        private void setName(String name) {
-            this.mName = name;
-        }
-
-        /**
-         * Setter for the list of users of the group we are building
-         *
-         * @param users The users we would like to add to the group
-         */
-        private void setUsers(String[] users) {
-            this.mUsers.addAll(Arrays.asList(users));
-        }
-
-        /**
-         * Setter for the list of nicknames of the group we are building
-         *
-         * @param nicknames The nicknames we would like to add to the group
-         */
-        private void setNicknames(String[] nicknames) {
-            this.mSurnames.addAll(Arrays.asList(nicknames));
-        }
-
-        /**
-         * Setter for the list of roles of the group we are building
-         *
-         * @param rolesArray The array containing the roles we would like to add to the group
-         */
-        private void setRoles(JSONArray rolesArray) {
-            if (rolesArray != null) {
+                List<String[]> roles = new ArrayList<>();
+                JSONArray rolesArray = object.getJSONArray(GROUP_ENTRY_ROLES);
                 for (int i = 0; i < rolesArray.length(); i++) {
                     try {
-                        String[] roles = convertFromJSONArray((JSONArray) rolesArray.get(i));
-                        mRoles.add(roles);
+                        String[] currentRoles = convertFromJSONArray((JSONArray) rolesArray.get(i));
+                        roles.add(currentRoles);
                     } catch (JSONException | ClassCastException e) {
                         // TODO : if object not found or cast failed ?
-                        e.printStackTrace();
                     }
                 }
-            }
-        }
 
-        /**
-         * Setter for the list of events of the group we are building
-         *
-         * @param events The events we would like to add to the group
-         */
-        private void setEvents(String[] events) {
-            if (events != null) {
-                this.mEvents.addAll(Arrays.asList(events));
-            }
-        }
+                String[] eventsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
+                List<String> events = new ArrayList<>();
+                events.addAll(Arrays.asList(eventsArray));
 
-        /**
-         * Setter for the privacy of the group we are building
-         *
-         * @param privacy The new privacy of the group
-         */
-        private void setPrivacy(boolean privacy) {
-            this.mIsPrivate = privacy;
-        }
+                String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-        /**
-         * Setter for the description of the group we are building
-         *
-         * @param description The new description of the group
-         */
-        private void setDescription(String description) {
-            this.mDescription = description;
-        }
-
-        @Override
-        public void setImage(Bitmap image) {
-            this.mPicture = image;
-        }
-
-        @Override
-        public void retrieveFromServer() throws PFException {
-            if (mId != null) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
-                query.whereEqualTo(OBJECT_ID, mId);
-                try {
-                    ParseObject object = query.getFirst();
-                    if (object != null) {
-                        setName(object.getString(GROUP_ENTRY_NAME));
-                        setPrivacy(object.getBoolean(GROUP_ENTRY_ISPRIVATE));
-
-                        String[] users = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_USERS));
-                        setUsers(users);
-
-                        String[] surnames = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_NICKNAMES));
-                        setNicknames(surnames);
-
-                        setRoles(object.getJSONArray(GROUP_ENTRY_ROLES));
-
-                        String[] events = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
-                        setEvents(events);
-
-                        setDescription(object.getString(GROUP_ENTRY_DESCRIPTION));
-
-                        retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, this);
-
-                    } else {
-                        throw new PFException("Query failed");
-                    }
-                } catch (ParseException e) {
-                    throw new PFException("Query failed");
-                }
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
+                return new PFGroup(id, name, users, nickNames, roles, events, privacy, description, picture[0]);
             } else {
-                final ParseObject object = new ParseObject(GROUP_TABLE_NAME);
-                object.put(GROUP_ENTRY_USERS, mUsers.toArray());
-                object.put(GROUP_ENTRY_NICKNAMES, mSurnames.toArray());
-                object.put(GROUP_ENTRY_ROLES, mRoles.toArray());
-                object.put(GROUP_ENTRY_EVENTS, mEvents.toArray());
-                object.put(GROUP_ENTRY_NAME, mName);
-                object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
-                object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
-                object.getDate("");
-                object.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            setId(object.getObjectId());
-                        } else {
-                            // throw new PFException("Query failed");
-                        }
-                    }
-                });
+                throw new PFException("Query failed for id " + id);
             }
+        } catch (ParseException e) {
+            throw new PFException("Query failed for id " + id);
         }
-
-        /**
-         * Builds a new Group with all its attributes.
-         *
-         * @return a new Group corresponding to the object we were building
-         * @throws PFException If something went wrong while retrieving information online
-         */
-        public PFGroup build() throws PFException {
-            retrieveFromServer();
-            return new PFGroup(mId, mName, mUsers, mSurnames, mRoles, mEvents, mIsPrivate, mDescription, mPicture);
-        }
-
     }
+
 }
