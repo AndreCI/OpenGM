@@ -197,6 +197,7 @@ public class ManageRoles extends AppCompatActivity {
     }
 
     public void removeRole(TableRow roleRow){
+        ((CheckBox)roleRow.getChildAt(0)).setChecked(false);
         rolesAndButtons.removeView(roleRow);
         roleRowCount--;
         roleTextCount--;
