@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.parse.GetDataCallback;
@@ -43,22 +44,23 @@ public final class PFUtils {
     }
 
     /**
-     * Downloads in background the image of a Parse object and stores them in an object
-     * that implements PFImageInterface
+     * Downloads in background the image of a Parse object and stores it at the first index of the array given in parameter
      *
-     * @param object  A Parse object which contains the image we want to get
-     * @param entry   A string whose value is the entry which contains the image in our table
-     * @param builder An object which contains an image in which the downloaded data
-     *                will be stored
+     * @param object A Parse object which contains the image we want to get
+     * @param entry  A string whose value is the entry which contains the image in our table
+     * @param image  An array of image with only one case
      */
-    public static void retrieveFileFromServer(ParseObject object, String entry, final PFImageInterface builder) {
+    public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap[] image) {
+        if (image.length != 1) {
+            // TOOD : empty array
+        }
         ParseFile fileObject = (ParseFile) object.get(entry);
         if (fileObject != null) {
             fileObject.getDataInBackground(new GetDataCallback() {
                 @Override
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
-                        builder.setImage(BitmapFactory.decodeByteArray(data, 0, data.length));
+                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length);
                     }
                 }
             });

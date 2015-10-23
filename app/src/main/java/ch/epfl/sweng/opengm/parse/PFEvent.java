@@ -21,8 +21,8 @@ public final class PFEvent extends PFEntity {
     private String mDescription;
     private String mDate;  // Gregorian Calendar Date ???
     private String mPlace;
-//    private Bitmap mPicture;
-    private List<GroupMember> mParticipants;
+    //    private Bitmap mPicture;
+    private List<PFMember> mParticipants;
 
     public PFEvent() {
         super(null, null);
@@ -70,22 +70,5 @@ public final class PFEvent extends PFEntity {
                 }
             }
         });
-    }
-
-
-    public static class Builder extends PFEntity.Builder {
-
-        public Builder(String id) {
-            super(id);
-        }
-
-        @Override
-        protected void retrieveFromServer() throws PFException {
-
-        }
-
-        public PFEvent build() {
-            return new PFEvent();
-        }
     }
 }
