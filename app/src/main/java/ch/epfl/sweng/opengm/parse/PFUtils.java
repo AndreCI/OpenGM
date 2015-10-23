@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.parse.GetDataCallback;
@@ -51,14 +52,17 @@ public final class PFUtils {
      * @param builder An object which contains an image in which the downloaded data
      *                will be stored
      */
-    public static void retrieveFileFromServer(ParseObject object, String entry, final PFImageInterface builder) {
+    public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap[] image) {
+        if (image.length != 1) {
+            // TOOD : empty array
+        }
         ParseFile fileObject = (ParseFile) object.get(entry);
         if (fileObject != null) {
             fileObject.getDataInBackground(new GetDataCallback() {
                 @Override
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
-                        builder.setImage(BitmapFactory.decodeByteArray(data, 0, data.length));
+                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length);
                     }
                 }
             });
