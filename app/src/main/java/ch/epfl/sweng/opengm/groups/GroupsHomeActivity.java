@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -32,8 +33,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     private PFGroup currentGroup;
 
-    private TextView mUsernameTextView;
-    private TextView mNameTextView;
+    private ListView mEventLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +46,11 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        setTitle(currentGroup.getName());
+
         NavigationView navView = (NavigationView) drawer.findViewById(R.id.nav_view);
 
-        mUsernameTextView = (TextView) navView.findViewById(R.id.usernameUserView);
-        mNameTextView = (TextView) navView.findViewById(R.id.nameUserView);
-
-        // mUsernameTextView.setText(OpenGMApplication.getCurrentUser().getUsername());
-        //  mNameTextView.setText(OpenGMApplication.getCurrentUser().getFirstName() + " " + OpenGMApplication.getCurrentUser().getLastName());
+        mEventLists = (ListView) navView.findViewById(R.id.listViewEvents);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -62,9 +60,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(GroupsHomeActivity.this, GroupsOverviewActivity.class);
-                intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
-                startActivity(intent);
+                // TODO add a member
             }
         });
 

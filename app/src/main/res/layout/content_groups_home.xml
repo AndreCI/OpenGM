@@ -31,14 +31,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/softwhite"
+                android:background="#44FFFFFF"
                 android:drawableEnd="@mipmap/ic_settings_white_24dp"
                 android:gravity="end|center_vertical"
                 android:longClickable="false"
                 android:paddingRight="15dp"
-                android:text="Settings"
+                android:text="Manage group    "
                 android:textAlignment="textEnd"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/white" />
         </RelativeLayout>
 
         <LinearLayout
@@ -65,8 +65,8 @@
                     android:textStyle="bold" />
 
                 <ListView
-                    android:id="@+id/listView"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/listViewEvents"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
@@ -80,9 +80,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="T :"
+                    android:text="Group's members :"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
+
+                <ListView
+                    android:id="@+id/listViewMembers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

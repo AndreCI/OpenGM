@@ -12,7 +12,7 @@
             android:title="Members" />
         <item
             android:id="@+id/nav_events"
-            android:icon="@android:drawable/ic_menu_slideshow"
+            android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="Events" />
         <item
             android:id="@+id/nav_messages"
@@ -24,7 +24,7 @@
             android:title="Manage group" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Personal">
         <menu>
             <item
                 android:id="@+id/nav_share"
