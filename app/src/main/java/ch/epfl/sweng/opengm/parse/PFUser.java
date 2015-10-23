@@ -402,7 +402,7 @@ public final class PFUser extends PFEntity {
         }
     }
 
-    public static PFUser createNewUser(String id, String username, String firstName, String lastName) {
+    public static PFUser createNewUser(String id, String username, String firstName, String lastName) throws PFException{
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);
         parseObject.put(USER_ENTRY_USERNAME, username);
@@ -415,7 +415,7 @@ public final class PFUser extends PFEntity {
             parseObject.save();
             return new PFUser(id, username, firstName, lastName, "", "", null, new ArrayList<String>());
         } catch (ParseException e) {
-            return null;
+            throw new PFException();
         }
     }
 }
