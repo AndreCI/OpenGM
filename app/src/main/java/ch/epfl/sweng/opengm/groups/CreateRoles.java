@@ -1,7 +1,6 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -25,7 +24,6 @@ import ch.epfl.sweng.opengm.parse.GroupMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
-import ch.epfl.sweng.opengm.utils.Alert;
 
 public class CreateRoles extends AppCompatActivity {
     private List<String> roles;
@@ -35,11 +33,10 @@ public class CreateRoles extends AppCompatActivity {
 
     private int rowCount;
     private int roleTextCount;
-    private int roleCheckBoxCount;
     private List<GroupMember> groupMembers;
     private PFGroup currentGroup;
 
-    public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.createroles.grouplist";
+    //public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.createroles.grouplist";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +71,11 @@ public class CreateRoles extends AppCompatActivity {
         // -----------------------------------------------------------------------------------------
 
         roles = new ArrayList<>();
-        Intent intent = getIntent();
+        //Intent intent = getIntent();
         //Uncomment this when testing with real app
         //int groupId = intent.getIntExtra(GROUP_LIST_KEY, -1);
         int groupId = 0;
-        if(groupId != -1){
-            roles = user.getGroups().get(groupId).getRoles();
-        } else {
-            Alert.displayAlert("No current group");
-        }
+        roles = user.getGroups().get(groupId).getRoles();
 
 
         rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
@@ -98,7 +91,6 @@ public class CreateRoles extends AppCompatActivity {
 
             CheckBox box = new CheckBox(getApplicationContext());
             box.setChecked(true);
-            roleCheckBoxCount++;
 
             TableRow currentRow = getNewTableRow(box, current);
             currentRow.setTag("roleRow" + rowCount);
@@ -116,7 +108,7 @@ public class CreateRoles extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addRoleEditorField((Button) v);
+                addRoleEditorField();
             }
         });
 
@@ -127,7 +119,7 @@ public class CreateRoles extends AppCompatActivity {
         rolesAndButtons.addView(addRow);
     }
 
-    private void addRoleEditorField(Button button){
+    private void addRoleEditorField(){
         rolesAndButtons.removeView(addRoleRow);
         final EditText newRoleEdit = new EditText(getApplicationContext());
         newRoleEdit.setTag("newRoleEdit");
@@ -158,7 +150,6 @@ public class CreateRoles extends AppCompatActivity {
         roleTextCount++;
 
         CheckBox box = new CheckBox(getApplicationContext());
-        roleCheckBoxCount++;
 
         TableRow newRow = getNewTableRow(box, newRoleText);
         newRow.setTag("roleRow" + rowCount);
