@@ -9,32 +9,32 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.GroupMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Alert;
 
 public class CreateRoles extends AppCompatActivity {
     private List<String> roles;
-    private Map<Button, TableRow> buttonTableRowMap;
+    private Map<CheckBox, TableRow> buttonTableRowMap;
     private LinearLayout rolesAndButtons;
+    private TableRow addRoleRow;
 
     private int rowCount;
     private int roleTextCount;
-    private int roleButtonCount;
+    private int roleCheckBoxCount;
 
     public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.creategroup.grouplist";
 
@@ -55,6 +55,8 @@ public class CreateRoles extends AppCompatActivity {
         } catch (PFException e) {
             e.printStackTrace();
         }
+        //Receive this from intent
+        List<GroupMember> groupMembers = new ArrayList<>();
         //
 
         roles = new ArrayList<>();
@@ -80,17 +82,14 @@ public class CreateRoles extends AppCompatActivity {
             current.setTag("roleName" + roleTextCount);
             roleTextCount++;
 
-            Button currentButton = getNewButton("-");
-            currentButton.setEnabled(false);
-            currentButton.setTag("removeRole" + roleButtonCount);
-            roleButtonCount++;
+            CheckBox box = new CheckBox(getApplicationContext());
+            roleCheckBoxCount++;
 
-            TableRow currentRow = getNewTableRow(current, currentButton);
+            TableRow currentRow = getNewTableRow(box, current);
             currentRow.setTag("roleRow" + rowCount);
             rowCount++;
-            currentButton.setLayoutParams(getParamsForTableColumn());
 
-            buttonTableRowMap.put(currentButton, currentRow);
+            buttonTableRowMap.put(box, currentRow);
 
             rolesAndButtons.addView(currentRow);
         }
@@ -109,63 +108,54 @@ public class CreateRoles extends AppCompatActivity {
         TableRow addRow = getNewTableRow(addButton, null);
         addRow.setTag("addRow");
 
-        buttonTableRowMap.put(addButton, addRow);
+        addRoleRow = addRow;
         rolesAndButtons.addView(addRow);
     }
 
     private void addRoleEditorField(Button button){
-        rolesAndButtons.removeView(buttonTableRowMap.get(button));
+        rolesAndButtons.removeView(addRoleRow);
         final EditText newRoleEdit = new EditText(getApplicationContext());
         newRoleEdit.setTag("newRoleEdit");
         newRoleEdit.setHint("Enter role name.");
 
         Button okButton = getNewButton("OK");
         okButton.setTag("okButton");
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String roleName = newRoleEdit.getText().toString();
-                addRole(roleName, (Button) v);
-            }
-        });
 
-        TableRow newRoleRow = getNewTableRow(newRoleEdit, okButton);
+        final TableRow newRoleRow = getNewTableRow(newRoleEdit, okButton);
         newRoleRow.setTag("editRoleRow");
 
         okButton.setLayoutParams(getParamsForTableColumn());
 
-        buttonTableRowMap.put(okButton, newRoleRow);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String roleName = newRoleEdit.getText().toString();
+                addRole(roleName, newRoleRow);
+            }
+        });
+
         rolesAndButtons.addView(newRoleRow);
     }
 
-    private void addRole(String name, Button button){
+    private void addRole(String name, TableRow editRow){
         TextView newRoleText = getNewTextView(name);
         newRoleText.setTag("roleName" + roleTextCount);
         roleTextCount++;
 
-        Button newButton = getNewButton("-");
-        newButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeRole((Button) v);
-            }
-        });
-        newButton.setTag("removeRole" + roleButtonCount);
-        roleButtonCount++;
+        CheckBox box = new CheckBox(getApplicationContext());
+        roleCheckBoxCount++;
 
-        TableRow newRow = getNewTableRow(newRoleText, newButton);
+        TableRow newRow = getNewTableRow(box, newRoleText);
         newRow.setTag("roleRow" + rowCount);
         rowCount++;
 
-        newButton.setLayoutParams(getParamsForTableColumn());
-
-        buttonTableRowMap.put(newButton, newRow);
+        buttonTableRowMap.put(box, newRow);
 
         // TODO: Add role to database
 
         // TODO: Exit keyboard if currently typing.
         rolesAndButtons.addView(newRow);
-        rolesAndButtons.removeView(buttonTableRowMap.get(button));
+        rolesAndButtons.removeView(editRow);
         addNewRoleRow();
     }
 
@@ -203,7 +193,7 @@ public class CreateRoles extends AppCompatActivity {
     private void removeRole(Button button){
         rolesAndButtons.removeView(buttonTableRowMap.get(button));
         rowCount--;
-        roleButtonCount--;
+        roleCheckBoxCount--;
         roleTextCount--;
         // TODO: Remove role from the database
     }
