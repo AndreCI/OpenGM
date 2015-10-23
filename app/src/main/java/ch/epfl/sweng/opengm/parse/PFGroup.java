@@ -32,7 +32,15 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
@@ -442,4 +450,48 @@ public final class PFGroup extends PFEntity {
         }
     }
 
+
+    public static PFGroup createNewGroup(PFUser user, String name, String description, Bitmap picture) throws PFException {
+
+        JSONArray users = new JSONArray();
+        users.put(user.getId());
+        List<String> usersList = new ArrayList<>();
+        usersList.add(user.getId());
+
+        JSONArray nicknames = new JSONArray();
+        nicknames.put(user.getUsername());
+        List<String> nickNamesList = new ArrayList<>();
+        nickNamesList.add(user.getUsername());
+
+        JSONArray roles = new JSONArray();
+        roles.put(new JSONArray());
+        List<String[]> rolesList = new ArrayList<>();
+        rolesList.add(new String[0]);
+
+        JSONArray events = new JSONArray();
+
+        String about = (description == null) ? "" : description;
+
+
+        ParseObject object = new ParseObject(GROUP_TABLE_NAME);
+        object.put(GROUP_ENTRY_USERS, users);
+        object.put(GROUP_ENTRY_NICKNAMES, nicknames);
+        object.put(GROUP_ENTRY_ROLES, roles);
+        object.put(GROUP_ENTRY_EVENTS, events);
+        object.put(GROUP_ENTRY_NAME, name);
+        object.put(GROUP_ENTRY_DESCRIPTION, about);
+        object.put(GROUP_ENTRY_ISPRIVATE, false);
+        if (picture != null) {
+            object.put(GROUP_ENTRY_PICTURE, picture);
+        }
+
+        try {
+            object.save();
+            String id = object.getObjectId();
+            return new PFGroup(id, name, usersList, nickNamesList, rolesList, new ArrayList<String>(), false, about, picture);
+        } catch (ParseException e) {
+            throw new PFException();
+        }
+
+    }
 }
