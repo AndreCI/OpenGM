@@ -9,6 +9,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,12 +25,13 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 /**
@@ -399,4 +402,20 @@ public final class PFUser extends PFEntity {
         }
     }
 
+    public static PFUser createNewUser(String id, String username, String firstName, String lastName) {
+        ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
+        parseObject.put(USER_ENTRY_USERID, id);
+        parseObject.put(USER_ENTRY_USERNAME, username);
+        parseObject.put(USER_ENTRY_FIRSTNAME, firstName);
+        parseObject.put(USER_ENTRY_LASTNAME, lastName);
+        parseObject.put(USER_ENTRY_GROUPS, new JSONArray());
+        parseObject.put(USER_ENTRY_PHONENUMBER, "");
+        parseObject.put(USER_ENTRY_ABOUT, "");
+        try {
+            parseObject.save();
+            return new PFUser(id, username, firstName, lastName, "", "", null, new ArrayList<String>());
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 }

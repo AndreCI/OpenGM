@@ -47,25 +47,20 @@ public final class PFUtils {
      * Downloads in background the image of a Parse object and stores them in an object
      * that implements PFImageInterface
      *
-     * @param object A Parse object which contains the image we want to get
-     * @param entry  A string whose value is the entry which contains the image in our table
-     * @param image  An image that will have its pixels changed after retrieving in background the image on the server
+     * @param object  A Parse object which contains the image we want to get
+     * @param entry   A string whose value is the entry which contains the image in our table
      */
-    public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap image) {
+    public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap[] image) {
+        if (image.length != 1) {
+            // TOOD : empty array
+        }
         ParseFile fileObject = (ParseFile) object.get(entry);
         if (fileObject != null) {
             fileObject.getDataInBackground(new GetDataCallback() {
                 @Override
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
-                        Bitmap newImg = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        image.setHeight(newImg.getHeight());
-                        image.setWidth(newImg.getWidth());
-                        for (int x = 0; x < newImg.getWidth(); x++) {
-                            for (int y = 0; y < newImg.getHeight(); y++) {
-                                image.setPixel(x, y, newImg.getPixel(x, y));
-                            }
-                        }
+                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length);
                     }
                 }
             });
