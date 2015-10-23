@@ -70,8 +70,8 @@
     <string name="okayButtonText">Ok</string>
 
     <string name="title_activity_add_member">AddMember</string>
-    <string name="add_member_hint">Type mail address...</string>
-    <string name="add_member_text">Add new member</string>
+    <string name="members_hint">Type mail address...</string>
+    <string name="members_text">Add new member</string>
     <string name="invite">Invite</string>
 
     <string name="title_activity_modify_group">ModifyGroup</string>

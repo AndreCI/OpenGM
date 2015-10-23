@@ -42,7 +42,8 @@
             android:label="@string/title_activity_join_group" >
         </activity>
         <activity
-            android:name=".groups.AddMember"
+            android:name=".groups.Members"
+            android:exported="true"
             android:label="@string/title_activity_add_member" >
         </activity>
         <activity
