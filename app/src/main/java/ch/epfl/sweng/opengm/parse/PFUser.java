@@ -66,9 +66,8 @@ public final class PFUser extends PFEntity {
         checkNullArguments(aboutUser, "User's groups");
         this.mGroups = new ArrayList<>();
         for (String groupId : groups) {
-            PFGroup.Builder group = new PFGroup.Builder(this, groupId, false);
             try {
-                mGroups.add(group.build());
+                mGroups.add(PFGroup.fetchExistingGroup(groupId));
             } catch (PFException e) {
                 // TODO : what to do?
             }
@@ -402,7 +401,7 @@ public final class PFUser extends PFEntity {
         }
     }
 
-    public static PFUser createNewUser(String id, String username, String firstName, String lastName) throws PFException{
+    public static PFUser createNewUser(String id, String username, String firstName, String lastName) throws PFException {
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);
         parseObject.put(USER_ENTRY_USERNAME, username);
