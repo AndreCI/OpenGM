@@ -151,9 +151,19 @@ public class CreateRoles extends AppCompatActivity {
 
         CheckBox box = new CheckBox(getApplicationContext());
 
-        TableRow newRow = getNewTableRow(box, newRoleText);
+        Button newButton = getNewButton("-");
+
+        final TableRow newRow = getNewTableRow(box, newRoleText);
         newRow.setTag("roleRow" + rowCount);
         rowCount++;
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeRole(newRow);
+            }
+        });
+        newRow.addView(newButton);
+        newButton.setLayoutParams(getParamsForTableColumn());
 
         buttonTableRowMap.put(box, newRow);
 
@@ -169,6 +179,12 @@ public class CreateRoles extends AppCompatActivity {
         params.weight = 1.0f;
 
         return params;
+    }
+
+    public void removeRole(TableRow roleRow){
+        rolesAndButtons.removeView(roleRow);
+        rowCount--;
+        roleTextCount--;
     }
 
     private TableRow getNewTableRow(View elem1, View elem2){
