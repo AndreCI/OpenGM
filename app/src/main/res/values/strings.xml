@@ -49,8 +49,9 @@
     <string name="ok">Ok</string>
     <string name="title_activity_create_group">CreateGroup</string>
 
-    <string name="enterGroupNameHint">Enter group name</string>
-    <string name="enterGroupDescriptionHint">Enter group description</string>
+    <string name="enterGroupNameHint">Enter group\'s name</string>
+    <string name="chooseGroupPhoto">Choose a group\'s photo</string>
+    <string name="enterGroupDescriptionHint">Enter group\'s description</string>
     <string name="title_activity_event_list">Event list : groupe X</string>
 
     <string name="action_settings">Settings</string>
