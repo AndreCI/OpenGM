@@ -133,4 +133,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withId(R.id.button)).perform(click());
         assertTrue(databaseRolesMatchesView());
     }
+
+    public void testIfRemovesRoleFromDatabase() throws PFException {
+        onView(withTagValue(is((Object) "roleBox1"))).perform(click());
+        onView(withId(R.id.button)).perform(click());
+        testGroup = PFGroup.fetchExistingGroup(testGroup.getId());
+        assertTrue(!testGroup.getRolesForUser(testUser.getId()).contains("TestRole1"));
+        addTestRoles();
+    }
 }
