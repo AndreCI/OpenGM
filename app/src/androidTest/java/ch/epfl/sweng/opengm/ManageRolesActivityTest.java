@@ -148,4 +148,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withTagValue(is((Object) "okButton"))).perform(click());
         onView(withTagValue(is((Object) "roleName2"))).check(doesNotExist());
     }
+
+    public void testCantPressAddButtonWhenEditingNewRole(){
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "addRole"))).check(doesNotExist());
+    }
 }
