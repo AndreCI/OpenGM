@@ -114,9 +114,6 @@ public class GroupsHomeActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_leave:
                 getCurrentUser().removeFromGroup(currentGroup.getId());
-                if (currentGroup.getMembers().size() == 1) {
-                    currentGroup.deleteGroup();
-                }
                 // use the below intent then (no break)
             case R.id.nav_home:
                 startActivity(new Intent(GroupsHomeActivity.this, GroupsOverviewActivity.class));

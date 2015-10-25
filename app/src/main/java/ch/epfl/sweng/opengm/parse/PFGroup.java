@@ -258,13 +258,18 @@ public final class PFGroup extends PFEntity {
         if (!mMembers.containsKey(userId)) {
             Alert.displayAlert("User does not belong to this group.");
         } else {
-            PFMember oldMember = mMembers.remove(userId);
-            oldMember.removeFromGroup(getId());
-            try {
-                updateToServer(GROUP_ENTRY_USERS);
-            } catch (PFException e) {
-                mMembers.put(userId, oldMember);
-                Alert.displayAlert("Error while updating the user's groups to the server.");
+            // if only one user, then delete the group
+            if (mMembers.size() == 1) {
+                deleteGroup();
+            } else {
+                PFMember oldMember = mMembers.remove(userId);
+                oldMember.removeFromGroup(getId());
+                try {
+                    updateToServer(GROUP_ENTRY_USERS);
+                } catch (PFException e) {
+                    mMembers.put(userId, oldMember);
+                    Alert.displayAlert("Error while updating the user's groups to the server.");
+                }
             }
         }
     }
