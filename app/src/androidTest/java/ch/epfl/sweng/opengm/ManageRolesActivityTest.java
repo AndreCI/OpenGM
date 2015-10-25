@@ -53,7 +53,20 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
     }
 
+    private void addTestRoles(){
+        testGroup.addRoleToUser("TestRole1", testUser.getId());
+        testGroup.addRoleToUser("TestRole2", testUser.getId());
+    }
+
+    private void cleanUpTestRoles(){
+        List<String> roles = testGroup.getRolesForUser(testUser.getId());
+        for(String role : roles){
+            testGroup.removeRoleToUser(role, testUser.getId());
+        }
+    }
+
     private boolean databaseRolesMatchesView(){
+        addTestRoles();
         List<String> roles = testGroup.getRolesForUser(testUser.getId());
 
         for(int i = 0; i < rolesAndButtons.getChildCount(); i++){
@@ -63,6 +76,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
                 roles.remove(currentRole.getText().toString());
             }
         }
+        cleanUpTestRoles();
         return roles.isEmpty();
     }
 
