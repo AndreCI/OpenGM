@@ -11,6 +11,8 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
@@ -33,10 +36,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_edit_event);
 
-        //TODO : fill editedEvent, editing, participants with intent + prefill text with existing values of event
         Intent intent = getIntent();
         PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE);
-        //event = new Event("zert","az", new GregorianCalendar(), "", new ArrayList<Event.OpenGMMember>());
         if (event == null) {
             editing = false;
             participants = new ArrayList<>();
@@ -73,9 +74,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
         Date date = event.getDate();
-        String timeString = Integer.toString(date.getHours()) + " : " + Integer.toString(date.getMinutes());
-        ((Button) findViewById(R.id.CreateEditEventDateText)).setText(timeString);
-        String dateString = Integer.toString(date.getDate()) + '/' + Integer.toString(date.getMonth() + 1) + '/' + Integer.toString(date.getYear());
+        String timeString = String.format("%d : %02d", date.getHours(), date.getMinutes());
+        ((Button) findViewById(R.id.CreateEditEventTimeText)).setText(timeString);
+        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth()+1, date.getYear());
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
@@ -88,6 +89,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private PFEvent createEvent() {
+
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
@@ -95,9 +97,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
 
-        //TODO : get new id for creating event
-
-        return new PFEvent("testid", name, place, date, description, participants);
+        //TODO : get new id for creating event maybe asynchronously in onCreate
+        ParseObject parseObject = new ParseObject(PFConstants.EVENT_TABLE_NAME);
+        try {
+            parseObject.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new PFEvent(parseObject.getObjectId(), name, place, date, description, participants);
     }
 
     private PFEvent editEvent() {
@@ -151,7 +158,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         EditText eventNameText = (EditText) findViewById(R.id.CreateEditEventNameText);
         String name = eventNameText.getText().toString();
         if (name.isEmpty()) {
-            eventNameText.setError("Event name should not be empty");
+            eventNameText.setError(getString(R.string.CreateEditEmptyNameErrorMessage));
             return false;
         }
         int[] timeArray = getTimeFromText();
@@ -164,20 +171,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (dateArray.length == 0) {
                 ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
             }
-            Toast.makeText(this, "Time and Date must be specified", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.CreateEditEmptyTimeDateErrorMessage), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         Date date = new Date(dateArray[0], dateArray[1], dateArray[2], timeArray[0], timeArray[1]);
-        boolean err = false;
-        if(date.getHours() != timeArray[0] || date.getMinutes() != timeArray[1]) {
-            Toast.makeText(this, "Invalid Time " + Integer.toString(date.getHours()) + "!=" + timeArray[0] + " " + Integer.toString(date.getMinutes()) + "!=" + timeArray[1], Toast.LENGTH_SHORT).show();
-            err = true;
-        }
-        if(date.getYear() != dateArray[0] || date.getMonth() != dateArray[1] || date.getDate()!= dateArray[2]) {
-            Toast.makeText(this, "Invalid date " + date.getYear() + "!=" + dateArray[0] + " " + date.getMonth() + "!=" + (dateArray[1]) + " " + date.getDate()+ "!=" + dateArray[2], Toast.LENGTH_SHORT).show();
-            err = true;
-        }
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -191,10 +189,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
             } else {
                 ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
             }
-            Toast.makeText(this, "Invalid date(prior to now)", Toast.LENGTH_SHORT).show();
-            err = true;
+            Toast.makeText(this, getString(R.string.CreateEditEarlyDate), Toast.LENGTH_SHORT).show();
+            return false;
         }
-        return !err;
+        if(participants.isEmpty()) {
+            Toast.makeText(this, getString(R.string.CreateEditNoParticipants), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     public void showTimePickerDialog(View view) {

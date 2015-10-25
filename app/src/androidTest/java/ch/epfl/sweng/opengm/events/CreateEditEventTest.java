@@ -11,9 +11,12 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
@@ -55,31 +58,38 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withId(R.id.CreateEditOkButton)).perform(click());
         Button timeButton = (Button) act.findViewById(R.id.CreateEditEventTimeText);
         Button dateButton = (Button) act.findViewById(R.id.CreateEditEventDateText);
-        assertEquals(timeButton.getError(), act.getString(R.string.CreateEditEmptyTimeErrorMessage));
-        assertEquals(dateButton.getError(), act.getString(R.string.CreateEditEmptyDateErrorMessage));
+        assertEquals("", timeButton.getError());
+        assertEquals("", dateButton.getError());
         onView(withText(R.string.CreateEditEmptyTimeDateErrorMessage)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 
     public void testEventInIntent() {
         Intent i = new Intent();
-        Event e = new Event("testName", "testPlace", new Date(2000,00,01,10,10), "testDescription", new ArrayList<Event.OpenGMMember>());
+        PFEvent e = new PFEvent("testid","testName", "testPlace", new Date(2000,00,01,10,10), "testDescription", new ArrayList<PFMember>());
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).check(matches(withText("testName")));
         onView(withId(R.id.CreateEditEventPlaceText)).check(matches(withText("testPlace")));
-        assertEquals(((Button) act.findViewById(R.id.CreateEditEventTimeText)).getText(), "10 : 10");
-        assertEquals(((Button) act.findViewById(R.id.CreateEditEventDateText)).getText(), "1/1/2000");
+        assertEquals("10 : 10", ((Button) act.findViewById(R.id.CreateEditEventTimeText)).getText());
+        assertEquals("1/01/2000", ((Button) act.findViewById(R.id.CreateEditEventDateText)).getText());
         onView(withId(R.id.CreateEditEventDescriptionText)).check(matches(withText("testDescription")));
     }
 
     public void testNoParticipants() {
         Intent i = new Intent();
-        Event e = new Event("testName", "testPlace", new Date(2000,00,01,10,10), "testDescription", new ArrayList<Event.OpenGMMember>());
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int min = c.get(Calendar.MINUTE);
+        Date date = new Date(year+1, month, day, hour, min);
+        PFEvent e = new PFEvent("testid","testName", "testPlace", date, "testDescription", new ArrayList<PFMember>());
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE, e);
         setActivityIntent(i);
         getActivity();
         onView(withId(R.id.CreateEditEventParticipantsButton)).perform(click());
-        onView(withText(R.string.CreateEditEarlyDate)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
+        onView(withText(R.string.CreateEditNoParticipants)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 }

@@ -73,4 +73,5 @@
     <string name="CreateEditEmptyDateErrorMessage">Date must be specified</string>
     <string name="CreateEditEmptyTimeErrorMessage">Time must be specified</string>
     <string name="CreateEditEmptyNameErrorMessage">Name must be specified</string>
+    <string name="CreateEditNoParticipants">Participants must be specified</string>
 </resources>
