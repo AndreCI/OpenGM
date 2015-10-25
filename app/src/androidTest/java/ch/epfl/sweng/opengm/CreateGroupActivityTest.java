@@ -61,7 +61,13 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name is too long")));
     }
 
-    
+    public void testDeclinesNameWithBadChars() throws InterruptedException {
+        onView(withId(R.id.enterGroupName)).perform(typeText("This//is//bad"));
+        closeSoftKeyboard();
+        Thread.sleep(1000);
+        onView(withId(R.id.doneGroupCreate)).perform(click());
+        onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name contains illegal characters, only letters, numbers and spaces allowed.")));
+    }
 
     private BaseMatcher<View> hasErrorText(final String expectedError){
         return new BoundedMatcher<View, TextView>(TextView.class) {

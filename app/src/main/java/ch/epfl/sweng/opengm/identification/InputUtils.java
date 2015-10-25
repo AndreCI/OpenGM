@@ -18,7 +18,7 @@ public class InputUtils {
     private final static int PASSWORD_MIN_LENGTH = 6;
     private final static int PASSWORD_MAX_LENGTH = 30;
     private final static int GROUP_NAME_MIN_LENGTH = 3;
-    private final static int GROUP_NAME_MAX_LENGTH = 10;
+    private final static int GROUP_NAME_MAX_LENGTH = 30;
 
     private final static Pattern emailPattern =
             Pattern.compile("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
