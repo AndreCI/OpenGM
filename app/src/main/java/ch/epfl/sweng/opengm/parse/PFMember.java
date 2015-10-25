@@ -302,4 +302,8 @@ public final class PFMember extends PFEntity {
     public void writeToParcel(Parcel dest, int flags) {
 
     }
+
+    public String getName() {
+        return getLastname() + " - " + getFirstname();
+    }
 }

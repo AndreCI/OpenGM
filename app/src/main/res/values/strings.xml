@@ -74,4 +74,8 @@
     <string name="CreateEditEmptyTimeErrorMessage">Time must be specified</string>
     <string name="CreateEditEmptyNameErrorMessage">Name must be specified</string>
     <string name="CreateEditNoParticipants">Participants must be specified</string>
+    <string name="EventListSuccessfullAdd">Event successfully added</string>
+    <string name="EventListFailToAdd">Couldn\'t add the new event</string>
+    <string name="CreateEditFailToAddParticipants">Fail to add participants</string>
+    <string name="CreateEditSuccessfullAddParticipants">Successfully added participants</string>
 </resources>

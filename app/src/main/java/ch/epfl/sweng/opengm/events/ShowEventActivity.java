@@ -11,13 +11,14 @@ import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class ShowEventActivity extends AppCompatActivity {
-    public final static String SHOW_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.SHOW_EVENT";
+    public final static String SHOW_EVENT_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.SHOW_EVENT_EVENT";
 
     private PFEvent event;
-
+    private PFGroup currentGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +26,8 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        event = intent.getParcelableExtra("todo");
-
+        event = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
         displayEventInformation();
     }
 
@@ -82,8 +83,8 @@ public class ShowEventActivity extends AppCompatActivity {
 
     public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(SHOW_EVENT_MESSAGE, event);
+        intent.putExtra(SHOW_EVENT_MESSAGE_EVENT, event);
+        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
         startActivity(intent);
-
     }
 }

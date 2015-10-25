@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.events;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,13 +24,16 @@ import java.util.List;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
+    public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;
     private boolean editing;
     private List<PFMember> participants;
+    private PFGroup currentGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +41,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_edit_event);
 
         Intent intent = getIntent();
-        PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE);
+        PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
         if (event == null) {
             editing = false;
             participants = new ArrayList<>();
@@ -49,12 +54,27 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                participants = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+                Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     public void onOkButtonClick(View v) {
         if (legalArguments()) {
             if (participants != null) {
                 Intent intent = new Intent(this, EventListActivity.class);
                 intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
-                startActivity(intent);
+                setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT, intent);
+                finish();
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
@@ -65,7 +85,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (legalArguments()) {
             Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
-            startActivity(intent);
+            intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
+            startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
         }
     }
 

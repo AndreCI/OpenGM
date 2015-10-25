@@ -1,6 +1,9 @@
 package ch.epfl.sweng.opengm.events;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
@@ -9,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,12 +19,16 @@ import java.util.Comparator;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
+    public static final String ADD_REMOVE_PARTICIPANTS_RESULT = "CL4P-TP";
     public static int geneId = 0; //TODO : used for the quickClass to test, delete it later.
-    private List<OpenGMMember> members;
-    private List<OpenGMMember> membersToAdd;
+    private List<PFMember> members;
+    private List<PFMember> membersToAdd;
     private List<CheckBox> boxes;
     private LinearLayout linearLayoutListMembers;
 
@@ -31,9 +37,10 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_remove_participants);
         boxes = new ArrayList<>();
-        membersToAdd = new ArrayList<>();
-        members = new ArrayList<>();
-        members.add(new OpenGMMember());
+        Intent intent = getIntent();
+        membersToAdd = ((PFEvent) intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE)).getParticipants();
+        members = ((PFGroup)intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP)).getMembers();
+        /*members.add(new OpenGMMember());
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
@@ -56,7 +63,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
+        members.add(new OpenGMMember());*/
 
         linearLayoutListMembers = new LinearLayout(this);
 
@@ -77,7 +84,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
             }
         });
         Collections.sort(members, getComparator(""));
-        for (final OpenGMMember m : members) {
+        for (final PFMember m : members) {
             CheckBox c = new CheckBox(this);
             c.setText(m.getName());
             c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -91,6 +98,9 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
                 }
             });
             boxes.add(c);
+            if(membersToAdd.contains(m)) {
+                c.setChecked(true);
+            }
         }
         displayParticipants("");
     }
@@ -102,8 +112,10 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
      * @param v
      */
     public void clickOnOkayButton(View v) {
-        Toast t = Toast.makeText(getApplicationContext(), "m.size()= " + membersToAdd.size(), Toast.LENGTH_SHORT);
-        t.show();
+        Intent intent = new Intent();
+        intent.putExtra(ADD_REMOVE_PARTICIPANTS_RESULT, (Parcelable) membersToAdd);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     /**
@@ -113,10 +125,10 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
      * @param s : if the member's name contains s, it will have a higher priority
      * @return : the comparator
      */
-    private Comparator<OpenGMMember> getComparator(final String s) {
-        return new Comparator<OpenGMMember>() {
+    private Comparator<PFMember> getComparator(final String s) {
+        return new Comparator<PFMember>() {
             @Override
-            public int compare(OpenGMMember lhs, OpenGMMember rhs) {
+            public int compare(PFMember lhs, PFMember rhs) {
                 if (lhs.getName().contains(s) && rhs.getName().contains(s)) {
                     return lhs.getName().compareTo(rhs.getName());
                 } else if (lhs.getName().contains(s) && !rhs.getName().contains(s)) {
@@ -156,28 +168,5 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
         scrollViewForMembers.addView(linearLayoutListMembers);
         memberLayout.addView(scrollViewForMembers);
-    }
-
-    /**
-     * A quick class to test
-     * //TODO: replace it.
-     */
-    private class OpenGMMember {
-        private int id;
-        private String name;
-
-        public OpenGMMember() {
-            this.id = geneId;
-            geneId++;
-            this.name = "MemberTester : " + id;
-        }
-
-        public void setName(String newName) {
-            name = newName;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 }

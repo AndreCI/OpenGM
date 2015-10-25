@@ -47,8 +47,9 @@ public final class PFGroup extends PFEntity {
 
     private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
 
-    private final HashMap<String, PFMember> mMembers;
-    private final List<PFEvent> mEvents;
+    private HashMap<String, PFMember> mMembers;
+
+    private List<PFEvent> mEvents;
 
     private String mName;
     private String mDescription;
@@ -209,6 +210,10 @@ public final class PFGroup extends PFEntity {
             roles.addAll(member.getRoles());
         }
         return new ArrayList<>(roles);
+    }
+
+    public List<PFEvent> getEvents() {
+        return mEvents;
     }
 
     /**
