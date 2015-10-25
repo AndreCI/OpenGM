@@ -25,6 +25,8 @@ import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
 import ch.epfl.sweng.opengm.identification.GroupsOverviewActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -44,7 +46,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         Intent comingIntent = getIntent();
 
-        currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0));
+        currentGroup = getCurrentUser().getGroups().get(comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0));
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -54,8 +56,8 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         mEventLists = (ListView) navView.findViewById(R.id.listViewEvents);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +112,14 @@ public class GroupsHomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         switch (item.getItemId()) {
+            case R.id.nav_leave:
+                getCurrentUser().removeFromGroup(currentGroup.getId());
+                if (currentGroup.getMembers().size() == 1) {
+                    currentGroup.deleteGroup();
+                }
+                // use the below intent then (no break)
             case R.id.nav_home:
+                startActivity(new Intent(GroupsHomeActivity.this, GroupsOverviewActivity.class));
                 break;
             case R.id.nav_group_overview:
                 break;
@@ -122,8 +131,6 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_messages:
                 break;
             case R.id.nav_manage:
-                break;
-            case R.id.nav_leave:
                 break;
             case R.id.nav_my_settings:
                 break;
