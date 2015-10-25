@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ch.epfl.sweng.opengm.utils.Alert;
@@ -195,6 +196,21 @@ public final class PFGroup extends PFEntity {
             return member.getRoles();
         }
         return null;
+    }
+
+
+    public void deleteGroup() {
+        for (Map.Entry<String, PFMember> member : mMembers.entrySet()) {
+            removeUser(member.getKey());
+        }
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
+        query.whereEqualTo(OBJECT_ID, getId());
+        try {
+            ParseObject object = query.getFirst();
+            object.delete();
+        } catch (ParseException e) {
+            // TODO what to do if deleting failed?
+        }
     }
 
     /**
