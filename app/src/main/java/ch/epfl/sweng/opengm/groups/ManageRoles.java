@@ -129,6 +129,7 @@ public class ManageRoles extends AppCompatActivity {
         final EditText newRoleEdit = new EditText(getApplicationContext());
         newRoleEdit.setTag("newRoleEdit");
         newRoleEdit.setHint("Enter role name.");
+        newRoleEdit.setSingleLine(true);
 
         Button okButton = getNewButton("OK");
         okButton.setTag("okButton");
