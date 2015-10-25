@@ -1,7 +1,5 @@
 package ch.epfl.sweng.opengm.identification;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 class InputUtils {
@@ -14,30 +12,16 @@ class InputUtils {
     public final static int INPUT_WITHOUT_LETTER = 203;
     public final static int INPUT_WITHOUT_NUMBER = 204;
     public final static int INPUT_WITH_SYMBOL = 205;
+    public final static int INPUT_BEGINS_WITH_SPACE = 206;
+
 
     private final static int PASSWORD_MIN_LENGTH = 6;
     private final static int PASSWORD_MAX_LENGTH = 30;
+    private final static int GROUP_NAME_MIN_LENGTH = 3;
+    private final static int GROUP_NAME_MAX_LENGTH = 10;
 
     private final static Pattern emailPattern =
             Pattern.compile("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-    private final static int MIN_GROUP_NAME_LENGTH = 3;
-    private final static int MAX_GROUP_NAME_LENGTH = 10;
-
-    public enum ErrorCodes {
-        GROUP_NAME_TOO_SHORT(200),
-        GROUP_NAME_TOO_LONG(201),
-        GROUP_NAME_CONTAINS_ILLEGAL_CHARACTERS(202),
-        GROUP_NAME_BEGINS_WITH_SPACE(203);
-
-        private final int errorCode;
-        ErrorCodes(int i) {
-            errorCode = i;
-        }
-
-        public int getErrorCode(){
-            return errorCode;
-        }
-    }
 
     public static boolean isEmailValid(String email) {
         return emailPattern.matcher(email).matches();
@@ -75,15 +59,15 @@ class InputUtils {
         int toReturn = 0;
 
         if(name.charAt(0) == ' '){
-            toReturn = ErrorCodes.GROUP_NAME_BEGINS_WITH_SPACE.getErrorCode();
-        } else if(name.length() < MIN_GROUP_NAME_LENGTH){
-            toReturn = ErrorCodes.GROUP_NAME_TOO_SHORT.getErrorCode();
-        } else if(name.length() > MAX_GROUP_NAME_LENGTH){
-            toReturn = ErrorCodes.GROUP_NAME_TOO_LONG.getErrorCode();
+            toReturn = INPUT_BEGINS_WITH_SPACE;
+        } else if(name.length() < GROUP_NAME_MIN_LENGTH){
+            toReturn = INPUT_TOO_SHORT;
+        } else if(name.length() > GROUP_NAME_MAX_LENGTH){
+            toReturn = INPUT_TOO_LONG;
         } else {
             for(int i = 0; i < name.length(); i++){
                 if(allowedChars.indexOf(name.charAt(i)) < 0){
-                    toReturn = ErrorCodes.GROUP_NAME_CONTAINS_ILLEGAL_CHARACTERS.errorCode;
+                    toReturn = INPUT_WITH_SYMBOL;
                 }
             }
         }
