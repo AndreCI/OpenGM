@@ -15,7 +15,12 @@ import android.widget.TextView;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.util.List;
+import java.util.Random;
+
 import ch.epfl.sweng.opengm.groups.CreateGroup;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
@@ -75,6 +80,26 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         Thread.sleep(1000);
         onView(withId(R.id.doneGroupCreate)).perform(click());
         onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name cannot start with a space")));
+    }
+
+    public void testGoodGroupAddedToDatabase() throws InterruptedException, PFException {
+        Random random = new Random();
+        int groupNumber = random.nextInt(100);
+        onView(withId(R.id.enterGroupName)).perform(typeText("Nice Group" + groupNumber));
+        onView(withId(R.id.enterGroupDescription)).perform(typeText("Nice Description"));
+        closeSoftKeyboard();
+        Thread.sleep(1000);
+        onView(withId(R.id.doneGroupCreate)).perform(click());
+
+        currentUser = PFUser.fetchExistingUser(currentUser.getId());
+        List<PFGroup> groups = currentUser.getGroups();
+        boolean found = false;
+        for(PFGroup group : groups){
+            if(group.getName().equals("Nice Group" + groupNumber)){
+                found = true;
+            }
+        }
+        assertTrue(found);
     }
 
     private BaseMatcher<View> hasErrorText(final String expectedError){
