@@ -2,7 +2,7 @@ package ch.epfl.sweng.opengm.identification;
 
 import java.util.regex.Pattern;
 
-class InputUtils {
+public class InputUtils {
 
     public final static int INPUT_CORRECT = 0;
 
@@ -54,9 +54,9 @@ class InputUtils {
         return INPUT_CORRECT;
     }
 
-    public static int isGroupValid(String name){
+    public static int isGroupNameValid(String name){
         String allowedChars = "abcdefghijklmnoprqstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ";
-        int toReturn = 0;
+        int toReturn = INPUT_CORRECT;
 
         if(name.charAt(0) == ' '){
             toReturn = INPUT_BEGINS_WITH_SPACE;

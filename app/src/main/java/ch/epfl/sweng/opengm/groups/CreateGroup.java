@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.Alert;
@@ -56,7 +57,8 @@ public class CreateGroup extends AppCompatActivity {
         // TODO : call intent for next activity
         // If next activity is group page, also call function to put new gorup in the databse
 
-        if (isGroupNameCorrect(groupName)) {
+        int groupNameValid = InputUtils.isGroupNameValid(groupName);
+        if (groupNameValid == InputUtils.INPUT_CORRECT) {
             try {
                 PFGroup newGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), groupName, groupDescription, null);
                 OpenGMApplication.getCurrentUser().addToAGroup(newGroup);
@@ -64,11 +66,20 @@ public class CreateGroup extends AppCompatActivity {
                 Alert.displayAlert("Couldn't create the group, there were problems when contacting the server.");
             }
         } else {
-            ((EditText) findViewById(R.id.enterGroupName)).setError("Group name cannot be empty");
+            String errorMessage;
+            switch(groupNameValid){
+                case InputUtils.INPUT_TOO_LONG: errorMessage = "Group name is too short";
+                    break;
+                case InputUtils.INPUT_TOO_SHORT: errorMessage = "Group name is too long";
+                    break;
+                case InputUtils.INPUT_BEGINS_WITH_SPACE: errorMessage = "Group name cannot start with a space";
+                    break;
+                case InputUtils.INPUT_WITH_SYMBOL: errorMessage = "Group name contains illegal characters, only letters, numbers and spaces allowed.";
+                    break;
+                default: errorMessage = "Group name is invalid";
+                    break;
+            }
+            ((EditText) findViewById(R.id.enterGroupName)).setError(errorMessage);
         }
-    }
-
-    private boolean isGroupNameCorrect(String groupName) {
-        return true;
     }
 }
