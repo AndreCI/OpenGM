@@ -16,27 +16,28 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFEvent;
 
 public class EventListActivity extends AppCompatActivity {
 
-    private List<Event> eventList;
+    private List<PFEvent> eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //For the purpose of test only.
         //TODO : Event is not up to date, it doesn't implements PFEntity
-        eventList = new ArrayList<Event>();
-        Event tester1 = new Event();
-        Event tester2 = new Event();
-        Event tester3 = new Event();
-        Event tester4 = new Event();
-        Event tester5 = new Event();
-        Event tester6 = new Event();
-        Event tester7 = new Event();
-        Event tester8 = new Event();
-        Event tester9 = new Event();
-        Event tester10 = new Event();
-        Event tester11 = new Event();
+        eventList = new ArrayList<>();
+        PFEvent tester1 = new PFEvent();
+        PFEvent tester2 = new PFEvent();
+        PFEvent tester3 = new PFEvent();
+        PFEvent tester4 = new PFEvent();
+        PFEvent tester5 = new PFEvent();
+        PFEvent tester6 = new PFEvent();
+        PFEvent tester7 = new PFEvent();
+        PFEvent tester8 = new PFEvent();
+        PFEvent tester9 = new PFEvent();
+        PFEvent tester10 = new PFEvent();
+        PFEvent tester11 = new PFEvent();
         tester1.setName("E1");
         tester2.setName("E2");
         tester3.setName("E3");
@@ -84,7 +85,7 @@ public class EventListActivity extends AppCompatActivity {
      * @param v The View.
      */
     public void clickOnAddButton(View v){
-        Event toAdd = new Event();
+        PFEvent toAdd = new PFEvent();
         toAdd.setName("AddByButton");
         toAdd.setDate(new Date(2015, 10, 18));
         eventList.add(toAdd);
@@ -112,13 +113,13 @@ public class EventListActivity extends AppCompatActivity {
          * Comparator in order to sort the events by date. Maybe later we can allow multiple way
          * to sort?
          */
-        Collections.sort(eventList, new Comparator<Event>() {
+        Collections.sort(eventList, new Comparator<PFEvent>() {
             @Override
-            public int compare(Event lhs, Event rhs) {
+            public int compare(PFEvent lhs, PFEvent rhs) {
                 return rhs.getDate().compareTo(lhs.getDate());
             }
         });
-        for(Event e : eventList){
+        for(PFEvent e : eventList){
             final Button b = new Button(this);
             b.setText(e.getName() + ":"+e.getDate().getYear()+"/"+e.getDate().getMonth()+"/"+e.getDate().getDate());
 

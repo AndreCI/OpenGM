@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -292,4 +293,13 @@ public final class PFMember extends PFEntity {
         return fetchExistingMember(id, null, new String[0]);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 }

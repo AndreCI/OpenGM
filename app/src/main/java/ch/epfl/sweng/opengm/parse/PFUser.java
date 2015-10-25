@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -210,7 +211,7 @@ public final class PFUser extends PFEntity {
     /**
      * Add the current user to a group given its id
      *
-     * @param groupId The id of the group whose user wil be added
+     * @param group The group whose user wil be added
      */
     public void addToAGroup(PFGroup group) {
         if (belongToGroup(group.getId())) {
@@ -453,5 +454,15 @@ public final class PFUser extends PFEntity {
         } catch (ParseException e) {
             throw new PFException();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

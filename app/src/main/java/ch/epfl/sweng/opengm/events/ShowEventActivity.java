@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class ShowEventActivity extends AppCompatActivity {
     public final static String SHOW_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.SHOW_EVENT";
 
-    private Event event;
+    private PFEvent event;
 
 
     @Override
@@ -23,13 +25,8 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        //event = (Event) intent.getSerializableExtra("todo");
-        event = new Event();
-        event.setPlace("DTC");
-        event.setName("Event");
-        event.setDescription("ça va etre bien");
-        event.setDate(new Date(2015, 10, 10, 18, 30));
-        event.setParticipants(new ArrayList<Event.OpenGMMember>(1));
+        event = intent.getParcelableExtra("todo");
+
         displayEventInformation();
     }
 
@@ -75,9 +72,10 @@ public class ShowEventActivity extends AppCompatActivity {
     private void fillEventParticipants() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Participants:");
-        for (Event.OpenGMMember participant : event.getParticipants()) {
+        for (PFMember participant : event.getParticipants()) {
             stringBuilder.append('\n');
-            stringBuilder.append(participant.getName());
+
+            stringBuilder.append(participant.getUsername());
         }
         ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
     }

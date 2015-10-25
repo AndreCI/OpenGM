@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -497,6 +498,16 @@ public final class PFGroup extends PFEntity {
         } catch (ParseException e) {
             throw new PFException();
         }
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
 
     }
 }

@@ -11,18 +11,22 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
-    private Event editedEvent;
+    private PFEvent editedEvent;
     private boolean editing;
-    private List<Event.OpenGMMember> participants;
+    private List<PFMember> participants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         //TODO : fill editedEvent, editing, participants with intent + prefill text with existing values of event
         Intent intent = getIntent();
-        Event event = (Event) intent.getSerializableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE);
+        PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE);
         //event = new Event("zert","az", new GregorianCalendar(), "", new ArrayList<Event.OpenGMMember>());
         if (event == null) {
             editing = false;
@@ -64,7 +68,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
     }
 
-    private void fillTexts(Event event) {
+    private void fillTexts(PFEvent event) {
         ((EditText) findViewById(R.id.CreateEditEventNameText)).setText(event.getName());
         ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
@@ -75,7 +79,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
-    private Event createEditEvent() {
+    private PFEvent createEditEvent() {
         if (editing) {
             return editEvent();
         } else {
@@ -83,17 +87,20 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
     }
 
-    private Event createEvent() {
+    private PFEvent createEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
-        return new Event(name, place, date, description, participants);
+
+        //TODO : get new id for creating event
+
+        return new PFEvent("testid", name, place, date, description, participants);
     }
 
-    private Event editEvent() {
+    private PFEvent editEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);

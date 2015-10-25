@@ -68,4 +68,9 @@
     <string name="EditEventButtonText">edit</string>
     <string name="EventTimeTextHint">Select a Time</string>
     <string name="okayButtonText">Ok</string>
+    <string name="CreateEditEarlyDate">Invalide date (already past)</string>
+    <string name="CreateEditEmptyTimeDateErrorMessage">Time and Date must be specified</string>
+    <string name="CreateEditEmptyDateErrorMessage">Date must be specified</string>
+    <string name="CreateEditEmptyTimeErrorMessage">Time must be specified</string>
+    <string name="CreateEditEmptyNameErrorMessage">Name must be specified</string>
 </resources>
