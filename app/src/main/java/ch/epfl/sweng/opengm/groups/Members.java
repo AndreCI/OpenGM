@@ -28,26 +28,20 @@ public class Members extends AppCompatActivity {
 //        int groupId = getIntent().getIntExtra(GROUP_ID, -1);
 //        members = OpenGMApplication.getCurrentUser().getGroups().get(groupId).getMembers();
 
-//        int groupId = 0;
-//        try {
-//            PFUser user = PFUser.fetchExistingUser("oqMblls8Cb");
-//            List<PFGroup> groups = user.getGroups();
-//            if (groups.isEmpty()) {
-//                Log.v("test", "groups is empty");
-//            } else {
-//                Log.v("test", "groups is not empty");
-//            }
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-//
-//        list = (ListView) findViewById(R.id.member_list);
-//
-//        if (!members.isEmpty()) {
-//            MembersAdapter adapter = new MembersAdapter(this, R.layout.item_member, members);
-//            list.setAdapter(adapter);
-//        } else {
-//            Log.v("test", "members is empty");
-//        }
+        // hardcoded the getting of user for tests
+        int groupId = 0;
+        try {
+            PFUser user = PFUser.fetchExistingUser("oqMblls8Cb");
+            List<PFGroup> groups = user.getGroups();
+            members = groups.get(groupId).getMembers();
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        //-----------------------------------------
+
+        list = (ListView) findViewById(R.id.member_list);
+
+        MembersAdapter adapter = new MembersAdapter(this, R.layout.item_member, members);
+        list.setAdapter(adapter);
     }
 }

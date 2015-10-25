@@ -33,18 +33,29 @@ public class MembersAdapter extends ArrayAdapter<PFMember> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
+        MemberHolder holder;
 
         if (row == null) {
             row = ((Activity)context).getLayoutInflater().inflate(ressource, parent, false);
 
-            row.setTag(0, row.findViewById(R.id.member_img));
-            row.setTag(1, row.findViewById(R.id.member_name));
+            holder = new MemberHolder();
+            holder.icon = (ImageView)row.findViewById(R.id.member_img);
+            holder.username = (TextView)row.findViewById(R.id.member_name);
+
+            row.setTag(holder);
+        } else {
+            holder = (MemberHolder) row.getTag();
         }
 
         PFMember user = objects.get(position);
-        ((ImageView)row.getTag(0)).setImageBitmap(user.getPicture());
-        ((TextView)row.getTag(1)).setText(user.getUsername());
+        holder.icon.setImageBitmap(user.getPicture());
+        holder.username.setText(user.getUsername());
 
         return row;
+    }
+
+    static class MemberHolder {
+        ImageView icon;
+        TextView username;
     }
 }
