@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
@@ -46,6 +47,9 @@ public class GroupsHomeActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         setTitle(currentGroup.getName());
+
+        TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+        descriptionView.setText(currentGroup.getDescription());
 
         NavigationView navView = (NavigationView) drawer.findViewById(R.id.nav_view);
 
