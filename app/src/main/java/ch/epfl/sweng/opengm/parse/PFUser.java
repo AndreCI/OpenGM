@@ -243,6 +243,7 @@ public final class PFUser extends PFEntity {
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
+                group.addUser(getId());
                 mGroups.add(group);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
