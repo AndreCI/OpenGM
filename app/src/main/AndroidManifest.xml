@@ -43,8 +43,9 @@
         </activity>
         <activity
             android:name=".groups.Members"
+            android:theme="@style/Theme.AppCompat"
             android:exported="true"
-            android:label="@string/title_activity_add_member" >
+            android:label="@string/title_activity_members" >
         </activity>
         <activity
             android:name=".groups.CreateGroup"

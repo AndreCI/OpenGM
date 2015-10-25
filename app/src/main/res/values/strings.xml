@@ -69,10 +69,11 @@
     <string name="EventTimeTextHint">Select a Time</string>
     <string name="okayButtonText">Ok</string>
 
-    <string name="title_activity_add_member">AddMember</string>
+    <string name="title_activity_members">Members</string>
     <string name="members_hint">Type mail address...</string>
     <string name="members_text">Add new member</string>
     <string name="invite">Invite</string>
+    <string name="action_add_person">Add member</string>
 
     <string name="title_activity_modify_group">ModifyGroup</string>
     <string name="modify_group_add">Add members</string>
