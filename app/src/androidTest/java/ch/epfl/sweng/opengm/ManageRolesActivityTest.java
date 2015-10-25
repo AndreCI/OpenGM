@@ -3,12 +3,14 @@ package ch.epfl.sweng.opengm;
 import android.app.Activity;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.junit.Test;
 
+import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     private void setUpDatabaseInfo() throws PFException {
         testUser = PFUser.fetchExistingUser("f9PMNCFLXN");
         testGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
+        addTestRoles();
     }
 
     private void addTestRoles(){
@@ -59,15 +62,14 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private void cleanUpTestRoles(){
-        List<String> roles = testGroup.getRolesForUser(testUser.getId());
+        List<String> roles = new ArrayList<>(testGroup.getRolesForUser(testUser.getId()));
         for(String role : roles){
             testGroup.removeRoleToUser(role, testUser.getId());
         }
     }
 
     private boolean databaseRolesMatchesView(){
-        addTestRoles();
-        List<String> roles = testGroup.getRolesForUser(testUser.getId());
+        List<String> roles = new ArrayList<>(testGroup.getRolesForUser(testUser.getId()));;
 
         for(int i = 0; i < rolesAndButtons.getChildCount(); i++){
             TableRow currentRow = (TableRow) rolesAndButtons.getChildAt(i);
@@ -76,11 +78,24 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
                 roles.remove(currentRole.getText().toString());
             }
         }
-        cleanUpTestRoles();
         return roles.isEmpty();
     }
 
     public void testIfFetchesUsersRoles(){
         assertTrue(databaseRolesMatchesView());
+    }
+
+    public void testIfFetchedRolesChecked(){
+        boolean allChecked = true;
+        for(int i = 0; i < rolesAndButtons.getChildCount(); i++){
+            TableRow currentRow = (TableRow) rolesAndButtons.getChildAt(i);
+            if(currentRow.getChildCount() > 1){
+                CheckBox box = (CheckBox) currentRow.getChildAt(0);
+                if(!box.isChecked()){
+                    allChecked = false;
+                }
+            }
+        }
+        assertTrue(allChecked);
     }
 }
