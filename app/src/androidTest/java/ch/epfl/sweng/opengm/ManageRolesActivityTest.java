@@ -4,6 +4,13 @@ import android.app.Activity;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.sweng.opengm.groups.ManageRoles;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -46,5 +53,20 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
     }
 
-    
+    private boolean databaseRolesMatchesView(){
+        List<String> roles = testGroup.getRolesForUser(testUser.getId());
+
+        for(int i = 0; i < rolesAndButtons.getChildCount(); i++){
+            TableRow currentRow = (TableRow) rolesAndButtons.getChildAt(i);
+            if(currentRow.getChildCount() > 1){
+                TextView currentRole = (TextView) currentRow.getChildAt(1);
+                roles.remove(currentRole.getText().toString());
+            }
+        }
+        return roles.isEmpty();
+    }
+
+    public void testIfFetchesUsersRoles(){
+        assertTrue(databaseRolesMatchesView());
+    }
 }
