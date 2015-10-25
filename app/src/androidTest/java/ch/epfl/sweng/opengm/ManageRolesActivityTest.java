@@ -6,6 +6,9 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.LinearLayout;
 
 import ch.epfl.sweng.opengm.groups.ManageRoles;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -21,6 +24,8 @@ import static org.hamcrest.Matchers.not;
 public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRoles>{
     LinearLayout rolesAndButtons;
     Activity createRolesActivity;
+    PFUser testUser;
+    PFGroup testGroup;
 
     public ManageRolesActivityTest() {
         super(ManageRoles.class);
@@ -33,7 +38,13 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         createRolesActivity = getActivity();
 
         rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+        setUpDatabaseInfo();
     }
 
+    private void setUpDatabaseInfo() throws PFException {
+        testUser = PFUser.fetchExistingUser("f9PMNCFLXN");
+        testGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
+    }
 
+    
 }
