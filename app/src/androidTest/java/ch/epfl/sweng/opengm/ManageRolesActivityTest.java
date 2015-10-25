@@ -121,4 +121,16 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(databaseRolesMatchesView());
         testGroup.removeRoleToUser("Super new Role", testUser.getId());
     }
+
+    public void testIfRemovingAddedRoleDoesntGoToDatabase() throws PFException {
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "roleName2"))).check(matches(withText("Super new Role")));
+        onView(withTagValue(is((Object) "removeRole2"))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) "removeRole2"))).perform(click());
+        onView(withTagValue(is((Object) "roleName2"))).check(doesNotExist());
+        onView(withId(R.id.button)).perform(click());
+        assertTrue(databaseRolesMatchesView());
+    }
 }
