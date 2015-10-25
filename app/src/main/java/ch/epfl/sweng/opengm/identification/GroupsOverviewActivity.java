@@ -97,7 +97,6 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             // TODO: petit pop-up qui part du bouton avec either "Create a group" ou "Join an existing group"
-                            Log.v("INFO", "create a group / join an existing group");
                             Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroup.class);
                             startActivity(intent);
                         }
