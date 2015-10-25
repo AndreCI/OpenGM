@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.identification;
 
+import android.text.TextUtils;
+
 import java.util.regex.Pattern;
 
 public class InputUtils {
@@ -63,7 +65,7 @@ public class InputUtils {
             return INPUT_TOO_LONG;
         } else {
             for (Character c : name.toCharArray()) {
-                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) {
+                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == ' ')) {
                     return INPUT_WITH_SYMBOL;
                 }
             }

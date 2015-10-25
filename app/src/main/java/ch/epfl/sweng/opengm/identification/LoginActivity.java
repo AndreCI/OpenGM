@@ -36,6 +36,12 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        if (ParseUser.getCurrentUser() != null) {
+            Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
+            intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
+            startActivity(intent);
+        }
+
         mEditUsername = (EditText) findViewById(R.id.login_username);
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
