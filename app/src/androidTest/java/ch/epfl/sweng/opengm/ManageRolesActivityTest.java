@@ -18,11 +18,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class CreateRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRoles>{
+public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRoles>{
     LinearLayout rolesAndButtons;
     Activity createRolesActivity;
 
-    public CreateRolesActivityTest() {
+    public ManageRolesActivityTest() {
         super(ManageRoles.class);
     }
 
