@@ -54,25 +54,22 @@ public class InputUtils {
         return INPUT_CORRECT;
     }
 
-    public static int isGroupNameValid(String name){
-        String allowedChars = "abcdefghijklmnoprqstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ";
-        int toReturn = INPUT_CORRECT;
-
-        if(name.charAt(0) == ' '){
-            toReturn = INPUT_BEGINS_WITH_SPACE;
-        } else if(name.length() < GROUP_NAME_MIN_LENGTH){
-            toReturn = INPUT_TOO_SHORT;
-        } else if(name.length() > GROUP_NAME_MAX_LENGTH){
-            toReturn = INPUT_TOO_LONG;
+    public static int isGroupNameValid(String name) {
+        if (name.charAt(0) == ' ') {
+            return INPUT_BEGINS_WITH_SPACE;
+        } else if (name.length() < GROUP_NAME_MIN_LENGTH) {
+            return INPUT_TOO_SHORT;
+        } else if (name.length() > GROUP_NAME_MAX_LENGTH) {
+            return INPUT_TOO_LONG;
         } else {
-            for(int i = 0; i < name.length(); i++){
-                if(allowedChars.indexOf(name.charAt(i)) < 0){
-                    toReturn = INPUT_WITH_SYMBOL;
+            for (Character c : name.toCharArray()) {
+                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) {
+                    return INPUT_WITH_SYMBOL;
                 }
             }
         }
 
-        return toReturn;
+        return INPUT_CORRECT;
     }
 
 }
