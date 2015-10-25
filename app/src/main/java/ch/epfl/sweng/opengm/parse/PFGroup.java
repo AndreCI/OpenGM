@@ -171,6 +171,17 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
+     * Getter for the list of members in the group without the current user
+     *
+     * @return A list of members in the group without the current user
+     */
+    public List<PFMember> getMembersWithoutUser(String userId) {
+        Map<String, PFMember> members = new HashMap<>(mMembers);
+        members.remove(userId);
+        return new ArrayList<>(members.values());
+    }
+
+    /**
      * Getter for the nickname of a particular member in the group
      *
      * @return the nickname for this user or null if this user does
