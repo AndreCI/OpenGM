@@ -4,7 +4,18 @@ import java.util.regex.Pattern;
 
 class InputUtils {
 
-    private final static int PASSWORD_LENGTH = 6;
+    public final static int INPUT_CORRECT = 0;
+
+    public final static int INPUT_TOO_SHORT = 200;
+    public final static int INPUT_TOO_LONG = 201;
+    public final static int INPUT_NOT_CASE_SENSITIVE = 202;
+    public final static int INPUT_WITHOUT_LETTER = 203;
+    public final static int INPUT_WITHOUT_NUMBER = 204;
+    public final static int INPUT_WITH_SYMBOL = 205;
+
+    private final static int PASSWORD_MIN_LENGTH = 6;
+    private final static int PASSWORD_MAX_LENGTH = 30;
+
     private final static Pattern emailPattern =
             Pattern.compile("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 
@@ -13,7 +24,7 @@ class InputUtils {
         return emailPattern.matcher(email).matches();
     }
 
-    public static boolean isPasswordInvalid(String password) {
+    public static int isPasswordInvalid(String password) {
         // Rules :
         // 1 = length greater than 6
         // 2 = at least one lowercase and one uppercase
@@ -25,8 +36,20 @@ class InputUtils {
             nOfIntegers += (c >= '0' && c <= '9') ? 1 : 0;
         }
         // TODO : change this after testing
-        //return length <= PASSWORD_LENGTH || password.toLowerCase().equals(password) || nOfIntegers <= 0 || nOfIntegers >= length;
-        return false;
+        if (length <= PASSWORD_MIN_LENGTH) {
+            return INPUT_TOO_SHORT;
+        } else if (length > PASSWORD_MAX_LENGTH) {
+            return INPUT_TOO_LONG;
+        }
+        if (password.toLowerCase().equals(password)) {
+            return INPUT_NOT_CASE_SENSITIVE;
+        }
+        if (nOfIntegers <= 0) {
+            return INPUT_WITHOUT_NUMBER;
+        } else if (nOfIntegers >= length) {
+            return INPUT_WITHOUT_LETTER;
+        }
+        return INPUT_CORRECT;
     }
 
 }
