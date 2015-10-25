@@ -55,19 +55,19 @@ public class ManageRoles extends AppCompatActivity {
         // Hardcoding to make this application properly testable -----------------------------------
         PFUser user = null;
         try {
-            user = PFUser.fetchExistingUser("oqMblls8Cb");
+            user = PFUser.fetchExistingUser("f9PMNCFLXN");
         } catch (PFException e) {
             e.printStackTrace();
         }
         try {
-            currentGroup = PFGroup.fetchExistingGroup("s1WDchkWn6");
+            currentGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
         } catch (PFException e) {
             e.printStackTrace();
         }
         //Receive this from intent
         groupMembers = new ArrayList<>();
         try {
-            groupMembers.add(PFMember.fetchExistingMember("oqMblls8Cb"));
+            groupMembers.add(PFMember.fetchExistingMember("f9PMNCFLXN"));
         } catch (PFException e) {
             e.printStackTrace();
         }
