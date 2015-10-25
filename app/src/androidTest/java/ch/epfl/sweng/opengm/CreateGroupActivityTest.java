@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.matcher.BoundedMatcher;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -48,32 +50,29 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         closeSoftKeyboard();
         Thread.sleep(1000);
         onView(withId(R.id.doneGroupCreate)).perform(click());
-
         onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name is too short")));
     }
 
-    private BaseMatcher<View> hasErrorText(final String expectedError){
-        return new BaseMatcher<View>() {
-            @Override
-            public boolean matches(Object item) {
-                boolean toReturn;
-                if(item.getClass() != View.class){
-                    toReturn = false;
-                } else {
-                    View toTest = (View) item;
-                    if(toTest instanceof EditText){
-                        EditText editTextToTest = (EditText) toTest;
-                        toReturn = expectedError.equals(editTextToTest.getError().toString());
-                    } else {
-                        toReturn = false;
-                    }
-                }
-                return toReturn;
-            }
+    public void testDeclinesTooLongName() throws InterruptedException {
+        onView(withId(R.id.enterGroupName)).perform(typeText("thisisasuperlonggroupnameitsimpossiblesomeonewouldwanttowritesuchalonginfactverylonggroupname"));
+        closeSoftKeyboard();
+        Thread.sleep(1000);
+        onView(withId(R.id.doneGroupCreate)).perform(click());
+        onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name is too long")));
+    }
 
+    
+
+    private BaseMatcher<View> hasErrorText(final String expectedError){
+        return new BoundedMatcher<View, TextView>(TextView.class) {
             @Override
             public void describeTo(Description description) {
 
+            }
+
+            @Override
+            protected boolean matchesSafely(TextView textView) {
+                return expectedError.equals(textView.getError().toString());
             }
         };
     }

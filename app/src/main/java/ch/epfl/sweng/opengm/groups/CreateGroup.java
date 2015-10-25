@@ -68,9 +68,9 @@ public class CreateGroup extends AppCompatActivity {
         } else {
             String errorMessage;
             switch(groupNameValid){
-                case InputUtils.INPUT_TOO_LONG: errorMessage = "Group name is too short";
+                case InputUtils.INPUT_TOO_SHORT: errorMessage = "Group name is too short";
                     break;
-                case InputUtils.INPUT_TOO_SHORT: errorMessage = "Group name is too long";
+                case InputUtils.INPUT_TOO_LONG: errorMessage = "Group name is too long";
                     break;
                 case InputUtils.INPUT_BEGINS_WITH_SPACE: errorMessage = "Group name cannot start with a space";
                     break;
