@@ -141,4 +141,11 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(!testGroup.getRolesForUser(testUser.getId()).contains("TestRole1"));
         addTestRoles();
     }
+
+    public void testIfDeclinesBadRoleName() {
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText(""));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "roleName2"))).check(doesNotExist());
+    }
 }
