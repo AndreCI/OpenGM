@@ -20,9 +20,9 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         super(activityClass);
     }
 
-    public void testPreFillWithIntent() {
+    /*public void testPreFillWithIntent() {
         Intent eventIntent = new Intent();
 
-    }
+    }*/
 
 }

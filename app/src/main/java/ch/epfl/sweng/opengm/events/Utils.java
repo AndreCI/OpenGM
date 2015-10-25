@@ -15,11 +15,11 @@ public class Utils {
         for(int i = 0; i < stringArray.length; ++i) {
             array[i] = Integer.parseInt(stringArray[i]);
         }
-        return new Date(array[0],array[1],array[2],array[3],array[4]);
+        return new Date(array[0],array[1]-1,array[2],array[3],array[4]);
 
     }
 
     public static String DateToString(Date d) {
-        return String.format("%d-%d-%d-%d-%d", d.getYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes());
+        return String.format("%d-%d-%d-%d-%d", d.getYear(), d.getMonth()+1, d.getDate(), d.getHours(), d.getMinutes());
     }
 }
