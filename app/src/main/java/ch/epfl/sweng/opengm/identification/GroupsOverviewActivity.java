@@ -31,7 +31,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups_overview);
 
-        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser());
+        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
 
         boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
         // if newUser is true => user is new (register) so show the hints

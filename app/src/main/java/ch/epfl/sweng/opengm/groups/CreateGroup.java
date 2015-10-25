@@ -1,13 +1,21 @@
 package ch.epfl.sweng.opengm.groups;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.InputUtils;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.Alert;
+
+import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
 public class CreateGroup extends AppCompatActivity {
 
@@ -15,6 +23,9 @@ public class CreateGroup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.create_group_outmostLayout);
+        onTapOutsideBehaviour(layout, this);
     }
 
     @Override
@@ -39,11 +50,36 @@ public class CreateGroup extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void createGroup(View view){
+    public void createGroup(View view) {
         String groupName = ((EditText) findViewById(R.id.enterGroupName)).getText().toString();
         String groupDescription = ((EditText) findViewById(R.id.enterGroupDescription)).getText().toString();
         // TODO : retrieve image from button
         // TODO : call intent for next activity
         // If next activity is group page, also call function to put new gorup in the databse
+
+        int groupNameValid = InputUtils.isGroupNameValid(groupName);
+        if (groupNameValid == InputUtils.INPUT_CORRECT) {
+            try {
+                PFGroup newGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), groupName, groupDescription, null);
+                OpenGMApplication.getCurrentUser().addToAGroup(newGroup);
+            } catch (PFException e) {
+                Alert.displayAlert("Couldn't create the group, there were problems when contacting the server.");
+            }
+        } else {
+            String errorMessage;
+            switch(groupNameValid){
+                case InputUtils.INPUT_TOO_SHORT: errorMessage = "Group name is too short";
+                    break;
+                case InputUtils.INPUT_TOO_LONG: errorMessage = "Group name is too long";
+                    break;
+                case InputUtils.INPUT_BEGINS_WITH_SPACE: errorMessage = "Group name cannot start with a space";
+                    break;
+                case InputUtils.INPUT_WITH_SYMBOL: errorMessage = "Group name contains illegal characters, only letters, numbers and spaces allowed.";
+                    break;
+                default: errorMessage = "Group name is invalid";
+                    break;
+            }
+            ((EditText) findViewById(R.id.enterGroupName)).setError(errorMessage);
+        }
     }
 }

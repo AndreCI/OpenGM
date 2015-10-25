@@ -509,7 +509,9 @@ public final class PFGroup extends PFEntity {
         try {
             object.save();
             String id = object.getObjectId();
-            return new PFGroup(id, name, usersList, nickNamesList, rolesList, new ArrayList<String>(), false, about, picture);
+            PFGroup newGroup = new PFGroup(id, name, usersList, nickNamesList, rolesList, new ArrayList<String>(), false, about, picture);
+            user.addToAGroup(newGroup);
+            return newGroup;
         } catch (ParseException e) {
             throw new PFException();
         }
