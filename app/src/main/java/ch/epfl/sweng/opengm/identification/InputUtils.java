@@ -8,6 +8,20 @@ class InputUtils {
     private final static Pattern emailPattern =
             Pattern.compile("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 
+    private enum ErrorCodes {
+        GROUP_NAME_TOO_SHORT(200),
+        GROUP_NAME_TOO_LONG(201),
+        GROUP_NAME_CONTAINS_ILLEGAL_CHARACTERS(202);
+
+        private final int errorCode;
+        ErrorCodes(int i) {
+            errorCode = i;
+        }
+
+        public int getErrorCode(){
+            return errorCode;
+        }
+    }
 
     public static boolean isEmailValid(String email) {
         return emailPattern.matcher(email).matches();
