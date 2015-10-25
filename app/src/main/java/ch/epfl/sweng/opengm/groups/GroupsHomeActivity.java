@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class GroupsHomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_groups_home);
 
         Intent comingIntent = getIntent();
@@ -54,7 +56,6 @@ public class GroupsHomeActivity extends AppCompatActivity
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +112,8 @@ public class GroupsHomeActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_home:
                 break;
+            case R.id.nav_group_overview:
+                break;
             case R.id.nav_members:
                 break;
             case R.id.nav_events:
@@ -120,9 +123,9 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_manage:
                 break;
-            case R.id.nav_share:
+            case R.id.nav_leave:
                 break;
-            case R.id.nav_send:
+            case R.id.nav_my_settings:
                 break;
             default:
                 break;
