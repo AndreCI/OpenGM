@@ -23,6 +23,12 @@ import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Utils;
 
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_NOT_CASE_SENSITIVE;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_SHORT;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_LETTER;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_NUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.*;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static com.parse.ParseException.*;
@@ -78,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEditFirstname.setError(null);
         mEditEmail.setError(null);
 
+        int inputErrorCode;
         boolean cancel = false;
         View focusView = null;
 
@@ -109,8 +116,23 @@ public class RegisterActivity extends AppCompatActivity {
             mEditEmail.setError(getString(R.string.incorrect_email_activity_register));
             focusView = mEditEmail;
             cancel = true;
-        } else if (InputUtils.isPasswordInvalid(password1)) {
-            mEditPassword1.setError(getString(R.string.short_password_activity_register));
+        } else if ((inputErrorCode = InputUtils.isPasswordInvalid(password1)) != INPUT_CORRECT) {
+            String errorString = "";
+            switch (inputErrorCode) {
+                case INPUT_TOO_SHORT:
+                    errorString = getString(R.string.short_password_activity_register);
+                    break;
+                case INPUT_TOO_LONG:
+                    break;
+                case INPUT_NOT_CASE_SENSITIVE:
+                    break;
+                case INPUT_WITHOUT_NUMBER:
+                    break;
+                case INPUT_WITHOUT_LETTER:
+                    break;
+                default:
+            }
+            mEditPassword1.setError(errorString);
             focusView = mEditPassword1;
             cancel = true;
         } else if (!password1.equals(password2)) {
