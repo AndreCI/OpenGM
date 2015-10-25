@@ -69,6 +69,14 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name contains illegal characters, only letters, numbers and spaces allowed.")));
     }
 
+    public void testDeclinesNameStartingWithSpace() throws InterruptedException {
+        onView(withId(R.id.enterGroupName)).perform(typeText(" Why would you start with  ?"));
+        closeSoftKeyboard();
+        Thread.sleep(1000);
+        onView(withId(R.id.doneGroupCreate)).perform(click());
+        onView(withId(R.id.enterGroupName)).check(matches(hasErrorText("Group name cannot start with a space")));
+    }
+
     private BaseMatcher<View> hasErrorText(final String expectedError){
         return new BoundedMatcher<View, TextView>(TextView.class) {
             @Override
