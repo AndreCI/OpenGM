@@ -19,6 +19,8 @@ import com.parse.SignUpCallback;
 import org.json.JSONArray;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Utils;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.*;
@@ -28,8 +30,8 @@ import static com.parse.ParseException.*;
 public class RegisterActivity extends AppCompatActivity {
 
 
-    public static final String USERNAME_KEY = "ch.epfl.ch.opengm.connexion.signup.register1activity.username";
-    public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.connexion.signup.register1activity.password";
+    public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registeractivity.username";
+    public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registeractivity.password";
 
     private EditText mEditUsername;
     private EditText mEditPassword1;
@@ -130,29 +132,16 @@ public class RegisterActivity extends AppCompatActivity {
             user.signUpInBackground(new SignUpCallback() {
                                         public void done(ParseException e) {
                                             if (e == null) {
-                                                // Second : create a new row for this user in the PFUser table
-                                                ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
-                                                parseObject.put(USER_ENTRY_USERID, user.getObjectId());
-                                                parseObject.put(USER_ENTRY_USERNAME, username);
-                                                parseObject.put(USER_ENTRY_FIRSTNAME, firstname);
-                                                parseObject.put(USER_ENTRY_LASTNAME, lastname);
-                                                parseObject.put(USER_ENTRY_GROUPS, new JSONArray());
-                                                parseObject.put(USER_ENTRY_PHONENUMBER, "");
-                                                parseObject.put(USER_ENTRY_ABOUT, "Hey there !");
-                                                parseObject.saveInBackground(new SaveCallback() {
-                                                    @Override
-                                                    public void done(ParseException e) {
-                                                        dialog.hide();
-                                                        if (e == null) {
-                                                            Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
-                                                            intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            // error while updating the PFUser table
-                                                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
+                                                try {
+                                                    PFUser.createNewUser(user.getObjectId(), email, username, firstname, lastname);
+                                                    dialog.hide();
+                                                    Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
+                                                    intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
+                                                    startActivity(intent);
+                                                } catch (PFException e1) {
+                                                    dialog.hide();
+                                                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
                                             } else {
                                                 dialog.hide();
                                                 // error while updating the _User table
