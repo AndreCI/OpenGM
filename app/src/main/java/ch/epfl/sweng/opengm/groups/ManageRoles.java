@@ -165,9 +165,11 @@ public class ManageRoles extends AppCompatActivity {
         box.setChecked(true);
         box.setEnabled(false);
         box.setTag("roleBox" + roleBoxCount);
-        roleBoxCount++;
+
 
         Button newButton = getNewButton("-");
+        newButton.setTag("removeRole" + roleBoxCount);
+        roleBoxCount++;
 
         final TableRow newRow = getNewTableRow(box, newRoleText);
         newRow.setTag("roleRow" + roleRowCount);

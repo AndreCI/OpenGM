@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.CheckBox;
@@ -24,7 +25,9 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
@@ -68,20 +71,26 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         }
     }
 
-    private boolean databaseRolesMatchesView(){
-        List<String> roles = new ArrayList<>(testGroup.getRolesForUser(testUser.getId()));;
+    private boolean databaseRolesMatchesView() throws PFException {
+        setUpDatabaseInfo();
+        List<String> roles = new ArrayList<>(testGroup.getRolesForUser(testUser.getId()));
+        boolean allIn = true;
 
         for(int i = 0; i < rolesAndButtons.getChildCount(); i++){
             TableRow currentRow = (TableRow) rolesAndButtons.getChildAt(i);
             if(currentRow.getChildCount() > 1){
                 TextView currentRole = (TextView) currentRow.getChildAt(1);
-                roles.remove(currentRole.getText().toString());
+                if(!roles.contains(currentRole.getText().toString())){
+                    allIn = false;
+                } else {
+                    roles.remove(currentRole.getText().toString());
+                }
             }
         }
-        return roles.isEmpty();
+        return roles.isEmpty() && allIn;
     }
 
-    public void testIfFetchesUsersRoles(){
+    public void testIfFetchesUsersRoles() throws PFException {
         assertTrue(databaseRolesMatchesView());
     }
 
@@ -97,5 +106,19 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
             }
         }
         assertTrue(allChecked);
+    }
+
+    public void testIfAddsRoles() throws PFException {
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "roleName2"))).check(matches(withText("Super new Role")));
+        onView(withTagValue(is((Object) "removeRole2"))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) "roleBox2"))).check(matches(isChecked()));
+        onView(withTagValue(is((Object) "roleBox2"))).check(matches(not(isEnabled())));
+        onView(withId(R.id.button)).perform(click());
+
+        assertTrue(databaseRolesMatchesView());
+        testGroup.removeRoleToUser("Super new Role", testUser.getId());
     }
 }
