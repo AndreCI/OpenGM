@@ -11,18 +11,19 @@ import android.widget.TextView;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 /**
  * Created by heinz on 10/23/15.
  */
-public class MembersAdapter extends ArrayAdapter<PFUser> {
+public class MembersAdapter extends ArrayAdapter<PFMember> {
 
     private Context context;
     private int ressource;
-    private List<PFUser> objects;
+    private List<PFMember> objects;
 
-    public MembersAdapter(Context context, int resource, List<PFUser> objects) {
+    public MembersAdapter(Context context, int resource, List<PFMember> objects) {
         super(context, resource, objects);
         this.context = context;
         this.ressource = resource;
@@ -40,7 +41,7 @@ public class MembersAdapter extends ArrayAdapter<PFUser> {
             row.setTag(1, row.findViewById(R.id.member_name));
         }
 
-        PFUser user = objects.get(position);
+        PFMember user = objects.get(position);
         ((ImageView)row.getTag(0)).setImageBitmap(user.getPicture());
         ((TextView)row.getTag(1)).setText(user.getUsername());
 
