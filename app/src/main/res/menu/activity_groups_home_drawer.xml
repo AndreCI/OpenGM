@@ -4,8 +4,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@android:drawable/ic_menu_camera"
+            android:icon="@android:drawable/ic_menu_slideshow"
             android:title="Home" />
+        <item
+            android:id="@+id/nav_group_overview"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="Group overview" />
         <item
             android:id="@+id/nav_members"
             android:icon="@android:drawable/ic_menu_gallery"
@@ -22,19 +26,15 @@
             android:id="@+id/nav_manage"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="Manage group" />
+        <item
+            android:id="@+id/nav_leave"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:title="Leave group" />
+        <item
+            android:id="@+id/nav_my_settings"
+            android:icon="@android:drawable/ic_menu_share"
+            android:title="My settings" />
     </group>
 
-    <item android:title="Personal">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@android:drawable/ic_menu_share"
-                android:title="My settings" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@android:drawable/ic_menu_save"
-                android:title="Log out" />
-        </menu>
-    </item>
 
 </menu>
