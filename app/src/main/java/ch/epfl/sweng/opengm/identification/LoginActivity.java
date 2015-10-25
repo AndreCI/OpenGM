@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -37,6 +38,9 @@ public class LoginActivity extends AppCompatActivity {
 
         mEditUsername = (EditText) findViewById(R.id.login_username);
         mEditPassword = (EditText) findViewById(R.id.login_password);
+
+        mEditUsername.setText("aurel");
+        mEditPassword.setText("Password1");
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);
