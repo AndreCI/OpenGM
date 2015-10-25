@@ -1,7 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -27,12 +26,12 @@ import ch.epfl.sweng.opengm.utils.Alert;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
@@ -169,6 +168,15 @@ public final class PFGroup extends PFEntity {
      */
     public List<PFMember> getMembers() {
         return new ArrayList<>(mMembers.values());
+    }
+
+    /**
+     * getter for the description of the group
+     *
+     * @return A string containing the description of the group
+     */
+    public String getDescription() {
+        return mDescription;
     }
 
     /**
