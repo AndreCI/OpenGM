@@ -28,11 +28,10 @@ public class OpenGMApplication extends Application {
         return currentUser;
     }
 
-    public static PFUser setCurrentUser(ParseUser id) {
+    public static PFUser setCurrentUser(String id) {
         if (currentUser == null && id != null) {
-            PFUser.Builder builder = new PFUser.Builder(id.getObjectId());
             try {
-                currentUser = builder.build();
+                currentUser = PFUser.fetchExistingUser(id);
             } catch (PFException e) {
                 // TODO : what to do?
             }

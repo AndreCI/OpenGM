@@ -27,7 +27,7 @@ abstract class PFEntity {
     /**
      * @return the id of the current entity
      */
-    protected String getId() {
+    public String getId() {
         return this.mId;
     }
 
@@ -62,48 +62,6 @@ abstract class PFEntity {
         int result = mId.hashCode();
         result = 31 * result + mParseTable.hashCode();
         return result;
-    }
-
-    /**
-     * This Builder aims at building some entity that correspond to a table on the server
-     */
-    public static abstract class Builder {
-
-        protected String mId;
-
-        /**
-         * The builder of an entity without id is used when you want to create an object and then push it to the database
-         */
-        protected Builder() {
-            mId = null;
-        }
-
-        /**
-         * @param id The id of which you are retrieving the information
-         */
-        protected Builder(String id) {
-            mId = id;
-        }
-
-        /**
-         * Basically this method is only called when you are pushing a new object on the server
-         *
-         * @param id the new id of this object
-         */
-        protected void setId(String id) {
-            mId = id;
-        }
-
-        /**
-         * This method retrieves informations for all the fields that each subclass needs.
-         *
-         * @throws PFException If the server throws an exception while using it (usually, unknown object, no connexion etc...)
-         */
-        protected abstract void retrieveFromServer() throws PFException;
-
-
-
-
     }
 
 }

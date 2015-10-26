@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -9,8 +10,11 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,12 +26,14 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.objectToString;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 /**
@@ -40,6 +46,7 @@ public final class PFUser extends PFEntity {
 
     private final List<PFGroup> mGroups;
 
+    private String mEmail;
     private String mUsername;
     private String mFirstName;
     private String mLastName;
@@ -47,7 +54,7 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    private PFUser(String userId, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
+    private PFUser(String userId, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(userId, PARSE_TABLE_USER);
         checkArguments(username, "User name");
         this.mUsername = username;
@@ -62,9 +69,8 @@ public final class PFUser extends PFEntity {
         checkNullArguments(aboutUser, "User's groups");
         this.mGroups = new ArrayList<>();
         for (String groupId : groups) {
-            PFGroup.Builder group = new PFGroup.Builder(this, groupId, false);
             try {
-                mGroups.add(group.build());
+                mGroups.add(PFGroup.fetchExistingGroup(groupId));
             } catch (PFException e) {
                 // TODO : what to do?
             }
@@ -75,7 +81,9 @@ public final class PFUser extends PFEntity {
     @Override
     public void updateToServer(final String entry) throws PFException {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_USER);
-        query.getInBackground(getId(), new GetCallback<ParseObject>() {
+        query.whereEqualTo(USER_ENTRY_USERID, getId());
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
                     if (object != null) {
@@ -112,7 +120,7 @@ public final class PFUser extends PFEntity {
                         object.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e == null) {
+                                if (e != null) {
                                     // FIXME: done() method canno't throw exceptions, but we want THIS method
                                     // FIXME: updateToServer() to throw a PFException --> That we can catch e.g in the setters.
                                     // throw new ParseException("No object for the selected id.");
@@ -130,6 +138,15 @@ public final class PFUser extends PFEntity {
     }
 
     /**
+     * Getter for the email of the user
+     *
+     * @return the email of the user
+     */
+    public String getEmail() {
+        return mEmail;
+    }
+
+    /**
      * Getter for the username of the user
      *
      * @return the username of the user
@@ -137,6 +154,7 @@ public final class PFUser extends PFEntity {
     public String getUsername() {
         return mUsername;
     }
+
 
     /**
      * Getter for the first name of the user
@@ -195,21 +213,15 @@ public final class PFUser extends PFEntity {
     /**
      * Add the current user to a group given its id
      *
-     * @param groupId The id of the group whose user wil be added
+     * @param group The group whose user wil be added
      */
-    public void addToAGroup(String groupId) {
-        if (belongToGroup(groupId)) {
+    public void addToAGroup(PFGroup group) {
+        if (belongToGroup(group.getId())) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
+            mGroups.add(group);
             try {
-                PFGroup group = new PFGroup.Builder(this, groupId, false).build();
-                group.addUser(getId());
-                mGroups.add(group);
-                try {
-                    updateToServer(USER_ENTRY_GROUPS);
-                } catch (PFException e) {
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
-                }
+                updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
@@ -231,6 +243,7 @@ public final class PFUser extends PFEntity {
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
+                group.addUser(getId());
                 mGroups.add(group);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
@@ -375,128 +388,73 @@ public final class PFUser extends PFEntity {
         return false;
     }
 
-    public static final class Builder extends PFEntity.Builder implements PFImageInterface {
-
-        private String mUsername;
-        private String mFirstName;
-        private String mLastName;
-        private String mPhoneNumber;
-        private String mAboutUser;
-        private Bitmap mPicture;
-        private final List<String> mGroups;
-
-        /**
-         * The only constructor for building a user
-         *
-         * @param id The id of the user we would like to retrieve information
-         */
-        public Builder(String id) {
-            super(id);
-            this.mGroups = new ArrayList<>();
+    /**
+     * Fetches an existing user from the server and returns the object as a PFUser
+     *
+     * @param id The id of the user we are looking for
+     * @return The user that corresponds to the given id
+     * @throws PFException If something wrong happened with the server
+     */
+    public static PFUser fetchExistingUser(String id) throws PFException {
+        if (id == null) {
+            throw new PFException();
         }
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+        try {
+            ParseObject object = query.getFirst();
+            if (object != null) {
+                String username = object.getString(USER_ENTRY_USERNAME);
+                String firstName = object.getString(USER_ENTRY_FIRSTNAME);
+                String lastName = object.getString(USER_ENTRY_LASTNAME);
+                String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
+                String description = object.getString(USER_ENTRY_ABOUT);
 
-        /**
-         * Setter for the username of the user we are building
-         *
-         * @param username The new username of the current user
-         */
-        private void setUsername(String username) {
-            this.mUsername = username;
-        }
+                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
 
-        /**
-         * Setter for the first name of the user we are building
-         *
-         * @param firstName The new first name of the current user
-         */
-        private void setFirstName(String firstName) {
-            this.mFirstName = firstName;
-        }
+                ParseObject mailObject = query.getFirst();
 
-        /**
-         * Setter for the last name of the user we are building
-         *
-         * @param lastName The new last name of the current user
-         */
-        private void setLastName(String lastName) {
-            this.mLastName = lastName;
-        }
+                String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
-        /**
-         * Setter for the phone number of the user we are building
-         *
-         * @param phoneNumber The new phone number of the current user
-         */
-        private void setPhoneNumber(String phoneNumber) {
-            this.mPhoneNumber = phoneNumber;
-        }
 
-        /**
-         * Setter for the description of the user we are building
-         *
-         * @param about The new description of the current user
-         */
-        private void setAbout(String about) {
-            this.mAboutUser = about;
-        }
-
-        /**
-         * Setter for the profile picture of the user we are building
-         *
-         * @param image The new picture of the current user
-         */
-        public void setImage(Bitmap image) {
-            this.mPicture = image;
-        }
-
-        /**
-         * Add the user we are building to a group given its id
-         *
-         * @param group The id of the group whose user wil be added
-         */
-        private void addToAGroup(String group) {
-            mGroups.add(group);
-        }
-
-        @Override
-        protected void retrieveFromServer() throws PFException {
-            if (mId == null) {
-                throw new PFException();
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
+                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+                return new PFUser(id, email, username, firstName, lastName, phoneNumber, description, picture[0], groups);
+            } else {
+                throw new PFException("Parse query for id " + id + " failed");
             }
-            final String userId = mId;
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-            query.whereEqualTo(PFConstants.USER_ENTRY_USERID, userId);
-            try {
-                ParseObject object = query.getFirst();
-                if (object != null) {
-                    setUsername(object.getString(USER_ENTRY_USERNAME));
-                    setFirstName(object.getString(USER_ENTRY_FIRSTNAME));
-                    setLastName(object.getString(USER_ENTRY_LASTNAME));
-                    setPhoneNumber(object.getString(USER_ENTRY_PHONENUMBER));
-                    setAbout(object.getString(USER_ENTRY_ABOUT));
-                    retrieveFileFromServer(object, USER_ENTRY_PICTURE, this);
-                    String[] groups = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
-                    for (String groupId : groups) {
-                        addToAGroup(objectToString(groupId));
-                    }
-                } else {
-                    throw new PFException("Parse query for id " + userId + " failed");
-                }
-            } catch (ParseException e) {
-                throw new PFException("Parse query for id " + userId + " failed");
-            }
+        } catch (ParseException e) {
+            throw new PFException("Parse query for id " + id + " failed");
         }
+    }
 
-        /**
-         * Builds a new User with all its attributes.
-         *
-         * @return a new user corresponding to the object we were building
-         * @throws PFException If something went wrong while retrieving information online
-         */
-        public PFUser build() throws PFException {
-            retrieveFromServer();
-            return new PFUser(mId, mUsername, mFirstName, mLastName, mPhoneNumber, mAboutUser, mPicture, mGroups);
+    /**
+     * Create a new user in the User table (should only be used after sign up)
+     *
+     * @param id        The given id of our user
+     * @param username  The username of the user
+     * @param firstName The first name of the user
+     * @param lastName  The last name of the user
+     * @return The new user that contains all the given parameters
+     * @throws PFException If something wrong happened with the server
+     */
+    public static PFUser createNewUser(String id, String email, String username, String firstName, String lastName) throws PFException {
+        ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
+        parseObject.put(USER_ENTRY_USERID, id);
+        parseObject.put(USER_ENTRY_USERNAME, username);
+        parseObject.put(USER_ENTRY_FIRSTNAME, firstName);
+        parseObject.put(USER_ENTRY_LASTNAME, lastName);
+        parseObject.put(USER_ENTRY_GROUPS, new JSONArray());
+        parseObject.put(USER_ENTRY_PHONENUMBER, "");
+        parseObject.put(USER_ENTRY_ABOUT, "");
+        try {
+            parseObject.save();
+            return new PFUser(id, email, username, firstName, lastName, "", "", null, new ArrayList<String>());
+        } catch (ParseException e) {
+            throw new PFException();
         }
-
     }
 }

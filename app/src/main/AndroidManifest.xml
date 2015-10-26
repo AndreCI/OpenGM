@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ch.epfl.sweng.opengm" >
+    package="ch.epfl.sweng.opengm">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -10,58 +10,61 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".identification.RegisterActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".identification.GroupsOverviewActivity" >
-        </activity>
+
         <activity
-            android:name=".identification.GroupHomeActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_group_home"
-            android:theme="@style/FullscreenTheme" >
-        </activity>
+            android:name=".identification.GroupsOverviewActivity"
+            android:screenOrientation="portrait"></activity>
+
         <activity
-            android:name=".groups.CreateRoles"
-            android:label="@string/title_activity_create_roles" >
-        </activity>
+            android:name=".groups.ManageRoles"
+            android:label="@string/title_activity_manage_roles"
+            android:screenOrientation="portrait"></activity>
+
         <activity
             android:name=".groups.JoinGroup"
-            android:label="@string/title_activity_join_group" >
-        </activity>
+            android:label="@string/title_activity_join_group"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".groups.CreateGroup"
-            android:label="@string/title_activity_create_group" >
-        </activity>
+            android:label="@string/title_activity_create_group"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".events.EventListActivity"
-            android:label="@string/title_activity_event_list" >
-        </activity>
+            android:label="@string/title_activity_event_list"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".events.ShowEventActivity"
-            android:label="@string/title_activity_show_event" >
-        </activity>
+            android:label="@string/title_activity_show_event"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".events.CreateEditEventActivity"
-            android:exported="true"
-            android:label="@string/title_activity_create_edit_event" >
-        </activity>
+            android:label="@string/title_activity_create_edit_event"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".events.AddRemoveParticipantsActivity"
-            android:label="@string/title_activity_add_remove_participants" >
-        </activity>
+            android:label="@string/title_activity_add_remove_participants"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".groups.GroupsHomeActivity"
+            android:label="@string/title_activity_groups_home"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

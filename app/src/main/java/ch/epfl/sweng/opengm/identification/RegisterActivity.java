@@ -19,8 +19,16 @@ import com.parse.SignUpCallback;
 import org.json.JSONArray;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Utils;
 
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_NOT_CASE_SENSITIVE;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_SHORT;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_LETTER;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_NUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.*;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static com.parse.ParseException.*;
@@ -28,8 +36,8 @@ import static com.parse.ParseException.*;
 public class RegisterActivity extends AppCompatActivity {
 
 
-    public static final String USERNAME_KEY = "ch.epfl.ch.opengm.connexion.signup.register1activity.username";
-    public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.connexion.signup.register1activity.password";
+    public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registeractivity.username";
+    public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registeractivity.password";
 
     private EditText mEditUsername;
     private EditText mEditPassword1;
@@ -76,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEditFirstname.setError(null);
         mEditEmail.setError(null);
 
+        int inputErrorCode;
         boolean cancel = false;
         View focusView = null;
 
@@ -107,8 +116,23 @@ public class RegisterActivity extends AppCompatActivity {
             mEditEmail.setError(getString(R.string.incorrect_email_activity_register));
             focusView = mEditEmail;
             cancel = true;
-        } else if (InputUtils.isPasswordInvalid(password1)) {
-            mEditPassword1.setError(getString(R.string.short_password_activity_register));
+        } else if ((inputErrorCode = InputUtils.isPasswordInvalid(password1)) != INPUT_CORRECT) {
+            String errorString = "";
+            switch (inputErrorCode) {
+                case INPUT_TOO_SHORT:
+                    errorString = getString(R.string.short_password_activity_register);
+                    break;
+                case INPUT_TOO_LONG:
+                    break;
+                case INPUT_NOT_CASE_SENSITIVE:
+                    break;
+                case INPUT_WITHOUT_NUMBER:
+                    break;
+                case INPUT_WITHOUT_LETTER:
+                    break;
+                default:
+            }
+            mEditPassword1.setError(errorString);
             focusView = mEditPassword1;
             cancel = true;
         } else if (!password1.equals(password2)) {
@@ -130,29 +154,16 @@ public class RegisterActivity extends AppCompatActivity {
             user.signUpInBackground(new SignUpCallback() {
                                         public void done(ParseException e) {
                                             if (e == null) {
-                                                // Second : create a new row for this user in the PFUser table
-                                                ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
-                                                parseObject.put(USER_ENTRY_USERID, user.getObjectId());
-                                                parseObject.put(USER_ENTRY_USERNAME, username);
-                                                parseObject.put(USER_ENTRY_FIRSTNAME, firstname);
-                                                parseObject.put(USER_ENTRY_LASTNAME, lastname);
-                                                parseObject.put(USER_ENTRY_GROUPS, new JSONArray());
-                                                parseObject.put(USER_ENTRY_PHONENUMBER, "");
-                                                parseObject.put(USER_ENTRY_ABOUT, "Hey there !");
-                                                parseObject.saveInBackground(new SaveCallback() {
-                                                    @Override
-                                                    public void done(ParseException e) {
-                                                        dialog.hide();
-                                                        if (e == null) {
-                                                            Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
-                                                            intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            // error while updating the PFUser table
-                                                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
+                                                try {
+                                                    PFUser.createNewUser(user.getObjectId(), email, username, firstname, lastname);
+                                                    dialog.hide();
+                                                    Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
+                                                    intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
+                                                    startActivity(intent);
+                                                } catch (PFException e1) {
+                                                    dialog.hide();
+                                                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
                                             } else {
                                                 dialog.hide();
                                                 // error while updating the _User table
