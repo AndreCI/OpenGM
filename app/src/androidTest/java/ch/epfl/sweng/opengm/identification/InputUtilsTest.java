@@ -46,26 +46,26 @@ public class InputUtilsTest {
 
     @Test
     public void testAcceptGoodPassword(){
-        assertTrue(!InputUtils.isPasswordInvalid("GoodPassword1"));
+        assertEquals(InputUtils.isPasswordInvalid("GoodPassword1"), InputUtils.INPUT_CORRECT);
     }
 
     @Test
     public void testDeclineShortPassword(){
-        assertTrue(InputUtils.isPasswordInvalid("goodpa"));
+        assertEquals(InputUtils.isPasswordInvalid("goodpa"), InputUtils.INPUT_TOO_SHORT);
     }
 
     @Test
     public void testDeclinePasswordWithoutNumber() {
-        assertTrue(InputUtils.isPasswordInvalid("GoodPassword"));
+        assertEquals(InputUtils.isPasswordInvalid("GoodPassword"), InputUtils.INPUT_WITHOUT_NUMBER);
     }
 
     @Test
     public void testDeclinePasswordNotBothCases() {
-        assertTrue(InputUtils.isPasswordInvalid("goodpassword"));
+        assertEquals(InputUtils.isPasswordInvalid("goodpassword"), InputUtils.INPUT_NOT_CASE_SENSITIVE);
     }
 
     @Test
     public void testDeclinePasswordOnlyNumbers(){
-        assertTrue(InputUtils.isPasswordInvalid("1337"));
+        assertEquals(InputUtils.isPasswordInvalid("1337"), InputUtils.INPUT_WITHOUT_NUMBER);
     }
 }
