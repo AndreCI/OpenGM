@@ -40,7 +40,7 @@ public final class PFEvent extends PFEntity implements Parcelable {
         super(in.readString(), PARSE_TABLE_EVENT);
         mTitle = in.readString();
         mDescription = in.readString();
-        mDate = Utils.StringToDate(in.readString());
+        mDate = Utils.stringToDate(in.readString());
         mPlace = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
         Parcelable[] members = in.readParcelableArray(PFMember.class.getClassLoader());
@@ -180,7 +180,7 @@ public final class PFEvent extends PFEntity implements Parcelable {
         dest.writeString(mId);
         dest.writeString(mTitle);
         dest.writeString(mDescription);
-        dest.writeString(Utils.DateToString(mDate));
+        dest.writeString(Utils.dateToString(mDate));
         dest.writeString(mPlace);
         dest.writeParcelable(mPicture, flags);
         dest.writeParcelableArray(mParticipants.toArray(new PFMember[0]), flags);

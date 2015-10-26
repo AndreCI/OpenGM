@@ -27,6 +27,8 @@ import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
+import static android.app.PendingIntent.getActivity;
+
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
@@ -82,12 +84,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     public void onParticipantsButtonClick(View v) {
-        if (legalArguments()) {
-            Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
+        Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
+        if(editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
-            intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
-            startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
         }
+        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
+        startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 
     private void fillTexts(PFEvent event) {

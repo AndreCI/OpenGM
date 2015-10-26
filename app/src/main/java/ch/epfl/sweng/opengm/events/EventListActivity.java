@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,7 +19,10 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -84,6 +88,19 @@ public class EventListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //TODO : check with other ppl for intent name
         currentGroup = intent.getParcelableExtra("intentNameToDetermine");
+        PFUser user = null;
+        try {
+            user = PFUser.createNewUser("testuser", "lolNoMail4U", "toto", "titi", "tata");
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        try {
+            currentGroup = PFGroup.createNewGroup(user, "testgroup", "testdescription", null);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        currentGroup.addEvent(new PFEvent("id", "name", "place", Utils.stringToDate("2018-0-1-12-12"), "description", new ArrayList<PFMember>()));
+        currentGroup.addUser("aurel");
         eventList = currentGroup.getEvents();
         setContentView(R.layout.activity_event_list);
         displayEvents();
@@ -120,10 +137,6 @@ public class EventListActivity extends AppCompatActivity {
         intent.putExtra(EVENT_LIST_MESSAGE_GROUP, currentGroup);
 
         startActivityForResult(intent, RESULT_CODE_FOR_CREATE_EDIT);
-
-        Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT);
-        t.show();
-        displayEvents();
     }
 
     /**

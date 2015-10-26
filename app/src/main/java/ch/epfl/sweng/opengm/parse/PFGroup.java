@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -55,6 +56,12 @@ public final class PFGroup extends PFEntity {
     private String mDescription;
     private boolean mIsPrivate;
     private Bitmap mPicture;
+
+    public PFGroup(Parcel in) {
+        super(in.readString(), PARSE_TABLE_GROUP);
+        //TODO : make parcel constructor with map and everything
+
+    }
 
     private PFGroup(String groupId, String name, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
         super(groupId, PARSE_TABLE_GROUP);
@@ -216,6 +223,13 @@ public final class PFGroup extends PFEntity {
         return mEvents;
     }
 
+    public void addEvent(PFEvent event) {
+        mEvents.add(event);
+    }
+
+    public boolean hasMembers() {
+        return (mMembers != null && !mMembers.isEmpty());
+    }
     /**
      * Add a particular user to a group by adding its id
      *
@@ -513,6 +527,21 @@ public final class PFGroup extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mId);
 
     }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+
+        @Override
+        public PFGroup createFromParcel(Parcel source) {
+            return new PFGroup(source);
+        }
+
+        @Override
+        public PFGroup[] newArray(int size) {
+            return new PFGroup[size];
+        }
+    };
+
 }

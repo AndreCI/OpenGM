@@ -15,12 +15,12 @@ public class UtilsTest {
     public void legitDateShouldBeParsedCorrectly() {
         int year = 1994; int month = 5; int day = 6; int hour = 6; int min = 10;
         Date date = new Date(year, month, day, hour, min);
-        assertEquals("1994-6-6-6-10", Utils.DateToString(date));
+        assertEquals("1994-6-6-6-10", Utils.dateToString(date));
     }
     @Test
     public void LegitStringShouldProduceCorrectDate() {
         String s = "2012-12-21-12-5";
-        Date date = Utils.StringToDate(s);
+        Date date = Utils.stringToDate(s);
         assertEquals(2012, date.getYear());
         assertEquals(12, date.getMonth()+1);
         assertEquals(21, date.getDate());
@@ -31,12 +31,12 @@ public class UtilsTest {
     public void IllegalStringShouldProduceException() {
         String s = "42";
         try {
-            Utils.StringToDate(s);
+            Utils.stringToDate(s);
             fail("No IllegalArgumentException for 42");
         } catch (IllegalArgumentException e) {
             String s2 = "----";
             try {
-                Utils.StringToDate(s2);
+                Utils.stringToDate(s2);
                 fail("No IllegalArgumentException for ----");
             } catch (IllegalArgumentException e2) {
             }

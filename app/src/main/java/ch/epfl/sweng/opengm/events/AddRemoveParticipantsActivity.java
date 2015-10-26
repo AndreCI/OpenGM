@@ -20,8 +20,10 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
@@ -38,8 +40,24 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_remove_participants);
         boxes = new ArrayList<>();
         Intent intent = getIntent();
-        membersToAdd = ((PFEvent) intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE)).getParticipants();
-        members = ((PFGroup)intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP)).getMembers();
+        PFEvent currentEvent = intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
+        if(currentEvent != null && currentEvent.getParticipants() != null && !currentEvent.getParticipants().isEmpty()) {
+            membersToAdd = currentEvent.getParticipants();
+        } else {
+            membersToAdd = new ArrayList<>();
+        }
+        PFGroup currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
+        if(currentGroup.hasMembers()) {
+            members = currentGroup.getMembers();
+        } else {
+            members = new ArrayList<>();
+            try {
+                members.add(PFMember.fetchExistingMember("aurel"));
+            } catch (PFException e) {
+                e.printStackTrace();
+            }
+        }
+        assert(members.containsAll(membersToAdd));
         /*members.add(new OpenGMMember());
         members.add(new OpenGMMember());
         members.add(new OpenGMMember());
@@ -113,7 +131,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
      */
     public void clickOnOkayButton(View v) {
         Intent intent = new Intent();
-        intent.putExtra(ADD_REMOVE_PARTICIPANTS_RESULT, (Parcelable) membersToAdd);
+        intent.putParcelableArrayListExtra(ADD_REMOVE_PARTICIPANTS_RESULT, (ArrayList<PFMember>) membersToAdd);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

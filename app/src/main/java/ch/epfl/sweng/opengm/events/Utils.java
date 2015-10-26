@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by virgile on 25/10/2015.
  */
 public class Utils {
-    public static Date StringToDate(String s) {
+    public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");
         if(stringArray.length != 5) {
             throw new IllegalArgumentException("StringToDate string format must be year-month-day-hour-minute");
@@ -19,7 +19,7 @@ public class Utils {
 
     }
 
-    public static String DateToString(Date d) {
+    public static String dateToString(Date d) {
         return String.format("%d-%d-%d-%d-%d", d.getYear(), d.getMonth()+1, d.getDate(), d.getHours(), d.getMinutes());
     }
 }
