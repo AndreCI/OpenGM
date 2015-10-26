@@ -13,17 +13,20 @@ import android.widget.LinearLayout;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ch.epfl.sweng.opengm.groups.CreateGroup;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import it.gmariotti.cardslib.library.internal.Card;
+import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
+import it.gmariotti.cardslib.library.internal.CardHeader;
+import it.gmariotti.cardslib.library.view.CardGridView;
 
 public class GroupsOverviewActivity extends AppCompatActivity {
 
-    public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
-
-    private static final int TILES_PER_WIDTH = 2;
+     public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,83 +35,57 @@ public class GroupsOverviewActivity extends AppCompatActivity {
 
         OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser());
 
-        boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
-        // if newUser is true => user is new (register) so show the hints
-
-        // TODO: At the moment, just an array of Strings, but normally : an array of "Groups" (the Object which encapsulate all group date)
-        // real stuff : ArrayList<Group> groups = {g1, g2, ...., gn}; --> Then, g1.name, g1.members[], g1.admin, etc...
+         boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
+//         if newUser is true => user is new (register) so show the hints
+//         Not a good idea : Alex prefers if (groups.size() == 0) --> Show hints ! "No groups Yet ? Click + to add one..."
         Log.d("USER", OpenGMApplication.getCurrentUser().toString());
 
         ArrayList<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
-        // ArrayList<String> groups = new ArrayList<String>(Arrays.asList("Sat", "IC Travel", "Clic"));
-        // Get screen size :
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int screenWidth = metrics.widthPixels;
-
-        // Get base (main) layout
-        LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main);
-        LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//        ArrayList<String> groups = new ArrayList<>(Arrays.asList("Satellite", "IC Travel", "Ya d'la joa", "Facebook", "EPFL"));
+//        ArrayList<String> admins = new ArrayList<>(Arrays.asList("Un monsieur", "Lionel Fleury", "An extra long name that cannot possibly enter in the field we provided", "Mark Zuckerberg", "Patou"));
 
 
-        // TODO: SPECIAL CASE = AlertView "no groups yet ???" --> Pop-up help ??? --> groups.size() = 0
-        // TODO: put all of this inside a scrollView
+        ArrayList<Card> cards = new ArrayList<>();
 
+        if (groups.size() == 0) {
 
-        int numberOfLinearLayouts = (int) Math.ceil((double) (groups.size() + 1) / (double) TILES_PER_WIDTH);   // +1 pour la tile "+" add a group // TODO: image pour la tuile +
+            Log.v("INFO", "No groups yet ? Click + to add one");
 
-        for (int i = 0; i < numberOfLinearLayouts; i++) {
-            LinearLayout ll = new LinearLayout(this);
-            ll.setOrientation(LinearLayout.HORIZONTAL);
-            ll.setLayoutParams(llParams);
-//            ll.setTag(new String("tileLayout" + i));  // setId() instead ???
+        } else {
 
-            for (int j = 0; j < TILES_PER_WIDTH; j++) { // loop 2 times
-                if (groups.size() != 0) {
-                    Button tile = new Button(this);
-                    tile.setLayoutParams(llParams);
-                    tile.setText(groups.get(0).getName());    // Always get elem 0, as elements get shifted...
-                    tile.setWidth(screenWidth / 2);
-                    tile.setHeight(screenWidth / 2);
-                    tile.setGravity(Gravity.CENTER | Gravity.BOTTOM);
-
-                    // TODO: specify WHERE does the button go ? On this particular group homescreen
-                    tile.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(GroupsOverviewActivity.this, GroupHomeActivity.class));
-                        }
-                    });
-
-                    ll.addView(tile);
-                    groups.remove(0);   // shift the elements to the left
-                } else {
-                    Button tile = new Button(this);
-                    tile.setLayoutParams(llParams);
-                    tile.setText("+");
-                    tile.setWidth(screenWidth / 2);
-                    tile.setHeight(screenWidth / 2);
-                    tile.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-
-                    tile.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // TODO: petit pop-up qui part du bouton avec either "Create a group" ou "Join an existing group"
-                            Log.v("INFO", "create a group / join an existing group");
-                            Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroup.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                    ll.addView(tile);
-                    break;
-                }
+            for (int i = 0; i < groups.size(); i++) {
+                Card card = new Card(this);
+                CardHeader cardHeader = new CardHeader(this);
+                cardHeader.setTitle(groups.get(i).getName());
+                card.setTitle("Members : " + groups.get(i).getMembers().toString());
+                card.addCardHeader(cardHeader);
+                card.setOnClickListener(new Card.OnCardClickListener() {
+                    @Override
+                    public void onClick(Card card, View view) {
+                        Log.v("INFO", "clicked on card : " + card.getCardHeader().getTitle() + " !!!");
+                    }
+                });
+                cards.add(card);
             }
 
-            mainLayout.addView(ll);
         }
-        // will generate Math.ceil(3/2) = 2 linear layouts : "tileLayout0" and "tileLayout1", in our case.
 
+        Card addGroupCard = new Card(this);
+        CardHeader addGroupHeader = new CardHeader(this);
+        addGroupHeader.setTitle("+");   // Instead of putting in a tile, draw a round button with a "plus" sign
+        addGroupCard.addCardHeader(addGroupHeader);
+        addGroupCard.setOnClickListener(new Card.OnCardClickListener() {
+            @Override
+            public void onClick(Card card, View view) {
+                Log.v("INFO", "Going to add group activity");
+                startActivity(new Intent(GroupsOverviewActivity.this, CreateGroup.class));
+            }
+        });
+        cards.add(addGroupCard);
+
+
+        CardGridView gridView = (CardGridView) findViewById(R.id.myGroupsGrid);
+        gridView.setAdapter(new CardArrayAdapter(this, cards));
 
     }
 }
