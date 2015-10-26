@@ -86,7 +86,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private Event createEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
-        Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
+        Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
@@ -96,7 +96,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private Event editEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
-        Date date = new Date(dateArray[0], dateArray[1]-1, dateArray[2], timeArray[0], timeArray[1]);
+        Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
@@ -113,7 +113,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private int[] getTimeFromText() {
         Button button = (Button) findViewById(R.id.CreateEditEventTimeText);
         String[] timeString = button.getText().toString().split(" : ");
-        if(timeString.length != 2) {
+        if (timeString.length != 2) {
             return new int[]{};
         }
         int hours = Integer.parseInt(timeString[0]);
@@ -127,11 +127,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private int[] getDateFromText() {
         Button button = (Button) findViewById(R.id.CreateEditEventDateText);
         String[] dateString = button.getText().toString().split("/");
-        if(dateString.length != 3) {
+        if (dateString.length != 3) {
             return new int[]{};
         }
         int year = Integer.parseInt(dateString[2]);
-        int month = Integer.parseInt(dateString[1])-1;
+        int month = Integer.parseInt(dateString[1]) - 1;
         int day = Integer.parseInt(dateString[0]);
         return new int[]{year, month, day};
     }
@@ -150,7 +150,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
 
-        if(timeArray.length == 0 || dateArray.length == 0) {
+        if (timeArray.length == 0 || dateArray.length == 0) {
             if (timeArray.length == 0) {
                 ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
             }
@@ -163,12 +163,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         Date date = new Date(dateArray[0], dateArray[1], dateArray[2], timeArray[0], timeArray[1]);
         boolean err = false;
-        if(date.getHours() != timeArray[0] || date.getMinutes() != timeArray[1]) {
+        if (date.getHours() != timeArray[0] || date.getMinutes() != timeArray[1]) {
             Toast.makeText(this, "Invalid Time " + Integer.toString(date.getHours()) + "!=" + timeArray[0] + " " + Integer.toString(date.getMinutes()) + "!=" + timeArray[1], Toast.LENGTH_SHORT).show();
             err = true;
         }
-        if(date.getYear() != dateArray[0] || date.getMonth() != dateArray[1] || date.getDate()!= dateArray[2]) {
-            Toast.makeText(this, "Invalid date " + date.getYear() + "!=" + dateArray[0] + " " + date.getMonth() + "!=" + (dateArray[1]) + " " + date.getDate()+ "!=" + dateArray[2], Toast.LENGTH_SHORT).show();
+        if (date.getYear() != dateArray[0] || date.getMonth() != dateArray[1] || date.getDate() != dateArray[2]) {
+            Toast.makeText(this, "Invalid date " + date.getYear() + "!=" + dateArray[0] + " " + date.getMonth() + "!=" + (dateArray[1]) + " " + date.getDate() + "!=" + dateArray[2], Toast.LENGTH_SHORT).show();
             err = true;
         }
         final Calendar c = Calendar.getInstance();
@@ -179,7 +179,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int min = c.get(Calendar.MINUTE);
         Date currentDate = new Date(year, month, day, hour, min);
         if (date.before(currentDate)) {
-            if(year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
+            if (year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
                 ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
             } else {
                 ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");

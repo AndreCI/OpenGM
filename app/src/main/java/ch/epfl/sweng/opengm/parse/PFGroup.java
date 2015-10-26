@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ch.epfl.sweng.opengm.utils.Alert;
@@ -25,12 +26,12 @@ import ch.epfl.sweng.opengm.utils.Alert;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
@@ -170,6 +171,26 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
+     * getter for the description of the group
+     *
+     * @return A string containing the description of the group
+     */
+    public String getDescription() {
+        return mDescription;
+    }
+
+    /**
+     * Getter for the list of members in the group without the current user
+     *
+     * @return A list of members in the group without the current user
+     */
+    public List<PFMember> getMembersWithoutUser(String userId) {
+        Map<String, PFMember> members = new HashMap<>(mMembers);
+        members.remove(userId);
+        return new ArrayList<>(members.values());
+    }
+
+    /**
      * Getter for the nickname of a particular member in the group
      *
      * @return the nickname for this user or null if this user does
@@ -195,6 +216,21 @@ public final class PFGroup extends PFEntity {
             return member.getRoles();
         }
         return null;
+    }
+
+
+    public void deleteGroup() {
+        for (Map.Entry<String, PFMember> member : mMembers.entrySet()) {
+            removeUser(member.getKey());
+        }
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
+        query.whereEqualTo(OBJECT_ID, getId());
+        try {
+            ParseObject object = query.getFirst();
+            object.delete();
+        } catch (ParseException e) {
+            // TODO what to do if deleting failed?
+        }
     }
 
     /**
@@ -249,6 +285,10 @@ public final class PFGroup extends PFEntity {
             } catch (PFException e) {
                 mMembers.put(userId, oldMember);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
+            } finally {
+                if (mMembers.isEmpty()) {
+                    deleteGroup();
+                }
             }
         }
     }
@@ -493,7 +533,9 @@ public final class PFGroup extends PFEntity {
         try {
             object.save();
             String id = object.getObjectId();
-            return new PFGroup(id, name, usersList, nickNamesList, rolesList, new ArrayList<String>(), false, about, picture);
+            PFGroup newGroup = new PFGroup(id, name, usersList, nickNamesList, rolesList, new ArrayList<String>(), false, about, picture);
+            user.addToAGroup(newGroup);
+            return newGroup;
         } catch (ParseException e) {
             throw new PFException();
         }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_group_overview"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="Group overview" />
+        <item
+            android:id="@+id/nav_members"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Members" />
+        <item
+            android:id="@+id/nav_events"
+            android:icon="@android:drawable/ic_menu_my_calendar"
+            android:title="Events" />
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@android:drawable/ic_menu_more"
+            android:title="Messages" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="Manage group" />
+        <item
+            android:id="@+id/nav_leave"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:title="Leave group" />
+        <item
+            android:id="@+id/nav_my_settings"
+            android:icon="@android:drawable/ic_menu_share"
+            android:title="My settings" />
+    </group>
+
+
+</menu>
