@@ -58,20 +58,40 @@ public class PFUserTest {
     }
 
     @Test
+    public void createNewUserTest() throws InterruptedException, ParseException {
+        createTestUserWithID(USER_ID + "0");
+        String username = null;
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, USER_ID + "0");
+        ParseObject o = query.getFirst();
+        if (o != null) {
+            username = o.getString(PFConstants._USER_TABLE_USERNAME);
+        }
+
+        Thread.sleep(1000);
+
+        assertEquals(USERNAME, username);
+
+        deleteUserWithId(USER_ID + "0");
+    }
+
+    @Test
     public void fetchExistingUserTest() throws PFException {
         PFUser user1 = createTestUserWithID(USER_ID + "1");
-        PFUser user2 = PFUser.fetchExistingUser(USER_ID+"1");
+        PFUser user2 = PFUser.fetchExistingUser(USER_ID + "1");
         // test with the Equals inherited from PFEntity
         // (same ParseID, same ParseTableID)
         assertEquals(user1, user2);
 
 
+        // Test field by field
         assertEquals(user1.getUsername(), user2.getUsername());
         assertEquals(user1.getEmail(), user2.getEmail());
         assertEquals(user1.getFirstName(), user2.getFirstName());
         assertEquals(user1.getLastName(), user2.getLastName());
 
-        deleteUserWithId(USER_ID+"1");
+        deleteUserWithId(USER_ID + "1");
     }
 
     @Test
@@ -88,7 +108,7 @@ public class PFUserTest {
         // getLastNameTest()
         assertEquals(LAST_NAME, user.getLastName());
 
-        deleteUserWithId(USER_ID+"2");
+        deleteUserWithId(USER_ID + "2");
     }
 
     @Test
@@ -109,18 +129,18 @@ public class PFUserTest {
         user.setPhoneNumber("02100044433");
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, USER_ID+"3");
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, USER_ID + "3");
         ParseObject o = query.getFirst();
         if (o != null) {
             username = o.getString(PFConstants.USER_ENTRY_USERNAME);
 //            email = o.getString(PFConstants. // );
-            firstName= o.getString(PFConstants.USER_ENTRY_FIRSTNAME);
+            firstName = o.getString(PFConstants.USER_ENTRY_FIRSTNAME);
             lastName = o.getString(PFConstants.USER_ENTRY_LASTNAME);
             aboutText = o.getString(PFConstants.USER_ENTRY_ABOUT);
             phoneNumber = o.getString(PFConstants.USER_ENTRY_PHONENUMBER);
         }
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         assertEquals("Patou", username);
         assertEquals("Patrick", firstName);
@@ -128,7 +148,9 @@ public class PFUserTest {
         assertEquals("Director of EPFL", aboutText);
         assertEquals("02100044433", phoneNumber);
 
-        deleteUserWithId(USER_ID+"3");
+        // TODO: test Bitmap Picture ???
+
+        deleteUserWithId(USER_ID + "3");
     }
 
 }
