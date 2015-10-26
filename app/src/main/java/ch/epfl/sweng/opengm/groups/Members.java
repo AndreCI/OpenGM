@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +22,7 @@ public class Members extends AppCompatActivity {
 
     private ListView list;
     private PFGroup group;
+    private MembersAdapter adapter;
     private List<PFMember> members;
     private boolean selectMode;
 
@@ -30,6 +32,8 @@ public class Members extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         selectMode = false;
 
@@ -52,7 +56,7 @@ public class Members extends AppCompatActivity {
 
         list = (ListView) findViewById(R.id.member_list);
 
-        MembersAdapter adapter = new MembersAdapter(this, R.layout.item_member, members, selectMode);
+        adapter = new MembersAdapter(this, R.layout.item_member, members, selectMode);
         list.setAdapter(adapter);
 
         // change for the select mode when long click on item
@@ -60,7 +64,7 @@ public class Members extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 selectMode = true;
-                MembersAdapter a = (MembersAdapter)((ListView)view.getParent()).getAdapter();
+                MembersAdapter a = (MembersAdapter) ((ListView) view.getParent()).getAdapter();
                 a.setSelectMode(selectMode);
                 a.notifyDataSetChanged();
                 invalidateOptionsMenu();
@@ -69,7 +73,7 @@ public class Members extends AppCompatActivity {
             }
         });
 
-        setTitle(group.getName());
+
     }
 
     @Override
@@ -89,6 +93,19 @@ public class Members extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                // handle up navigation according to select mode
+                if (selectMode) {
+                    selectMode = false;
+                    adapter.setSelectMode(selectMode);
+                    adapter.notifyDataSetChanged();
+                    invalidateOptionsMenu();
+                    setTitle(group.getName());
+                } else {
+                    // decoment when parent activity is correctly set
+//                    NavUtils.navigateUpFromSameTask(this);
+                }
+                return true;
             case R.id.action_add_person:
                 addPerson();
                 return true;
@@ -100,6 +117,19 @@ public class Members extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (selectMode) {
+            selectMode = false;
+            adapter.setSelectMode(selectMode);
+            adapter.notifyDataSetChanged();
+            invalidateOptionsMenu();
+            setTitle(group.getName());
+        } else {
+            super.onBackPressed();
         }
     }
 
