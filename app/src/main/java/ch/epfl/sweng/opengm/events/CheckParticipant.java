@@ -25,7 +25,6 @@ public class CheckParticipant {
 
     public CheckParticipant(String participantName, boolean isCheck) {
         mParticipantName = participantName;
-
         mIsCheck = isCheck;
     }
 }

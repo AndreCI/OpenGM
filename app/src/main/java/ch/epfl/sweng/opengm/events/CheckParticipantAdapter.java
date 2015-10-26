@@ -17,9 +17,13 @@ import ch.epfl.sweng.opengm.R;
  * Created by virgile on 26/10/2015.
  */
 public class CheckParticipantAdapter extends ArrayAdapter<CheckParticipant> {
-    Context context;
-    int layoutResourceId;
-    List<CheckParticipant> checkParticipantList;
+    private Context context;
+    private int layoutResourceId;
+    private List<CheckParticipant> checkParticipantList;
+
+    public List<CheckParticipant> getCheckParticipantList() {
+        return checkParticipantList;
+    }
 
     public CheckParticipantAdapter(Context context, int layoutResourceId, List<CheckParticipant> checkParticipantList) {
         super(context, layoutResourceId, checkParticipantList);
@@ -43,7 +47,7 @@ public class CheckParticipantAdapter extends ArrayAdapter<CheckParticipant> {
 
             row.setTag(holder);
         } else {
-            holder = (CheckParticipantHolder)row.getTag();
+            holder = (CheckParticipantHolder) row.getTag();
         }
 
         CheckParticipant checkParticipant = checkParticipantList.get(position);

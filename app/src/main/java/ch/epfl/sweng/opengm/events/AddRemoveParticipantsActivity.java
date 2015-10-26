@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SearchView;
@@ -52,7 +53,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         } else {
             members = new ArrayList<>();
             try {
-                members.add(PFMember.fetchExistingMember("aurel"));
+                members.add(PFMember.fetchExistingMember("oqMblls8Cb"));
             } catch (PFException e) {
                 e.printStackTrace();
             }
@@ -160,16 +161,38 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         };
     }
 
+    private void displayParticipants(String query) {
+        List<CheckParticipant> checkParticipantList = new ArrayList<>(members.size());
+        List<PFMember> searchList;
+        if(!query.isEmpty()) {
+            searchList = new ArrayList<>();
+            for(PFMember member : members) {
+                if(member.getName().toLowerCase().contains(query.toLowerCase())) {
+                    searchList.add(member);
+                }
+            }
+        } else {
+            searchList = new ArrayList<>(members);
+        }
+        for(PFMember member : searchList) {
+            CheckParticipant checkParticipant = new CheckParticipant(member.getName(), membersToAdd.contains(member));
+            checkParticipantList.add(checkParticipant);
+        }
+
+        CheckParticipantAdapter adapter = new CheckParticipantAdapter(this, R.layout.participant_listview_item_row, checkParticipantList);
+        ((ListView) findViewById(R.id.memberListView)).setAdapter(adapter);
+    }
+
     /**
      * This method display all the boxes to add or remove participants.
      *
      * @param query : il query is non empty, it will only show members with the query in their name.
      */
-    private void displayParticipants(String query) {
+    /*private void displayParticipants(String query) {
         linearLayoutListMembers.removeAllViews();
         linearLayoutListMembers = new LinearLayout(this);
         linearLayoutListMembers.setOrientation(LinearLayout.VERTICAL);
-        final RelativeLayout memberLayout = (RelativeLayout) findViewById(R.id.memberListLayout);
+        final ListView memberLayout = (ListView) findViewById(R.id.memberListView);
         memberLayout.removeAllViews();
         ScrollView scrollViewForMembers = new ScrollView(this);
         ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.MATCH_PARENT);
@@ -186,5 +209,5 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
         scrollViewForMembers.addView(linearLayoutListMembers);
         memberLayout.addView(scrollViewForMembers);
-    }
+    }*/
 }

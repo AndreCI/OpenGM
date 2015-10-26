@@ -100,7 +100,7 @@ public class EventListActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         currentGroup.addEvent(new PFEvent("id", "name", "place", Utils.stringToDate("2018-0-1-12-12"), "description", new ArrayList<PFMember>()));
-        currentGroup.addUser("aurel");
+        currentGroup.addUser("oqMblls8Cb");
         eventList = currentGroup.getEvents();
         setContentView(R.layout.activity_event_list);
         displayEvents();
