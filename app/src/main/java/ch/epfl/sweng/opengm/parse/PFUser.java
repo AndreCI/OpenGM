@@ -54,6 +54,7 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
+    // TODO: assign email to mEmail field
     private PFUser(String userId, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(userId, PARSE_TABLE_USER);
         checkArguments(username, "User name");
