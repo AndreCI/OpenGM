@@ -13,7 +13,6 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.parse.PFUser;
 
 /**
  * Created by heinz on 10/23/15.

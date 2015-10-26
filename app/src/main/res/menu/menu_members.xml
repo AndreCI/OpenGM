@@ -19,4 +19,9 @@
         android:icon="@drawable/ic_action_group"
         android:title="@string/action_change_roles"
         opengm:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_members_select"
+        android:title="@string/title_members_select_mode"
+        opengm:showAsAction="never" />
 </menu>

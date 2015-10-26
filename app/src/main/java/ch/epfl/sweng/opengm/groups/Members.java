@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.groups;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,9 +63,8 @@ public class Members extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 selectMode = true;
-                MembersAdapter a = (MembersAdapter) ((ListView) view.getParent()).getAdapter();
-                a.setSelectMode(selectMode);
-                a.notifyDataSetChanged();
+                adapter.setSelectMode(selectMode);
+                adapter.notifyDataSetChanged();
                 invalidateOptionsMenu();
                 setTitle("Select");
                 return true;
@@ -87,6 +85,7 @@ public class Members extends AppCompatActivity {
         // display or not these option according to the select mode
         menu.findItem(R.id.action_remove_person).setVisible(selectMode);
         menu.findItem(R.id.action_change_roles).setVisible(selectMode);
+        menu.findItem(R.id.action_members_select).setVisible(!selectMode);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -114,6 +113,13 @@ public class Members extends AppCompatActivity {
                 return true;
             case R.id.action_change_roles:
                 changeRoles();
+                return true;
+            case R.id.action_members_select:
+                selectMode = true;
+                adapter.setSelectMode(selectMode);
+                adapter.notifyDataSetChanged();
+                invalidateOptionsMenu();
+                setTitle("Select");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
