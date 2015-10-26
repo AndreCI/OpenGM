@@ -59,7 +59,7 @@ public class PFUserTest {
 
     @Test
     public void fetchExistingUserTest() throws PFException {
-        PFUser user1 = createTestUserWithID(USER_ID+"1");
+        PFUser user1 = createTestUserWithID(USER_ID + "1");
         PFUser user2 = PFUser.fetchExistingUser(USER_ID+"1");
         // test with the Equals inherited from PFEntity
         // (same ParseID, same ParseTableID)
@@ -76,8 +76,7 @@ public class PFUserTest {
 
     @Test
     public void gettersTest() throws PFException {
-        createTestUserWithID(USER_ID+"2");
-        PFUser user = PFUser.fetchExistingUser(USER_ID + "2");
+        PFUser user = createTestUserWithID(USER_ID + "2");
 
         // getUsernameTest()
         assertEquals(USERNAME, user.getUsername());
@@ -90,6 +89,46 @@ public class PFUserTest {
         assertEquals(LAST_NAME, user.getLastName());
 
         deleteUserWithId(USER_ID+"2");
+    }
+
+    @Test
+    public void settersTest() throws ParseException, InterruptedException {
+        PFUser user = createTestUserWithID(USER_ID + "3");
+
+        String username = null;
+        user.setUsername("Patou");
+//        String email = null;
+//        user.setEmail("");
+        String firstName = null;
+        user.setFirstName("Patrick");
+        String lastName = null;
+        user.setLastName("Aebischer");
+        String aboutText = null;
+        user.setAboutUser("Director of EPFL");
+        String phoneNumber = null;
+        user.setPhoneNumber("02100044433");
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, USER_ID+"3");
+        ParseObject o = query.getFirst();
+        if (o != null) {
+            username = o.getString(PFConstants.USER_ENTRY_USERNAME);
+//            email = o.getString(PFConstants. // );
+            firstName= o.getString(PFConstants.USER_ENTRY_FIRSTNAME);
+            lastName = o.getString(PFConstants.USER_ENTRY_LASTNAME);
+            aboutText = o.getString(PFConstants.USER_ENTRY_ABOUT);
+            phoneNumber = o.getString(PFConstants.USER_ENTRY_PHONENUMBER);
+        }
+
+        Thread.sleep(1000);
+
+        assertEquals("Patou", username);
+        assertEquals("Patrick", firstName);
+        assertEquals("Aebischer", lastName);
+        assertEquals("Director of EPFL", aboutText);
+        assertEquals("02100044433", phoneNumber);
+
+        deleteUserWithId(USER_ID+"3");
     }
 
 }
