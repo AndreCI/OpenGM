@@ -26,8 +26,6 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class ManageRoles extends AppCompatActivity {
     private List<String> roles;

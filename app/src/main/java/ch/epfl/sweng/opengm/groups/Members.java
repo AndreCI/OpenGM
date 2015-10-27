@@ -161,7 +161,6 @@ public class Members extends AppCompatActivity {
         Intent intent = new Intent(this, ManageRoles.class);
         intent.putExtra(ManageRoles.GROUP_ID, group.getId());
         intent.putExtra(ManageRoles.USER_ID, userId);
-        Log.v("testx", userId);
         startActivity(intent);
     }
 }
