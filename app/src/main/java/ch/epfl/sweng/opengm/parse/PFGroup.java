@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -230,6 +231,7 @@ public final class PFGroup extends PFEntity {
             object.delete();
         } catch (ParseException e) {
             // TODO what to do if deleting failed?
+            Log.v("INFO", "group does not exist. Deletion aborted.");
         }
     }
 
@@ -415,6 +417,7 @@ public final class PFGroup extends PFEntity {
                 Alert.displayAlert("Error while changing the privacy to the server.");
             }
         }
+        return null;
     }
 
     /**
