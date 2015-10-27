@@ -35,7 +35,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     }
 
-    public void testEmptyFields() {
+    public void testFields() {
 
         LoginActivity activity = getActivity();
 
@@ -88,5 +88,16 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
 
         onView(withId(R.id.linearLayout_groupsOverview)).check(matches(isDisplayed()));
 
+    }
+
+    public void testPasswordPopup() {
+
+        LoginActivity activity = getActivity();
+
+        onView(ViewMatchers.withId(R.id.textView_password_forgotten)).perform(click());
+
+        onView(ViewMatchers.withId(R.id.editTextMail_dialog_forgot)).perform(clearText()).perform(typeText("thisIsNotAnEmail")).perform(click());
+
+        // TODO how to click on the positive button of our alert ?
     }
 }
