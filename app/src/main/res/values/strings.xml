@@ -5,6 +5,7 @@
 
     <string name="title_activity_login">LoginActivity</string>
     <string name="incorrect_activity_login">Invalid username or password</string>
+    <string name="invalid_password_activity_login">Password has not a correct format</string>
     <string name="login_now_activity_login">Login</string>
     <string name="forgotten_password_activity_login"><u>Forgot your password?</u></string>
     <string name="register_now_activity_login">Don\'t have any account yet? Register now</string>
@@ -31,7 +32,12 @@
     <string name="empty_lastname_activity_register">Last name should not be empty</string>
     <string name="incorrect_email_activity_register">Email has not a correct format</string>
     <string name="incorrect_password_activity_register">Passwords don\'t match</string>
-    <string name="short_password_activity_register">Passwords are too short</string>
+    <string name="short_password_activity_register">Password is too short</string>
+    <string name="long_password_activity_register">Password is too long</string>
+    <string name="case_password_activity_register">Password should contain at least a small and a cap letter</string>
+    <string name="no_letter_password_activity_register">Password should contain a letter</string>
+    <string name="no_number_password_activity_register">Password should contain a number</string>
+    <string name="symbol_password_activity_register">Password contains some illegal characters</string>
     <string name="taken_username_activity_register">Username %s already taken</string>
     <string name="taken_email_activity_register">Email %s already taken</string>
 
