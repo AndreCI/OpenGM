@@ -8,31 +8,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.opengm.events.AddRemoveParticipantsActivity">
 
-    <RelativeLayout
-        android:id="@+id/screenAddRemoveParticipants"
+    <SearchView
+        android:id="@+id/searchMember"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@color/darkblue"
+        android:layout_alignParentTop="true">
+    </SearchView>
 
-        <SearchView
-            android:id="@+id/searchMember"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"></SearchView>
+    <ListView
+        android:id="@+id/memberListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/okayButton"
+        android:layout_below="@+id/searchMember">
+    </ListView>
 
-        <RelativeLayout
-            android:id="@+id/memberListLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/okayButton"
-            android:layout_below="@+id/searchMember"></RelativeLayout>
-
-        <Button
-            android:id="@+id/okayButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:onClick="clickOnOkayButton"
-            android:text="@string/okayButtonText" />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/okayButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="clickOnOkayButton"
+        android:text="@string/okayButtonText" />
 </RelativeLayout>
