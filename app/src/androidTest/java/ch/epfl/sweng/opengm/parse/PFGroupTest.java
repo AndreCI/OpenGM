@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -102,5 +103,61 @@ public class PFGroupTest {
         deleteUserWithId(USER_ID + "b");
         deleteGroupWithName("Another Group");
     }
+
+    @Test
+    public void createFetchDeleteGroupTest() throws PFException, InterruptedException {
+        PFUser user = createTestUserWithID(USER_ID + "2");
+        PFGroup gr = PFGroup.createNewGroup(user, "Le joli groupe", "Un très joli groupe", null);
+
+        PFGroup group = PFGroup.fetchExistingGroup(gr.getId());
+
+        assertEquals(group, gr);
+        assertEquals(gr.getName(), group.getName());
+        assertEquals(gr.getDescription(), group.getDescription());
+
+        deleteUserWithId(USER_ID + "2");
+        gr.deleteGroup();
+
+        Thread.sleep(2000);
+
+        group.deleteGroup();
+    }
+
+    @Test
+    public void settersTest() throws PFException, ParseException, InterruptedException {
+        PFUser user = createTestUserWithID(USER_ID + "3");
+        PFGroup group = PFGroup.createNewGroup(user, "OneDirection", "Death Metal Band", null);
+
+        String name = null;
+        group.setName("Gojira");
+        String description = null;
+        group.setDescription("A jazz band");
+        String nicknameForUser = null;
+        group.setNicknameForUser("The man in the corner", PFMember.fetchExistingMember(USER_ID).getId());
+//        Bitmap picture = null;
+//        group.setPicture();
+        boolean isPrivate = false;
+        group.setPrivacy(true);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.GROUP_TABLE_NAME);
+        query.whereEqualTo(PFConstants.OBJECT_ID, group.getId());
+        ParseObject o = query.getFirst();
+        if (o != null) {
+            name = o.getString(PFConstants.GROUP_ENTRY_NAME);
+            description = o.getString(PFConstants.GROUP_ENTRY_DESCRIPTION);
+            nicknameForUser  = o.getString(PFConstants.GROUP_ENTRY_NICKNAMES);
+            isPrivate = o.getBoolean(PFConstants.GROUP_ENTRY_ISPRIVATE);
+        }
+
+        Thread.sleep(2000);
+
+        assertEquals("Gojira", group.getName());
+        assertEquals("A jazz band", group.getDescription());
+        assertEquals("The man in the corner", group.getNicknameForUser(USER_ID + "3"));
+        // TODO: check whether group is private
+//        assertTrue(group.isPrivate());
+    }
+
+
 
 }

@@ -71,4 +71,9 @@ public class PFMemberTest {
         deleteUserWithId(USER_ID);
     }
 
+    @Test
+    public void sameIdThanPFUserTest() {
+        // TODO : cf. PFGroupTest
+    }
+
 }
