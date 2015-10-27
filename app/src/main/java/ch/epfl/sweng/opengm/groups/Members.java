@@ -1,12 +1,15 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public class Members extends AppCompatActivity {
     private List<PFMember> members;
     private boolean selectMode;
 
-    public static final String GROUP_ID = "ch.epfl.sweng.opengm.groups.members.groupid";
+    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,7 @@ public class Members extends AppCompatActivity {
         }
         selectMode = false;
 
-        int groupId = getIntent().getIntExtra(GROUP_ID, -1);
+        int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
         group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
         members = group.getMembers();
 
@@ -147,6 +150,18 @@ public class Members extends AppCompatActivity {
     }
 
     private void changeRoles() {
-
+        String userId = null;
+        for (int i = 0; i < list.getCount(); i++) {
+            View v = list.getChildAt(i);
+            CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
+            if (c.isChecked()) {
+                userId = members.get(i).getId();
+            }
+        }
+        Intent intent = new Intent(this, ManageRoles.class);
+        intent.putExtra(ManageRoles.GROUP_ID, group.getId());
+        intent.putExtra(ManageRoles.USER_ID, userId);
+        Log.v("testx", userId);
+        startActivity(intent);
     }
 }

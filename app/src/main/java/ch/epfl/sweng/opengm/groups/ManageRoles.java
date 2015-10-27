@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -41,7 +42,8 @@ public class ManageRoles extends AppCompatActivity {
     private List<PFMember> groupMembers;
     private PFGroup currentGroup;
 
-    //public final static String GROUP_LIST_KEY = "ch.epfl.ch.opengm.groups.createroles.grouplist";
+    public final static String GROUP_ID = "ch.epfl.ch.opengm.groups.manageroles.groupid";
+    public final static String USER_ID = "ch.epfl.ch.opengm.groups.manageroles.userid";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,32 +55,42 @@ public class ManageRoles extends AppCompatActivity {
         /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
         // Hardcoding to make this application properly testable -----------------------------------
-        PFUser user = null;
-        try {
-            user = PFUser.fetchExistingUser("f9PMNCFLXN");
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        try {
-            currentGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        //Receive this from intent
-        groupMembers = new ArrayList<>();
-        try {
-            groupMembers.add(PFMember.fetchExistingMember("f9PMNCFLXN"));
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
+//        PFUser user = null;
+//        try {
+//            user = PFUser.fetchExistingUser("f9PMNCFLXN");
+//        } catch (PFException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            currentGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
+//        } catch (PFException e) {
+//            e.printStackTrace();
+//        }
+//        //Receive this from intent
+//        groupMembers = new ArrayList<>();
+//        try {
+//            groupMembers.add(PFMember.fetchExistingMember("f9PMNCFLXN"));
+//        } catch (PFException e) {
+//            e.printStackTrace();
+//        }
         // -----------------------------------------------------------------------------------------
 
         roles = new ArrayList<>();
-        //Intent intent = getIntent();
+        Intent intent = getIntent();
         //Uncomment this when testing with real app
-        //int groupId = intent.getIntExtra(GROUP_LIST_KEY, -1);
-        int groupId = 0;
-        roles = user.getGroups().get(groupId).getRoles();
+        String groupId = intent.getStringExtra(GROUP_ID);
+        String memberID = intent.getStringExtra(USER_ID);
+        PFMember member;
+        groupMembers = new ArrayList<>();
+        try {
+            currentGroup = PFGroup.fetchExistingGroup(groupId);
+            member = PFMember.fetchExistingMember(memberID);
+            roles = currentGroup.getRolesForUser(member.getId());
+            groupMembers.add(member);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+
 
 
         rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);

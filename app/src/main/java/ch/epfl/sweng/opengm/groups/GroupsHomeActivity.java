@@ -21,7 +21,7 @@ import ch.epfl.sweng.opengm.identification.GroupsOverviewActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.Members.GROUP_ID;
+import static ch.epfl.sweng.opengm.groups.Members.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.identification.GroupsOverviewActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
@@ -125,7 +125,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivity(new Intent(GroupsHomeActivity.this, Members.class).putExtra(GROUP_ID, groupPos));
+                startActivity(new Intent(GroupsHomeActivity.this, Members.class).putExtra(GROUP_INDEX, groupPos));
                 break;
             case R.id.nav_events:
                 startActivity(new Intent(GroupsHomeActivity.this, CreateEditEventActivity.class));
