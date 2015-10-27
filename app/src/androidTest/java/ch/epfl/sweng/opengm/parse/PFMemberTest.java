@@ -53,9 +53,9 @@ public class PFMemberTest {
 
     @Test
     public void gettersTest() throws PFException, InterruptedException {
-        createTestUserWithID(USER_ID);
-        PFMember member = PFMember.fetchExistingMember(USER_ID);
-        Thread.sleep(1000);
+        createTestUserWithID(USER_ID + "1");
+        PFMember member = PFMember.fetchExistingMember(USER_ID + "1");
+        Thread.sleep(2000);
 
         assertEquals(USERNAME, member.getUsername());
         // TODO: getter for email ?
@@ -63,18 +63,22 @@ public class PFMemberTest {
         assertEquals(FIRST_NAME, member.getFirstname());
         assertEquals(LAST_NAME, member.getLastname());
         // TODO: phoneNumber() fails
-//        assertEquals(PHONE_NUMBER, member.getPhoneNumber());
+        assertEquals(PHONE_NUMBER, member.getPhoneNumber());
         assertEquals(ABOUT_TEXT, member.getAbout());
+        // TODO: test bitmap pictures
 //        member.getPicture();
         // TODO: test roles
 //        member.getRoles();
 
-        deleteUserWithId(USER_ID);
+        deleteUserWithId(USER_ID + "1");
+
+        // FIXME: when same USER_ID, Parse takes the most recent one ???
+        // Idea: generate a random ID at the begining, stored into a variable.
     }
 
     @Test
     public void sameIdThanPFUserTest() throws PFException {
-        PFUser user = createTestUserWithID(USER_ID );
+        PFUser user = createTestUserWithID(USER_ID);
 
         assertEquals(PFMember.fetchExistingMember(USER_ID).getId(), USER_ID);
 
