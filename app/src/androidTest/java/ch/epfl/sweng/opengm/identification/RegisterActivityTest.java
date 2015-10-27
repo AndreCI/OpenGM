@@ -1,10 +1,12 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.identification;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
 
 import java.util.Calendar;
 
+import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.RegisterActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -13,7 +15,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static ch.epfl.sweng.opengm.StyleIdentificationUtils.isTextStyleCorrect;
+import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTextStyleCorrect;
 
 public class RegisterActivityTest extends ActivityInstrumentationTestCase2<RegisterActivity> {
 
@@ -42,7 +44,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         RegisterActivity activity = getActivity();
 
         // empty username
-        onView(withId(R.id.button_signup)).perform(click());
+        onView(ViewMatchers.withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_username)).check(matches(isTextStyleCorrect(activity.getString(R.string.emtpy_username_activity_register), true)));
 
         //empty password1

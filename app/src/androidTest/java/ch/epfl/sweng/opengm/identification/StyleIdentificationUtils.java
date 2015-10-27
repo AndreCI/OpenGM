@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.identification;
 
 import android.view.View;
 import android.widget.EditText;

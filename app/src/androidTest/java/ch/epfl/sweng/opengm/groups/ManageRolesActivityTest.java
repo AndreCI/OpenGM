@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.groups;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -15,6 +15,7 @@ import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.groups.ManageRoles;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;

@@ -1,11 +1,12 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.identification;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
 
 import java.util.Calendar;
 
-import ch.epfl.sweng.opengm.identification.LoginActivity;
+import ch.epfl.sweng.opengm.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -13,7 +14,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static ch.epfl.sweng.opengm.StyleIdentificationUtils.isTextStyleCorrect;
+import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTextStyleCorrect;
 
 public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -39,7 +40,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
         LoginActivity activity = getActivity();
 
         // empty username
-        onView(withId(R.id.login_buttonLogin)).perform(click());
+        onView(ViewMatchers.withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_username)).check(matches(isTextStyleCorrect(activity.getString(R.string.emtpy_username_activity_register), true)));
 
         //empty password

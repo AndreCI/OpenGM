@@ -45,9 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         mEditUsername = (EditText) findViewById(R.id.login_username);
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
-        mEditUsername.setText("aurel");
-        mEditPassword.setText("Password1");
-
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);
     }

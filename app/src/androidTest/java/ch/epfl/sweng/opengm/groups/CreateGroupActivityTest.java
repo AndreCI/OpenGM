@@ -1,10 +1,11 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.groups;
 
 import android.app.Activity;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,6 +19,8 @@ import org.hamcrest.Description;
 import java.util.List;
 import java.util.Random;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
+import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.groups.CreateGroup;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -51,7 +54,7 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
     }
 
     public void testDeclinesTooShortName() throws InterruptedException {
-        onView(withId(R.id.enterGroupName)).perform(typeText("sh"));
+        onView(ViewMatchers.withId(R.id.enterGroupName)).perform(typeText("sh"));
         closeSoftKeyboard();
         Thread.sleep(1000);
         onView(withId(R.id.doneGroupCreate)).perform(click());
