@@ -417,7 +417,6 @@ public final class PFGroup extends PFEntity {
                 Alert.displayAlert("Error while changing the privacy to the server.");
             }
         }
-        return null;
     }
 
     /**
