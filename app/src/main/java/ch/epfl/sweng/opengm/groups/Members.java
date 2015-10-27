@@ -70,6 +70,7 @@ public class Members extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 invalidateOptionsMenu();
                 setTitle("Select");
+                ((CheckBox)view.findViewById(R.id.member_checkbox)).setChecked(true);
                 return true;
             }
         });
@@ -150,6 +151,7 @@ public class Members extends AppCompatActivity {
     }
 
     private void changeRoles() {
+        // modify this to get multiple checked users
         String userId = null;
         for (int i = 0; i < list.getCount(); i++) {
             View v = list.getChildAt(i);
