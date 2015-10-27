@@ -5,6 +5,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.Calendar;
+
 import ch.epfl.sweng.opengm.parse.PFConstants;
 
 public class UtilsTest {
@@ -25,4 +27,9 @@ public class UtilsTest {
             // Error while deleting the user but not so important
         }
     }
+
+    public static String getRandomId() {
+        return String.format("%1$10s", Calendar.getInstance().getTimeInMillis());
+    }
+
 }
