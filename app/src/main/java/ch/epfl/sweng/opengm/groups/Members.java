@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -65,17 +66,25 @@ public class Members extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                selectMode = true;
-                adapter.setSelectMode(selectMode);
-                adapter.notifyDataSetChanged();
-                invalidateOptionsMenu();
-                setTitle("Select");
+                setSelectMode(true);
                 ((CheckBox)view.findViewById(R.id.member_checkbox)).setChecked(true);
                 return true;
             }
         });
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == Activity.RESULT_OK) {
+                    setSelectMode(false);
+                }
+                break;
+            default:
+        }
     }
 
     @Override
@@ -99,11 +108,7 @@ public class Members extends AppCompatActivity {
             case android.R.id.home:
                 // handle up navigation according to select mode
                 if (selectMode) {
-                    selectMode = false;
-                    adapter.setSelectMode(selectMode);
-                    adapter.notifyDataSetChanged();
-                    invalidateOptionsMenu();
-                    setTitle(group.getName());
+                    setSelectMode(false);
                 } else {
                     NavUtils.navigateUpFromSameTask(this);
                 }
@@ -118,11 +123,7 @@ public class Members extends AppCompatActivity {
                 changeRoles();
                 return true;
             case R.id.action_members_select:
-                selectMode = true;
-                adapter.setSelectMode(selectMode);
-                adapter.notifyDataSetChanged();
-                invalidateOptionsMenu();
-                setTitle("Select");
+                setSelectMode(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -132,11 +133,7 @@ public class Members extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (selectMode) {
-            selectMode = false;
-            adapter.setSelectMode(selectMode);
-            adapter.notifyDataSetChanged();
-            invalidateOptionsMenu();
-            setTitle(group.getName());
+            setSelectMode(false);
         } else {
             super.onBackPressed();
         }
@@ -163,6 +160,18 @@ public class Members extends AppCompatActivity {
         Intent intent = new Intent(this, ManageRoles.class);
         intent.putExtra(ManageRoles.GROUP_ID, group.getId());
         intent.putExtra(ManageRoles.USER_ID, userId);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
+    }
+
+    private void setSelectMode(boolean m) {
+        selectMode = m;
+        adapter.setSelectMode(selectMode);
+        adapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
+        if (selectMode) {
+            setTitle(getString(R.string.title_members_select_mode));
+        } else {
+            setTitle(group.getName());
+        }
     }
 }
