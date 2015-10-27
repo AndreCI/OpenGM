@@ -13,10 +13,8 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class Members extends AppCompatActivity {
 
@@ -33,8 +31,9 @@ public class Members extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if (getActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         selectMode = false;
 
         int groupId = getIntent().getIntExtra(GROUP_ID, -1);
@@ -102,8 +101,7 @@ public class Members extends AppCompatActivity {
                     invalidateOptionsMenu();
                     setTitle(group.getName());
                 } else {
-                    // decoment when parent activity is correctly set
-//                    NavUtils.navigateUpFromSameTask(this);
+                    NavUtils.navigateUpFromSameTask(this);
                 }
                 return true;
             case R.id.action_add_person:
