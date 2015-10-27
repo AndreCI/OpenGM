@@ -57,47 +57,12 @@ public class InputUtilsTest {
     }
 
     @Test
-    public void testDeclineEmailWithoutAt(){
-        assertFalse(isEmailValid("goodmail.com"));
-    }
-
-    @Test
-    public void testDeclineEmailWithoutDot(){
-        assertFalse(isEmailValid("good@mailcom"));
-    }
-
-    @Test
-    public void testDeclineEmailWithoutDomain(){
-        assertFalse(isEmailValid("good@mail"));
-    }
-
-    @Test
-    public void testDeclineBadChars(){
-        assertFalse(isEmailValid("góód@maił.cóm"));
-    }
-
-    @Test
     public void testAcceptGoodPassword(){
-        assertEquals(INPUT_CORRECT, isPasswordInvalid("GoodPassword1"));
-    }
-
-    @Test
-    public void testDeclineShortPassword(){
-        assertEquals(INPUT_TOO_SHORT, isPasswordInvalid("goodpa"));
-    }
-
-    @Test
-    public void testDeclinePasswordWithoutNumber() {
-        assertEquals(INPUT_WITHOUT_NUMBER, isPasswordInvalid("GoodPassword"));
-    }
-
-    @Test
-    public void testDeclinePasswordNotBothCases() {
-        assertEquals(INPUT_NOT_CASE_SENSITIVE, isPasswordInvalid("1goodpassword"));
-    }
-
-    @Test
-    public void testDeclinePasswordOnlyNumbers(){
-        assertEquals(INPUT_WITHOUT_LETTER, isPasswordInvalid("123456789"));
+        assertEquals("Good password", INPUT_CORRECT, isPasswordInvalid("GoodPassword1"));
+        assertEquals("Short password", INPUT_TOO_SHORT, isPasswordInvalid("goodpa"));
+        assertEquals("No number", INPUT_WITHOUT_NUMBER, isPasswordInvalid("GoodPassword"));
+        assertEquals("No caps", INPUT_NOT_CASE_SENSITIVE, isPasswordInvalid("1goodpassword"));
+        assertEquals("Only caps", INPUT_NOT_CASE_SENSITIVE, isPasswordInvalid("1GOODPASSWORD"));
+        assertEquals("Only numbers", INPUT_WITHOUT_LETTER, isPasswordInvalid("123456789"));
     }
 }

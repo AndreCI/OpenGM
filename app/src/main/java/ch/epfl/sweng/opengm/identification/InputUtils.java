@@ -48,7 +48,7 @@ public class InputUtils {
         } else if (nOfIntegers >= length) {
             return INPUT_WITHOUT_LETTER;
         }
-        if (password.toLowerCase().equals(password)) {
+        if (password.toLowerCase().equals(password) || password.toUpperCase().equals(password)) {
             return INPUT_NOT_CASE_SENSITIVE;
         }
         return INPUT_CORRECT;

@@ -17,6 +17,9 @@ public class StyleIdentificationUtils {
                     return false;
                 }
                 EditText editText = (EditText) o;
+                if (editText.getError() == null) {
+                    return false;
+                }
                 // if it does not have the focus, its error should be null
                 if (!checkFocus) {
                     return editText.getError() == null;
