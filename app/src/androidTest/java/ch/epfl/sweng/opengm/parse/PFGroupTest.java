@@ -120,6 +120,7 @@ public class PFGroupTest {
 
         Thread.sleep(2000);
 
+        // Will throw an error at deletion (group already deleted)
         group.deleteGroup();
     }
 
@@ -133,11 +134,14 @@ public class PFGroupTest {
         String description = null;
         group.setDescription("A jazz band");
         String nicknameForUser = null;
-        group.setNicknameForUser("The man in the corner", PFMember.fetchExistingMember(USER_ID).getId());
+//        group.setNicknameForUser("The man in the corner", PFMember.fetchExistingMember(USER_ID + "3").getId());
+        group.setNicknameForUser("The man in the corner", USER_ID + "3");
 //        Bitmap picture = null;
 //        group.setPicture();
         boolean isPrivate = false;
         group.setPrivacy(true);
+
+        Thread.sleep(2000);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.GROUP_TABLE_NAME);
         query.whereEqualTo(PFConstants.OBJECT_ID, group.getId());
@@ -151,13 +155,18 @@ public class PFGroupTest {
 
         Thread.sleep(2000);
 
-        assertEquals("Gojira", group.getName());
-        assertEquals("A jazz band", group.getDescription());
-        assertEquals("The man in the corner", group.getNicknameForUser(USER_ID + "3"));
-        // TODO: check whether group is private
+        assertEquals("Gojira", name);   // .getName()
+        assertEquals("A jazz band", description);   // .getDescription()
+        assertEquals("The man in the corner", nicknameForUser); // .getNicknameForUser(String userId)
+        // TODO: publicly check whether group is private ?
 //        assertTrue(group.isPrivate());
+
+        deleteUserWithId(USER_ID + "3");
+        try {
+            deleteGroupWithName("Gojira");
+        } catch (Exception e) {
+            deleteGroupWithName("OneDirection");
+        }
     }
-
-
 
 }
