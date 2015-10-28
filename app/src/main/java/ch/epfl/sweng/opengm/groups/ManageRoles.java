@@ -19,6 +19,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,10 @@ public class ManageRoles extends AppCompatActivity {
 
     private List<PFMember> groupMembers;
     private PFGroup currentGroup;
+    private Map<CheckBox, Boolean> modifiedCheckBoxes;
 
     public final static String GROUP_ID = "ch.epfl.ch.opengm.groups.manageroles.groupid";
-    public final static String USER_ID = "ch.epfl.ch.opengm.groups.manageroles.userid";
+    public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class ManageRoles extends AppCompatActivity {
         setContentView(R.layout.activity_manage_roles);
 
         boxesAndRows = new Hashtable<>();
+        modifiedCheckBoxes = new Hashtable<>();
 
         /* TODO: Grab roles from database, ideally the three default roles are
          * already there.*/
@@ -78,14 +81,16 @@ public class ManageRoles extends AppCompatActivity {
         Intent intent = getIntent();
         //Uncomment this when testing with real app
         String groupId = intent.getStringExtra(GROUP_ID);
-        String memberID = intent.getStringExtra(USER_ID);
+        List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
         PFMember member;
         groupMembers = new ArrayList<>();
         try {
             currentGroup = PFGroup.fetchExistingGroup(groupId);
-            member = PFMember.fetchExistingMember(memberID);
-            roles = currentGroup.getRolesForUser(member.getId());
-            groupMembers.add(member);
+            for(String memberID : memberIDs) {
+                member = PFMember.fetchExistingMember(memberID);
+                roles.addAll(currentGroup.getRolesForUser(memberID));
+                groupMembers.add(member);
+            }
         } catch (PFException e) {
             e.printStackTrace();
         }
@@ -106,6 +111,12 @@ public class ManageRoles extends AppCompatActivity {
             CheckBox box = new CheckBox(getApplicationContext());
             box.setTag("roleBox" + roleBoxCount);
             box.setChecked(true);
+            box.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    modifiedCheckBoxes.put((CheckBox) v, true);
+                }
+            });
             roleBoxCount++;
 
             TableRow currentRow = getNewTableRow(box, currentRole);
@@ -113,6 +124,7 @@ public class ManageRoles extends AppCompatActivity {
             roleRowCount++;
 
             boxesAndRows.put(box, currentRow);
+            modifiedCheckBoxes.put(box, false);
 
             rolesAndButtons.addView(currentRow);
         }
@@ -177,7 +189,6 @@ public class ManageRoles extends AppCompatActivity {
         box.setEnabled(false);
         box.setTag("roleBox" + roleBoxCount);
 
-
         Button newButton = getNewButton("-");
         newButton.setTag("removeRole" + roleBoxCount);
         roleBoxCount++;
@@ -195,6 +206,7 @@ public class ManageRoles extends AppCompatActivity {
         newButton.setLayoutParams(getParamsForTableColumn());
 
         boxesAndRows.put(box, newRow);
+        modifiedCheckBoxes.put(box, true);
 
         rolesAndButtons.addView(newRow);
         rolesAndButtons.removeView(editRow);
@@ -211,7 +223,9 @@ public class ManageRoles extends AppCompatActivity {
     }
 
     public void removeRole(TableRow roleRow){
-        ((CheckBox)roleRow.getChildAt(0)).setChecked(false);
+        CheckBox toDelete = ((CheckBox)roleRow.getChildAt(0));
+        toDelete.setChecked(false);
+        modifiedCheckBoxes.put(toDelete, false);
         rolesAndButtons.removeView(roleRow);
         roleRowCount--;
         roleTextCount--;
@@ -265,9 +279,9 @@ public class ManageRoles extends AppCompatActivity {
     public void doneManageRoles(View view){
         for(CheckBox box : boxesAndRows.keySet()){
             for(PFMember member : groupMembers){
-                if(box.isChecked()){
+                if(box.isChecked() && modifiedCheckBoxes.get(box)){
                     currentGroup.addRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
-                } else {
+                } else if(!box.isChecked() && modifiedCheckBoxes.get(box)){
                     currentGroup.removeRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
                 }
             }
