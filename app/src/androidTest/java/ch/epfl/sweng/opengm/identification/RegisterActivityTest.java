@@ -124,7 +124,6 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
         onView(withId(R.id.register_password2)).perform(typeText(PASSWORD_CORRECT));
 
-        assertNull(OpenGMApplication.getCurrentUser());
         assertNull(ParseUser.getCurrentUser());
 
         onView(withId(R.id.button_signup)).perform(click());
