@@ -34,9 +34,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
         boolean reload = getIntent().getBooleanExtra(RELOAD_USER_KEY, true);
 
-        if (reload) {
-            OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
-        }
+        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
 
         // if newUser is true => user is new (register) so show the hints
 

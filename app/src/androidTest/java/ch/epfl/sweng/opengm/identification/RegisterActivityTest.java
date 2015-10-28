@@ -135,7 +135,6 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         assertNotNull(user);
         assertNotNull(ParseUser.getCurrentUser());
 
-        assertTrue(user.getGroups().isEmpty());
         assertEquals(user.getId(), ParseUser.getCurrentUser().getObjectId());
 
         deleteUserWithId(user.getId());

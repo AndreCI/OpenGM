@@ -100,6 +100,7 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         for(PFGroup group : groups){
             if(group.getName().equals("Nice Group" + groupNumber)){
                 found = true;
+                group.deleteGroup();
             }
         }
         assertTrue(found);
