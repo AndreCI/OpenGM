@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
@@ -48,21 +49,28 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void setUp() throws Exception{
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
+        Intent intent = new Intent();
+        intent.putExtra(ManageRoles.GROUP_ID, "9E0kzVZF4i");
+        intent.putExtra(ManageRoles.USER_ID, "f9PMNCFLXN");
+        setActivityIntent(intent);
+
         createRolesActivity = getActivity();
 
         rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
         setUpDatabaseInfo();
     }
 
-    private void setUpDatabaseInfo() throws PFException {
+    private void setUpDatabaseInfo() throws PFException, InterruptedException {
         testUser = PFUser.fetchExistingUser("f9PMNCFLXN");
         testGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
         addTestRoles();
     }
 
-    private void addTestRoles(){
+    private void addTestRoles() throws InterruptedException {
         testGroup.addRoleToUser("TestRole1", testUser.getId());
         testGroup.addRoleToUser("TestRole2", testUser.getId());
+        Thread.sleep(1000);
     }
 
     private void cleanUpTestRoles(){
@@ -72,7 +80,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         }
     }
 
-    private boolean databaseRolesMatchesView() throws PFException {
+    private boolean databaseRolesMatchesView() throws PFException, InterruptedException {
         setUpDatabaseInfo();
         List<String> roles = new ArrayList<>(testGroup.getRolesForUser(testUser.getId()));
         boolean allIn = true;
@@ -91,7 +99,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         return roles.isEmpty() && allIn;
     }
 
-    public void testIfFetchesUsersRoles() throws PFException {
+    public void testIfFetchesUsersRoles() throws PFException, InterruptedException {
         assertTrue(databaseRolesMatchesView());
     }
 
@@ -109,7 +117,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(allChecked);
     }
 
-    public void testIfAddsRoles() throws PFException {
+    public void testIfAddsRoles() throws PFException, InterruptedException {
         onView(withTagValue(is((Object) "addRole"))).perform(click());
         onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
         onView(withTagValue(is((Object) "okButton"))).perform(click());
@@ -121,9 +129,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         assertTrue(databaseRolesMatchesView());
         testGroup.removeRoleToUser("Super new Role", testUser.getId());
+        Thread.sleep(1000);
     }
 
-    public void testIfRemovingAddedRoleDoesntGoToDatabase() throws PFException {
+    public void testIfRemovingAddedRoleDoesntGoToDatabase() throws PFException, InterruptedException {
         onView(withTagValue(is((Object) "addRole"))).perform(click());
         onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
         onView(withTagValue(is((Object) "okButton"))).perform(click());
@@ -135,7 +144,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(databaseRolesMatchesView());
     }
 
-    public void testIfRemovesRoleFromDatabase() throws PFException {
+    public void testIfRemovesRoleFromDatabase() throws PFException, InterruptedException {
         onView(withTagValue(is((Object) "roleBox1"))).perform(click());
         onView(withId(R.id.button)).perform(click());
         testGroup = PFGroup.fetchExistingGroup(testGroup.getId());
