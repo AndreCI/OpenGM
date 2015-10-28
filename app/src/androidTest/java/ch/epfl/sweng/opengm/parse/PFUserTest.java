@@ -140,7 +140,7 @@ public class PFUserTest {
     }
 
     @Test
-    public void settersTest() throws ParseException, InterruptedException {
+    public void settersTest() throws InterruptedException {
         // Assuming create user is working now
         String id = getRandomId();
 

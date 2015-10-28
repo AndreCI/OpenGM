@@ -1,9 +1,9 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -100,8 +100,7 @@ public final class PFGroup extends PFEntity {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(GROUP_TABLE_NAME);
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
-                if (e == null) {
-                    if (object != null) {
+                if (e == null && object != null) {
                         switch (entry) {
                             case GROUP_ENTRY_NAME:
                                 object.put(GROUP_ENTRY_NAME, mName);
@@ -147,7 +146,7 @@ public final class PFGroup extends PFEntity {
                         object.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e == null) {
+                                if (e != null) {
                                     // throw new ParseException("No object for the selected id.");
                                 }
                             }
@@ -155,9 +154,6 @@ public final class PFGroup extends PFEntity {
                     } else {
                         // throw new ParseException("No object for the selected id.");
                     }
-                } else {
-                    // throw new ParseException("Error while sending the request to the server");
-                }
             }
         });
     }
@@ -395,7 +391,8 @@ public final class PFGroup extends PFEntity {
             String oldTitle = mName;
             this.mName = name;
             try {
-                updateToServer(GROUP_TABLE_NAME);
+                updateToServer(GROUP_ENTRY_NAME);
+                Log.v("SUCCESSS", "=========================");
             } catch (PFException e) {
                 this.mName = oldTitle;
                 Alert.displayAlert("Error while updating the group's title to the server.");
