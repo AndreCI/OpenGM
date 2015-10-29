@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.CheckBox;
@@ -12,12 +11,7 @@ import android.widget.TextView;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
-import org.junit.Test;
-
-import java.nio.charset.CharacterCodingException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +19,6 @@ import ch.epfl.sweng.opengm.groups.ManageRoles;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -116,11 +109,21 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private List<String>getRolesIntersection(){
-        List<String> roles = new ArrayList<>(testGroup.getRolesForUser(testUsers.get(0).getId()));
+        String firstUserId = testUsers.get(0).getId();
+        List<String> rolesForFirst = testGroup.getRolesForUser(firstUserId);
+        if(rolesForFirst == null){
+            fail("No user found with id " + firstUserId);
+        }
+        List<String> roles = new ArrayList<>(rolesForFirst);
+
         ArrayList<String> toRemove = new ArrayList<>();
         for(int i = 0; i < testUsers.size(); i++){
             for(String role : roles){
-                List<String> otherRoles = testGroup.getRolesForUser(testUsers.get(i).getId());
+                String otherUserId = testUsers.get(i).getId();
+                List<String> otherRoles = testGroup.getRolesForUser(otherUserId);
+                if(otherRoles == null){
+                    fail("No user found with id " + otherUserId);
+                }
                 if(!otherRoles.contains(role)){
                     toRemove.add(role);
                 }
@@ -225,7 +228,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         Thread.sleep(1000);
         updateRefsToDB();
         Thread.sleep(1000);
-        boolean result = !testGroup.getRolesForUser(testUsers.get(0).getId()).contains("testRole0");
+        String userId = testUsers.get(0).getId();
+        List<String> rolesForUser = testGroup.getRolesForUser(userId);
+        if(rolesForUser == null){
+            fail("No user found with id " + userId);
+        }
+        boolean result = !rolesForUser.contains("testRole0");
         cleanUpDBAfterTests();
         Thread.sleep(1000);
         assertTrue(result);
@@ -251,6 +259,138 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withTagValue(is((Object) "addRole"))).perform(click());
         onView(withTagValue(is((Object) "addRole"))).check(doesNotExist());
         cleanUpDBAfterTests();
+    }
+
+    public void testOnlyShowCommonRolesWhenMultipleUsers() throws Exception{
+        launchActivityWithIntent(2);
+        testGroup.addRoleToUser("RoleFor0", testUsers.get(0).getId());
+        testGroup.addRoleToUser("RoleFor1", testUsers.get(1).getId());
+        testGroup.addRoleToUser("ForBoth", testUsers.get(0).getId());
+        testGroup.addRoleToUser("ForBoth", testUsers.get(1).getId());
+        Thread.sleep(1000);
+        createRolesActivity = getActivity();
+        rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+
+        boolean result = databaseRolesMatchesView();
+        cleanUpDBAfterTests();
+        assertTrue(result);
+
+    }
+
+    public void testAddsRoleForMultipleUsers() throws Exception{
+        launchActivityWithIntent(2);
+        Thread.sleep(1000);
+        createRolesActivity = getActivity();
+        rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "roleName0"))).check(matches(withText("Super new Role")));
+        onView(withTagValue(is((Object) "removeRole0"))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) "roleBox0"))).check(matches(isChecked()));
+        onView(withTagValue(is((Object) "roleBox0"))).check(matches(not(isEnabled())));
+        onView(withId(R.id.button)).perform(click());
+        Thread.sleep(1000);
+        updateRefsToDB();
+        Thread.sleep(1000);
+
+        boolean result = databaseRolesMatchesView();
+        cleanUpDBAfterTests();
+        assertTrue(result);
+
+    }
+
+    public void testRemovesFromMultipleUsers() throws Exception{
+        launchActivityWithIntent(2);
+        testGroup.addRoleToUser("ForBoth", testUsers.get(0).getId());
+        testGroup.addRoleToUser("ForBoth", testUsers.get(1).getId());
+        Thread.sleep(1000);
+        createRolesActivity = getActivity();
+        rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+
+        onView(withTagValue(is((Object) "roleBox0"))).perform(click());
+        onView(withId(R.id.button)).perform(click());
+        Thread.sleep(1000);
+        updateRefsToDB();
+        Thread.sleep(1000);
+        String userID1 = testUsers.get(0).getId();
+        String userID2 = testUsers.get(1).getId();
+        List<String> rolesFor1 = testGroup.getRolesForUser(userID1);
+        List<String> rolesFor2 = testGroup.getRolesForUser(userID2);
+        if(rolesFor1 == null){
+            fail("No user found with id " + userID1);
+        }
+        if(rolesFor2 == null){
+            fail("No user found with id " + userID2);
+        }
+        boolean result0 = !rolesFor1.contains("ForBoth");
+        boolean result1 = !rolesFor2.contains("ForBoth");
+        cleanUpDBAfterTests();
+        Thread.sleep(1000);
+        assertTrue(result0 && result1);
+    }
+
+    public void testDoesntAffectOtherUsers () throws Exception {
+        launchActivityWithIntent(2);
+        testGroup.addRoleToUser("RoleFor0", testUsers.get(0).getId());
+        testGroup.addRoleToUser("RoleFor1", testUsers.get(1).getId());
+        testGroup.addRoleToUser("ForBoth", testUsers.get(0).getId());
+        testGroup.addRoleToUser("ForBoth", testUsers.get(1).getId());
+        Thread.sleep(1000);
+        PFUser additionalUser = PFUser.createNewUser("additionalUser", "addi@tional.com", "additional", "addi", "tional");
+        testGroup.addUser(additionalUser.getId());
+        testGroup.addRoleToUser("ForBoth", additionalUser.getId());
+        Thread.sleep(1000);
+        createRolesActivity = getActivity();
+        rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+
+        onView(withTagValue(is((Object) "addRole"))).perform(click());
+        onView(withTagValue(is((Object) "newRoleEdit"))).perform(typeText("Super new Role"));
+        onView(withTagValue(is((Object) "okButton"))).perform(click());
+        onView(withTagValue(is((Object) "roleName1"))).check(matches(withText("Super new Role")));
+        onView(withTagValue(is((Object) "removeRole1"))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) "roleBox1"))).check(matches(isChecked()));
+        onView(withTagValue(is((Object) "roleBox1"))).check(matches(not(isEnabled())));
+
+        onView(withTagValue(is((Object) "roleBox0"))).perform(click());
+        onView(withId(R.id.button)).perform(click());
+
+        Thread.sleep(1000);
+        updateRefsToDB();
+        additionalUser = PFUser.fetchExistingUser(additionalUser.getId());
+        Thread.sleep(1000);
+
+        String userID0 = testUsers.get(0).getId();
+        String userID1 = testUsers.get(0).getId();
+        String additionalID = additionalUser.getId();
+        List<String> rolesFor0 = testGroup.getRolesForUser(userID0);
+        List<String> rolesFor1 = testGroup.getRolesForUser(userID1);
+        List<String> rolesForAdditional = testGroup.getRolesForUser(additionalID);
+
+        if(rolesFor0 == null){
+            fail("No user found with id " + userID0);
+        }
+        if(rolesFor1 == null){
+            fail("No user found with id " + userID1);
+        }
+        if(rolesForAdditional == null){
+            fail("No user found with id " + additionalID);
+        }
+
+        boolean result = rolesFor0.contains("Super new Role") &&
+                rolesFor1.contains("Super new Role");
+        boolean result0 = !rolesFor0.contains("ForBoth");
+        boolean result1 = !rolesFor1.contains("ForBoth");
+        boolean result2 = rolesForAdditional.contains("ForBoth");
+        boolean result3 = !rolesForAdditional.contains("Super new Role");
+
+        cleanUpDBAfterTests();
+        deleteUserFromDatabase(additionalUser.getId());
+        assertTrue(result);
+        assertTrue(result0);
+        assertTrue(result1);
+        assertTrue(result2);
+        assertTrue(result3);
     }
 
     private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
