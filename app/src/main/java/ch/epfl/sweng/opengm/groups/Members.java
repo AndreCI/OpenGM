@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -150,17 +151,17 @@ public class Members extends AppCompatActivity {
     }
 
     private void changeRoles() {
-        String userId = null;
+        ArrayList<String> userIds = new ArrayList<>();
         for (int i = 0; i < list.getCount(); i++) {
             View v = list.getChildAt(i);
             CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
             if (c.isChecked()) {
-                userId = members.get(i).getId();
+                userIds.add(members.get(i).getId());
             }
         }
         Intent intent = new Intent(this, ManageRoles.class);
         intent.putExtra(ManageRoles.GROUP_ID, group.getId());
-        intent.putExtra(ManageRoles.USER_ID, userId);
+        intent.putStringArrayListExtra(ManageRoles.USER_IDS, userIds);
         startActivity(intent);
     }
 }
