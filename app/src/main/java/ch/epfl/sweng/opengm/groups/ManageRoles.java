@@ -86,7 +86,7 @@ public class ManageRoles extends AppCompatActivity {
         groupMembers = new ArrayList<>();
         try {
             currentGroup = PFGroup.fetchExistingGroup(groupId);
-            roles = currentGroup.getRolesForUser(memberIDs.get(0));
+            roles = new ArrayList<>(currentGroup.getRolesForUser(memberIDs.get(0)));
             for(String memberID : memberIDs) {
                 member = PFMember.fetchExistingMember(memberID);
                 keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
