@@ -86,20 +86,29 @@ public class ManageRoles extends AppCompatActivity {
         groupMembers = new ArrayList<>();
         try {
             currentGroup = PFGroup.fetchExistingGroup(groupId);
+            roles = currentGroup.getRolesForUser(memberIDs.get(0));
             for(String memberID : memberIDs) {
                 member = PFMember.fetchExistingMember(memberID);
-                roles.addAll(currentGroup.getRolesForUser(memberID));
+                keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
                 groupMembers.add(member);
             }
         } catch (PFException e) {
             e.printStackTrace();
         }
-
-
-
+        
         rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
         fillWithRoles();
         addNewRoleRow();
+    }
+
+    private void keepIntersectionRoles(List<String> otherRoles){
+        ArrayList<String> toRemove = new ArrayList<>();
+        for(String role : roles){
+            if(!otherRoles.contains(role)){
+                toRemove.add(role);
+            }
+        }
+        roles.removeAll(toRemove);
     }
 
     private void fillWithRoles() {
