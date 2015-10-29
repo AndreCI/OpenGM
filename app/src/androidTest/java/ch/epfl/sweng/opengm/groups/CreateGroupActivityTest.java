@@ -28,7 +28,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTextStyleCorrect;
 
-public class CreateGroupActivityActivityTest extends ActivityInstrumentationTestCase2<CreateGroupActivity> {
+public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<CreateGroupActivity> {
 
     private Activity createGroupActivity;
     private PFUser currentUser;
@@ -46,7 +46,7 @@ public class CreateGroupActivityActivityTest extends ActivityInstrumentationTest
     private final static int sDescriptionEdit = R.id.enterGroupDescription;
     private final static int sDoneButton = R.id.doneGroupCreate;
 
-    public CreateGroupActivityActivityTest() {
+    public CreateGroupActivityTest() {
         super(CreateGroupActivity.class);
     }
 
