@@ -8,6 +8,7 @@ import java.util.Calendar;
 
 import ch.epfl.sweng.opengm.R;
 
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -45,45 +46,54 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
 
         //empty password
         onView(withId(R.id.login_username)).perform(clearText()).perform(typeText(USERNAME_INCORRECT));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
 
         //short password
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_password_activity_login), true)));
 
         //long password
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_password_activity_login), true)));
 
         //all caps password
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText("AAAAAAAAAA"));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_password_activity_login), true)));
 
         //without caps password
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText("aaaaaaaaaa"));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_password_activity_login), true)));
 
         //without number password
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText("Aaaaaaaaaaa"));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_password_activity_login), true)));
 
         //without letter password
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText("123456789"));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_password_activity_login), true)));
 
         //bad credits
         onView(withId(R.id.login_password)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
         onView(withId(R.id.login_password)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_activity_login), true)));
 
         onView(withId(R.id.login_username)).perform(clearText()).perform(typeText(USERNAME_CORRECT));
+        closeSoftKeyboard();
         onView(withId(R.id.login_buttonLogin)).perform(click());
 
         onView(withId(R.id.linearLayout_groupsOverview)).check(matches(isDisplayed()));

@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
+
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static org.junit.Assert.assertEquals;
@@ -34,6 +36,7 @@ public class PFUserTest {
 
     @Test
     public void testFetchingWithIdNull() {
+        OpenGMApplication.logOut();
         try {
             PFUser.fetchExistingUser(null);
             Assert.fail("should have thrown an exception");
@@ -44,6 +47,7 @@ public class PFUserTest {
 
     @Test
     public void testFetchingWithIdInvalid() {
+        OpenGMApplication.logOut();
         try {
             PFUser.fetchExistingUser("Mouh@h@");
             Assert.fail("should have thrown an exception");
@@ -54,7 +58,7 @@ public class PFUserTest {
 
     @Test
     public void testCreateNewUser() {
-
+        OpenGMApplication.logOut();
         String id = getRandomId();
 
         PFUser user = null;
@@ -88,6 +92,7 @@ public class PFUserTest {
 
     @Test
     public void testGetters() throws PFException {
+        OpenGMApplication.logOut();
         String id = getRandomId();
 
         PFUser user = null;
@@ -106,10 +111,12 @@ public class PFUserTest {
         assertEquals("", user.getPhoneNumber());
         assertNull(user.getPicture());
         assertEquals(new ArrayList<PFGroup>(), user.getGroups());
+        deleteUserWithId(id);
     }
 
     @Test
     public void testFetchExistingUser() throws PFException {
+        OpenGMApplication.logOut();
         // Assuming create user is working now
         String id = getRandomId();
 
@@ -141,6 +148,7 @@ public class PFUserTest {
 
     @Test
     public void settersTest() throws InterruptedException {
+        OpenGMApplication.logOut();
         // Assuming create user is working now
         String id = getRandomId();
 

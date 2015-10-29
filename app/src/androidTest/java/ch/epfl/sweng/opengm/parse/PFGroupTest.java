@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
+
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
@@ -43,6 +45,7 @@ public class PFGroupTest {
 
     @Test
     public void testCreateAndDeleteGroup() {
+        OpenGMApplication.logOut();
         String id = getRandomId();
 
         PFUser user = null;
@@ -83,6 +86,7 @@ public class PFGroupTest {
 
     @Test
     public void testGroupGetters() {
+        OpenGMApplication.logOut();
         String id = getRandomId();
 
         PFUser user = null;
@@ -125,6 +129,7 @@ public class PFGroupTest {
 
     @Test
     public void getMembersTest() throws PFException {
+        OpenGMApplication.logOut();
         String id1 = getRandomId();
 
         PFUser user1 = null;
@@ -168,6 +173,7 @@ public class PFGroupTest {
 
     @Test
     public void testSetters() throws InterruptedException {
+        OpenGMApplication.logOut();
         String id1 = getRandomId();
 
         PFUser user1 = null;
@@ -297,8 +303,6 @@ public class PFGroupTest {
         } catch (PFException e) {
             Assert.fail("Network error");
         }
-
-        Log.v("TEST", "TEST");
 
         try {
             PFUser user3 = fetchExistingUser(user2.getId());

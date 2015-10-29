@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
+
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static org.junit.Assert.assertEquals;
@@ -49,6 +51,7 @@ public class PFMemberTest {
 
     @Test
     public void testGetters() throws PFException {
+        OpenGMApplication.logOut();
         String id = getRandomId();
 
         PFUser user = null;
@@ -74,6 +77,7 @@ public class PFMemberTest {
 
     @Test
     public void settersTest() throws InterruptedException {
+        OpenGMApplication.logOut();
         // Assuming create user is working now
         String id1 = getRandomId();
 
