@@ -157,8 +157,8 @@ public class RegisterActivity extends AppCompatActivity {
                                                 try {
                                                     PFUser.createNewUser(user.getObjectId(), email, username, firstname, lastname);
                                                     dialog.hide();
-                                                    Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
-                                                    intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
+                                                    Intent intent = new Intent(RegisterActivity.this, MyGroupsActivity.class);
+                                                    intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, true);
                                                     startActivity(intent);
                                                 } catch (PFException e1) {
                                                     dialog.hide();

@@ -11,6 +11,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
@@ -24,47 +25,67 @@
 
         <activity
             android:name=".identification.RegisterActivity"
+            android:label="@string/title_activity_register"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden">
+        </activity>
 
         <activity
-            android:name=".identification.GroupsOverviewActivity"
-            android:screenOrientation="portrait"></activity>
+            android:name=".identification.MyGroupsActivity"
+            android:label="@string/title_activity_my_groups"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
 
         <activity
             android:name=".groups.ManageRoles"
             android:label="@string/title_activity_manage_roles"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
 
         <activity
             android:name=".groups.JoinGroup"
             android:label="@string/title_activity_join_group"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".groups.CreateGroup"
             android:label="@string/title_activity_create_group"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".events.EventListActivity"
             android:label="@string/title_activity_event_list"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".events.ShowEventActivity"
             android:label="@string/title_activity_show_event"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".events.CreateEditEventActivity"
             android:label="@string/title_activity_create_edit_event"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".events.AddRemoveParticipantsActivity"
             android:label="@string/title_activity_add_remove_participants"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity
             android:name=".groups.GroupsHomeActivity"
             android:label="@string/title_activity_groups_home"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
     </application>
 
 </manifest>

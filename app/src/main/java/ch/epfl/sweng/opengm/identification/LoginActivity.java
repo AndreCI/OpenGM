@@ -37,8 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         if (ParseUser.getCurrentUser() != null) {
-            Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
-            intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
+            Intent intent = new Intent(LoginActivity.this, MyGroupsActivity.class);
+            intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, false);
             startActivity(intent);
         }
 
@@ -102,8 +102,8 @@ public class LoginActivity extends AppCompatActivity {
                 public void done(ParseUser user, ParseException e) {
                     if (user != null) {
                         dialog.hide();
-                        Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
-                        intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
+                        Intent intent = new Intent(LoginActivity.this, MyGroupsActivity.class);
+                        intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, false);
                         startActivity(intent);
                     } else {
                         dialog.hide();

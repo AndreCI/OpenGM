@@ -17,10 +17,10 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
-import ch.epfl.sweng.opengm.identification.GroupsOverviewActivity;
+import ch.epfl.sweng.opengm.identification.MyGroupsActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
-import static ch.epfl.sweng.opengm.identification.GroupsOverviewActivity.RELOAD_USER_KEY;
+import static ch.epfl.sweng.opengm.identification.MyGroupsActivity.RELOAD_USER_KEY;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class GroupsHomeActivity extends AppCompatActivity
@@ -115,7 +115,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 getCurrentUser().removeFromGroup(currentGroup.getId());
                 // use the below intent then (no break)
             case R.id.nav_home:
-                startActivity(new Intent(GroupsHomeActivity.this, GroupsOverviewActivity.class).putExtra(RELOAD_USER_KEY, false));
+                startActivity(new Intent(GroupsHomeActivity.this, MyGroupsActivity.class).putExtra(RELOAD_USER_KEY, false));
                 break;
             case R.id.nav_group_overview:
                 break;
