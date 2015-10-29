@@ -1,6 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
-import android.graphics.Bitmap;;
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.util.Log;
 
@@ -457,7 +457,6 @@ public final class PFUser extends PFEntity {
             parseObject.save();
             return new PFUser(id, email, username, firstName, lastName, "", "", null, new ArrayList<String>());
         } catch (ParseException e) {
-            e.printStackTrace();
             throw new PFException();
         }
     }

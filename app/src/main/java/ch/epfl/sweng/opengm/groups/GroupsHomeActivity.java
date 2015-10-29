@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +47,8 @@ public class GroupsHomeActivity extends AppCompatActivity
         Intent comingIntent = getIntent();
 
         groupPos = comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0);
+
+        Log.d("USER1", "" + getCurrentUser());
 
         currentGroup = getCurrentUser().getGroups().get(groupPos);
 
