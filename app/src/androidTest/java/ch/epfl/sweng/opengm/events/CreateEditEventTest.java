@@ -81,7 +81,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         int day = c.get(Calendar.DAY_OF_MONTH);
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
-        Date date = new Date(year+1, month, day, hour, min);
+        Date date = new Date(year, month+1, day, hour, min);
         PFEvent e = new PFEvent("testid","testName", "testPlace", date, "testDescription", new ArrayList<PFMember>());
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);

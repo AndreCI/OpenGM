@@ -457,6 +457,7 @@ public final class PFUser extends PFEntity {
             parseObject.save();
             return new PFUser(id, email, username, firstName, lastName, "", "", null, new ArrayList<String>());
         } catch (ParseException e) {
+            e.printStackTrace();
             throw new PFException();
         }
     }

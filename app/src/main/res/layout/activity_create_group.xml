@@ -3,7 +3,7 @@
     android:id="@+id/create_group_outmostLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ch.epfl.sweng.opengm.groups.CreateGroup">
+    tools:context="ch.epfl.sweng.opengm.groups.CreateGroupActivity">
 
     <ImageView
         android:layout_width="match_parent"

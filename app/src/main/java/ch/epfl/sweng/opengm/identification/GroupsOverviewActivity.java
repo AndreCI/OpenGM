@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.groups.CreateGroup;
+import ch.epfl.sweng.opengm.groups.CreateGroupActivity;
 import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
@@ -98,7 +98,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             // TODO: petit pop-up qui part du bouton avec either "Create a group" ou "Join an existing group"
-                            Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroup.class);
+                            Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroupActivity.class);
                             startActivity(intent);
                         }
                     });
