@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.groups;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -19,7 +18,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +26,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.Alert;
 
 public class ManageRoles extends AppCompatActivity {
     private List<String> roles;
@@ -86,7 +85,12 @@ public class ManageRoles extends AppCompatActivity {
         groupMembers = new ArrayList<>();
         try {
             currentGroup = PFGroup.fetchExistingGroup(groupId);
-            roles = new ArrayList<>(currentGroup.getRolesForUser(memberIDs.get(0)));
+            List<String> rolesFromServer = currentGroup.getRolesForUser(memberIDs.get(0));
+            if(rolesFromServer != null){
+                roles = new ArrayList<>(rolesFromServer);
+            } else {
+                Alert.displayAlert("Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.");
+            }
             for(String memberID : memberIDs) {
                 member = PFMember.fetchExistingMember(memberID);
                 keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
