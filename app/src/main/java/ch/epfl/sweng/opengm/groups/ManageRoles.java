@@ -53,29 +53,6 @@ public class ManageRoles extends AppCompatActivity {
         boxesAndRows = new Hashtable<>();
         modifiedCheckBoxes = new Hashtable<>();
 
-        /* TODO: Grab roles from database, ideally the three default roles are
-         * already there.*/
-        // Hardcoding to make this application properly testable -----------------------------------
-//        PFUser user = null;
-//        try {
-//            user = PFUser.fetchExistingUser("f9PMNCFLXN");
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            currentGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-//        //Receive this from intent
-//        groupMembers = new ArrayList<>();
-//        try {
-//            groupMembers.add(PFMember.fetchExistingMember("f9PMNCFLXN"));
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-        // -----------------------------------------------------------------------------------------
-
         roles = new ArrayList<>();
         Intent intent = getIntent();
         //Uncomment this when testing with real app
