@@ -94,6 +94,13 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
 
         onView(withId(R.id.login_username)).perform(clearText()).perform(typeText(USERNAME_CORRECT));
         closeSoftKeyboard();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         onView(withId(R.id.login_buttonLogin)).perform(click());
 
         onView(withId(R.id.linearLayout_groupsOverview)).check(matches(isDisplayed()));

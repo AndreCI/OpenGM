@@ -3,11 +3,13 @@ package ch.epfl.sweng.opengm.identification;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 
 import com.parse.ParseUser;
 
 import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.Before;
 
 import java.util.Calendar;
 
@@ -38,6 +40,8 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
     private final static String EMAIL_INCORRECT = "yolo";
     private final static String EMAIL_CORRECT = CURRENT_DATE + "@yolo.ch";
 
+    private String id;
+
     public RegisterActivityTest() {
         super(RegisterActivity.class);
     }
@@ -48,13 +52,16 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     }
 
+    @Before
+    public void newIds() {
+        id = null;
+    }
+
     public void testFields() {
 
         OpenGMApplication.logOut();
 
         RegisterActivity activity = getActivity();
-
-        Log.v("BEFORE", OpenGMApplication.getCurrentUser() + "");
 
         // empty username
         onView(ViewMatchers.withId(R.id.button_signup)).perform(click());
@@ -156,16 +163,21 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
         onView(withId(R.id.linearLayout_groupsOverview)).check(matches(isDisplayed()));
 
-        Log.v("BEFORE2", OpenGMApplication.getCurrentUser().toString());
-
         PFUser user = OpenGMApplication.getCurrentUser();
 
         assertNotNull(user);
         assertNotNull(ParseUser.getCurrentUser());
 
-        assertEquals(user.getId(), ParseUser.getCurrentUser().getObjectId());
+        id = user.getId();
+
+        assertEquals(id, ParseUser.getCurrentUser().getObjectId());
 
         OpenGMApplication.logOut();
-        deleteUserWithId(user.getId());
     }
+
+    @After
+    public void deleteAfterTesting() {
+        deleteUserWithId(id);
+    }
+
 }
