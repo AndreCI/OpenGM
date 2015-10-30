@@ -7,6 +7,7 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import junit.framework.Assert;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 
 import java.util.Calendar;
@@ -30,21 +31,18 @@ import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTex
 
 public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<CreateGroupActivity> {
 
-    private Activity createGroupActivity;
-    private PFUser currentUser;
-
     private final static String CURRENT_DATE = "" + Calendar.getInstance().getTimeInMillis();
-
     private final static String USERNAME = CURRENT_DATE;
     private final static String FIRSTNAME = "Chuck";
     private final static String LASTRNAME = "Norris";
     private final static String EMAIL = CURRENT_DATE + "@yolo.ch";
-
     private final static String GROUPNAME = "Group " + CURRENT_DATE;
-
     private final static int sNameEdit = R.id.enterGroupName;
     private final static int sDescriptionEdit = R.id.enterGroupDescription;
     private final static int sDoneButton = R.id.doneGroupCreate;
+    private Activity createGroupActivity;
+    private PFUser currentUser;
+    private PFGroup group;
 
     public CreateGroupActivityTest() {
         super(CreateGroupActivity.class);
@@ -68,7 +66,6 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
         onView(withId(sNameEdit)).check(matches(isTextStyleCorrect("Group name is too short", true)));
-        deleteUserWithId(CURRENT_DATE);
     }
 
     public void testDeclinesTooLongName() throws InterruptedException {
@@ -77,7 +74,6 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
         onView(withId(sNameEdit)).check(matches(isTextStyleCorrect("Group name is too long", true)));
-        deleteUserWithId(CURRENT_DATE);
     }
 
     public void testDeclinesNameWithBadChars() throws InterruptedException {
@@ -86,7 +82,6 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
         onView(withId(sNameEdit)).check(matches(isTextStyleCorrect("Group name contains illegal characters, only letters, numbers and spaces allowed.", true)));
-        deleteUserWithId(CURRENT_DATE);
     }
 
     public void testDeclinesNameStartingWithSpace() throws InterruptedException {
@@ -95,12 +90,11 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
         onView(withId(sNameEdit)).check(matches(isTextStyleCorrect("Group name cannot start with a space", true)));
-        deleteUserWithId(CURRENT_DATE);
     }
 
     public void testGoodGroupAddedToDatabase() throws InterruptedException, PFException {
         onView(withId(sNameEdit)).perform(clearText()).perform(typeText(GROUPNAME));
-        onView(withId(sDescriptionEdit)).perform(typeText("Nice Description"));
+        onView(withId(sDescriptionEdit)).perform(typeText("Nice Description HELLO"));
         closeSoftKeyboard();
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
@@ -116,11 +110,17 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         for (PFGroup group : groups) {
             if (group.getName().equals(GROUPNAME)) {
                 found = true;
-                group.deleteGroup();
+                this.group = group;
             }
         }
         assertTrue(found);
-        deleteUserWithId(CURRENT_DATE);
+    }
+
+    @AfterClass
+    public void tearDown() {
+        if (group != null)
+            group.deleteGroup();
+        deleteUserWithId(currentUser.getId());
     }
 
 }

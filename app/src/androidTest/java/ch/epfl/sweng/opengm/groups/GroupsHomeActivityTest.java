@@ -6,6 +6,9 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import junit.framework.Assert;
 
+import org.junit.AfterClass;
+import org.junit.Before;
+
 import java.util.Calendar;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -33,26 +36,28 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
     private PFUser user;
     private PFGroup group;
 
-
     public GroupsHomeActivityTest() {
         super(GroupsHomeActivity.class);
+    }
+
+    @Before
+    public void setIds() {
+        user = null;
+        group = null;
     }
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-
         OpenGMApplication.logOut();
 
-        user = null;
         try {
             user = PFUser.createNewUser(CURRENT_DATE, EMAIL, USERNAME, FIRSTNAME, LASTRNAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group = null;
         try {
             group = PFGroup.createNewGroup(user, USERNAME, EMAIL, null);
         } catch (PFException e) {
@@ -77,10 +82,12 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
     public void testIntentAndTextViews() {
         assertEquals(USERNAME, activity.getTitle());
         onView(withId(R.id.textView_description)).check(matches(withText(EMAIL)));
+    }
 
+    @AfterClass
+    public void tearDown() {
         group.deleteGroup();
         deleteUserWithId(user.getId());
-
     }
 
 }

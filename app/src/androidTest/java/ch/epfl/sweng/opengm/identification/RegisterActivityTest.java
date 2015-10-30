@@ -8,7 +8,7 @@ import com.parse.ParseUser;
 
 import junit.framework.Assert;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 
 import java.util.Calendar;
@@ -32,7 +32,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
     private final static String CURRENT_DATE = "" + Calendar.getInstance().getTimeInMillis();
 
-    private final static String USERNAME = CURRENT_DATE;
+    private final static String USERNAME = "DELETE" + CURRENT_DATE;
     private final static String FIRSTNAME = "Chuck";
     private final static String LASTRNAME = "Norris";
     private final static String PASSWORD_INCORRECT = "abc";
@@ -175,8 +175,8 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         OpenGMApplication.logOut();
     }
 
-    @After
-    public void deleteAfterTesting() {
+    @AfterClass
+    public void tearDown() {
         deleteUserWithId(id);
     }
 
