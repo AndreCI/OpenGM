@@ -46,8 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
         // TODO change this after testing
-        mEditUsername.setText("Alex");
-        mEditPassword.setText("1234");
+        mEditUsername.setText("JellyTester");
+        mEditPassword.setText("Jelly123");
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);

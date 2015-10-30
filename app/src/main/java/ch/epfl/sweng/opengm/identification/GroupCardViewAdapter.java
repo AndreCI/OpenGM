@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
 
         GroupViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.groupCardView);
+            cv = (CardView) itemView.findViewById(R.id.group_card_view);
             groupName = (TextView) itemView.findViewById(R.id.group_name);
             groupPhoto = (ImageView) itemView.findViewById(R.id.group_photo);
         }
@@ -42,6 +43,16 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_card_layout, parent, false);
+
+//        ViewGroup.LayoutParams lpm = parent.getLayoutParams();
+//        lpm.height = 100;
+//        parent.setLayoutParams(lpm);    // FIXME: Attention, ceci est la "card VIEW globale" (qui contient les cards à l'intérieur)
+
+//        CardView groupCardView = (CardView) parent.findViewById(R.id.group_card_view);      // FIXME: null pointer exception
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) groupCardView.getLayoutParams();
+//        params.height = 300;
+//        groupCardView.setLayoutParams(params);
+
         GroupViewHolder gvh = new GroupViewHolder(v);
         return gvh;
     }
