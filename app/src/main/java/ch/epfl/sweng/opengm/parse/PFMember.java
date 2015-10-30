@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -77,23 +76,18 @@ public final class PFMember extends PFEntity {
                         JSONArray array = new JSONArray();
                         for (String groupId : mGroups) {
                             array.put(groupId);
-                            Log.v("GROUPID", groupId);
                         }
                         object.put(USER_ENTRY_GROUPS, array);
                         object.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                                 if (e != null) {
-                                    Log.v("ERROR", "1");
                                     // throw new ParseException("No object for the selected id.");
                                 } else {
-                                    Log.v("ERROR", getId() + " SUCCESS========");
                                 }
                             }
                         });
                     } else {
-                    Log.v("ERROR", "2");
-                    e.printStackTrace();
                         // throw new ParseException("No object for the selected id.");
                     }
             }

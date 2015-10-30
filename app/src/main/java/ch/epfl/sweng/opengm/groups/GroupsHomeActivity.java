@@ -48,8 +48,6 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         groupPos = comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0);
 
-        Log.d("USER1", "" + getCurrentUser());
-
         currentGroup = getCurrentUser().getGroups().get(groupPos);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

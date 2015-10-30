@@ -392,7 +392,6 @@ public final class PFGroup extends PFEntity {
             this.mName = name;
             try {
                 updateToServer(GROUP_ENTRY_NAME);
-                Log.v("SUCCESSS", "=========================");
             } catch (PFException e) {
                 this.mName = oldTitle;
                 Alert.displayAlert("Error while updating the group's title to the server.");
