@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -10,6 +9,8 @@ import com.parse.ParseQuery;
 
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,15 +43,24 @@ public class PFGroupTest {
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
 
+    private String id1, id2;
+    private PFGroup group;
+
+    @Before
+    public void newIds() {
+        id1 = null;
+        id2 = null;
+        group = null;
+    }
 
     @Test
     public void testCreateAndDeleteGroup() {
         OpenGMApplication.logOut();
-        String id = getRandomId();
+        id1 = getRandomId();
 
         PFUser user = null;
         try {
-            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -59,7 +69,7 @@ public class PFGroupTest {
         String description = "A group, much nicer than the previous one";
 
         try {
-            PFGroup group = createNewGroup(user, name, description, null);
+            group = createNewGroup(user, name, description, null);
 
             ParseQuery<ParseObject> query1 = ParseQuery.getQuery(GROUP_TABLE_NAME);
             try {
@@ -73,25 +83,22 @@ public class PFGroupTest {
                     // Success
                 }
             } catch (ParseException e) {
-                e.printStackTrace();
                 Assert.fail("Network error");
             }
 
         } catch (PFException e) {
             Assert.fail("Network error");
         }
-
-        deleteUserWithId(id);
     }
 
     @Test
     public void testGroupGetters() {
         OpenGMApplication.logOut();
-        String id = getRandomId();
+        id1 = getRandomId();
 
         PFUser user = null;
         try {
-            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -100,13 +107,13 @@ public class PFGroupTest {
         String description = "A group, much nicer than the previous one";
 
         try {
-            PFGroup group = createNewGroup(user, name, description, null);
+            group = createNewGroup(user, name, description, null);
 
             assertEquals(name, group.getName());
             assertEquals(description, group.getDescription());
             assertTrue(group.getEvents().isEmpty());
             assertEquals(1, group.getMembers().size());
-            assertTrue(group.getMembersWithoutUser(id).isEmpty());
+            assertTrue(group.getMembersWithoutUser(id1).isEmpty());
 
             PFMember member = group.getMembers().get(0);
 
@@ -124,13 +131,12 @@ public class PFGroupTest {
             Assert.fail("Network error");
         }
 
-        deleteUserWithId(id);
     }
 
     @Test
     public void getMembersTest() throws PFException {
         OpenGMApplication.logOut();
-        String id1 = getRandomId();
+        id1 = getRandomId();
 
         PFUser user1 = null;
         try {
@@ -138,7 +144,7 @@ public class PFGroupTest {
         } catch (PFException e) {
             Assert.fail("Network error");
         }
-        String id2 = getRandomId();
+        id2 = getRandomId();
 
         try {
             createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
@@ -149,7 +155,7 @@ public class PFGroupTest {
         String name = "Another group";
         String description = "Can we add members to this group?";
 
-        PFGroup group = createNewGroup(user1, name, description, null);
+        group = createNewGroup(user1, name, description, null);
         group.addUser(id2);
 
         Set<PFMember> members = new HashSet<>(asList(fetchExistingMember(id1),
@@ -167,14 +173,12 @@ public class PFGroupTest {
 
         group.removeUser(id2);
 
-        deleteUserWithId(id1);
-        deleteUserWithId(id2);
     }
 
     @Test
     public void testSetters() throws InterruptedException {
         OpenGMApplication.logOut();
-        String id1 = getRandomId();
+        id1 = getRandomId();
 
         PFUser user1 = null;
         try {
@@ -182,7 +186,7 @@ public class PFGroupTest {
         } catch (PFException e) {
             Assert.fail("Network error");
         }
-        String id2 = getRandomId();
+        id2 = getRandomId();
 
         PFUser user2 = null;
         try {
@@ -191,9 +195,9 @@ public class PFGroupTest {
             Assert.fail("Network error");
         }
 
-        PFGroup group1 = null;
+        group = null;
         try {
-            group1 = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
+            group = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -205,55 +209,55 @@ public class PFGroupTest {
         String nicknameForUser1 = "The man in the corner";
         String role = "singer";
 
-        group1.setName(name);
+        group.setName(name);
 
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(name, group1.getName());
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(name, group.getName());
             assertEquals(name, group2.getName());
-            assertEquals(group1.getDescription(), group2.getDescription());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            assertEquals(group.getDescription(), group2.getDescription());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.setDescription(description);
+        group.setDescription(description);
 
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(description, group1.getDescription());
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(description, group.getDescription());
             assertEquals(description, group2.getDescription());
-            assertEquals(group1.getName(), group2.getName());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            assertEquals(group.getName(), group2.getName());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.setNicknameForUser(nicknameForUser1, user1.getId());
+        group.setNicknameForUser(nicknameForUser1, user1.getId());
 
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(nicknameForUser1, group1.getNicknameForUser(user1.getId()));
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(nicknameForUser1, group.getNicknameForUser(user1.getId()));
             assertEquals(nicknameForUser1, group2.getNicknameForUser(user1.getId()));
-            assertEquals(group1.getDescription(), group2.getDescription());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            assertEquals(group.getDescription(), group2.getDescription());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.addRoleToUser(role, user1.getId());
+        group.addRoleToUser(role, user1.getId());
 
         List<String> roles = new ArrayList<>();
         roles.add(role);
@@ -261,45 +265,45 @@ public class PFGroupTest {
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(roles, group1.getRolesForUser(user1.getId()));
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(roles, group.getRolesForUser(user1.getId()));
             assertEquals(roles, group2.getRolesForUser(user1.getId()));
-            assertEquals(group1.getDescription(), group2.getDescription());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            assertEquals(group.getDescription(), group2.getDescription());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.removeRoleToUser(role, user1.getId());
+        group.removeRoleToUser(role, user1.getId());
 
         roles.clear();
 
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(roles, group1.getRolesForUser(user1.getId()));
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(roles, group.getRolesForUser(user1.getId()));
             assertEquals(roles, group2.getRolesForUser(user1.getId()));
-            assertEquals(group1.getDescription(), group2.getDescription());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            assertEquals(group.getDescription(), group2.getDescription());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.addUser(user2.getId());
+        group.addUser(user2.getId());
 
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(group1.getDescription(), group2.getDescription());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(group.getDescription(), group2.getDescription());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -314,38 +318,43 @@ public class PFGroupTest {
             assertEquals(user3.getPhoneNumber(), user2.getPhoneNumber());
             assertEquals(user3.getPicture(), user2.getPicture());
             assertEquals(1, user3.getGroups().size());
-            assertEquals(group1, user3.getGroups().get(0));
+            assertEquals(group, user3.getGroups().get(0));
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.removeUser(user1.getId());
+        group.removeUser(user1.getId());
 
         Thread.sleep(2000);
 
         try {
-            group2 = fetchExistingGroup(group1.getId());
-            assertEquals(group1.getId(), group2.getId());
-            assertEquals(group1.getDescription(), group2.getDescription());
-            assertEquals(new HashSet<>(group1.getMembers()), new HashSet<>(group2.getMembers()));
-            assertEquals(group1.getEvents(), group2.getEvents());
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(group.getId(), group2.getId());
+            assertEquals(group.getDescription(), group2.getDescription());
+            assertEquals(new HashSet<>(group.getMembers()), new HashSet<>(group2.getMembers()));
+            assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.removeUser(user2.getId());
+        group.removeUser(user2.getId());
 
         Thread.sleep(2000);
 
         try {
-            fetchExistingGroup(group1.getId());
+            fetchExistingGroup(group.getId());
             Assert.fail("Should have thrown a no result for this query exception");
         } catch (PFException e) {
             // Success
         }
 
-        deleteUserWithId(id1);
-        deleteUserWithId(id2);
     }
 
+    @After
+    public void deleteAfterTesting() {
+        deleteUserWithId(id1);
+        deleteUserWithId(id2);
+        if (group != null)
+            group.deleteGroup();
+    }
 }

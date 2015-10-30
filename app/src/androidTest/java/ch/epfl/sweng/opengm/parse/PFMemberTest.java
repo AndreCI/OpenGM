@@ -5,6 +5,8 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +30,15 @@ public class PFMemberTest {
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
 
+    private String id1, id2;
+    private PFGroup group;
+
+    @Before
+    public void newIds() {
+        id1 = null;
+        id2 = null;
+        group = null;
+    }
 
     @Test
     public void testFetchingWithIdNull() {
@@ -52,18 +63,17 @@ public class PFMemberTest {
     @Test
     public void testGetters() throws PFException {
         OpenGMApplication.logOut();
-        String id = getRandomId();
+        id1 = getRandomId();
 
-        PFUser user = null;
         try {
-            user = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
         // Initial empty fields
-        PFMember member = PFMember.fetchExistingMember(id);
-        assertEquals(id, member.getId());
+        PFMember member = PFMember.fetchExistingMember(id1);
+        assertEquals(id1, member.getId());
         assertEquals(USERNAME, member.getUsername());
         assertEquals(FIRST_NAME, member.getFirstname());
         assertEquals(LAST_NAME, member.getLastname());
@@ -72,14 +82,14 @@ public class PFMemberTest {
         assertNull(member.getPicture());
         assertEquals(new ArrayList<String>(), member.getRoles());
 
-        deleteUserWithId(id);
+        deleteUserWithId(id1);
     }
 
     @Test
     public void settersTest() throws InterruptedException {
         OpenGMApplication.logOut();
         // Assuming create user is working now
-        String id1 = getRandomId();
+        id1 = getRandomId();
 
         PFUser user1 = null, user2, user3 = null;
         try {
@@ -88,23 +98,23 @@ public class PFMemberTest {
             Assert.fail("Network error");
         }
 
-        String id3 = getRandomId();
+        id2 = getRandomId();
 
         try {
-            user3 = PFUser.createNewUser(id3, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user3 = PFUser.createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        PFGroup group1 = null;
+        group = null;
 
         try {
-            group1 = PFGroup.createNewGroup(user1, "Name1", "Description1", null);
+            group = PFGroup.createNewGroup(user1, "Name1", "Description1", null);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.addUser(id3);
+        group.addUser(id2);
 
         Thread.sleep(2000);
 
@@ -115,21 +125,26 @@ public class PFMemberTest {
             Assert.fail("Network error");
         }
 
-        group1.removeUser(id3);
+        group.removeUser(id2);
 
         Thread.sleep(2000);
 
         try {
-            user2 = PFUser.fetchExistingUser(id3);
+            user2 = PFUser.fetchExistingUser(id2);
             assertEquals(0, user2.getGroups().size());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        group1.deleteGroup();
+    }
 
+
+    @After
+    public void deleteAfterTesting() {
         deleteUserWithId(id1);
-        deleteUserWithId(id3);
+        deleteUserWithId(id2);
+        if (group != null)
+            group.deleteGroup();
     }
 
 }

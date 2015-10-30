@@ -10,6 +10,8 @@ import com.parse.ParseQuery;
 import junit.framework.Assert;
 
 import org.json.JSONArray;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +35,12 @@ public class PFUserTest {
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
 
+    private String id1;
+
+    @Before
+    public void newIds() {
+        id1 = null;
+    }
 
     @Test
     public void testFetchingWithIdNull() {
@@ -59,20 +67,18 @@ public class PFUserTest {
     @Test
     public void testCreateNewUser() {
         OpenGMApplication.logOut();
-        String id = getRandomId();
+        id1 = getRandomId();
 
-        PFUser user = null;
         try {
-            user = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
         // we wait for the background task
-        while (user == null) ;
 
         ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+        query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id1);
         try {
             ParseObject o1 = query1.getFirst();
             if (o1 != null) {
@@ -87,22 +93,21 @@ public class PFUserTest {
         } catch (ParseException e) {
             Assert.fail("Error while retrieving the user from the server");
         }
-        deleteUserWithId(id);
     }
 
     @Test
     public void testGetters() throws PFException {
         OpenGMApplication.logOut();
-        String id = getRandomId();
+        id1 = getRandomId();
 
         PFUser user = null;
         try {
-            user = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        assertEquals(id, user.getId());
+        assertEquals(id1, user.getId());
         assertEquals(USERNAME, user.getUsername());
         assertEquals(EMAIL, user.getEmail());
         assertEquals(FIRST_NAME, user.getFirstName());
@@ -111,23 +116,22 @@ public class PFUserTest {
         assertEquals("", user.getPhoneNumber());
         assertNull(user.getPicture());
         assertEquals(new ArrayList<PFGroup>(), user.getGroups());
-        deleteUserWithId(id);
     }
 
     @Test
     public void testFetchExistingUser() throws PFException {
         OpenGMApplication.logOut();
         // Assuming create user is working now
-        String id = getRandomId();
+        id1 = getRandomId();
 
         PFUser user1 = null;
         try {
-            user1 = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        PFUser user2 = PFUser.fetchExistingUser(id);
+        PFUser user2 = PFUser.fetchExistingUser(id1);
 
         assertNotNull(user1);
         assertNotNull(user2);
@@ -142,19 +146,17 @@ public class PFUserTest {
         assertEquals(user1.getPhoneNumber(), user2.getPhoneNumber());
         assertEquals(user1.getPicture(), user2.getPicture());
         assertEquals(user1.getGroups().size(), user2.getGroups().size());
-
-        deleteUserWithId(id);
     }
 
     @Test
     public void settersTest() throws InterruptedException {
         OpenGMApplication.logOut();
         // Assuming create user is working now
-        String id = getRandomId();
+        id1 = getRandomId();
 
         PFUser user1 = null, user2;
         try {
-            user1 = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -170,7 +172,7 @@ public class PFUserTest {
         Thread.sleep(2000);
 
         try {
-            user2 = PFUser.fetchExistingUser(id);
+            user2 = PFUser.fetchExistingUser(id1);
             assertEquals(username, user2.getUsername());
             assertEquals(user1.getId(), user2.getId());
             assertEquals(user1.getFirstName(), user2.getFirstName());
@@ -188,7 +190,7 @@ public class PFUserTest {
         Thread.sleep(2000);
 
         try {
-            user2 = PFUser.fetchExistingUser(id);
+            user2 = PFUser.fetchExistingUser(id1);
             assertEquals(firstname, user2.getFirstName());
             assertEquals(user1.getId(), user2.getId());
             assertEquals(user1.getUsername(), user2.getUsername());
@@ -206,7 +208,7 @@ public class PFUserTest {
         Thread.sleep(2000);
 
         try {
-            user2 = PFUser.fetchExistingUser(id);
+            user2 = PFUser.fetchExistingUser(id1);
             assertEquals(lastname, user2.getLastName());
             assertEquals(user1.getId(), user2.getId());
             assertEquals(user1.getUsername(), user2.getUsername());
@@ -224,7 +226,7 @@ public class PFUserTest {
         Thread.sleep(2000);
 
         try {
-            user2 = PFUser.fetchExistingUser(id);
+            user2 = PFUser.fetchExistingUser(id1);
             assertEquals(about, user2.getAboutUser());
             assertEquals(user1.getId(), user2.getId());
             assertEquals(user1.getUsername(), user2.getUsername());
@@ -242,7 +244,7 @@ public class PFUserTest {
         Thread.sleep(2000);
 
         try {
-            user2 = PFUser.fetchExistingUser(id);
+            user2 = PFUser.fetchExistingUser(id1);
             assertEquals(phoneNumber, user2.getPhoneNumber());
             assertEquals(user1.getId(), user2.getId());
             assertEquals(user1.getUsername(), user2.getUsername());
@@ -257,7 +259,12 @@ public class PFUserTest {
 
         user1.setUsername(null);
 
-        deleteUserWithId(id);
     }
+
+    @After
+    public void deleteAfterTesting() {
+        deleteUserWithId(id1);
+    }
+
 
 }
