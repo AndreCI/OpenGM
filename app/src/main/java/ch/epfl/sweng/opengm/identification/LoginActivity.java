@@ -33,14 +33,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_login);
-        /*
         if (ParseUser.getCurrentUser() != null) {
             Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
             intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
             startActivity(intent);
         }
-        */
+
+        setContentView(R.layout.activity_login);
+
         mEditUsername = (EditText) findViewById(R.id.login_username);
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
