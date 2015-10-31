@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.groups;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import org.junit.After;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.groups.ManageRoles;
+import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -136,7 +136,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         boolean result = databaseRolesMatchesView();
         assertTrue(result);
     }
-
 
     public void testIfRemovesRoleFromDatabase() throws Exception {
         prepareIntentAndDatabase(1);

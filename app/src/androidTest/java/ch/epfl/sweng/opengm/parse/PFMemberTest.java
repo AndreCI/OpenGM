@@ -3,86 +3,148 @@ package ch.epfl.sweng.opengm.parse;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
+import ch.epfl.sweng.opengm.OpenGMApplication;
+
+import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PFMemberTest {
 
-    private final String USER_ID = "tEsTuSr";
+
     private final String EMAIL = "bobby.lapointe@caramail.co.uk";
     private final String USERNAME = "BobTheBobby";
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
-    private final String ABOUT_TEXT = "A simple about text";
-    private final String PHONE_NUMBER = "0793332567";
 
+    private String id1, id2;
+    private PFGroup group;
 
-    private PFUser createTestUserWithID(String id) {
-        PFUser userTest = null;
-        try {
-            userTest = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
-            Thread.sleep(1000);
-            userTest.setAboutUser(ABOUT_TEXT);
-            userTest.setPhoneNumber(PHONE_NUMBER);
-        } catch (PFException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return userTest;
+    @Before
+    public void newIds() {
+        id1 = null;
+        id2 = null;
+        group = null;
     }
 
-    private void deleteUserWithId(String id) {
+    @Test
+    public void testFetchingWithIdNull() {
         try {
-            // Remove from User table
-            ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-            query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
-            ParseObject user1 = query1.getFirst();
-            user1.delete();
-        } catch (ParseException e) {
-            e.printStackTrace();
+            PFMember.fetchExistingMember(null);
+            Assert.fail("should have thrown an exception");
+        } catch (PFException e) {
+            // Success
         }
     }
 
     @Test
-    public void gettersTest() throws PFException, InterruptedException {
-        createTestUserWithID(USER_ID + "1");
-        PFMember member = PFMember.fetchExistingMember(USER_ID + "1");
-        Thread.sleep(2000);
+    public void testFetchingWithIdInvalid() {
+        try {
+            PFMember.fetchExistingMember("Mouh@h@");
+            Assert.fail("should have thrown an exception");
+        } catch (PFException e) {
+            // Success
+        }
+    }
 
+    @Test
+    public void testGetters() throws PFException {
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
+
+        try {
+            PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        // Initial empty fields
+        PFMember member = PFMember.fetchExistingMember(id1);
+        assertEquals(id1, member.getId());
         assertEquals(USERNAME, member.getUsername());
-        // TODO: getter for email ?
-//        assertEquals(EMAIL, member.getEmail());
         assertEquals(FIRST_NAME, member.getFirstname());
         assertEquals(LAST_NAME, member.getLastname());
-        // TODO: phoneNumber() fails
-        assertEquals(PHONE_NUMBER, member.getPhoneNumber());
-        assertEquals(ABOUT_TEXT, member.getAbout());
-        // TODO: test bitmap pictures
-//        member.getPicture();
-        // TODO: test roles
-//        member.getRoles();
+        assertEquals("", member.getAbout());
+        assertEquals("", member.getPhoneNumber());
+        assertNull(member.getPicture());
+        assertEquals(new ArrayList<String>(), member.getRoles());
 
-        deleteUserWithId(USER_ID + "1");
-
-        // FIXME: when same USER_ID, Parse takes the most recent one ???
-        // Idea: generate a random ID at the begining, stored into a variable.
+        deleteUserWithId(id1);
     }
 
     @Test
-    public void sameIdThanPFUserTest() throws PFException {
-        PFUser user = createTestUserWithID(USER_ID);
+    public void settersTest() throws InterruptedException {
+        OpenGMApplication.logOut();
+        // Assuming create user is working now
+        id1 = getRandomId();
 
-        assertEquals(PFMember.fetchExistingMember(USER_ID).getId(), USER_ID);
+        PFUser user1 = null, user2, user3 = null;
+        try {
+            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
 
-        deleteUserWithId(USER_ID);
+        id2 = getRandomId();
+
+        try {
+            user3 = PFUser.createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        group = null;
+
+        try {
+            group = PFGroup.createNewGroup(user1, "Name1", "Description1", null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        group.addUser(id2);
+
+        Thread.sleep(2000);
+
+        try {
+            user2 = PFUser.fetchExistingUser(user3.getId());
+            assertEquals(1, user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        group.removeUser(id2);
+
+        Thread.sleep(2000);
+
+        try {
+            user2 = PFUser.fetchExistingUser(id2);
+            assertEquals(0, user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+    }
+
+
+    @After
+    public void deleteAfterTesting() {
+        deleteUserWithId(id1);
+        deleteUserWithId(id2);
+        if (group != null)
+            group.deleteGroup();
     }
 
 }

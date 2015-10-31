@@ -1,10 +1,9 @@
 package ch.epfl.sweng.opengm.identification;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -14,9 +13,9 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
-import ch.epfl.sweng.opengm.groups.CreateGroup;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.CreateGroupActivity;
 import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
@@ -35,9 +34,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
         boolean reload = getIntent().getBooleanExtra(RELOAD_USER_KEY, true);
 
-        if (reload) {
-            OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
-        }
+        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
 
         // if newUser is true => user is new (register) so show the hints
 
@@ -52,7 +49,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         int screenWidth = metrics.widthPixels;
 
         // Get base (main) layout
-        LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main);
+        LinearLayout mainLayout = (LinearLayout) findViewById(R.id.linearLayout_groupsOverview);
         LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
 
@@ -101,7 +98,7 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             // TODO: petit pop-up qui part du bouton avec either "Create a group" ou "Join an existing group"
-                            Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroup.class);
+                            Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroupActivity.class);
                             startActivity(intent);
                         }
                     });
