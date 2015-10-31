@@ -9,8 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+
+import org.junit.After;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +78,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     }
 
+    @After
+    public void tearDown() throws Exception {
+        cleanUpDBAfterTests();
+        super.tearDown();
+    }
+
     public void testIfFetchesUsersRoles() throws Exception {
         prepareIntentAndDatabase(1);
         addTestRolesToUser(3, testUsers.get(0).getId());
@@ -94,7 +103,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
             }
         }
 
-        cleanUpDBAfterTests();
         assertTrue(viewMatches && allChecked);
     }
 
@@ -111,8 +119,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         Thread.sleep(1000);
 
         assertTrue(databaseRolesMatchesView());
-        cleanUpDBAfterTests();
-        Thread.sleep(1000);
     }
 
 
@@ -129,7 +135,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         updateReferencesFromDatabase();
         Thread.sleep(1000);
         boolean result = databaseRolesMatchesView();
-        cleanUpDBAfterTests();
         assertTrue(result);
     }
 
@@ -148,7 +153,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         String userId = testUsers.get(0).getId();
         List<String> rolesForUser = getRolesOrFail(userId);
         boolean result = !rolesForUser.contains(TEST_ROLE_PREFIX + "0");
-        cleanUpDBAfterTests();
         Thread.sleep(1000);
         assertTrue(result);
     }
@@ -161,7 +165,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withTagValue(is((Object) NEW_ROLE_EDIT))).perform(typeText(""));
         onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
         onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "2")))).check(doesNotExist());
-        cleanUpDBAfterTests();
     }
 
 
@@ -170,7 +173,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         getActivityAndLayout();
         onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
         onView(withTagValue(is((Object) ADD_ROLE))).check(doesNotExist());
-        cleanUpDBAfterTests();
     }
 
     public void testOnlyShowCommonRolesWhenMultipleUsers() throws Exception{
@@ -183,7 +185,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         getActivityAndLayout();
 
         boolean result = databaseRolesMatchesView();
-        cleanUpDBAfterTests();
         assertTrue(result);
 
     }
@@ -202,7 +203,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         Thread.sleep(1000);
 
         boolean result = databaseRolesMatchesView();
-        cleanUpDBAfterTests();
         assertTrue(result);
 
     }
@@ -225,8 +225,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         List<String> rolesFor2 = getRolesOrFail(userID2);
         boolean result0 = !rolesFor1.contains(ROLE_FOR_BOTH);
         boolean result1 = !rolesFor2.contains(ROLE_FOR_BOTH);
-        cleanUpDBAfterTests();
-        Thread.sleep(1000);
         assertTrue(result0 && result1);
     }
 
@@ -273,7 +271,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         boolean result2 = rolesForAdditional.contains(ROLE_FOR_BOTH);
         boolean result3 = !rolesForAdditional.contains(NEW_TEST_ROLE_PREFIX);
 
-        cleanUpDBAfterTests();
         deleteUserFromDatabase(additionalUser.getId());
         assertTrue(result);
         assertTrue(result0);
@@ -288,7 +285,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
         onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "0")))).check(matches(withText(newRole)));
     }
-//--------------------------------------------------------------------------------------------------
+
     private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
         ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
         query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
