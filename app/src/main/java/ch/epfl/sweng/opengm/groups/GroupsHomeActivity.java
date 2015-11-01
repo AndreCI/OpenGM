@@ -116,8 +116,9 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_leave:
-                getCurrentUser().removeFromGroup(currentGroup.getId());
-                // use the below intent then (no break)
+                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment(currentGroup);
+                leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
+                break;
             case R.id.nav_home:
                 startActivity(new Intent(GroupsHomeActivity.this, MyGroupsActivity.class).putExtra(RELOAD_USER_KEY, false));
                 break;

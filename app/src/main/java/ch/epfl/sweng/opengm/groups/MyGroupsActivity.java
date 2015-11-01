@@ -19,6 +19,8 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.LoginActivity;
+import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -46,6 +48,11 @@ public class MyGroupsActivity extends AppCompatActivity {
 
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);
+
+        if (groups.size() == 0) {
+            DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
+            noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
+        }
     }
 
     public void gotoGroup(View view) {
@@ -65,32 +72,19 @@ public class MyGroupsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DialogFragment logoutFragment = new LogoutDialog();
+        DialogFragment logoutFragment = new LogoutDialogFragment();
         logoutFragment.show(getFragmentManager(), "logoutDialog");
     }
 
-    public static class LogoutDialog extends DialogFragment {
+    public static class NoGroupsDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.logoutWarning)
-                    .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
+            builder.setMessage(R.string.noGroupsYet)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            // Logout the user
-                            Intent setIntent = new Intent(Intent.ACTION_MAIN);
-                            setIntent.addCategory(Intent.CATEGORY_HOME);
-                            setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            ParseUser.logOut();
-                            startActivity(setIntent);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
                         }
                     });
-            // Create the AlertDialog object and return it
             return builder.create();
         }
     }
