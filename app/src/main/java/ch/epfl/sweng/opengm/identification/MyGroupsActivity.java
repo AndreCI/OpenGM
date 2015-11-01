@@ -1,10 +1,12 @@
 package ch.epfl.sweng.opengm.identification;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -17,6 +19,8 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.CreateGroup;
+import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
@@ -32,27 +36,24 @@ public class MyGroupsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_groups);
 
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
-//        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        rv.setLayoutManager(llm);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        groupsRecyclerView.setLayoutManager(gridLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        groupsRecyclerView.setLayoutManager(linearLayoutManager);
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+//        groupsRecyclerView.setLayoutManager(gridLayoutManager);
         groupsRecyclerView.setHasFixedSize(true);
 
         //List<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
         List<PFGroup> groups = new ArrayList<>();
         try {
-            PFGroup group1 = PFGroup.fetchExistingGroup("6YdYsS59yo");
+            PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
             Log.v("ORNYTHO", group1.getName() + " | " + group1.getDescription());
             groups.add(group1);
-            PFGroup group2 = PFGroup.fetchExistingGroup("YQ7Ehgac93");
+            PFGroup group2 = PFGroup.fetchExistingGroup("OXsMb6BrSa");
             Log.v("ORNYTHO", group2.getName() + " | " + group2.getDescription());
             groups.add(group2);
-            PFGroup group3 = PFGroup.fetchExistingGroup("bFstqir7Qf");
+            PFGroup group3 = PFGroup.fetchExistingGroup("3RSp15oVOr");
             Log.v("ORNYTHO", group3.getName() + " | " + group3.getDescription());
             groups.add(group3);
-            PFGroup group4 = PFGroup.fetchExistingGroup("OXsMb6BrSa");
-            Log.v("ORNYTHO", group4.getName() + " | " + group4.getDescription());
-            groups.add(group4);
         } catch (PFException e) {
             e.printStackTrace();
         }
@@ -63,7 +64,18 @@ public class MyGroupsActivity extends AppCompatActivity {
 
     public void gotoGroup(View view) {
         String tag = (String) view.getTag();
-        view.setBackgroundColor(0xBA1027);  // FIXME: change color
-        Log.v("ORNYTHO", "datTag = ["+tag+"]");
+        view.setBackgroundColor(0xBA1027);  // FIXME: change color --> Add behaviour of clicked card
+        Log.v("ORNYTHO", "datTag = [" + tag + "]");
+
+
+        Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
+        intent.putExtra("", "");    // PUT CHOSEN GROUP HERE !
+        startActivity(intent);
+    }
+
+    public void addGroup() {
+        Log.v("ORNYTHO", "Add Group button pressed !");
+        Intent intent = new Intent(MyGroupsActivity.this, CreateGroup.class);
+        startActivity(intent);
     }
 }
