@@ -28,7 +28,7 @@ import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.Alert;
 
-public class ManageRoles extends AppCompatActivity {
+public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
     private Map<CheckBox, TableRow> boxesAndRows;
     private LinearLayout rolesAndButtons;

@@ -36,7 +36,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRoles>{
+public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRolesActivity>{
     private LinearLayout rolesAndButtons;
     private PFGroup testGroup;
     private List<PFUser> testUsers;
@@ -68,7 +68,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
 
     public ManageRolesActivityTest() {
-        super(ManageRoles.class);
+        super(ManageRolesActivity.class);
     }
 
     @Override
@@ -309,8 +309,8 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
             testUsersIds.add(testUser.getId());
         }
 
-        intent.putStringArrayListExtra(ManageRoles.USER_IDS, testUsersIds);
-        intent.putExtra(ManageRoles.GROUP_ID, testGroup.getId());
+        intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, testUsersIds);
+        intent.putExtra(ManageRolesActivity.GROUP_ID, testGroup.getId());
 
         setActivityIntent(intent);
     }
