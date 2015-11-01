@@ -41,22 +41,16 @@ public class MyGroupsActivity extends AppCompatActivity {
         groupsRecyclerView.setHasFixedSize(true);
 
         List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
-/*
-        List<PFGroup> groups = new ArrayList<>();
-        try {
-            PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
-            Log.v("ORNYTHO", group1.getName() + " | " + group1.getDescription());
-            groups.add(group1);
-            PFGroup group2 = PFGroup.fetchExistingGroup("OXsMb6BrSa");
-            Log.v("ORNYTHO", group2.getName() + " | " + group2.getDescription());
-            groups.add(group2);
-            PFGroup group3 = PFGroup.fetchExistingGroup("3RSp15oVOr");
-            Log.v("ORNYTHO", group3.getName() + " | " + group3.getDescription());
-            groups.add(group3);
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-*/
+
+//        List<PFGroup> groups = new ArrayList<>();
+//        try {
+//            PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
+//            Log.v("ORNYTHO", group1.getName() + " | " + group1.getDescription());
+//            groups.add(group1);
+//        } catch (PFException e) {
+//            e.printStackTrace();
+//        }
+
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);
     }
@@ -69,7 +63,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         Log.v("ORNYTHO", "datTag = [" + groupPosition + "]");
 
         Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
-        intent.putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, groupPosition);
+        intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, groupPosition);
         startActivity(intent);
     }
 

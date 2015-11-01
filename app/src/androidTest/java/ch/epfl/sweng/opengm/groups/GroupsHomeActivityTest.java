@@ -70,7 +70,7 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
 
         Intent intent = new Intent();
 
-        intent.putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, 0);
+        intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, 0);
         setActivityIntent(intent);
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());

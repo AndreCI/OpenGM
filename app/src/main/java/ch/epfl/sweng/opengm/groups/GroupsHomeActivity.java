@@ -27,7 +27,7 @@ import static ch.epfl.sweng.opengm.identification.MyGroupsActivity.RELOAD_USER_K
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String CHOOSEN_GROUP_KEY = "ch.epfl.ch.opengm.groups.groupshomeactivity.groupidx";
+    public static final String CHOSEN_GROUP_KEY = "ch.epfl.ch.opengm.groups.groupshomeactivity.groupidx";
 
     DrawerLayout drawer;
 
@@ -45,7 +45,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         Intent comingIntent = getIntent();
 
-        groupPos = comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0);
+        groupPos = comingIntent.getIntExtra(CHOSEN_GROUP_KEY, 0);
 
         currentGroup = getCurrentUser().getGroups().get(groupPos);
 
