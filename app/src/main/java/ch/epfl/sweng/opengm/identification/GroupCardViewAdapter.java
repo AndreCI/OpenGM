@@ -16,13 +16,13 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdapter.GroupViewHolder>{
 
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
+        CardView cardView;
         TextView groupName;
         ImageView groupPhoto;
 
         GroupViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.group_card_view);
+            cardView = (CardView) itemView.findViewById(R.id.group_card_view);
             groupName = (TextView) itemView.findViewById(R.id.group_name);
             groupPhoto = (ImageView) itemView.findViewById(R.id.group_photo);
         }
@@ -58,6 +58,7 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
 
     @Override
     public void onBindViewHolder(GroupViewHolder holder, int position) {
+        holder.cardView.setTag(position);
         holder.groupName.setText(groups.get(position).getName());
 //        holder.groupPhoto.setImageResource(groups.get(position).getPhoto);
     }
