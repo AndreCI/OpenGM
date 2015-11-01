@@ -103,7 +103,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
 
         onView(withId(R.id.login_buttonLogin)).perform(click());
 
-        onView(withId(R.id.linearLayout_groupsOverview)).check(matches(isDisplayed()));
+        onView(withId(R.id.group_card_view)).check(matches(isDisplayed()));
 
     }
 

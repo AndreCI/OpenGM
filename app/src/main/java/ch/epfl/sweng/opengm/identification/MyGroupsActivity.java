@@ -3,11 +3,12 @@ package ch.epfl.sweng.opengm.identification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,9 @@ import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.groups.CreateGroupActivity;
 import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
-import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class MyGroupsActivity extends AppCompatActivity {
 
@@ -29,6 +31,8 @@ public class MyGroupsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
 
+        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         groupsRecyclerView.setLayoutManager(linearLayoutManager);
@@ -36,8 +40,8 @@ public class MyGroupsActivity extends AppCompatActivity {
 //        groupsRecyclerView.setLayoutManager(gridLayoutManager);
         groupsRecyclerView.setHasFixedSize(true);
 
-//        List<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
-
+        List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
+/*
         List<PFGroup> groups = new ArrayList<>();
         try {
             PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
@@ -52,7 +56,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         } catch (PFException e) {
             e.printStackTrace();
         }
-
+*/
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);
     }
@@ -64,14 +68,24 @@ public class MyGroupsActivity extends AppCompatActivity {
         int groupPosition = (int) view.getTag();
         Log.v("ORNYTHO", "datTag = [" + groupPosition + "]");
 
-//        Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
-//        intent.putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, groupPosition);
-//        startActivity(intent);
+        Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
+        intent.putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, groupPosition);
+        startActivity(intent);
     }
 
     public void addGroup(View view) {
         Log.v("ORNYTHO", "Add Group button pressed !");
         Intent intent = new Intent(MyGroupsActivity.this, CreateGroupActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("CDA", "onBackPressed Called");
+        Intent setIntent = new Intent(Intent.ACTION_MAIN);
+        setIntent.addCategory(Intent.CATEGORY_HOME);
+        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ParseUser.logOut();
+        startActivity(setIntent);
     }
 }
