@@ -1,5 +1,9 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -60,12 +64,34 @@ public class MyGroupsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {   // TODO: petit logout drawer :-) Qui partirait d'en bas.
-        Log.d("CDA", "onBackPressed Called");
-        Intent setIntent = new Intent(Intent.ACTION_MAIN);
-        setIntent.addCategory(Intent.CATEGORY_HOME);
-        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ParseUser.logOut();
-        startActivity(setIntent);
+    public void onBackPressed() {
+        DialogFragment logoutFragment = new LogoutDialog();
+        logoutFragment.show(getFragmentManager(), "logoutDialog");
+    }
+
+    public static class LogoutDialog extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.logoutWarning)
+                    .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Logout the user
+                            Intent setIntent = new Intent(Intent.ACTION_MAIN);
+                            setIntent.addCategory(Intent.CATEGORY_HOME);
+                            setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            ParseUser.logOut();
+                            startActivity(setIntent);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
     }
 }

@@ -19,6 +19,10 @@
 
     <string name="title_activity_my_groups">My Groups</string>
 
+    <string name="logoutWarning">Are you sure you want to logout ?</string>
+    <string name="logout">Logout</string>
+    <string name="cancel">Cancel</string>
+
     <string name="hint_username_activity_register">Username</string>
     <string name="hint_password_activity_register">Password</string>
     <string name="hint_firstname_activity_register">First name</string>
