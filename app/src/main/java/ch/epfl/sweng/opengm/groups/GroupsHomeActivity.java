@@ -20,8 +20,9 @@ import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
 import ch.epfl.sweng.opengm.identification.MyGroupsActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
-import static ch.epfl.sweng.opengm.identification.MyGroupsActivity.RELOAD_USER_KEY;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+import static ch.epfl.sweng.opengm.groups.Members.GROUP_INDEX;
+import static ch.epfl.sweng.opengm.identification.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +35,8 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     private ListView mEventLists;
 
+    private int groupPos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +45,9 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         Intent comingIntent = getIntent();
 
-        currentGroup = getCurrentUser().getGroups().get(comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0));
+        groupPos = comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0);
+
+        currentGroup = getCurrentUser().getGroups().get(groupPos);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -120,6 +125,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
+                startActivity(new Intent(GroupsHomeActivity.this, Members.class).putExtra(GROUP_INDEX, groupPos));
                 break;
             case R.id.nav_events:
                 startActivity(new Intent(GroupsHomeActivity.this, CreateEditEventActivity.class));

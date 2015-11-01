@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class ShowEventActivity extends AppCompatActivity {
-    public final static String SHOW_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.SHOW_EVENT";
+    public final static String SHOW_EVENT_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.SHOW_EVENT_EVENT";
 
-    private Event event;
-
+    private PFEvent event;
+    private PFGroup currentGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +26,8 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        //event = (Event) intent.getSerializableExtra("todo");
-        event = new Event();
-        event.setPlace("DTC");
-        event.setName("Event");
-        event.setDescription("ça va etre bien");
-        event.setDate(new Date(2015, 10, 10, 18, 30));
-        event.setParticipants(new ArrayList<Event.OpenGMMember>(1));
+        event = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
         displayEventInformation();
     }
 
@@ -56,9 +54,9 @@ public class ShowEventActivity extends AppCompatActivity {
 
     private void fillEventDate() {
         Date date = event.getDate();
-        String hourString = (Integer.toString(date.getHours())+':'+Integer.toString(date.getMinutes()));
+        String hourString = String.format("%d : %02d", date.getHours(), date.getMinutes());
         ((TextView)findViewById(R.id.ShowEventHourText)).setText(hourString);
-        String dateString = Integer.toString(date.getDate()) + '/' + Integer.toString(date.getMonth()+1) + '/' + Integer.toString(date.getYear());
+        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth()+1, date.getYear());
         ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
     }
 
@@ -75,17 +73,18 @@ public class ShowEventActivity extends AppCompatActivity {
     private void fillEventParticipants() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Participants:");
-        for (Event.OpenGMMember participant : event.getParticipants()) {
+        for (PFMember participant : event.getParticipants()) {
             stringBuilder.append('\n');
-            stringBuilder.append(participant.getName());
+
+            stringBuilder.append(participant.getUsername());
         }
         ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
     }
 
     public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(SHOW_EVENT_MESSAGE, event);
+        intent.putExtra(SHOW_EVENT_MESSAGE_EVENT, event);
+        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
         startActivity(intent);
-
     }
 }

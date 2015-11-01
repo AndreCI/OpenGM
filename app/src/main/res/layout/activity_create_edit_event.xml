@@ -72,14 +72,15 @@
         android:layout_below="@id/CreateEditButtonLayout"
         android:editable="true"
         android:nestedScrollingEnabled="true"
-        android:minLines="7"
-        android:maxLines="7"
-        android:textAlignment="center"
+        android:minLines="3"
+        android:maxLines="3"
         android:elegantTextHeight="false"
         android:clickable="false"
         android:autoText="false"
         android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false" />
+        android:layout_alignParentEnd="false"
+        android:textAlignment="gravity"
+        android:gravity="top|left" />
 
     <Button
         android:layout_width="wrap_content"

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:opengm="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_add_person"
+        android:icon="@drawable/ic_action_add_person"
+        android:title="@string/action_add_person"
+        opengm:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_remove_person"
+        android:icon="@drawable/ic_action_remove"
+        android:title="@string/action_remove_person"
+        opengm:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_change_roles"
+        android:icon="@drawable/ic_action_group"
+        android:title="@string/action_change_roles"
+        opengm:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_members_select"
+        android:title="@string/title_members_select_mode"
+        opengm:showAsAction="never" />
+</menu>

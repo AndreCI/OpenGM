@@ -21,7 +21,7 @@ public final class PFConstants {
     public static final String USER_ENTRY_USERNAME = "username";
     public static final String USER_ENTRY_FIRSTNAME = "firstName";
     public static final String USER_ENTRY_LASTNAME = "lastName";
-    public static final String USER_ENTRY_PHONENUMBER = "phoneNumer";
+    public static final String USER_ENTRY_PHONENUMBER = "phoneNumber";
     public static final String USER_ENTRY_GROUPS = "groups";
     public static final String USER_ENTRY_PICTURE = "profilePicture";
     public static final String USER_ENTRY_ABOUT = "description";

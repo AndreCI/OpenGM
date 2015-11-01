@@ -1,12 +1,14 @@
 package ch.epfl.sweng.opengm.parse;
 
+import android.os.Parcelable;
+
 /**
  * This abstract class represents an abstraction of an object that is stored on the server.
  * Each table online must be associated with its own class which extends this one.
  */
-abstract class PFEntity {
+abstract class PFEntity implements Parcelable {
 
-    private final String mId;
+    protected final String mId;
     private final String mParseTable;
 
     /**

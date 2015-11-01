@@ -1,29 +1,22 @@
 package ch.epfl.sweng.opengm.identification;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.groups.CreateGroup;
+import ch.epfl.sweng.opengm.groups.CreateGroupActivity;
 import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class MyGroupsActivity extends AppCompatActivity {
 
@@ -42,40 +35,42 @@ public class MyGroupsActivity extends AppCompatActivity {
 //        groupsRecyclerView.setLayoutManager(gridLayoutManager);
         groupsRecyclerView.setHasFixedSize(true);
 
-        //List<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
-        List<PFGroup> groups = new ArrayList<>();
-        try {
-            PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
-            Log.v("ORNYTHO", group1.getName() + " | " + group1.getDescription());
-            groups.add(group1);
-            PFGroup group2 = PFGroup.fetchExistingGroup("OXsMb6BrSa");
-            Log.v("ORNYTHO", group2.getName() + " | " + group2.getDescription());
-            groups.add(group2);
-            PFGroup group3 = PFGroup.fetchExistingGroup("3RSp15oVOr");
-            Log.v("ORNYTHO", group3.getName() + " | " + group3.getDescription());
-            groups.add(group3);
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
+        List<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
+
+//        List<PFGroup> groups = new ArrayList<>();
+//        try {
+//            PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
+//            Log.v("ORNYTHO", group1.getName() + " | " + group1.getDescription());
+//            groups.add(group1);
+//            PFGroup group2 = PFGroup.fetchExistingGroup("OXsMb6BrSa");
+//            Log.v("ORNYTHO", group2.getName() + " | " + group2.getDescription());
+//            groups.add(group2);
+//            PFGroup group3 = PFGroup.fetchExistingGroup("3RSp15oVOr");
+//            Log.v("ORNYTHO", group3.getName() + " | " + group3.getDescription());
+//            groups.add(group3);
+//        } catch (PFException e) {
+//            e.printStackTrace();
+//        }
 
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);
     }
 
     public void gotoGroup(View view) {
-        String tag = (String) view.getTag();
+        String tag = (String) view.getTag();    // TODO: for instance, the position in the adapterView
         view.setBackgroundColor(0xBA1027);  // FIXME: change color --> Add behaviour of clicked card
         Log.v("ORNYTHO", "datTag = [" + tag + "]");
 
+        int groupPosition = 0;
 
         Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
-        intent.putExtra("", "");    // PUT CHOSEN GROUP HERE !
+        intent.putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, groupPosition);    // PUT CHOSEN GROUP HERE !  Càd la position du group dans la liste de groupes du mec.
         startActivity(intent);
     }
 
-    public void addGroup() {
+    public void addGroup(View view) {
         Log.v("ORNYTHO", "Add Group button pressed !");
-        Intent intent = new Intent(MyGroupsActivity.this, CreateGroup.class);
+        Intent intent = new Intent(MyGroupsActivity.this, CreateGroupActivity.class);
         startActivity(intent);
     }
 }

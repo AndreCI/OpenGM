@@ -50,7 +50,15 @@
         </activity>
 
         <activity
-            android:name=".groups.CreateGroup"
+            android:name=".groups.Members"
+            android:parentActivityName=".groups.GroupsHomeActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_members"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+
+        <activity
+            android:name=".groups.CreateGroupActivity"
             android:label="@string/title_activity_create_group"
             android:screenOrientation="portrait">
         </activity>
@@ -84,6 +92,12 @@
             android:label="@string/title_activity_groups_home"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".groups.ModifyGroup"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_modify_group">
         </activity>
 
     </application>
