@@ -45,8 +45,8 @@ public class LoginActivity extends AppCompatActivity {
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
         // TODO change this after testing
-//        mEditUsername.setText("JellyTester");
-//        mEditPassword.setText("Jelly123");
+        mEditUsername.setText("JellyTester");
+        mEditPassword.setText("Jelly123");
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);
@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                             case ParseException.OBJECT_NOT_FOUND:
                                 mEditPassword.setError(getString(R.string.incorrect_activity_login));
                                 mEditPassword.requestFocus();
+                                mEditPassword.setText("");
                                 break;
                             default:
                                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
