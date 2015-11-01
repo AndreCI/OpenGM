@@ -15,6 +15,7 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Utils;

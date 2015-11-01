@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm.identification;
+package ch.epfl.sweng.opengm.groups;
 
 import 	android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;

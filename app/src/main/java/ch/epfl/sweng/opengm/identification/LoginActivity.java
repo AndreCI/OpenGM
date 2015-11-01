@@ -19,6 +19,7 @@ import com.parse.ParseUser;
 import com.parse.RequestPasswordResetCallback;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
 import ch.epfl.sweng.opengm.utils.Utils;
 
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;

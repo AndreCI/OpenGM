@@ -17,12 +17,11 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
-import ch.epfl.sweng.opengm.identification.MyGroupsActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.Members.GROUP_INDEX;
-import static ch.epfl.sweng.opengm.identification.MyGroupsActivity.RELOAD_USER_KEY;
+import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -63,7 +62,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

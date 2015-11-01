@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm.identification;
+package ch.epfl.sweng.opengm.groups;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +15,6 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.groups.CreateGroupActivity;
-import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -42,15 +40,6 @@ public class MyGroupsActivity extends AppCompatActivity {
 
         List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
 
-//        List<PFGroup> groups = new ArrayList<>();
-//        try {
-//            PFGroup group1 = PFGroup.fetchExistingGroup("p7grbYzKMj");
-//            Log.v("ORNYTHO", group1.getName() + " | " + group1.getDescription());
-//            groups.add(group1);
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);
     }
@@ -60,21 +49,18 @@ public class MyGroupsActivity extends AppCompatActivity {
 //        view.setBackgroundColor(0xBA1027);
 
         int groupPosition = (int) view.getTag();
-        Log.v("ORNYTHO", "datTag = [" + groupPosition + "]");
-
         Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
         intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, groupPosition);
         startActivity(intent);
     }
 
     public void addGroup(View view) {
-        Log.v("ORNYTHO", "Add Group button pressed !");
         Intent intent = new Intent(MyGroupsActivity.this, CreateGroupActivity.class);
         startActivity(intent);
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() {   // TODO: petit logout drawer :-) Qui partirait d'en bas.
         Log.d("CDA", "onBackPressed Called");
         Intent setIntent = new Intent(Intent.ACTION_MAIN);
         setIntent.addCategory(Intent.CATEGORY_HOME);
