@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".groups.ManageRoles"
+            android:name=".groups.ManageRolesActivity"
             android:label="@string/title_activity_manage_roles"
             android:screenOrientation="portrait">
         </activity>
