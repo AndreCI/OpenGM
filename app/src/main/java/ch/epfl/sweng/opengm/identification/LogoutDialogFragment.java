@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.parse.ParseUser;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 
 public class LogoutDialogFragment extends DialogFragment {
@@ -19,7 +20,7 @@ public class LogoutDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Logout the user
-                        ParseUser.logOut();
+                        OpenGMApplication.logOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         startActivity(intent);
                     }

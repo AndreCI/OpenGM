@@ -161,7 +161,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
             Assert.fail("Waiting instruction failed");
         }
 
-        onView(withId(R.id.linearLayout_groupsOverview)).check(matches(isDisplayed()));
+        onView(withId(R.id.groups_recycler_view)).check(matches(isDisplayed()));
 
         PFUser user = OpenGMApplication.getCurrentUser();
 

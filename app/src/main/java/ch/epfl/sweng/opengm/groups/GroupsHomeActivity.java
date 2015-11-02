@@ -85,6 +85,9 @@ public class GroupsHomeActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            Intent intent = new Intent(this, MyGroupsActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 
