@@ -1,11 +1,15 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.graphics.Color;
 import 	android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -58,6 +62,17 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
 
     @Override
     public void onBindViewHolder(GroupViewHolder holder, int position) {
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.cardView.getLayoutParams();
+
+        // TODO: get the screen size in pixels, within a static context
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        MyGroupsActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        int screenWidth = metrics.widthPixels;
+        int screenWidth = 1080; // (only for Nexus 5 which is 1080x1920)
+
+        layoutParams.height = screenWidth/2;
+        holder.cardView.setLayoutParams(layoutParams);
+
         holder.cardView.setTag(position);
         holder.groupName.setText(groups.get(position).getName());
 //        holder.groupPhoto.setImageResource(groups.get(position).getPhoto);

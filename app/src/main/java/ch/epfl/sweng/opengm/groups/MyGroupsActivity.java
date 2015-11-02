@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,10 +39,10 @@ public class MyGroupsActivity extends AppCompatActivity {
         OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
 
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        groupsRecyclerView.setLayoutManager(linearLayoutManager);
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-//        groupsRecyclerView.setLayoutManager(gridLayoutManager);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        groupsRecyclerView.setLayoutManager(linearLayoutManager);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        groupsRecyclerView.setLayoutManager(gridLayoutManager);
         groupsRecyclerView.setHasFixedSize(true);
 
         List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
