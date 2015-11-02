@@ -17,6 +17,13 @@
 
     <string name="title_activity_register">RegisterActivity</string>
 
+    <string name="title_activity_my_groups">My Groups</string>
+    <string name="noGroupsYet">No groups yet ? Click on the + button below to create one !</string>
+
+    <string name="logoutWarning">Are you sure you want to logout ?</string>
+    <string name="logout">Logout</string>
+    <string name="cancel">Cancel</string>
+
     <string name="hint_username_activity_register">Username</string>
     <string name="hint_password_activity_register">Password</string>
     <string name="hint_firstname_activity_register">First name</string>
@@ -77,6 +84,9 @@
     <string name="okayButtonText">Ok</string>
 
     <string name="title_activity_groups_home">GroupsHomeActivity</string>
+
+    <string name="leaveGroupWarning">Are you sure you want to leave the group [group] ?</string>
+    <string name="leaveTheGroup">Leave the group</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

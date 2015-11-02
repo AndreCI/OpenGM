@@ -15,7 +15,7 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOOSEN_GROUP_KEY;
+import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOSEN_GROUP_KEY;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_BEGINS_WITH_SPACE;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
@@ -74,7 +74,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             try {
                 PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
                 getCurrentUser().addToAGroup(newGroup);
-                startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
+                startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
             } catch (PFException e) {
                 Alert.displayAlert("Couldn't create the group, there were problems when contacting the server.");
             }

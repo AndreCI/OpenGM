@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,17 +17,16 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
-import ch.epfl.sweng.opengm.identification.GroupsOverviewActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.Members.GROUP_INDEX;
-import static ch.epfl.sweng.opengm.identification.GroupsOverviewActivity.RELOAD_USER_KEY;
+import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String CHOOSEN_GROUP_KEY = "ch.epfl.ch.opengm.groups.groupshomeactivity.groupidx";
+    public static final String CHOSEN_GROUP_KEY = "ch.epfl.ch.opengm.groups.groupshomeactivity.groupidx";
 
     DrawerLayout drawer;
 
@@ -46,7 +44,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         Intent comingIntent = getIntent();
 
-        groupPos = comingIntent.getIntExtra(CHOOSEN_GROUP_KEY, 0);
+        groupPos = comingIntent.getIntExtra(CHOSEN_GROUP_KEY, 0);
 
         currentGroup = getCurrentUser().getGroups().get(groupPos);
 
@@ -64,7 +62,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,10 +116,11 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_leave:
-                getCurrentUser().removeFromGroup(currentGroup.getId());
-                // use the below intent then (no break)
+                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment(currentGroup);
+                leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
+                break;
             case R.id.nav_home:
-                startActivity(new Intent(GroupsHomeActivity.this, GroupsOverviewActivity.class).putExtra(RELOAD_USER_KEY, false));
+                startActivity(new Intent(GroupsHomeActivity.this, MyGroupsActivity.class).putExtra(RELOAD_USER_KEY, false));
                 break;
             case R.id.nav_group_overview:
                 break;

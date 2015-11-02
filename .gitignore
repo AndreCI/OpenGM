@@ -4,6 +4,8 @@ local.properties
 .idea/libraries
 .idea/misc.xml
 .idea/gradle.xml
+.idea/modules.xml
+.idea/vcs.xml
 app/app.iml
 .DS_Store
 build/*
