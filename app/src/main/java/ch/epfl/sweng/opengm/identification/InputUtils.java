@@ -63,7 +63,8 @@ public class InputUtils {
             return INPUT_TOO_LONG;
         } else {
             for (Character c : name.toCharArray()) {
-                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == ' ')) {
+                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
+                        c == ' ' || c == '\'')) {
                     return INPUT_WITH_SYMBOL;
                 }
             }
