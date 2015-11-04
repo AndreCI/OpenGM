@@ -39,7 +39,7 @@ public class Utils {
     }
 
     public static String stripAccents(String s) {
-        String res = s;
+        String res = s.toLowerCase();
         res = Normalizer.normalize(res, Normalizer.Form.NFD);
         res = res.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return res;
