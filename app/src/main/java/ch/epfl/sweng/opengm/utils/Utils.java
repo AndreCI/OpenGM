@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.text.Normalizer;
+
 import ch.epfl.sweng.opengm.R;
 
 public class Utils {
@@ -34,6 +36,13 @@ public class Utils {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
         return dialog;
+    }
+
+    public static String stripAccents(String s) {
+        String res = s;
+        res = Normalizer.normalize(res, Normalizer.Form.NFD);
+        res = res.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return res;
     }
 
 }
