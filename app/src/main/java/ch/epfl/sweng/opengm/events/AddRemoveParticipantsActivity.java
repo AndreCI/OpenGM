@@ -83,36 +83,18 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CheckParticipant checkParticipant = (CheckParticipant) parent.getItemAtPosition(position);
-                checkParticipant.setCheck(!checkParticipant.getCheck());
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkParticipantCheckBox);
+                checkBox.performClick();
+                CheckParticipant checkParticipant = (CheckParticipant) checkBox.getTag();
+                checkParticipant.setCheck(checkBox.isChecked());
+                PFMember member = checkParticipant.getParticipant();
+                if(checkParticipant.getCheck()) {
+                    membersToAdd.add(member);
+                } else {
+                    membersToAdd.remove(member);
+                }
             }
         });
-
-        /*members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());
-        members.add(new OpenGMMember());*/
-
 
         final SearchView sv = (SearchView) findViewById(R.id.searchMember);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -213,19 +195,6 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
                 holder.textView = (TextView) convertView.findViewById(R.id.checkParticipantTextView);
                 holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkParticipantCheckBox);
                 convertView.setTag(holder);
-
-                holder.checkBox.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        CheckBox cb = (CheckBox) v;
-                        CheckParticipant checkParticipant = (CheckParticipant) cb.getTag();
-                        checkParticipant.setCheck(cb.isChecked());
-                        if (cb.isChecked()) {
-                            membersToAdd.add(checkParticipant.getParticipant());
-                        } else {
-                            membersToAdd.remove(checkParticipant.getParticipant());
-                        }
-                    }
-                });
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
@@ -234,6 +203,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
             holder.textView.setText(checkParticipant.getName());
             holder.checkBox.setChecked(checkParticipant.getCheck());
             holder.checkBox.setTag(checkParticipant);
+            holder.textView.setTag(checkParticipant);
 
             return convertView;
         }
