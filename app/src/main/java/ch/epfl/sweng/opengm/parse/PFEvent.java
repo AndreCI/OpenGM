@@ -10,6 +10,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,6 +24,8 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PARTICIPANTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_NAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
@@ -175,6 +179,31 @@ public final class PFEvent extends PFEntity implements Parcelable {
                 }
             }
         });
+    }
+
+    public static PFEvent createEvent(String name, String place, Date date, String description, List<String> participants, Bitmap picture) throws PFException {
+
+        ParseObject object = new ParseObject(EVENT_TABLE_NAME);
+        object.put(EVENT_ENTRY_TITLE, name);
+        object.put(EVENT_ENTRY_PLACE, place);
+        object.put(EVENT_ENTRY_DATE, date);
+        object.put(EVENT_ENTRY_DESCRIPTION, description);
+        object.put(EVENT_ENTRY_PARTICIPANTS, new JSONArray().put(participants));
+        if (picture != null) {
+            object.put(GROUP_ENTRY_PICTURE, picture);
+        }
+
+        try {
+            object.save();
+            String id = object.getObjectId();
+            return new PFEvent(id, name, place, date, description, participants, picture);
+        } catch (ParseException e) {
+            throw new PFException();
+        }
+    }
+
+    public static PFEvent createEvent(String name, Date date, List<String> participants, Bitmap picture) throws PFException {
+        return createEvent(name, null, date, null, participants, picture);
     }
 
     public static PFEvent fetchExistingEvent(String id) throws PFException {
