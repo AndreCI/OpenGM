@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.parse.ParseUser;
-
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
@@ -17,14 +15,25 @@ import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class LeaveGroupDialogFragment extends DialogFragment {
 
-    final PFGroup groupToLeave;
+    private PFGroup groupToLeave;
 
-    public LeaveGroupDialogFragment(PFGroup groupToLeave) {
+    public LeaveGroupDialogFragment(){
+        groupToLeave = null;
+    }
+
+    /*public LeaveGroupDialogFragment(PFGroup groupToLeave) {
+        this.groupToLeave = groupToLeave;
+    }*/
+
+    public void setGroupToLeave(PFGroup groupToLeave){
         this.groupToLeave = groupToLeave;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if(groupToLeave == null){
+            throw new UnsupportedOperationException();
+        }
         String leaveThisGroupWarning = getString(R.string.leaveGroupWarning);
         leaveThisGroupWarning = leaveThisGroupWarning.replace("[group]", groupToLeave.getName());
 
