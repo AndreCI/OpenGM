@@ -1,5 +1,6 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.identification;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -12,7 +13,6 @@ public class StyleIdentificationUtils {
         return new TypeSafeMatcher<View>() {
             @Override
             protected boolean matchesSafely(View o) {
-
                 if (o == null) {
                     return false;
                 }
@@ -20,6 +20,9 @@ public class StyleIdentificationUtils {
                 // if it does not have the focus, its error should be null
                 if (!checkFocus) {
                     return editText.getError() == null;
+                }
+                if (editText.getError() == null) {
+                    return false;
                 }
                 return editText.getError().equals(expectedString) && editText.hasFocus();
             }

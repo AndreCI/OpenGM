@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.groups;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -27,8 +26,9 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.Alert;
 
-public class ManageRoles extends AppCompatActivity {
+public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
     private Map<CheckBox, TableRow> boxesAndRows;
     private LinearLayout rolesAndButtons;
@@ -40,9 +40,10 @@ public class ManageRoles extends AppCompatActivity {
 
     private List<PFMember> groupMembers;
     private PFGroup currentGroup;
+    private Map<CheckBox, Boolean> modifiedCheckBoxes;
 
     public final static String GROUP_ID = "ch.epfl.ch.opengm.groups.manageroles.groupid";
-    public final static String USER_ID = "ch.epfl.ch.opengm.groups.manageroles.userid";
+    public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,51 +51,45 @@ public class ManageRoles extends AppCompatActivity {
         setContentView(R.layout.activity_manage_roles);
 
         boxesAndRows = new Hashtable<>();
-
-        /* TODO: Grab roles from database, ideally the three default roles are
-         * already there.*/
-        // Hardcoding to make this application properly testable -----------------------------------
-//        PFUser user = null;
-//        try {
-//            user = PFUser.fetchExistingUser("f9PMNCFLXN");
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            currentGroup = PFGroup.fetchExistingGroup("9E0kzVZF4i");
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-//        //Receive this from intent
-//        groupMembers = new ArrayList<>();
-//        try {
-//            groupMembers.add(PFMember.fetchExistingMember("f9PMNCFLXN"));
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-        // -----------------------------------------------------------------------------------------
+        modifiedCheckBoxes = new Hashtable<>();
 
         roles = new ArrayList<>();
         Intent intent = getIntent();
         //Uncomment this when testing with real app
         String groupId = intent.getStringExtra(GROUP_ID);
-        String memberID = intent.getStringExtra(USER_ID);
+        List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
         PFMember member;
         groupMembers = new ArrayList<>();
         try {
             currentGroup = PFGroup.fetchExistingGroup(groupId);
-            member = PFMember.fetchExistingMember(memberID);
-            roles = currentGroup.getRolesForUser(member.getId());
-            groupMembers.add(member);
+            List<String> rolesFromServer = currentGroup.getRolesForUser(memberIDs.get(0));
+            if(rolesFromServer != null){
+                roles = new ArrayList<>(rolesFromServer);
+            } else {
+                Alert.displayAlert("Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.");
+            }
+            for(String memberID : memberIDs) {
+                member = PFMember.fetchExistingMember(memberID);
+                keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
+                groupMembers.add(member);
+            }
         } catch (PFException e) {
             e.printStackTrace();
         }
-
-
-
+        
         rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
         fillWithRoles();
         addNewRoleRow();
+    }
+
+    private void keepIntersectionRoles(List<String> otherRoles){
+        ArrayList<String> toRemove = new ArrayList<>();
+        for(String role : roles){
+            if(!otherRoles.contains(role)){
+                toRemove.add(role);
+            }
+        }
+        roles.removeAll(toRemove);
     }
 
     private void fillWithRoles() {
@@ -106,6 +101,12 @@ public class ManageRoles extends AppCompatActivity {
             CheckBox box = new CheckBox(getApplicationContext());
             box.setTag("roleBox" + roleBoxCount);
             box.setChecked(true);
+            box.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    modifiedCheckBoxes.put((CheckBox) v, true);
+                }
+            });
             roleBoxCount++;
 
             TableRow currentRow = getNewTableRow(box, currentRole);
@@ -113,6 +114,7 @@ public class ManageRoles extends AppCompatActivity {
             roleRowCount++;
 
             boxesAndRows.put(box, currentRow);
+            modifiedCheckBoxes.put(box, false);
 
             rolesAndButtons.addView(currentRow);
         }
@@ -177,7 +179,6 @@ public class ManageRoles extends AppCompatActivity {
         box.setEnabled(false);
         box.setTag("roleBox" + roleBoxCount);
 
-
         Button newButton = getNewButton("-");
         newButton.setTag("removeRole" + roleBoxCount);
         roleBoxCount++;
@@ -195,6 +196,7 @@ public class ManageRoles extends AppCompatActivity {
         newButton.setLayoutParams(getParamsForTableColumn());
 
         boxesAndRows.put(box, newRow);
+        modifiedCheckBoxes.put(box, true);
 
         rolesAndButtons.addView(newRow);
         rolesAndButtons.removeView(editRow);
@@ -211,7 +213,9 @@ public class ManageRoles extends AppCompatActivity {
     }
 
     public void removeRole(TableRow roleRow){
-        ((CheckBox)roleRow.getChildAt(0)).setChecked(false);
+        CheckBox toDelete = ((CheckBox)roleRow.getChildAt(0));
+        toDelete.setChecked(false);
+        modifiedCheckBoxes.put(toDelete, false);
         rolesAndButtons.removeView(roleRow);
         roleRowCount--;
         roleTextCount--;
@@ -265,9 +269,9 @@ public class ManageRoles extends AppCompatActivity {
     public void doneManageRoles(View view){
         for(CheckBox box : boxesAndRows.keySet()){
             for(PFMember member : groupMembers){
-                if(box.isChecked()){
+                if(box.isChecked() && modifiedCheckBoxes.get(box)){
                     currentGroup.addRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
-                } else {
+                } else if(!box.isChecked() && modifiedCheckBoxes.get(box)){
                     currentGroup.removeRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
                 }
             }

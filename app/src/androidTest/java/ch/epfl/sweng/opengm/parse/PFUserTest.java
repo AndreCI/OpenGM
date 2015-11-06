@@ -7,150 +7,264 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import junit.framework.Assert;
+
+import org.json.JSONArray;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
+import ch.epfl.sweng.opengm.OpenGMApplication;
+
+import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PFUserTest {
 
-    private final String USER_ID = "tEsTuSr";
     private final String EMAIL = "bobby.lapointe@caramail.co.uk";
     private final String USERNAME = "BobTheBobby";
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
 
+    private String id1;
 
-    private PFUser createTestUserWithID(String id) {
-        PFUser userTest = null;
-        try {
-            userTest = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        return userTest;
+    @Before
+    public void newIds() {
+        id1 = null;
     }
 
-    private void deleteUserWithId(String id) {
+    @Test
+    public void testFetchingWithIdNull() {
+        OpenGMApplication.logOut();
         try {
-            // Remove from User table
-            ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-            query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
-            ParseObject user1 = query1.getFirst();
-            user1.delete();
-        } catch (ParseException e) {
-            e.printStackTrace();
+            PFUser.fetchExistingUser(null);
+            Assert.fail("should have thrown an exception");
+        } catch (PFException e) {
+            // Success
         }
     }
 
     @Test
-    public void wrongUserIdTest() {
+    public void testFetchingWithIdInvalid() {
+        OpenGMApplication.logOut();
+        try {
+            PFUser.fetchExistingUser("Mouh@h@");
+            Assert.fail("should have thrown an exception");
+        } catch (PFException e) {
+            // Success
+        }
+    }
+
+    @Test
+    public void testCreateNewUser() {
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
+
+        try {
+            PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        // we wait for the background task
+
+        ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+        query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id1);
+        try {
+            ParseObject o1 = query1.getFirst();
+            if (o1 != null) {
+                assertEquals(USERNAME, o1.getString(PFConstants._USER_TABLE_USERNAME));
+                assertEquals(FIRST_NAME, o1.getString(PFConstants.USER_ENTRY_FIRSTNAME));
+                assertEquals(LAST_NAME, o1.getString(PFConstants.USER_ENTRY_LASTNAME));
+                assertEquals(new JSONArray(), o1.getJSONArray(PFConstants.USER_ENTRY_GROUPS));
+                assertEquals("", o1.getString(PFConstants.USER_ENTRY_ABOUT));
+                assertEquals("", o1.getString(PFConstants.USER_ENTRY_PHONENUMBER));
+                assertNull(o1.getParseFile(PFConstants.USER_ENTRY_PICTURE));
+            }
+        } catch (ParseException e) {
+            Assert.fail("Error while retrieving the user from the server");
+        }
+    }
+
+    @Test
+    public void testGetters() throws PFException {
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
+
         PFUser user = null;
         try {
-            user = PFUser.fetchExistingUser("Mouh@h@");
+            user = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            // FIXME: does that really test ?
-            // sucess
+            Assert.fail("Network error");
         }
+
+        assertEquals(id1, user.getId());
+        assertEquals(USERNAME, user.getUsername());
+        assertEquals(EMAIL, user.getEmail());
+        assertEquals(FIRST_NAME, user.getFirstName());
+        assertEquals(LAST_NAME, user.getLastName());
+        assertEquals("", user.getAboutUser());
+        assertEquals("", user.getPhoneNumber());
+        assertNull(user.getPicture());
+        assertEquals(new ArrayList<PFGroup>(), user.getGroups());
     }
 
     @Test
-    public void createNewUserTest() throws InterruptedException, ParseException {
-        createTestUserWithID(USER_ID + "0");
-        String username = null;
+    public void testFetchExistingUser() throws PFException {
+        OpenGMApplication.logOut();
+        // Assuming create user is working now
+        id1 = getRandomId();
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, USER_ID + "0");
-        ParseObject o = query.getFirst();
-        if (o != null) {
-            username = o.getString(PFConstants._USER_TABLE_USERNAME);
+        PFUser user1 = null;
+        try {
+            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
         }
 
-        Thread.sleep(1000);
+        PFUser user2 = PFUser.fetchExistingUser(id1);
 
-        assertEquals(USERNAME, username);
+        assertNotNull(user1);
+        assertNotNull(user2);
 
-        deleteUserWithId(USER_ID + "0");
-    }
+        // Note : we do not check emails since we work with the User table and not the _User one
 
-    @Test
-    public void fetchExistingUserTest() throws PFException {
-        PFUser user1 = createTestUserWithID(USER_ID + "1");
-        PFUser user2 = PFUser.fetchExistingUser(USER_ID + "1");
-        // test with the Equals inherited from PFEntity
-        // (same ParseID, same ParseTableID)
-        assertEquals(user1, user2);
-
-
-        // Test field by field
+        assertEquals(user1.getId(), user2.getId());
         assertEquals(user1.getUsername(), user2.getUsername());
-        assertEquals(user1.getEmail(), user2.getEmail());
         assertEquals(user1.getFirstName(), user2.getFirstName());
         assertEquals(user1.getLastName(), user2.getLastName());
-
-        deleteUserWithId(USER_ID + "1");
+        assertEquals(user1.getAboutUser(), user2.getAboutUser());
+        assertEquals(user1.getPhoneNumber(), user2.getPhoneNumber());
+        assertEquals(user1.getPicture(), user2.getPicture());
+        assertEquals(user1.getGroups().size(), user2.getGroups().size());
     }
 
     @Test
-    public void gettersTest() throws PFException {
-        PFUser user = createTestUserWithID(USER_ID + "2");
+    public void settersTest() throws InterruptedException {
+        OpenGMApplication.logOut();
+        // Assuming create user is working now
+        id1 = getRandomId();
 
-        // getUsernameTest()
-        assertEquals(USERNAME, user.getUsername());
-        // getEmailTest()
-        // FIXME: getEmail() returns null
-//        assertEquals(EMAIL, user.getEmail());
-        // getFirstNameTest()
-        assertEquals(FIRST_NAME, user.getFirstName());
-        // getLastNameTest()
-        assertEquals(LAST_NAME, user.getLastName());
-
-        deleteUserWithId(USER_ID + "2");
-    }
-
-    @Test
-    public void settersTest() throws ParseException, InterruptedException {
-        PFUser user = createTestUserWithID(USER_ID + "3");
-
-        String username = null;
-        user.setUsername("Patou");
-//        String email = null;
-//        user.setEmail("");
-        String firstName = null;
-        user.setFirstName("Patrick");
-        String lastName = null;
-        user.setLastName("Aebischer");
-        String aboutText = null;
-        user.setAboutUser("Director of EPFL");
-        String phoneNumber = null;
-        user.setPhoneNumber("02100044433");
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query.whereEqualTo(PFConstants.USER_ENTRY_USERID, USER_ID + "3");
-        ParseObject o = query.getFirst();
-        if (o != null) {
-            username = o.getString(PFConstants.USER_ENTRY_USERNAME);
-//            email = o.getString(PFConstants. // );
-            firstName = o.getString(PFConstants.USER_ENTRY_FIRSTNAME);
-            lastName = o.getString(PFConstants.USER_ENTRY_LASTNAME);
-            aboutText = o.getString(PFConstants.USER_ENTRY_ABOUT);
-            phoneNumber = o.getString(PFConstants.USER_ENTRY_PHONENUMBER);
+        PFUser user1 = null, user2;
+        try {
+            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
         }
+
+        String username = "Patou";
+        String firstname = "Patrick";
+        String lastname = "Aebischer";
+        String about = "Director of EPFL";
+        String phoneNumber = "02100044433";
+
+        user1.setUsername(username);
 
         Thread.sleep(2000);
 
-        assertEquals("Patou", username);
-        assertEquals("Patrick", firstName);
-        assertEquals("Aebischer", lastName);
-        assertEquals("Director of EPFL", aboutText);
-        assertEquals("02100044433", phoneNumber);
+        try {
+            user2 = PFUser.fetchExistingUser(id1);
+            assertEquals(username, user2.getUsername());
+            assertEquals(user1.getId(), user2.getId());
+            assertEquals(user1.getFirstName(), user2.getFirstName());
+            assertEquals(user1.getLastName(), user2.getLastName());
+            assertEquals(user1.getAboutUser(), user2.getAboutUser());
+            assertEquals(user1.getPhoneNumber(), user2.getPhoneNumber());
+            assertEquals(user1.getPicture(), user2.getPicture());
+            assertEquals(user1.getGroups().size(), user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Should have thrown an exception");
+        }
 
-        // TODO: test Bitmap Picture ???
+        user1.setFirstName(firstname);
 
-        deleteUserWithId(USER_ID + "3");
+        Thread.sleep(2000);
+
+        try {
+            user2 = PFUser.fetchExistingUser(id1);
+            assertEquals(firstname, user2.getFirstName());
+            assertEquals(user1.getId(), user2.getId());
+            assertEquals(user1.getUsername(), user2.getUsername());
+            assertEquals(user1.getLastName(), user2.getLastName());
+            assertEquals(user1.getAboutUser(), user2.getAboutUser());
+            assertEquals(user1.getPhoneNumber(), user2.getPhoneNumber());
+            assertEquals(user1.getPicture(), user2.getPicture());
+            assertEquals(user1.getGroups().size(), user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Should have thrown an exception");
+        }
+
+        user1.setLastName(lastname);
+
+        Thread.sleep(2000);
+
+        try {
+            user2 = PFUser.fetchExistingUser(id1);
+            assertEquals(lastname, user2.getLastName());
+            assertEquals(user1.getId(), user2.getId());
+            assertEquals(user1.getUsername(), user2.getUsername());
+            assertEquals(user1.getFirstName(), user2.getFirstName());
+            assertEquals(user1.getAboutUser(), user2.getAboutUser());
+            assertEquals(user1.getPhoneNumber(), user2.getPhoneNumber());
+            assertEquals(user1.getPicture(), user2.getPicture());
+            assertEquals(user1.getGroups().size(), user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Should have thrown an exception");
+        }
+
+        user1.setAboutUser(about);
+
+        Thread.sleep(2000);
+
+        try {
+            user2 = PFUser.fetchExistingUser(id1);
+            assertEquals(about, user2.getAboutUser());
+            assertEquals(user1.getId(), user2.getId());
+            assertEquals(user1.getUsername(), user2.getUsername());
+            assertEquals(user1.getLastName(), user2.getLastName());
+            assertEquals(user1.getFirstName(), user2.getFirstName());
+            assertEquals(user1.getPhoneNumber(), user2.getPhoneNumber());
+            assertEquals(user1.getPicture(), user2.getPicture());
+            assertEquals(user1.getGroups().size(), user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Should have thrown an exception");
+        }
+
+        user1.setPhoneNumber(phoneNumber);
+
+        Thread.sleep(2000);
+
+        try {
+            user2 = PFUser.fetchExistingUser(id1);
+            assertEquals(phoneNumber, user2.getPhoneNumber());
+            assertEquals(user1.getId(), user2.getId());
+            assertEquals(user1.getUsername(), user2.getUsername());
+            assertEquals(user1.getLastName(), user2.getLastName());
+            assertEquals(user1.getAboutUser(), user2.getAboutUser());
+            assertEquals(user1.getFirstName(), user2.getFirstName());
+            assertEquals(user1.getPicture(), user2.getPicture());
+            assertEquals(user1.getGroups().size(), user2.getGroups().size());
+        } catch (PFException e) {
+            Assert.fail("Should have thrown an exception");
+        }
+
+        user1.setUsername(null);
+
     }
+
+    @After
+    public void deleteAfterTesting() {
+        deleteUserWithId(id1);
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.identification;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -20,9 +20,10 @@ import com.parse.ParseUser;
 import com.parse.RequestPasswordResetCallback;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
 import ch.epfl.sweng.opengm.utils.Utils;
 
-import static ch.epfl.sweng.opengm.identification.InputUtils.*;
+import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
 public class LoginActivity extends AppCompatActivity {
@@ -34,19 +35,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_login);
-        /*
         if (ParseUser.getCurrentUser() != null) {
-            Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
-            intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
+            Intent intent = new Intent(LoginActivity.this, MyGroupsActivity.class);
+            intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, false);
             startActivity(intent);
         }
-        */
+
+        setContentView(R.layout.activity_login);
+
         mEditUsername = (EditText) findViewById(R.id.login_username);
         mEditPassword = (EditText) findViewById(R.id.login_password);
 
-        mEditUsername.setText("aurel");
-        mEditPassword.setText("Password1");
+        // TODO change this after testing
+        mEditUsername.setText("JellyTester");
+        mEditPassword.setText("Jelly123");
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.login_outmostLayout);
         onTapOutsideBehaviour(layout, this);
@@ -59,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         mEditUsername.setError(null);
         mEditPassword.setError(null);
 
-        int inputErrorCode;
         boolean cancel = false;
         View focusView = null;
 
@@ -71,22 +72,8 @@ public class LoginActivity extends AppCompatActivity {
             mEditPassword.setError(getString(R.string.empty_password_activity_register));
             focusView = mEditPassword;
             cancel = true;
-        } else if ((inputErrorCode = InputUtils.isPasswordInvalid(password)) != INPUT_CORRECT) {
-            String errorString = "";
-            switch (inputErrorCode) {
-                case INPUT_TOO_SHORT:
-                    errorString = getString(R.string.short_password_activity_register);
-                    break;
-                case INPUT_TOO_LONG:
-                    break;
-                case INPUT_NOT_CASE_SENSITIVE:
-                    break;
-                case INPUT_WITHOUT_NUMBER:
-                    break;
-                case INPUT_WITHOUT_LETTER:
-                    break;
-                default:
-            }
+        } else if (InputUtils.isPasswordInvalid(password) != INPUT_CORRECT) {
+            String errorString = getString(R.string.invalid_password_activity_login);
             mEditPassword.setError(errorString);
             focusView = mEditPassword;
             cancel = true;
@@ -101,8 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 public void done(ParseUser user, ParseException e) {
                     if (user != null) {
                         dialog.hide();
-                        Intent intent = new Intent(LoginActivity.this, GroupsOverviewActivity.class);
-                        intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, false);
+                        Intent intent = new Intent(LoginActivity.this, MyGroupsActivity.class);
+                        intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, false);
                         startActivity(intent);
                     } else {
                         dialog.hide();
@@ -110,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                             case ParseException.OBJECT_NOT_FOUND:
                                 mEditPassword.setError(getString(R.string.incorrect_activity_login));
                                 mEditPassword.requestFocus();
+                                mEditPassword.setText("");
                                 break;
                             default:
                                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

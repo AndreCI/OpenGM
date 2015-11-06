@@ -22,6 +22,7 @@ public class OpenGMApplication extends Application {
         super.onCreate();
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, PARSE_APP_ID, PARSE_KEY);
+        ParseUser.enableRevocableSessionInBackground();
     }
 
     public static PFUser getCurrentUser() {
@@ -45,5 +46,10 @@ public class OpenGMApplication extends Application {
 
     public static void setCurrentActivity(Activity currentActivity) {
         OpenGMApplication.currentActivity = currentActivity;
+    }
+
+    public static void logOut() {
+        currentUser = null;
+        ParseUser.logOut();
     }
 }

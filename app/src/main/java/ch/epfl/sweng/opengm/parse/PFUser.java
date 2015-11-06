@@ -1,7 +1,8 @@
 package ch.epfl.sweng.opengm.parse;
 
-import android.graphics.Bitmap;;
+import android.graphics.Bitmap;
 import android.os.Parcel;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -57,6 +58,7 @@ public final class PFUser extends PFEntity {
     // TODO: assign email to mEmail field
     private PFUser(String userId, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(userId, PARSE_TABLE_USER);
+        this.mEmail = email;
         checkArguments(username, "User name");
         this.mUsername = username;
         checkArguments(firstname, "First name");

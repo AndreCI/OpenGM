@@ -1,7 +1,5 @@
 package ch.epfl.sweng.opengm.identification;
 
-import android.text.TextUtils;
-
 import java.util.regex.Pattern;
 
 public class InputUtils {
@@ -45,13 +43,13 @@ public class InputUtils {
         } else if (length > PASSWORD_MAX_LENGTH) {
             return INPUT_TOO_LONG;
         }
-        if (password.toLowerCase().equals(password)) {
-            return INPUT_NOT_CASE_SENSITIVE;
-        }
         if (nOfIntegers <= 0) {
             return INPUT_WITHOUT_NUMBER;
         } else if (nOfIntegers >= length) {
             return INPUT_WITHOUT_LETTER;
+        }
+        if (password.toLowerCase().equals(password) || password.toUpperCase().equals(password)) {
+            return INPUT_NOT_CASE_SENSITIVE;
         }
         return INPUT_CORRECT;
     }
@@ -65,7 +63,8 @@ public class InputUtils {
             return INPUT_TOO_LONG;
         } else {
             for (Character c : name.toCharArray()) {
-                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == ' ')) {
+                if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
+                        c == ' ' || c == '\'')) {
                     return INPUT_WITH_SYMBOL;
                 }
             }
