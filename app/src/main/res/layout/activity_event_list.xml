@@ -14,10 +14,10 @@
         android:id="@+id/ScrollViewParentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/addButton">
+        android:layout_above="@+id/eventListAddButton">
     </RelativeLayout>
         <Button
-            android:id="@+id/addButton"
+            android:id="@+id/eventListAddButton"
             android:text="@string/addButtonText"
             android:onClick="clickOnAddButton"
             android:layout_width="wrap_content"
