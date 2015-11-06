@@ -68,20 +68,14 @@ public final class PFEvent extends PFEntity implements Parcelable {
         }
     };
 
-    private PFEvent(String id, Date updated, String name, String place, Date date, String description, List<String> participants, Bitmap picture) {
+    private PFEvent(String id, Date updated, String name, String place, Date date, String description, List<PFMember> participants, Bitmap picture) {
         super(id, PARSE_TABLE_EVENT, updated);
         this.mTitle = name;
         this.mPlace = place;
         this.mDate = new Date(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
         this.mDescription = description;
         this.mParticipants = new ArrayList<>();
-        for (String participantID : participants) {
-            try {
-                mParticipants.add(PFMember.fetchExistingMember(participantID));
-            } catch (PFException e) {
-                // Just do not add this guy :)
-            }
-        }
+        this.mParticipants = new ArrayList<>(participants);
         this.mPicture = picture;
     }
 
@@ -225,14 +219,20 @@ public final class PFEvent extends PFEntity implements Parcelable {
         });
     }
 
-    public static PFEvent createEvent(String name, String place, Date date, String description, List<String> participants, Bitmap picture) throws PFException {
+    public static PFEvent createEvent(String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
 
         ParseObject object = new ParseObject(EVENT_TABLE_NAME);
         object.put(EVENT_ENTRY_TITLE, name);
         object.put(EVENT_ENTRY_PLACE, place);
         object.put(EVENT_ENTRY_DATE, date);
         object.put(EVENT_ENTRY_DESCRIPTION, description);
-        object.put(EVENT_ENTRY_PARTICIPANTS, new JSONArray().put(participants));
+
+        List<String> participantsIds = new ArrayList<>();
+        for (PFMember member : participants) {
+            participantsIds.add(member.getId());
+        }
+
+        object.put(EVENT_ENTRY_PARTICIPANTS, new JSONArray().put(participantsIds));
         if (picture != null) {
             object.put(GROUP_ENTRY_PICTURE, picture);
         }
@@ -246,8 +246,17 @@ public final class PFEvent extends PFEntity implements Parcelable {
         }
     }
 
-    public static PFEvent createEvent(String name, Date date, List<String> participants, Bitmap picture) throws PFException {
-        return createEvent(name, null, date, null, participants, picture);
+    public static PFEvent createEvent(String name, String place, Date date, String description, List<String> participants, Bitmap picture) throws PFException {
+        List<PFMember> members = new ArrayList<>();
+
+        for (String participantID : participants) {
+            try {
+                members.add(PFMember.fetchExistingMember(participantID));
+            } catch (PFException e) {
+                // Just do not add this guy :)
+            }
+        }
+        return createEvent(name, place, date, members, description, picture);
     }
 
     public static PFEvent fetchExistingEvent(String id) throws PFException {
@@ -269,7 +278,17 @@ public final class PFEvent extends PFEntity implements Parcelable {
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                 List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
 
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, participants, picture[0]);
+                List<PFMember> members = new ArrayList<>();
+
+                for (String participantID : participants) {
+                    try {
+                        members.add(PFMember.fetchExistingMember(participantID));
+                    } catch (PFException e) {
+                        // Just do not add this guy :)
+                    }
+                }
+
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members, picture[0]);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

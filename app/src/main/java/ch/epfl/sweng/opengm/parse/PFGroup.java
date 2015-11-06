@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.epfl.sweng.opengm.utils.Alert;
-
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
@@ -368,9 +366,7 @@ public final class PFGroup extends PFEntity {
      *               user we would like to add to the group
      */
     public void addUser(String userId) {
-        if (mMembers.containsKey(userId)) {
-            Alert.displayAlert("User already belongs to this group.");
-        } else {
+        if (!mMembers.containsKey(userId)) {
             try {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
@@ -378,7 +374,6 @@ public final class PFGroup extends PFEntity {
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
                 mMembers.remove(userId);
-                Alert.displayAlert("Error while updating the user's groups to the server.");
             }
         }
     }
@@ -390,16 +385,13 @@ public final class PFGroup extends PFEntity {
      *               user we would like to remove from the group
      */
     public void removeUser(String userId) {
-        if (!mMembers.containsKey(userId)) {
-            Alert.displayAlert("User does not belong to this group.");
-        } else {
+        if (mMembers.containsKey(userId)) {
             PFMember oldMember = mMembers.remove(userId);
             oldMember.removeFromGroup(getId());
             try {
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
                 mMembers.put(userId, oldMember);
-                Alert.displayAlert("Error while updating the user's groups to the server.");
             } finally {
                 if (mMembers.isEmpty()) {
                     deleteGroup();
@@ -416,16 +408,13 @@ public final class PFGroup extends PFEntity {
      */
     public void addRoleToUser(String role, String memberId) {
         if (checkNullArguments(role)) {
-            if (!mMembers.containsKey(memberId)) {
-                Alert.displayAlert("User does not belong to this group.");
-            } else {
+            if (mMembers.containsKey(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.addRole(role);
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
                     member.removeRole(role);
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
                 }
             }
         }
@@ -439,16 +428,13 @@ public final class PFGroup extends PFEntity {
      */
     public void removeRoleToUser(String role, String memberId) {
         if (checkNullArguments(role)) {
-            if (!mMembers.containsKey(memberId)) {
-                Alert.displayAlert("User does not belong to this group.");
-            } else {
+            if (mMembers.containsKey(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.removeRole(role);
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
                     member.addRole(role);
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
                 }
             }
         }
@@ -462,9 +448,7 @@ public final class PFGroup extends PFEntity {
      */
     public void setNicknameForUser(String nickname, String memberId) {
         if (checkNullArguments(nickname)) {
-            if (!mMembers.containsKey(memberId)) {
-                Alert.displayAlert("User does not belong to this group.");
-            } else {
+            if (mMembers.containsKey(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 String oldSurname = member.getNickname();
                 member.setNickname(nickname);
@@ -472,7 +456,6 @@ public final class PFGroup extends PFEntity {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
                     member.setNickname(oldSurname);
-                    Alert.displayAlert("Error while updating the user's groups to the server.");
                 }
             }
         }
@@ -491,7 +474,6 @@ public final class PFGroup extends PFEntity {
                 updateToServer(GROUP_ENTRY_NAME);
             } catch (PFException e) {
                 this.mName = oldTitle;
-                Alert.displayAlert("Error while updating the group's title to the server.");
             }
         }
     }
@@ -509,9 +491,7 @@ public final class PFGroup extends PFEntity {
                 updateToServer(GROUP_ENTRY_DESCRIPTION);
             } catch (PFException e) {
                 this.mDescription = oldDescription;
-                Alert.displayAlert("Error while updating the description to the server.");
             }
-
         }
     }
 
@@ -527,7 +507,6 @@ public final class PFGroup extends PFEntity {
                 updateToServer(GROUP_ENTRY_ISPRIVATE);
             } catch (PFException e) {
                 this.mIsPrivate = !mIsPrivate;
-                Alert.displayAlert("Error while changing the privacy to the server.");
             }
         }
     }
@@ -545,7 +524,6 @@ public final class PFGroup extends PFEntity {
                 updateToServer(GROUP_ENTRY_PICTURE);
             } catch (PFException e) {
                 this.mPicture = oldPicture;
-                Alert.displayAlert("Error while updating the picture to the server.");
             }
         }
     }
