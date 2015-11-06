@@ -94,7 +94,11 @@ public final class PFGroup extends PFEntity {
         fillMembersMap(users, nicknames, roles);
         mEvents = new ArrayList<>();
         for (String eventId : events) {
-            mEvents.add(new PFEvent());
+            try {
+                mEvents.add(PFEvent.fetchExistingEvent(eventId));
+            } catch (PFException e) {
+                // Do not add the event but to nothing
+            }
         }
         mName = name;
         mIsPrivate = isPrivate;
@@ -118,6 +122,73 @@ public final class PFGroup extends PFEntity {
 
     @Override
     public void reload() throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(GROUP_TABLE_NAME);
+        try {
+            ParseObject object = query.get(getId());
+            if (hasBeenModified(object)) {
+                setLastModified(object);
+
+                mName = object.getString(GROUP_ENTRY_NAME);
+                mIsPrivate = object.getBoolean(GROUP_ENTRY_ISPRIVATE);
+
+                String[] usersArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_USERS));
+                List<String> users = new ArrayList<>();
+                users.addAll(Arrays.asList(usersArray));
+
+                String[] nicknamesArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_NICKNAMES));
+                List<String> nickNames = new ArrayList<>();
+                nickNames.addAll(Arrays.asList(nicknamesArray));
+
+                List<String[]> roles = new ArrayList<>();
+                JSONArray rolesArray = object.getJSONArray(GROUP_ENTRY_ROLES);
+                for (int i = 0; i < rolesArray.length(); i++) {
+                    try {
+                        String[] currentRoles = convertFromJSONArray((JSONArray) rolesArray.get(i));
+                        roles.add(currentRoles);
+                    } catch (JSONException | ClassCastException e) {
+                        // Cast failed, but doesn't matter
+                    }
+                }
+
+                fillMembersMap(users, nickNames, roles);
+
+                String[] eventsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
+
+                HashSet<String> oldEvents = new HashSet<>();
+                for (PFEvent event : mEvents) {
+                    oldEvents.add(event.getId());
+                }
+                HashSet<String> newEvents = new HashSet<>();
+                for (int i = 0; i < eventsArray.length; i++) {
+                    newEvents.add(eventsArray[i]);
+                }
+
+                if (!newEvents.equals(oldEvents)) {
+                    mEvents = new ArrayList<>();
+                    for (int i = 0; i < eventsArray.length; i++) {
+                        try {
+                            mEvents.add(PFEvent.fetchExistingEvent(eventsArray[i]));
+                        } catch (PFException e) {
+                            // Do not add the event but to nothing
+                        }
+                    }
+                }
+
+                mDescription = object.getString(GROUP_ENTRY_DESCRIPTION);
+
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
+                mPicture = picture[0];
+            }
+            for (PFMember member : mMembers.values()) {
+                member.reload();
+            }
+            for (PFEvent event : mEvents) {
+                event.reload();
+            }
+        } catch (ParseException e) {
+            throw new PFException();
+        }
 
     }
 
