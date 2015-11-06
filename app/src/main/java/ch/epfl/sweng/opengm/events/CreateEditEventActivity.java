@@ -2,8 +2,16 @@ package ch.epfl.sweng.opengm.events;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -12,10 +20,12 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,11 +41,14 @@ import static android.app.PendingIntent.getActivity;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
-    public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
+    public static final int CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS = 42;
+    public static final int CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP = 69;
     private PFEvent editedEvent;
     private boolean editing;
     private List<PFMember> participants;
     private PFGroup currentGroup;
+    private Uri outputFileUri;
+    private Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +72,39 @@ public class CreateEditEventActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
+        if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS) {
             if(resultCode == Activity.RESULT_OK){
                 participants = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+        if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP) {
+            if (resultCode == RESULT_OK) {
+                final boolean isCamera;
+                if (data == null) {
+                    isCamera = true;
+                } else {
+                    final String action = data.getAction();
+                    if (action == null) {
+                        isCamera = false;
+                    } else {
+                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
+                }
+                TextView nText= (TextView) findViewById(R.id.CreateEditEventBitmapNameText);
+                if (isCamera) {
+                    selectedImageUri = outputFileUri;
+                    nText.setText("File From Camera");
+                } else {
+                    selectedImageUri = data == null ? null : data.getData();
+                    nText.setText(selectedImageUri.toString());
+                }
+
             }
         }
     }
@@ -89,7 +128,43 @@ public class CreateEditEventActivity extends AppCompatActivity {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
         intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
-        startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
+        startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS);
+    }
+
+    public void onBrowseButtonClick(View v){
+        // Determine Uri of camera image to save.
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
+        root.mkdirs();
+        final String fname = System.currentTimeMillis() + ".jpg";
+        final File sdImageMainDirectory = new File(root, fname);
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        // Camera.
+        final List<Intent> cameraIntents = new ArrayList<>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        // Filesystem.
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // Chooser of filesystem options.
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+        // Add the camera options.
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+        startActivityForResult(chooserIntent, CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP);
     }
 
     private void fillTexts(PFEvent event) {
@@ -122,12 +197,18 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         //TODO : get new id for creating event maybe asynchronously in onCreate
         ParseObject parseObject = new ParseObject(PFConstants.EVENT_TABLE_NAME);
+        Bitmap b = null;
         try {
             parseObject.save();
+             b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
         } catch (ParseException e) {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return new PFEvent(parseObject.getObjectId(), name, place, date, description, participants);
+        return new PFEvent(parseObject.getObjectId(), name, place, date, description, participants, b);
     }
 
     private PFEvent editEvent() {
@@ -137,10 +218,17 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
+        Bitmap b = null;
+        try {
+            b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         editedEvent.setName(name);
         editedEvent.setDate(date);
         editedEvent.setDescription(description);
         editedEvent.setPlace(place);
+        editedEvent.setPicture(b);
         return editedEvent;
     }
 

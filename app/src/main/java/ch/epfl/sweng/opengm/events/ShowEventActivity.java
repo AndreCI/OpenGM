@@ -1,9 +1,11 @@
 package ch.epfl.sweng.opengm.events;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class ShowEventActivity extends AppCompatActivity {
         fillEventDate();
         fillEventDescription();
         fillEventParticipants();
+        fillEventBitmap();
     }
 
     private void fillEventName() {
@@ -79,6 +82,11 @@ public class ShowEventActivity extends AppCompatActivity {
             stringBuilder.append(participant.getUsername());
         }
         ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
+    }
+    private void fillEventBitmap(){
+        Bitmap b = event.getPicture();
+        ImageView iv = (ImageView) findViewById(R.id.ShowEventBitmap);
+        iv.setImageBitmap(b);
     }
 
     public void onEditButtonClick(View view) {
