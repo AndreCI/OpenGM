@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -17,9 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-
-import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
@@ -55,30 +53,34 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    // TODO: assign email to mEmail field
-    private PFUser(String userId, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
-        super(userId, PARSE_TABLE_USER);
+    private PFUser(String userId, Date date, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
+        super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
-        checkArguments(username, "User name");
+        checkArguments(username);
         this.mUsername = username;
-        checkArguments(firstname, "First name");
+        checkArguments(firstname);
         this.mFirstName = firstname;
-        checkArguments(lastname, "Last name");
+        checkArguments(lastname);
         this.mLastName = lastname;
-        checkNullArguments(phoneNumber, "Phone number");
+        checkNullArguments(phoneNumber);
         this.mPhoneNumber = phoneNumber;
-        checkNullArguments(aboutUser, "User's description");
+        checkNullArguments(aboutUser);
         this.mAboutUser = aboutUser;
-        checkNullArguments(aboutUser, "User's groups");
+        checkNullArguments(aboutUser);
         this.mGroups = new ArrayList<>();
         for (String groupId : groups) {
             try {
                 mGroups.add(PFGroup.fetchExistingGroup(groupId));
             } catch (PFException e) {
-                // TODO : what to do?
+                throw new PFException("Error while retrieving the existing group with id " + groupId);
             }
         }
         this.mPicture = picture;
+    }
+
+    @Override
+    public void reload() {
+
     }
 
     @Override
@@ -217,16 +219,16 @@ public final class PFUser extends PFEntity {
      * Add the current user to a group given its id
      *
      * @param group The group whose user wil be added
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void addToAGroup(PFGroup group) {
-        if (belongToGroup(group.getId())) {
-            Alert.displayAlert("User already belongs to this group.");
-        } else {
+    public void addToAGroup(PFGroup group) throws PFException {
+        if (!belongToGroup(group.getId())) {
             mGroups.add(group);
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
-                Alert.displayAlert("Error while updating the user's groups to the server.");
+                mGroups.remove(group);
+                throw new PFException();
             }
         }
     }
@@ -235,11 +237,10 @@ public final class PFUser extends PFEntity {
      * Remove the current user to a group given its id
      *
      * @param groupId The id of the group whose user wil be removed
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void removeFromGroup(String groupId) {
-        if (!belongToGroup(groupId)) {
-            Alert.displayAlert("User does not belong the group.");
-        } else {
+    public void removeFromGroup(String groupId) throws PFException {
+        if (belongToGroup(groupId)) {
             PFGroup group = mGroups.get(getGroupIdx(groupId));
             group.removeUser(getId());
             mGroups.remove(group);
@@ -248,7 +249,7 @@ public final class PFUser extends PFEntity {
             } catch (PFException e) {
                 group.addUser(getId());
                 mGroups.add(group);
-                Alert.displayAlert("Error while updating the user's groups to the server.");
+                throw new PFException();
             }
         }
     }
@@ -257,16 +258,17 @@ public final class PFUser extends PFEntity {
      * Setter for the username of the current user
      *
      * @param username The new username of the current user
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void setUsername(String username) {
-        if (checkArguments(username, "User name") && !username.equals(mUsername)) {
+    public void setUsername(String username) throws PFException {
+        if (checkArguments(username) && !username.equals(mUsername)) {
             String oldUsername = mUsername;
             this.mUsername = username;
             try {
                 updateToServer(USER_ENTRY_USERNAME);
             } catch (PFException e) {
                 this.mUsername = oldUsername;
-                Alert.displayAlert("Error while updating the username to the server.");
+                throw new PFException();
             }
         }
     }
@@ -274,17 +276,18 @@ public final class PFUser extends PFEntity {
     /**
      * Setter for the first name of the current user
      *
-     * @param firstname The new first name of the current user
+     * @param firstName The new first name of the current user
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void setFirstName(String firstname) {
-        if (checkArguments(firstname, "First name") && !firstname.equals(mFirstName)) {
-            String oldFirstname = mFirstName;
-            this.mFirstName = firstname;
+    public void setFirstName(String firstName) throws PFException {
+        if (checkArguments(firstName) && !firstName.equals(mFirstName)) {
+            String oldFirstName = mFirstName;
+            this.mFirstName = firstName;
             try {
                 updateToServer(USER_ENTRY_FIRSTNAME);
             } catch (PFException e) {
-                this.mFirstName = oldFirstname;
-                Alert.displayAlert("Error while updating the first name to the server.");
+                this.mFirstName = oldFirstName;
+                throw new PFException();
             }
         }
     }
@@ -292,17 +295,18 @@ public final class PFUser extends PFEntity {
     /**
      * Setter for the last name of the current user
      *
-     * @param lastname The new last name of the current user
+     * @param lastName The new last name of the current user
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void setLastName(String lastname) {
-        if (checkArguments(lastname, "Last name") && !lastname.equals(mLastName)) {
-            String oldLastname = mFirstName;
-            this.mLastName = lastname;
+    public void setLastName(String lastName) throws PFException {
+        if (checkArguments(lastName) && !lastName.equals(mLastName)) {
+            String oldLastName = mFirstName;
+            this.mLastName = lastName;
             try {
                 updateToServer(USER_ENTRY_LASTNAME);
             } catch (PFException e) {
-                this.mLastName = oldLastname;
-                Alert.displayAlert("Error while updating the last name to the server.");
+                this.mLastName = oldLastName;
+                throw new PFException();
             }
         }
     }
@@ -311,16 +315,17 @@ public final class PFUser extends PFEntity {
      * Setter for the phone number of the current user
      *
      * @param phoneNumber The new phone number of the current user
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void setPhoneNumber(String phoneNumber) {
-        if (checkArguments(phoneNumber, "Phone number") && !phoneNumber.equals(mPhoneNumber)) {
+    public void setPhoneNumber(String phoneNumber) throws PFException {
+        if (checkArguments(phoneNumber) && !phoneNumber.equals(mPhoneNumber)) {
             String oldPhoneNumber = mPhoneNumber;
             this.mPhoneNumber = phoneNumber;
             try {
                 updateToServer(USER_ENTRY_PHONENUMBER);
             } catch (PFException e) {
                 this.mPhoneNumber = oldPhoneNumber;
-                Alert.displayAlert("Error while updating the phone number to the server.");
+                throw new PFException();
             }
         }
     }
@@ -329,16 +334,17 @@ public final class PFUser extends PFEntity {
      * Setter for the description of the current user
      *
      * @param aboutUser The new description of the current user
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void setAboutUser(String aboutUser) {
-        if (checkArguments(aboutUser, "User's description") && !aboutUser.equals(mAboutUser)) {
+    public void setAboutUser(String aboutUser) throws PFException {
+        if (checkArguments(aboutUser) && !aboutUser.equals(mAboutUser)) {
             String oldAboutUser = mAboutUser;
             this.mAboutUser = aboutUser;
             try {
                 updateToServer(USER_ENTRY_ABOUT);
             } catch (PFException e) {
                 this.mAboutUser = oldAboutUser;
-                Alert.displayAlert("Error while updating the phone number to the server.");
+                throw new PFException();
             }
         }
     }
@@ -347,8 +353,9 @@ public final class PFUser extends PFEntity {
      * Setter for the profile picture of the current user
      *
      * @param picture The new picture of the current user
+     * @throws PFException If something went wrong while updating on the server
      */
-    public void setPicture(Bitmap picture) {
+    public void setPicture(Bitmap picture) throws PFException {
         if (!mPicture.equals(picture)) {
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
@@ -356,7 +363,7 @@ public final class PFUser extends PFEntity {
                 updateToServer(USER_ENTRY_PICTURE);
             } catch (PFException e) {
                 this.mPicture = oldPicture;
-                Alert.displayAlert("Error while updating the picture to the server.");
+                throw new PFException();
             }
         }
     }
@@ -400,7 +407,7 @@ public final class PFUser extends PFEntity {
      */
     public static PFUser fetchExistingUser(String id) throws PFException {
         if (id == null) {
-            throw new PFException();
+            throw new PFException("Id is null");
         }
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
         query.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
@@ -420,12 +427,11 @@ public final class PFUser extends PFEntity {
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
-
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new PFUser(id, email, username, firstName, lastName, phoneNumber, description, picture[0], groups);
+                return new PFUser(id, object.getUpdatedAt(), email, username, firstName, lastName, phoneNumber, description, picture[0], groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -455,7 +461,7 @@ public final class PFUser extends PFEntity {
         parseObject.put(USER_ENTRY_ABOUT, "");
         try {
             parseObject.save();
-            return new PFUser(id, email, username, firstName, lastName, "", "", null, new ArrayList<String>());
+            return new PFUser(id, parseObject.getUpdatedAt(), email, username, firstName, lastName, "", "", null, new ArrayList<String>());
         } catch (ParseException e) {
             throw new PFException();
         }
