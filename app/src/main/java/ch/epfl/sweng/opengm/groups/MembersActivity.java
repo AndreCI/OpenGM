@@ -44,19 +44,6 @@ public class MembersActivity extends AppCompatActivity {
         group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
         members = group.getMembers();
 
-//        // hardcoded the getting of user for tests
-//        //-----------------------------------------
-//        int groupId = 0;
-//        PFUser user = null;
-//        try {
-//            user = PFUser.fetchExistingUser("oqMblls8Cb");
-//        } catch (PFException e) {
-//            e.printStackTrace();
-//        }
-//        group = user.getGroups().get(groupId);
-//        members = group.getMembers();
-//        //-----------------------------------------
-
         list = (ListView) findViewById(R.id.member_list);
 
         adapter = new MembersAdapter(this, R.layout.item_member, members, selectMode);
@@ -72,7 +59,15 @@ public class MembersActivity extends AppCompatActivity {
             }
         });
 
-
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // when select mode click on item selects it
+                if (selectMode) {
+                    ((CheckBox) view.findViewById(R.id.member_checkbox)).performClick();
+                }
+            }
+        });
     }
 
     @Override
