@@ -7,7 +7,7 @@ public class Utils {
     public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");
         if(stringArray.length != 5) {
-            throw new IllegalArgumentException("StringToDate string format must be year-month-day-hour-minute");
+            throw new IllegalArgumentException("StringToDate " + s + " string format must be year-month-day-hour-minute");
         }
         int[] array = new int[stringArray.length];
         for(int i = 0; i < stringArray.length; ++i) {

@@ -470,7 +470,7 @@ public final class PFUser extends PFEntity {
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
-                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+                List<String> groups = (groupsArray == null ? new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
                 return new PFUser(id, object.getUpdatedAt(), email, username, firstName, lastName, phoneNumber, description, picture[0], groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");

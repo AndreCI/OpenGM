@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.parse.ParseUser;
@@ -20,7 +18,6 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.identification.LoginActivity;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
@@ -88,5 +85,6 @@ public class MyGroupsActivity extends AppCompatActivity {
                     });
             return builder.create();
         }
+
     }
 }
