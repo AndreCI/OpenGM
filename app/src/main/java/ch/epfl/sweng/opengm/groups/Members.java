@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -148,19 +148,20 @@ public class Members extends AppCompatActivity {
     }
 
     private void changeRoles() {
-        // modify this to get multiple checked users
-        String userId = null;
+        ArrayList<String> userIds = new ArrayList<>();
+
         for (int i = 0; i < list.getCount(); i++) {
             View v = list.getChildAt(i);
             CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
             if (c.isChecked()) {
-                userId = members.get(i).getId();
+                userIds.add(members.get(i).getId());
             }
         }
-        Intent intent = new Intent(this, ManageRoles.class);
-        intent.putExtra(ManageRoles.GROUP_ID, group.getId());
-        intent.putExtra(ManageRoles.USER_ID, userId);
-        startActivityForResult(intent, 1);
+
+        Intent intent = new Intent(this, ManageRolesActivity.class);
+        intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
+        intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
+        startActivity(intent);
     }
 
     private void setSelectMode(boolean m) {

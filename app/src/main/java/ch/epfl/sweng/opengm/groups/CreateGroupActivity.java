@@ -15,7 +15,7 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOOSEN_GROUP_KEY;
+import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOSEN_GROUP_KEY;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_BEGINS_WITH_SPACE;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
@@ -24,7 +24,10 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITH_SYMBOL;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isGroupNameValid;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
-public class CreateGroup extends AppCompatActivity {
+public class CreateGroupActivity extends AppCompatActivity {
+
+    private EditText mGroupName;
+    private EditText mGroupDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,9 @@ public class CreateGroup extends AppCompatActivity {
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.create_group_outmostLayout);
         onTapOutsideBehaviour(layout, this);
+
+        mGroupName = (EditText) findViewById(R.id.enterGroupName);
+        mGroupDescription = (EditText) findViewById(R.id.enterGroupDescription);
     }
 
     @Override
@@ -58,18 +64,17 @@ public class CreateGroup extends AppCompatActivity {
     }
 
     public void createGroup(View view) {
-        String groupName = ((EditText) findViewById(R.id.enterGroupName)).getText().toString();
-        String groupDescription = ((EditText) findViewById(R.id.enterGroupDescription)).getText().toString();
+        String name = mGroupName.getText().toString();
+        String description = mGroupDescription.getText().toString();
         // TODO : retrieve image from button
-        // TODO : call intent for next activity
-        // If next activity is group page, also call function to put new gorup in the databse
+        // If next activity is group page, also call function to put new group in the database
 
-        int groupNameValid = isGroupNameValid(groupName);
+        int groupNameValid = isGroupNameValid(name);
         if (groupNameValid == INPUT_CORRECT) {
             try {
-                PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), groupName, groupDescription, null);
+                PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
                 getCurrentUser().addToAGroup(newGroup);
-                startActivity(new Intent(CreateGroup.this, GroupsHomeActivity.class).putExtra(CHOOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
+                startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
             } catch (PFException e) {
                 Alert.displayAlert("Couldn't create the group, there were problems when contacting the server.");
             }
@@ -92,7 +97,8 @@ public class CreateGroup extends AppCompatActivity {
                     errorMessage = "Group name is invalid";
                     break;
             }
-            ((EditText) findViewById(R.id.enterGroupName)).setError(errorMessage);
+            mGroupName.setError(errorMessage);
+            mGroupName.requestFocus();
         }
     }
 }

@@ -22,6 +22,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
@@ -68,10 +69,10 @@ public final class PFMember extends PFEntity {
     protected void updateToServer(String entry) throws PFException {
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery(USER_TABLE_NAME);
-        query.getInBackground(getId(), new GetCallback<ParseObject>() {
+        query.whereEqualTo(USER_ENTRY_USERID, getId());
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
-                if (e == null) {
-                    if (object != null) {
+                if (e == null && object != null) {
                         JSONArray array = new JSONArray();
                         for (String groupId : mGroups) {
                             array.put(groupId);
@@ -82,15 +83,13 @@ public final class PFMember extends PFEntity {
                             public void done(ParseException e) {
                                 if (e != null) {
                                     // throw new ParseException("No object for the selected id.");
+                                } else {
                                 }
                             }
                         });
                     } else {
                         // throw new ParseException("No object for the selected id.");
                     }
-                } else {
-                    // throw new ParseException("Error while sending the request to the server");
-                }
             }
         });
 

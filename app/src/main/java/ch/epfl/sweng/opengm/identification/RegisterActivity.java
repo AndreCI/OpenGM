@@ -11,14 +11,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
-import org.json.JSONArray;
-
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.Utils;
@@ -29,9 +26,9 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_SHORT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_LETTER;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_NUMBER;
-import static ch.epfl.sweng.opengm.parse.PFConstants.*;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
-import static com.parse.ParseException.*;
+import static com.parse.ParseException.EMAIL_TAKEN;
+import static com.parse.ParseException.USERNAME_MISSING;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -123,12 +120,16 @@ public class RegisterActivity extends AppCompatActivity {
                     errorString = getString(R.string.short_password_activity_register);
                     break;
                 case INPUT_TOO_LONG:
+                    errorString = getString(R.string.long_password_activity_register);
                     break;
                 case INPUT_NOT_CASE_SENSITIVE:
+                    errorString = getString(R.string.case_password_activity_register);
                     break;
                 case INPUT_WITHOUT_NUMBER:
+                    errorString = getString(R.string.no_number_password_activity_register);
                     break;
                 case INPUT_WITHOUT_LETTER:
+                    errorString = getString(R.string.no_letter_password_activity_register);
                     break;
                 default:
             }
@@ -157,8 +158,8 @@ public class RegisterActivity extends AppCompatActivity {
                                                 try {
                                                     PFUser.createNewUser(user.getObjectId(), email, username, firstname, lastname);
                                                     dialog.hide();
-                                                    Intent intent = new Intent(RegisterActivity.this, GroupsOverviewActivity.class);
-                                                    intent.putExtra(GroupsOverviewActivity.COMING_FROM_KEY, true);
+                                                    Intent intent = new Intent(RegisterActivity.this, MyGroupsActivity.class);
+                                                    intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, true);
                                                     startActivity(intent);
                                                 } catch (PFException e1) {
                                                     dialog.hide();
