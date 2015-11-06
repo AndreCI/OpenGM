@@ -27,6 +27,7 @@ import java.util.Set;
 
 import ch.epfl.sweng.opengm.utils.Alert;
 
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
@@ -42,6 +43,8 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
+import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
+import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
 
 /**
  * This class represents a group which extends PFEntity since it
@@ -61,21 +64,46 @@ public final class PFGroup extends PFEntity {
     private Bitmap mPicture;
 
     public PFGroup(Parcel in) {
-        super(in.readString(), PARSE_TABLE_GROUP);
-        //TODO : make parcel constructor with map and everything
-
+        super(in, PARSE_TABLE_GROUP);
+        this.mName = in.readString();
+        ArrayList<String> users = new ArrayList<>();
+        in.readStringList(users);
+        ArrayList<String> nicknames = new ArrayList<>();
+        in.readStringList(nicknames);
+        List<String> rolesZip = new ArrayList<>();
+        in.readStringList(rolesZip);
+        List<String[]> roles = unzipRoles(rolesZip);
+        fillMembersMap(users, nicknames, roles);
+        mEvents = new ArrayList<>();
+        in.readTypedList(mEvents, PFEvent.CREATOR);
+        mIsPrivate = in.readDouble() == 0; //0 is true, everything else is false
+        mDescription = in.readString();
+        mPicture = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
-    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> surnames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
+
+
+    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
         super(groupId, PARSE_TABLE_GROUP, date);
-        if ((users == null) || (surnames == null) || (roles == null) || (events == null)) {
+        if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
             throw new IllegalArgumentException("One of the array  is null");
         }
-        if ((users.size() != surnames.size()) || (users.size() != roles.size())) {
-            throw new IllegalArgumentException("Arrays' size don't match for group " + groupId + " " + users.size() + " " + surnames.size() + " " + roles.size());
+        if ((users.size() != nicknames.size()) || (users.size() != roles.size())) {
+            throw new IllegalArgumentException("Arrays' size don't match for group " + groupId + " " + users.size() + " " + nicknames.size() + " " + roles.size());
         }
-        mMembers = new HashMap<>();
+        fillMembersMap(users, nicknames, roles);
+        mEvents = new ArrayList<>();
+        for (String eventId : events) {
+            mEvents.add(new PFEvent());
+        }
+        mName = name;
+        mIsPrivate = isPrivate;
+        mDescription = description;
+        mPicture = picture;
+    }
 
+    private void fillMembersMap(List<String> users, List<String> surnames, List<String[]> roles) {
+        mMembers = new HashMap<>();
         for (int i = 0; i < users.size(); i++) {
             try {
                 String userId = users.get(i);
@@ -86,14 +114,6 @@ public final class PFGroup extends PFEntity {
                 // TODO : what to do?
             }
         }
-        mEvents = new ArrayList<>();
-        for (String eventId : events) {
-            mEvents.add(new PFEvent());
-        }
-        mName = name;
-        mIsPrivate = isPrivate;
-        mDescription = description;
-        mPicture = picture;
     }
 
     @Override
@@ -574,7 +594,26 @@ public final class PFGroup extends PFEntity {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mId);
-
+        dest.writeString(dateToString(lastModified));
+        List<String> ids = new ArrayList<>(mMembers.keySet());
+        dest.writeStringList(ids);
+        List<PFMember> members = new ArrayList<>(mMembers.values());
+        List<String> nicknames = new ArrayList<>();
+        List<String> rolesZip = new ArrayList<>();
+        for(PFMember member : members) {
+            nicknames.add(member.getNickname());
+            rolesZip.add(zipRole(member.getRoles()));
+        }
+        dest.writeStringList(nicknames);
+        dest.writeStringList(rolesZip);
+        dest.writeTypedList(mEvents);
+        if(mIsPrivate) {
+            dest.writeDouble(0);
+        } else {
+            dest.writeDouble(42);
+        }
+        dest.writeString(mDescription);
+        dest.writeParcelable(mPicture, flags);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

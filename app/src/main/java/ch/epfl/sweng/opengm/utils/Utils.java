@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.List;
+
 import ch.epfl.sweng.opengm.R;
 
 public class Utils {
@@ -35,5 +37,17 @@ public class Utils {
         dialog.show();
         return dialog;
     }
+
+
+    public static List<String[]> unzipRoles(List<String> rolesZip) {
+        //TODO : implementation missing
+        return null;
+    }
+
+    public static String zipRole(List<String> roles) {
+        //TODO : implementation missing
+        return null;
+    }
+
 
 }
