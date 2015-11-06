@@ -29,7 +29,7 @@ abstract class PFEntity implements Parcelable {
     /**
      * @return the id of the current entity
      */
-    protected String getId() {
+    public String getId() {
         return this.mId;
     }
 

@@ -17,11 +17,13 @@ import java.util.ArrayList;
 import ch.epfl.sweng.opengm.groups.CreateGroup;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.GroupsHomeActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class GroupsOverviewActivity extends AppCompatActivity {
 
     public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
+    public static final String RELOAD_USER_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.reloadUser";
 
     private static final int TILES_PER_WIDTH = 2;
 
@@ -30,14 +32,17 @@ public class GroupsOverviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups_overview);
 
-        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser());
-
         boolean newUser = getIntent().getBooleanExtra(COMING_FROM_KEY, false);
+        boolean reload = getIntent().getBooleanExtra(RELOAD_USER_KEY, true);
+
+        if (reload) {
+            OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+        }
+
         // if newUser is true => user is new (register) so show the hints
 
         // TODO: At the moment, just an array of Strings, but normally : an array of "Groups" (the Object which encapsulate all group date)
         // real stuff : ArrayList<Group> groups = {g1, g2, ...., gn}; --> Then, g1.name, g1.members[], g1.admin, etc...
-        Log.d("USER", OpenGMApplication.getCurrentUser().toString());
 
         ArrayList<PFGroup> groups = new ArrayList<>(OpenGMApplication.getCurrentUser().getGroups());
         // ArrayList<String> groups = new ArrayList<String>(Arrays.asList("Sat", "IC Travel", "Clic"));
@@ -72,11 +77,13 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                     tile.setHeight(screenWidth / 2);
                     tile.setGravity(Gravity.CENTER | Gravity.BOTTOM);
 
+                    final int row = i, col = j;
+
                     // TODO: specify WHERE does the button go ? On this particular group homescreen
                     tile.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            startActivity(new Intent(GroupsOverviewActivity.this, GroupHomeActivity.class));
+                            startActivity(new Intent(GroupsOverviewActivity.this, GroupsHomeActivity.class).putExtra(GroupsHomeActivity.CHOOSEN_GROUP_KEY, row * TILES_PER_WIDTH + col));
                         }
                     });
 
@@ -94,7 +101,6 @@ public class GroupsOverviewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             // TODO: petit pop-up qui part du bouton avec either "Create a group" ou "Join an existing group"
-                            Log.v("INFO", "create a group / join an existing group");
                             Intent intent = new Intent(GroupsOverviewActivity.this, CreateGroup.class);
                             startActivity(intent);
                         }

@@ -1,6 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
-import android.graphics.Bitmap;
+import android.graphics.Bitmap;;
 import android.os.Parcel;
 
 import com.parse.GetCallback;
@@ -54,6 +54,7 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
+    // TODO: assign email to mEmail field
     private PFUser(String userId, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) {
         super(userId, PARSE_TABLE_USER);
         checkArguments(username, "User name");
@@ -81,7 +82,9 @@ public final class PFUser extends PFEntity {
     @Override
     public void updateToServer(final String entry) throws PFException {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_USER);
-        query.getInBackground(getId(), new GetCallback<ParseObject>() {
+        query.whereEqualTo(USER_ENTRY_USERID, getId());
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
                     if (object != null) {
@@ -118,7 +121,7 @@ public final class PFUser extends PFEntity {
                         object.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e == null) {
+                                if (e != null) {
                                     // FIXME: done() method canno't throw exceptions, but we want THIS method
                                     // FIXME: updateToServer() to throw a PFException --> That we can catch e.g in the setters.
                                     // throw new ParseException("No object for the selected id.");
@@ -217,7 +220,6 @@ public final class PFUser extends PFEntity {
         if (belongToGroup(group.getId())) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
-            group.addUser(getId());
             mGroups.add(group);
             try {
                 updateToServer(USER_ENTRY_GROUPS);
@@ -242,6 +244,7 @@ public final class PFUser extends PFEntity {
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
+                group.addUser(getId());
                 mGroups.add(group);
                 Alert.displayAlert("Error while updating the user's groups to the server.");
             }
