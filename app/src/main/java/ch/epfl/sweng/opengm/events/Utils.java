@@ -2,10 +2,8 @@ package ch.epfl.sweng.opengm.events;
 
 import java.util.Date;
 
-/**
- * Created by virgile on 25/10/2015.
- */
 public class Utils {
+
     public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");
         if(stringArray.length != 5) {
