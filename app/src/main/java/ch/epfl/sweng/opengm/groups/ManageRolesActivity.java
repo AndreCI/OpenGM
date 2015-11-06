@@ -26,7 +26,6 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.utils.Alert;
 
 public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
@@ -66,7 +65,7 @@ public class ManageRolesActivity extends AppCompatActivity {
             if(rolesFromServer != null){
                 roles = new ArrayList<>(rolesFromServer);
             } else {
-                Alert.displayAlert("Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.");
+                // TODO "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.";
             }
             for(String memberID : memberIDs) {
                 member = PFMember.fetchExistingMember(memberID);
