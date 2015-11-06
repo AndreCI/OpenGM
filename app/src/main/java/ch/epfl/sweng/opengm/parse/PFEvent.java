@@ -11,6 +11,7 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -18,8 +19,12 @@ import ch.epfl.sweng.opengm.events.Utils;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PARTICIPANTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public final class PFEvent extends PFEntity implements Parcelable {
 
@@ -62,19 +67,21 @@ public final class PFEvent extends PFEntity implements Parcelable {
         }
     };
 
-    public PFEvent(String id, String name, String place, Date date, String description, List<PFMember> participants) {
+    private PFEvent(String id, String name, String place, Date date, String description, List<String> participants, Bitmap picture) {
         super(id, PARSE_TABLE_EVENT);
         this.mTitle = name;
         this.mPlace = place;
         this.mDate = new Date(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
         this.mDescription = description;
-        this.mParticipants = new ArrayList<>(participants);
-        this.mPicture = null;
-    }
-
-    public PFEvent(String id, String name, String place, Date date, String description, List<PFMember> participants, Bitmap picture) {
-        this(id, name, place, date, description, participants);
-        this.mPicture = Bitmap.createBitmap(picture);
+        this.mParticipants = new ArrayList<>();
+        for (String participantID : participants) {
+            try {
+                mParticipants.add(PFMember.fetchExistingMember(participantID));
+            } catch (PFException e) {
+                // Just do not add this guy :)
+            }
+        }
+        this.mPicture = picture;
     }
 
     public String getName() {
@@ -169,6 +176,35 @@ public final class PFEvent extends PFEntity implements Parcelable {
             }
         });
     }
+
+    public static PFEvent fetchExistingEvent(String id) throws PFException {
+        if (id == null) {
+            throw new PFException();
+        }
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_EVENT);
+        try {
+            ParseObject object = query.get(id);
+            if (object != null) {
+
+                String title = object.getString(PFConstants.EVENT_ENTRY_TITLE);
+                String description = object.getString(EVENT_ENTRY_DESCRIPTION);
+                String place = object.getString(EVENT_ENTRY_PLACE);
+                Date date = object.getDate(EVENT_ENTRY_DATE);
+
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
+                List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
+
+                return new PFEvent(id, title, place, date, description, participants, picture[0]);
+            } else {
+                throw new PFException("Parse query for id " + id + " failed");
+            }
+        } catch (ParseException e) {
+            throw new PFException("Parse query for id " + id + " failed");
+        }
+    }
+
 
     @Override
     public int describeContents() {
