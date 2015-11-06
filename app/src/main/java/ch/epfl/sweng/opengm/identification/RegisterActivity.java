@@ -163,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     startActivity(intent);
                                                 } catch (PFException e1) {
                                                     dialog.hide();
-                                                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             } else {
                                                 dialog.hide();
