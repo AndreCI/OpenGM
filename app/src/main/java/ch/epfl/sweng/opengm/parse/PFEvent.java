@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.events.Utils;
@@ -41,12 +42,8 @@ public final class PFEvent extends PFEntity implements Parcelable {
     private Bitmap mPicture;
     private List<PFMember> mParticipants;
 
-    public PFEvent() {
-        super(null,null);
-    }
-
     public PFEvent(Parcel in) {
-        super(in.readString(), PARSE_TABLE_EVENT);
+        super(in, PARSE_TABLE_EVENT);
         mTitle = in.readString();
         mDescription = in.readString();
         mDate = Utils.stringToDate(in.readString());
@@ -71,8 +68,8 @@ public final class PFEvent extends PFEntity implements Parcelable {
         }
     };
 
-    private PFEvent(String id, String name, String place, Date date, String description, List<String> participants, Bitmap picture) {
-        super(id, PARSE_TABLE_EVENT);
+    private PFEvent(String id, Date updated, String name, String place, Date date, String description, List<String> participants, Bitmap picture) {
+        super(id, PARSE_TABLE_EVENT, updated);
         this.mTitle = name;
         this.mPlace = place;
         this.mDate = new Date(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
@@ -138,6 +135,53 @@ public final class PFEvent extends PFEntity implements Parcelable {
 
 
     @Override
+    public void reload() throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_EVENT);
+        try {
+            ParseObject object = query.get(getId());
+
+            if (hasBeenModified(object)) {
+                setLastModified(object);
+
+                if (object != null) {
+
+                    mTitle = object.getString(PFConstants.EVENT_ENTRY_TITLE);
+                    mDescription = object.getString(EVENT_ENTRY_DESCRIPTION);
+                    mPlace = object.getString(EVENT_ENTRY_PLACE);
+                    mDate = object.getDate(EVENT_ENTRY_DATE);
+
+                    Bitmap[] picture = {null};
+                    retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                    mPicture = picture[0];
+
+                    String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
+                    List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
+
+                    HashSet<String> oldParticipants = new HashSet<>();
+                    for (String memberId : participants) {
+                        oldParticipants.add(memberId);
+                    }
+                    if (!new HashSet<>(participants).equals(oldParticipants)) {
+                        this.mParticipants = new ArrayList<>();
+                        for (String participantID : participants) {
+                            try {
+                                mParticipants.add(PFMember.fetchExistingMember(participantID));
+                            } catch (PFException e) {
+                                // Just do not add this guy :)
+                            }
+                        }
+                    }
+                }
+                for (PFMember member : mParticipants) {
+                    member.reload();
+                }
+            }
+        } catch (ParseException e) {
+            throw new PFException();
+        }
+    }
+
+    @Override
     protected void updateToServer(final String entry) throws PFException {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_EVENT);
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
@@ -196,7 +240,7 @@ public final class PFEvent extends PFEntity implements Parcelable {
         try {
             object.save();
             String id = object.getObjectId();
-            return new PFEvent(id, name, place, date, description, participants, picture);
+            return new PFEvent(id, object.getUpdatedAt(), name, place, date, description, participants, picture);
         } catch (ParseException e) {
             throw new PFException();
         }
@@ -225,7 +269,7 @@ public final class PFEvent extends PFEntity implements Parcelable {
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                 List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
 
-                return new PFEvent(id, title, place, date, description, participants, picture[0]);
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, participants, picture[0]);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
