@@ -13,8 +13,6 @@ import org.json.JSONException;
 
 import java.util.List;
 
-import ch.epfl.sweng.opengm.utils.Alert;
-
 /**
  * This class contains some static methods that may be called for conversion, saving or checking purposes
  */
@@ -103,30 +101,20 @@ public final class PFUtils {
      * Checks if the argument is not null and not empty. If it is, displays an Toast with the message given in parameter
      *
      * @param arg            The string argument to be checked
-     * @param displayedError The message that will be displayed in case of error
      * @return True if the argument is correct, false otherwise
      */
-    public static boolean checkArguments(String arg, String displayedError) {
-        if (arg == null || arg.isEmpty()) {
-            Alert.displayAlert(displayedError + " is null or empty.");
-            return false;
-        }
-        return true;
+    public static boolean checkArguments(String arg) {
+        return !(arg == null || arg.isEmpty());
     }
 
     /**
      * Checks if the argument is not null. If it is, displays an Toast with the message given in parameter
      *
      * @param arg            The string argument to be checked
-     * @param displayedError The message that will be displayed in case of error
      * @return True if the argument is correct, false otherwise
      */
-    public static boolean checkNullArguments(String arg, String displayedError) {
-        if (arg == null) {
-            Alert.displayAlert(displayedError + " is null.");
-            return false;
-        }
-        return true;
+    public static boolean checkNullArguments(String arg) {
+        return (arg != null);
     }
 
 
