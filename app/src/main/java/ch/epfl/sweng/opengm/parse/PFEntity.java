@@ -66,8 +66,10 @@ abstract class PFEntity implements Parcelable {
     /**
      * This abstract method must be redefined by each entity to update the current entity by
      * reloading the object with the server information if needed
+     *
+     * @throws PFException If someting went wrong while retrieving the information on the server
      */
-    public abstract void reload();
+    public abstract void reload() throws PFException;
 
     /**
      * This method updates in background the data but only the information which have changed since the last time

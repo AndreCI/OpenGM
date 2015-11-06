@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
@@ -30,7 +31,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
-import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
@@ -43,7 +43,7 @@ public final class PFUser extends PFEntity {
 
     private final static String PARSE_TABLE_USER = PFConstants.USER_TABLE_NAME;
 
-    private final List<PFGroup> mGroups;
+    private List<PFGroup> mGroups;
 
     private String mEmail;
     private String mUsername;
@@ -53,20 +53,14 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    private PFUser(String userId, Date date, String email, String username, String firstname, String lastname, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
+    private PFUser(String userId, Date date, String email, String username, String firstName, String lastName, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
         super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
-        checkArguments(username);
         this.mUsername = username;
-        checkArguments(firstname);
-        this.mFirstName = firstname;
-        checkArguments(lastname);
-        this.mLastName = lastname;
-        checkNullArguments(phoneNumber);
+        this.mFirstName = firstName;
+        this.mLastName = lastName;
         this.mPhoneNumber = phoneNumber;
-        checkNullArguments(aboutUser);
         this.mAboutUser = aboutUser;
-        checkNullArguments(aboutUser);
         this.mGroups = new ArrayList<>();
         for (String groupId : groups) {
             try {
@@ -79,8 +73,54 @@ public final class PFUser extends PFEntity {
     }
 
     @Override
-    public void reload() {
+    public void reload() throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_USER);
+        query.whereEqualTo(USER_ENTRY_USERID, getId());
+        try {
+            ParseObject object = query.getFirst();
+            if (hasBeenModified(object)) {
+                setLastModified(object);
+                mUsername = object.getString(USER_ENTRY_USERNAME);
+                mFirstName = object.getString(USER_ENTRY_FIRSTNAME);
+                mLastName = object.getString(USER_ENTRY_LASTNAME);
+                mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
+                mAboutUser = object.getString(USER_ENTRY_ABOUT);
 
+                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, getId());
+
+                ParseObject mailObject = query.getFirst();
+
+                if (mailObject != null) {
+                    mEmail = mailObject.getString(_USER_TABLE_EMAIL);
+                }
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
+                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+
+                HashSet<String> oldGroups = new HashSet<>();
+                for (PFGroup group : mGroups) {
+                    oldGroups.add(group.getId());
+                }
+
+                if (oldGroups.equals(new HashSet<>(groups))) {
+                    for (String groupId : groups) {
+                        try {
+                            mGroups.add(PFGroup.fetchExistingGroup(groupId));
+                        } catch (PFException e) {
+                            throw new PFException("Error while retrieving the existing group with id " + groupId);
+                        }
+                    }
+                }
+
+                for (PFGroup group : mGroups)
+                    group.reload();
+
+            }
+        } catch (ParseException e) {
+            throw new PFException();
+        }
     }
 
     @Override
@@ -88,6 +128,7 @@ public final class PFUser extends PFEntity {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_USER);
         query.whereEqualTo(USER_ENTRY_USERID, getId());
         query.getFirstInBackground(new GetCallback<ParseObject>() {
+
             @Override
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
@@ -133,7 +174,8 @@ public final class PFUser extends PFEntity {
                             }
                         });
                     } else {
-                        // throw new ParseException("No object for the selected id.");
+                        //erreur server
+                        // throw new ParseException(1,"");
                     }
                 } else {
                     // throw new ParseException("Error while sending the request to the server");
