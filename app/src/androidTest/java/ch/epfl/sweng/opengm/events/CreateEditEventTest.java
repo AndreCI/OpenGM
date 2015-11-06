@@ -72,8 +72,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withId(R.id.CreateEditEventDescriptionText)).check(matches(withText("testDescription")));
     }
 
-    // TODO : debug it
-    public void notestNoParticipants() {
+    public void testNoParticipants() {
         Intent i = new Intent();
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
