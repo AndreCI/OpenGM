@@ -10,6 +10,7 @@ import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -30,9 +31,9 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
     }
 
     // TODO : debug it
-    public void notestPreFillWithEventInIntent() {
+    public void notestPreFillWithEventInIntent() throws PFException {
         Intent intent = new Intent();
-        PFEvent event = new PFEvent("testid", "testName", "testPlace", new Date(1994,5,6,2,4), "testDescription", new ArrayList<PFMember>());
+        PFEvent event = PFEvent.createEvent("testName", "testPlace", new Date(1994, 5, 6, 2, 4), new ArrayList<PFMember>(), "testDescription", null);
         intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT, event);
         setActivityIntent(intent);
         ShowEventActivity activity = getActivity();

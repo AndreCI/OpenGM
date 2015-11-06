@@ -12,6 +12,7 @@ import java.util.Date;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
@@ -59,9 +60,9 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withText(R.string.CreateEditEmptyTimeDateErrorMessage)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 
-    public void testEventInIntent() {
+    public void testEventInIntent() throws PFException {
         Intent i = new Intent();
-        PFEvent e = new PFEvent("testid","testName", "testPlace", new Date(2000,00,01,10,10), "testDescription", new ArrayList<PFMember>());
+        PFEvent e = PFEvent.createEvent("testName", "testPlace", new Date(2000, 00, 01, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
@@ -72,7 +73,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withId(R.id.CreateEditEventDescriptionText)).check(matches(withText("testDescription")));
     }
 
-    public void testNoParticipants() {
+    public void testNoParticipants() throws PFException {
         Intent i = new Intent();
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -81,7 +82,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
         Date date = new Date(year, month+1, day, hour, min);
-        PFEvent e = new PFEvent("testid","testName", "testPlace", date, "testDescription", new ArrayList<PFMember>());
+        PFEvent e = PFEvent.createEvent("testName", "testPlace", date, new ArrayList<PFMember>(), "testDescription", null);
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);
         getActivity();
