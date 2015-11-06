@@ -72,8 +72,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withId(R.id.CreateEditEventDescriptionText)).check(matches(withText("testDescription")));
     }
 
-    // TODO : debug it
-    public void notestNoParticipants() {
+    public void testNoParticipants() {
         Intent i = new Intent();
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -86,7 +85,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);
         getActivity();
-        onView(withId(R.id.CreateEditEventParticipantsButton)).perform(click());
+        onView(withId(R.id.CreateEditOkButton)).perform(click());
         onView(withText(R.string.CreateEditNoParticipants)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 }

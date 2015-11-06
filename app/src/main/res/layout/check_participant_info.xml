@@ -3,15 +3,18 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <CheckBox
-        android:id="@+id/ParticipantCheckBox"
+        android:id="@+id/checkParticipantCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/darkblue"/>
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
     <TextView
-        android:id="@+id/ParticipantName"
-        android:layout_width="fill_parent"
+        android:id="@+id/checkParticipantTextView"
+        android:layout_width="wrap_content"
+        android:clickable="true"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

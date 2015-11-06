@@ -5,9 +5,14 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.junit.Test;
+
 import java.util.Calendar;
 
 import ch.epfl.sweng.opengm.parse.PFConstants;
+
+import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
+import static org.junit.Assert.assertEquals;
 
 public class UtilsTest {
 
@@ -34,6 +39,13 @@ public class UtilsTest {
 
     public static String getRandomId() {
         return String.format("%1$10s", Calendar.getInstance().getTimeInMillis());
+    }
+
+    @Test
+    public void StripAccentTest() {
+        String input = "àâäéèêëîïìôöòûùÿç";
+        String expecteed = "aaaeeeeiiiooouuyc";
+        assertEquals(expecteed, stripAccents(input));
     }
 
 }
