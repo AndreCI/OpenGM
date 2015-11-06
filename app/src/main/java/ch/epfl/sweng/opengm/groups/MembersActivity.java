@@ -20,7 +20,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
-public class Members extends AppCompatActivity {
+public class MembersActivity extends AppCompatActivity {
 
     private ListView list;
     private PFGroup group;
