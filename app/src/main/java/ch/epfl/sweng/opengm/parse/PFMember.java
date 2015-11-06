@@ -98,7 +98,7 @@ public final class PFMember extends PFEntity {
 
                 HashSet<String> oldGroups = new HashSet<>(mGroups);
 
-                if (oldGroups.equals(new HashSet<>(groups))) {
+                if (!oldGroups.equals(new HashSet<>(groups))) {
                     mGroups.clear();
                     mGroups.addAll(groups);
                 }

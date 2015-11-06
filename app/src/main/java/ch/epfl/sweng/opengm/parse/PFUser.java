@@ -104,7 +104,7 @@ public final class PFUser extends PFEntity {
                     oldGroups.add(group.getId());
                 }
 
-                if (oldGroups.equals(new HashSet<>(groups))) {
+                if (!oldGroups.equals(new HashSet<>(groups))) {
                     for (String groupId : groups) {
                         try {
                             mGroups.add(PFGroup.fetchExistingGroup(groupId));
