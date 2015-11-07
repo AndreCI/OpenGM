@@ -74,7 +74,7 @@ public final class PFGroup extends PFEntity {
         fillMembersMap(users, nicknames, roles);
         mEvents = new ArrayList<>();
         in.readTypedList(mEvents, PFEvent.CREATOR);
-        mIsPrivate = in.readDouble() == 0; //0 is true, everything else is false
+        mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
         mDescription = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
     }
@@ -511,6 +511,10 @@ public final class PFGroup extends PFEntity {
         }
     }
 
+    public boolean isPrivate() {
+        return this.mIsPrivate;
+    }
+
     /**
      * Setter for the group's picture of the group
      *
@@ -526,6 +530,10 @@ public final class PFGroup extends PFEntity {
                 this.mPicture = oldPicture;
             }
         }
+    }
+
+    public Bitmap getPicture() {
+        return Bitmap.createBitmap(mPicture);
     }
 
     /**
