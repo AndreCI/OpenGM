@@ -146,7 +146,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, intent);
         Toast.makeText(this, "members to add size" + membersToAdd.size(), Toast.LENGTH_SHORT).show();
 
-        //finish();
+        finish();
     }
 
     /**

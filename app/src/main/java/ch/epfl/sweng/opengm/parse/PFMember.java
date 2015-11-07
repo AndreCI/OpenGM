@@ -65,6 +65,20 @@ public final class PFMember extends PFEntity {
         this.mGroups = new ArrayList<>(groups);
     }
 
+    private PFMember(Parcel in){
+        super(in.readString(), USER_TABLE_NAME);
+        this.mUsername = in.readString();
+        this.mFirstName = in.readString();
+        this.mLastName = in.readString();
+        this.mNickname = in.readString();
+        this.mEmail = in.readString();
+        this.mPhoneNumber = in.readString();
+        this.mAboutUser = in.readString();
+        this.mPicture = in.readParcelable(Bitmap.class.getClassLoader());
+        this.mRoles = new ArrayList<String>();
+        this.mGroups = new ArrayList<String>();
+    }
+
     @Override
     protected void updateToServer(String entry) throws PFException {
 
@@ -299,10 +313,32 @@ public final class PFMember extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(mId);
+        dest.writeString(mUsername);
+        dest.writeString(mFirstName);
+        dest.writeString(mLastName);
+        dest.writeString(mNickname);
+        dest.writeString(mEmail);
+        dest.writeString(mPhoneNumber);
+        dest.writeString(mAboutUser);
+        dest.writeParcelable(mPicture, flags);
+        dest.writeStringArray(mRoles.toArray(new String[0]));
+        dest.writeStringArray(mGroups.toArray(new String[0]));
     }
 
     public String getName() {
         return getLastname() + " - " + getFirstname();
     }
+
+    public static final Creator<PFMember> CREATOR = new Creator<PFMember>() {
+        @Override
+        public PFMember createFromParcel(Parcel in) {
+            return new PFMember(in);
+        }
+
+        @Override
+        public PFMember[] newArray(int size) {
+            return new PFMember[size];
+        }
+    };
 }
