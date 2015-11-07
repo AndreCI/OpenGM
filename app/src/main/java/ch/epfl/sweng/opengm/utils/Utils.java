@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.text.Normalizer;
 
@@ -41,13 +42,23 @@ public class Utils {
 
 
     public static List<String[]> unzipRoles(List<String> rolesZip) {
-        //TODO : implementation missing
-        return null;
+        List<String[]> res = new ArrayList<>();
+        for(String s : rolesZip) {
+            res.add(s.split(" -- "));
+        }
+        return res;
     }
 
     public static String zipRole(List<String> roles) {
-        //TODO : implementation missing
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        if(roles.size() > 0 ) {
+            for (int i = 0; i < roles.size() - 1; ++i) {
+                stringBuilder.append(roles.get(i));
+                stringBuilder.append(" -- ");
+            }
+            stringBuilder.append(roles.get(roles.size()-1));
+        }
+        return stringBuilder.toString();
     }
 
 
