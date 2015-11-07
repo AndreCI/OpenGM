@@ -113,7 +113,7 @@ public final class PFGroup extends PFEntity {
                 String[] role = roles.get(i);
                 mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
             } catch (PFException e) {
-                // TODO : what to do?
+                //TODO : what to do?
             }
         }
     }
@@ -644,7 +644,8 @@ public final class PFGroup extends PFEntity {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mId);
         dest.writeString(dateToString(lastModified));
-        List<String> ids = new ArrayList<>(mMembers.keySet());
+        List<String> ids = new ArrayList<>();
+        ids.addAll(mMembers.keySet());
         dest.writeStringList(ids);
         List<PFMember> members = new ArrayList<>(mMembers.values());
         List<String> nicknames = new ArrayList<>();
@@ -657,9 +658,10 @@ public final class PFGroup extends PFEntity {
         dest.writeStringList(rolesZip);
         dest.writeTypedList(mEvents);
         if(mIsPrivate) {
-            dest.writeDouble(0);
+            dest.writeInt(0);
         } else {
-            dest.writeDouble(42);
+            dest.writeInt(42);
+
         }
         dest.writeString(mDescription);
         dest.writeParcelable(mPicture, flags);
