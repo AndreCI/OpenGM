@@ -16,7 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +28,7 @@ import ch.epfl.sweng.opengm.OpenGMApplication;
 
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFGroup.createNewGroup;
 import static ch.epfl.sweng.opengm.parse.PFGroup.fetchExistingGroup;
@@ -32,6 +36,7 @@ import static ch.epfl.sweng.opengm.parse.PFMember.fetchExistingMember;
 import static ch.epfl.sweng.opengm.parse.PFUser.createNewUser;
 import static ch.epfl.sweng.opengm.parse.PFUser.fetchExistingUser;
 import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
+import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -105,7 +110,55 @@ public class PFGroupTest {
         assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));
     }
 
-    
+
+    @Test
+    public void testConstructFromParcel() {
+        id1 = getRandomId();
+        id2 = getRandomId();
+        String name = "testGroup";
+        Date date = new Date();
+        date.setSeconds(0);
+        List<String> ids = new ArrayList<>();
+        ids.add(id2);
+        List<String> nicknames = new ArrayList<>();
+        nicknames.add(USERNAME);
+        String[] role = new String[2];
+        role[0] = "admin";
+        role[1] = "bobbbbbbyyyyy!!!";
+        List<String> roles = new ArrayList<>();
+        roles.add(zipRole(role));
+        List<PFEvent> events = new ArrayList<>();
+        int isPrivate = 0;
+        String description = "testDescription";
+        Bitmap picture = null;
+
+        Parcel in = Parcel.obtain();
+
+        in.writeString(id1);
+        in.writeString(dateToString(date));
+        in.writeString(name);
+        in.writeStringList(ids);
+        in.writeStringList(nicknames);
+        in.writeStringList(roles);
+        in.writeTypedList(events);
+        in.writeInt(isPrivate);
+        in.writeString(description);
+        in.writeParcelable(picture, 0);
+
+        in.setDataPosition(0);
+
+        PFGroup group = new PFGroup(in);
+
+        assertEquals(id1, group.getId());
+        assertEquals(date, group.lastModified);
+        assertEquals(name, group.getName());
+        assertEquals(description, group.getDescription());
+        assertEquals(events.size(), group.getEvents().size());
+        assertEquals(ids.size(), group.getMembers().size());
+        assertEquals(roles.size(), group.getRoles().size());
+        assertEquals(true, group.isPrivate());
+        assertNull(group.getPicture());
+    }
 
 
 
