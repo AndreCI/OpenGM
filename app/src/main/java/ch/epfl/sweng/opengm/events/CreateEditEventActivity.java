@@ -30,13 +30,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private List<PFMember> participants;
     private PFGroup currentGroup;
 
-    private EditText mEditName;
-    private EditText mEditPlace;
-    private MultiAutoCompleteTextView mEditDescription;
-
-    private Button mButtonTime;
-    private Button mButtonDate;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,21 +47,13 @@ public class CreateEditEventActivity extends AppCompatActivity {
             participants = editedEvent.getParticipants();
             fillTexts(event);
         }
-
-        mEditName = (EditText) findViewById(R.id.CreateEditEventNameText);
-        mEditPlace = (EditText) findViewById(R.id.CreateEditEventPlaceText);
-        mEditDescription = (MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText);
-
-        mButtonTime = (Button) findViewById(R.id.CreateEditEventTimeText);
-        mButtonDate = (Button) findViewById(R.id.CreateEditEventDateText);
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 participants = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             }
@@ -93,7 +78,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     public void onParticipantsButtonClick(View v) {
         Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
-        if(editing) {
+        if (editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
         intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
@@ -101,14 +86,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private void fillTexts(PFEvent event) {
-        mEditName.setText(event.getName());
-        mEditPlace.setText(event.getPlace());
-        mEditDescription.setText(event.getDescription());
+        ((EditText) findViewById(R.id.CreateEditEventNameText)).setText(event.getName());
+        ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
+        ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
         Date date = event.getDate();
         String timeString = String.format("%d : %02d", date.getHours(), date.getMinutes());
-        mButtonTime.setText(timeString);
-        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth()+1, date.getYear());
-        mButtonDate.setText(dateString);
+        ((Button) findViewById(R.id.CreateEditEventTimeText)).setText(timeString);
+        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth() + 1, date.getYear());
+        ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
     private PFEvent createEditEvent() {
@@ -124,9 +109,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
-        String name = mEditName.getText().toString();
-        String description = mEditDescription.getText().toString();
-        String place = mEditDescription.getText().toString();
+        String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
+        String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
+        String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
 
         try {
             return PFEvent.createEvent(name, place, date, participants, description, null);
@@ -141,9 +126,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
 
-        String name = mEditName.getText().toString();
-        String description = mEditDescription.getText().toString();
-        String place = mEditDescription.getText().toString();
+        String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
+        String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
+        String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         editedEvent.setName(name);
         editedEvent.setDate(date);
         editedEvent.setDescription(description);
@@ -155,7 +140,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with hours(24h format) at index 0 and minutes at index 1
      */
     private int[] getTimeFromText() {
-        String[] timeString = mButtonTime.getText().toString().split(" : ");
+        String[] timeString = ((Button) findViewById(R.id.CreateEditEventTimeText)).getText().toString().split(" : ");
         if (timeString.length != 2) {
             return new int[]{};
         }
@@ -168,7 +153,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with year at index 0, month at index 1 and day at index 2
      */
     private int[] getDateFromText() {
-        String[] dateString = mButtonDate.getText().toString().split("/");
+        String[] dateString = ((Button) findViewById(R.id.CreateEditEventDateText)).getText().toString().split("/");
         if (dateString.length != 3) {
             return new int[]{};
         }
@@ -183,9 +168,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * display a toast while it's not.
      */
     private boolean legalArguments() {
-        String name = mEditName.getText().toString();
+        String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         if (name.isEmpty()) {
-            mEditName.setError(getString(R.string.CreateEditEmptyNameErrorMessage));
+            ((EditText) findViewById(R.id.CreateEditEventNameText)).setError(getString(R.string.CreateEditEmptyNameErrorMessage));
             return false;
         }
         int[] timeArray = getTimeFromText();
@@ -193,10 +178,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         if (timeArray.length == 0 || dateArray.length == 0) {
             if (timeArray.length == 0) {
-                mButtonTime.setError("");
+                ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
             }
             if (dateArray.length == 0) {
-                mButtonDate.setError("");
+                ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
             }
             Toast.makeText(this, getString(R.string.CreateEditEmptyTimeDateErrorMessage), Toast.LENGTH_SHORT).show();
             return false;
@@ -212,14 +197,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
         Date currentDate = new Date(year, month, day, hour, min);
         if (date.before(currentDate)) {
             if (year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
-                mButtonTime.setError("");
+                ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
             } else {
-                mButtonDate.setError("");
+                ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
             }
             Toast.makeText(this, getString(R.string.CreateEditEarlyDate), Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(participants.isEmpty()) {
+        if (participants.isEmpty()) {
             Toast.makeText(this, getString(R.string.CreateEditNoParticipants), Toast.LENGTH_SHORT).show();
             return false;
         }

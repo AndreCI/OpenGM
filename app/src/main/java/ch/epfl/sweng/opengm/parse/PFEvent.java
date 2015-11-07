@@ -20,6 +20,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.events.Utils;
 
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PARTICIPANTS;
@@ -307,9 +308,10 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mId);
+        dest.writeString(dateToString(this.lastModified));
         dest.writeString(mTitle);
         dest.writeString(mDescription);
-        dest.writeString(Utils.dateToString(mDate));
+        dest.writeString(dateToString(mDate));
         dest.writeString(mPlace);
         dest.writeParcelable(mPicture, flags);
         dest.writeParcelableArray(mParticipants.toArray(new PFMember[0]), flags);
