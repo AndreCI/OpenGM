@@ -62,7 +62,7 @@ public class PFGroupTest {
         group = null;
     }
 
-    //@Test
+    @Test
     public void testWriteToParcel() {
         Parcel parcel = Parcel.obtain();
         String name = "testGroup";
@@ -166,7 +166,7 @@ public class PFGroupTest {
 
 
 
-    //@Test
+    @Test
     public void testCreateAndDeleteGroup() {
         OpenGMApplication.logOut();
         id1 = getRandomId();
@@ -204,7 +204,7 @@ public class PFGroupTest {
         }
     }
 
-    //@Test
+    @Test
     public void testGroupGetters() {
         OpenGMApplication.logOut();
         id1 = getRandomId();
@@ -246,7 +246,7 @@ public class PFGroupTest {
 
     }
 
-    //@Test
+    @Test
     public void getMembersTest() throws PFException {
         OpenGMApplication.logOut();
         id1 = getRandomId();
@@ -288,7 +288,7 @@ public class PFGroupTest {
 
     }
 
-    //@Test
+    @Test
     public void testSetters() throws InterruptedException {
         OpenGMApplication.logOut();
         id1 = getRandomId();

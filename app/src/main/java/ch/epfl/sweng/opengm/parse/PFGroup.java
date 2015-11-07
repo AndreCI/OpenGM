@@ -112,8 +112,6 @@ public final class PFGroup extends PFEntity {
                 String[] role = roles.get(i);
                 mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
             } catch (PFException e) {
-                e.printStackTrace();
-                System.out.println("can't fetch user with id: " + users.get(i));
                 //TODO : what to do?
             }
         }
