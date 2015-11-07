@@ -54,7 +54,7 @@ public class EventListActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         try {
-            currentGroup.addEvent(PFEvent.createEvent("name", "place", Utils.stringToDate("2018-0-1-12-12"), new ArrayList<PFMember>(), "description", null));
+            currentGroup.addEvent(PFEvent.createEvent(currentGroup, "name", "place", Utils.stringToDate("2018-0-1-12-12"), new ArrayList<PFMember>(), "description", null));
         } catch (PFException e) {
             // TODO : decide ?
         }

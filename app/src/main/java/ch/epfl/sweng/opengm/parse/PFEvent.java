@@ -236,7 +236,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
     }
 
-    public static PFEvent createEvent(String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
+    public static PFEvent createEvent(PFGroup group, String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
 
         ParseObject object = new ParseObject(EVENT_TABLE_NAME);
         object.put(EVENT_ENTRY_TITLE, name);
@@ -257,14 +257,16 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         try {
             object.save();
             String id = object.getObjectId();
-            return new PFEvent(id, object.getUpdatedAt(), name, place, date, description, participants, picture);
+            PFEvent event = new PFEvent(id, object.getUpdatedAt(), name, place, date, description, participants, picture);
+            group.addEvent(event);
+            return event;
         } catch (ParseException e) {
             e.printStackTrace();
             throw new PFException();
         }
     }
 
-    public static PFEvent createEvent(String name, String place, Date date, String description, List<String> participants, Bitmap picture) throws PFException {
+    public static PFEvent createEvent(PFGroup group, String name, String place, Date date, String description, List<String> participants, Bitmap picture) throws PFException {
         List<PFMember> members = new ArrayList<>();
 
         for (String participantID : participants) {
@@ -274,7 +276,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 // Just do not add this guy :)
             }
         }
-        return createEvent(name, place, date, members, description, picture);
+        return createEvent(group, name, place, date, members, description, picture);
     }
 
     public static PFEvent fetchExistingEvent(String id) throws PFException {
