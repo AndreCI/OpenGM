@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
+import android.graphics.Bitmap;
+import android.os.Parcel;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
@@ -29,9 +31,11 @@ import static ch.epfl.sweng.opengm.parse.PFGroup.fetchExistingGroup;
 import static ch.epfl.sweng.opengm.parse.PFMember.fetchExistingMember;
 import static ch.epfl.sweng.opengm.parse.PFUser.createNewUser;
 import static ch.epfl.sweng.opengm.parse.PFUser.fetchExistingUser;
+import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
@@ -52,6 +56,58 @@ public class PFGroupTest {
         id2 = null;
         group = null;
     }
+
+    @Test
+    public void testWriteToParcel() {
+        Parcel parcel = Parcel.obtain();
+        String name = "testGroup";
+        String description = "testDescription";
+        id1 = getRandomId();
+        PFUser user = null;
+        try {
+            user = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+        group.writeToParcel(parcel, 0);
+
+        parcel.setDataPosition(0);
+
+        parcel.readString(); //group id
+        parcel.readString(); //last modified
+        ArrayList<String> ids = new ArrayList<>();
+        parcel.readStringList(ids);
+        System.out.println(ids.size());
+        assertEquals(1, ids.size());
+        assertEquals(id1, ids.get(0));
+        ArrayList<String> nicknames = new ArrayList<>();
+        parcel.readStringList(nicknames);
+        assertEquals(1, nicknames.size());
+        PFMember member = null;
+        try {
+            member = PFMember.fetchExistingMember(id1);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+        assertEquals(member.getNickname(), nicknames.get(0));
+        ArrayList<String> rolesZip = new ArrayList<>();
+        parcel.readStringList(rolesZip);
+        assertNotNull(rolesZip);
+        List<String[]> roles = unzipRoles(rolesZip);
+        assertNotNull(roles);
+        assertEquals(1, roles.size());
+        List<PFEvent> events = new ArrayList<>();
+        parcel.readTypedList(events, PFEvent.CREATOR);
+        assertEquals(0, events.size());
+        assertEquals(42, parcel.readInt());
+        assertEquals(description, parcel.readString());
+        assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));
+    }
+
+    
+
+
 
     @Test
     public void testCreateAndDeleteGroup() {
