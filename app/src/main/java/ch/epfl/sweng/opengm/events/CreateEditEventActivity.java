@@ -114,7 +114,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
 
         try {
-            return PFEvent.createEvent(name, place, date, participants, description, null);
+            return PFEvent.createEvent(currentGroup, name, place, date, participants, description, null);
         } catch (PFException e) {
             // TODO toast ?
             return null;

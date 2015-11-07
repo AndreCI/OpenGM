@@ -73,7 +73,13 @@ public final class PFGroup extends PFEntity {
         List<String[]> roles = unzipRoles(rolesZip);
         fillMembersMap(users, nicknames, roles);
         mEvents = new HashMap<>();
-        // in.readTypedList(mEvents, PFEvent.CREATOR);
+        List<String> eventKeys = new ArrayList<>();
+        in.readStringList(eventKeys);
+        List<PFEvent> events = new ArrayList<>();
+        in.readTypedList(events, PFEvent.CREATOR);
+        for(int i = 0; i < events.size(); ++i) {
+            mEvents.put(eventKeys.get(i), events.get(i));
+        }
         mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
         mDescription = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
@@ -714,9 +720,12 @@ public final class PFGroup extends PFEntity {
         dest.writeString(mId);
         dest.writeString(dateToString(lastModified));
         List<String> ids = new ArrayList<>();
-        ids.addAll(mMembers.keySet());
+        List<PFMember> members = new ArrayList<>();
+        for(String s: mMembers.keySet()) {
+            ids.add(s);
+            members.add(mMembers.get(s));
+        }
         dest.writeStringList(ids);
-        List<PFMember> members = new ArrayList<>(mMembers.values());
         List<String> nicknames = new ArrayList<>();
         List<String> rolesZip = new ArrayList<>();
         for (PFMember member : members) {
@@ -725,7 +734,14 @@ public final class PFGroup extends PFEntity {
         }
         dest.writeStringList(nicknames);
         dest.writeStringList(rolesZip);
-        //dest.writeTypedList(mEvents);
+        List<String> eventKeys = new ArrayList<>();
+        List<PFEvent> events = new ArrayList<>();
+        for(String s : mEvents.keySet()) {
+            eventKeys.add(s);
+            events.add(mEvents.get(s));
+        }
+        dest.writeStringList(eventKeys);
+        dest.writeTypedList(events);
         if (mIsPrivate) {
             dest.writeInt(0);
         } else {
