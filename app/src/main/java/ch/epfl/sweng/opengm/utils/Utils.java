@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.text.Normalizer;
 
@@ -47,6 +48,10 @@ public class Utils {
             res.add(s.split(" -- "));
         }
         return res;
+    }
+
+    public static String zipRole(String[] roles) {
+        return zipRole(Arrays.asList(roles));
     }
 
     public static String zipRole(List<String> roles) {
