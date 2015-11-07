@@ -62,7 +62,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
 
     public void testEventInIntent() throws PFException {
         Intent i = new Intent();
-        PFEvent e = PFEvent.createEvent("testName", "testPlace", new Date(2000, 00, 01, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        PFEvent e = PFEvent.createEvent("testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();

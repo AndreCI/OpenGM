@@ -64,9 +64,9 @@ public final class PFGroup extends PFEntity {
     public PFGroup(Parcel in) {
         super(in, PARSE_TABLE_GROUP);
         this.mName = in.readString();
-        ArrayList<String> users = new ArrayList<>();
+        List<String> users = new ArrayList<>();
         in.readStringList(users);
-        ArrayList<String> nicknames = new ArrayList<>();
+        List<String> nicknames = new ArrayList<>();
         in.readStringList(nicknames);
         List<String> rolesZip = new ArrayList<>();
         in.readStringList(rolesZip);
@@ -78,7 +78,6 @@ public final class PFGroup extends PFEntity {
         mDescription = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
     }
-
 
 
     private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture) {
@@ -113,6 +112,8 @@ public final class PFGroup extends PFEntity {
                 String[] role = roles.get(i);
                 mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
             } catch (PFException e) {
+                e.printStackTrace();
+                System.out.println("can't fetch user with id: " + users.get(i));
                 //TODO : what to do?
             }
         }
@@ -196,59 +197,59 @@ public final class PFGroup extends PFEntity {
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
                 if (e == null && object != null) {
-                        switch (entry) {
-                            case GROUP_ENTRY_NAME:
-                                object.put(GROUP_ENTRY_NAME, mName);
-                                break;
-                            case GROUP_ENTRY_USERS:
-                                JSONArray usersArray = new JSONArray();
-                                JSONArray surnamesArray = new JSONArray();
-                                JSONArray rolesArray = new JSONArray();
-                                for (PFMember member : mMembers.values()) {
-                                    usersArray.put(member.getId());
-                                    surnamesArray.put(member.getNickname());
-                                    List<String> roles = member.getRoles();
-                                    JSONArray rolesForUser = new JSONArray();
-                                    for (int i = 0; i < roles.size(); i++) {
-                                        rolesForUser.put(roles.get(i));
-                                    }
-                                    rolesArray.put(rolesForUser);
+                    switch (entry) {
+                        case GROUP_ENTRY_NAME:
+                            object.put(GROUP_ENTRY_NAME, mName);
+                            break;
+                        case GROUP_ENTRY_USERS:
+                            JSONArray usersArray = new JSONArray();
+                            JSONArray surnamesArray = new JSONArray();
+                            JSONArray rolesArray = new JSONArray();
+                            for (PFMember member : mMembers.values()) {
+                                usersArray.put(member.getId());
+                                surnamesArray.put(member.getNickname());
+                                List<String> roles = member.getRoles();
+                                JSONArray rolesForUser = new JSONArray();
+                                for (int i = 0; i < roles.size(); i++) {
+                                    rolesForUser.put(roles.get(i));
                                 }
-                                object.put(GROUP_ENTRY_USERS, usersArray);
-                                object.put(GROUP_ENTRY_NICKNAMES, surnamesArray);
-                                object.put(GROUP_ENTRY_ROLES, rolesArray);
-                                break;
-                            case GROUP_ENTRY_EVENTS:
-                                object.put(GROUP_ENTRY_EVENTS, listToArray(mEvents));
-                                break;
-                            case GROUP_ENTRY_DESCRIPTION:
-                                object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
-                                break;
-                            case GROUP_ENTRY_ISPRIVATE:
-                                object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
-                                break;
-                            case GROUP_ENTRY_PICTURE:
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                byte[] image = stream.toByteArray();
-                                ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
-                                file.saveInBackground();
-                                object.put(GROUP_ENTRY_PICTURE, mPicture);
-                                break;
-                            default:
-                                return;
-                        }
-                        object.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    // throw new ParseException("No object for the selected id.");
-                                }
+                                rolesArray.put(rolesForUser);
                             }
-                        });
-                    } else {
-                        // throw new ParseException("No object for the selected id.");
+                            object.put(GROUP_ENTRY_USERS, usersArray);
+                            object.put(GROUP_ENTRY_NICKNAMES, surnamesArray);
+                            object.put(GROUP_ENTRY_ROLES, rolesArray);
+                            break;
+                        case GROUP_ENTRY_EVENTS:
+                            object.put(GROUP_ENTRY_EVENTS, listToArray(mEvents));
+                            break;
+                        case GROUP_ENTRY_DESCRIPTION:
+                            object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
+                            break;
+                        case GROUP_ENTRY_ISPRIVATE:
+                            object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
+                            break;
+                        case GROUP_ENTRY_PICTURE:
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] image = stream.toByteArray();
+                            ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
+                            file.saveInBackground();
+                            object.put(GROUP_ENTRY_PICTURE, mPicture);
+                            break;
+                        default:
+                            return;
                     }
+                    object.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                // throw new ParseException("No object for the selected id.");
+                            }
+                        }
+                    });
+                } else {
+                    // throw new ParseException("No object for the selected id.");
+                }
             }
         });
     }
@@ -359,6 +360,7 @@ public final class PFGroup extends PFEntity {
     public boolean hasMembers() {
         return (mMembers != null && !mMembers.isEmpty());
     }
+
     /**
      * Add a particular user to a group by adding its id
      *
@@ -533,7 +535,7 @@ public final class PFGroup extends PFEntity {
     }
 
     public Bitmap getPicture() {
-        return Bitmap.createBitmap(mPicture);
+        return (mPicture == null) ? null : Bitmap.createBitmap(mPicture);
     }
 
     /**
@@ -658,14 +660,14 @@ public final class PFGroup extends PFEntity {
         List<PFMember> members = new ArrayList<>(mMembers.values());
         List<String> nicknames = new ArrayList<>();
         List<String> rolesZip = new ArrayList<>();
-        for(PFMember member : members) {
+        for (PFMember member : members) {
             nicknames.add(member.getNickname());
             rolesZip.add(zipRole(member.getRoles()));
         }
         dest.writeStringList(nicknames);
         dest.writeStringList(rolesZip);
         dest.writeTypedList(mEvents);
-        if(mIsPrivate) {
+        if (mIsPrivate) {
             dest.writeInt(0);
         } else {
             dest.writeInt(42);
