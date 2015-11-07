@@ -32,7 +32,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 /**
@@ -156,7 +155,7 @@ public final class PFUser extends PFEntity {
                                 object.put(USER_ENTRY_PICTURE, mPicture);
                                 break;
                             case USER_ENTRY_GROUPS:
-                                object.put(USER_ENTRY_GROUPS, listToArray(mGroups));
+                                object.put(USER_ENTRY_GROUPS, PFUtils.collectionToArray(mGroups));
                                 break;
                             default:
                                 return;

@@ -39,7 +39,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
 import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
@@ -225,7 +224,7 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_ROLES, rolesArray);
                             break;
                         case GROUP_ENTRY_EVENTS:
-                            object.put(GROUP_ENTRY_EVENTS, listToArray(new ArrayList<PFEntity>(mEvents.values())));
+                            object.put(GROUP_ENTRY_EVENTS, PFUtils.collectionToArray(new ArrayList<PFEntity>(mEvents.values())));
                             break;
                         case GROUP_ENTRY_DESCRIPTION:
                             object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
@@ -273,8 +272,8 @@ public final class PFGroup extends PFEntity {
      *
      * @return A list of members in the group
      */
-    public List<PFMember> getMembers() {
-        return new ArrayList<>(mMembers.values());
+    public HashMap<String, PFMember> getMembers() {
+        return new HashMap<>(mMembers);
     }
 
     /**

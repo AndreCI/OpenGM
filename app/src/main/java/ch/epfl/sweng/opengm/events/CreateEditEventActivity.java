@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -27,7 +28,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;
     private boolean editing;
-    private List<PFMember> participants;
+    private HashMap<String, PFMember> participants;
     private PFGroup currentGroup;
 
     @Override
@@ -40,7 +41,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
         if (event == null) {
             editing = false;
-            participants = new ArrayList<>();
+            participants = new HashMap<>();
         } else {
             editedEvent = event;
             editing = true;
@@ -54,7 +55,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                participants = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+                ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+                for(PFMember member : members) {
+                    participants.put(member.getId(), member);
+                }
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -114,7 +118,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
 
         try {
-            return PFEvent.createEvent(currentGroup, name, place, date, participants, description, null);
+            return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, null);
         } catch (PFException e) {
             // TODO toast ?
             return null;

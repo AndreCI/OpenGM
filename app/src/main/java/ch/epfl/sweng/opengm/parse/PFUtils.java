@@ -11,7 +11,9 @@ import com.parse.ParseObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class contains some static methods that may be called for conversion, saving or checking purposes
@@ -86,13 +88,13 @@ public final class PFUtils {
     /**
      * Converts a list of PFEntities into a JSonarray whose elements are the id of the entities
      *
-     * @param entitiesList A list that contains some PFEntity we want to get the ids
+     * @param entities A collection that contains some PFEntity we want to get the ids
      * @return A JSONArray whose elements are the ids of the parameter
      */
-    public static JSONArray listToArray(List<? extends PFEntity> entitiesList) {
+    public static JSONArray collectionToArray(Collection<? extends PFEntity> entities) {
         JSONArray array = new JSONArray();
-        for (int i = 0; i < entitiesList.size(); i++) {
-            array.put(entitiesList.get(i).getId());
+        for (PFEntity entity : entities) {
+            array.put(entity.getId());
         }
         return array;
     }

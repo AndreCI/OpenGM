@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,8 +30,8 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public final class PFEvent extends PFEntity implements Parcelable, Comparable<PFEvent> {
@@ -42,7 +43,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     private Date mDate;
     private String mPlace;
     private Bitmap mPicture;
-    private List<PFMember> mParticipants;
+    private HashMap<String, PFMember> mParticipants;
 
     public PFEvent(Parcel in) {
         super(in, PARSE_TABLE_EVENT);
@@ -51,10 +52,13 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         mDate = Utils.stringToDate(in.readString());
         mPlace = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
-        Parcelable[] members = in.readParcelableArray(PFMember.class.getClassLoader());
-        mParticipants = new ArrayList<>();
-        for(Parcelable p : members) {
-            mParticipants.add((PFMember) p);
+        List<String> participantKeys = new ArrayList<>();
+        List<PFMember> participants = new ArrayList<>();
+        in.readStringList(participantKeys);
+        in.readTypedList(participants, PFMember.CREATOR);
+        mParticipants = new HashMap<>();
+        for(int i = 0; i < participants.size(); ++i) {
+            mParticipants.put(participantKeys.get(i), participants.get(i));
         }
     }
 
@@ -76,8 +80,11 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         this.mPlace = place;
         this.mDate = new Date(date.getYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
         this.mDescription = description;
-        this.mParticipants = new ArrayList<>();
-        this.mParticipants = new ArrayList<>(participants);
+        this.mParticipants = new HashMap<>();
+        for(PFMember p : participants) {
+            mParticipants.put(p.getId(), p);
+            //TODO : participants is list of String or PFMemeber?
+        }
         this.mPicture = picture;
     }
 
@@ -121,12 +128,16 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         this.mPicture = mPicture;
     }
 
-    public List<PFMember> getParticipants() {
-        return mParticipants;
+    public HashMap<String, PFMember> getParticipants() {
+        return new HashMap<>(mParticipants);
     }
 
-    public void setParticipants(List<PFMember> mParticipants) {
-        this.mParticipants = mParticipants;
+    public PFMember addParticipant(String id, PFMember participant) {
+        return mParticipants.put(id, participant);
+    }
+
+    public PFMember removeParticipant(String id) {
+        return mParticipants.remove(id);
     }
 
 
@@ -158,17 +169,17 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                         oldParticipants.add(memberId);
                     }
                     if (!new HashSet<>(participants).equals(oldParticipants)) {
-                        this.mParticipants = new ArrayList<>();
+                        this.mParticipants = new HashMap<>();
                         for (String participantID : participants) {
                             try {
-                                mParticipants.add(PFMember.fetchExistingMember(participantID));
+                                mParticipants.put(participantID, PFMember.fetchExistingMember(participantID));
                             } catch (PFException e) {
                                 // Just do not add this guy :)
                             }
                         }
                     }
                 }
-                for (PFMember member : mParticipants) {
+                for (PFMember member : mParticipants.values()) {
                     member.reload();
                 }
             }
@@ -198,7 +209,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                                 object.put(EVENT_ENTRY_PLACE, mPlace);
                                 break;
                             case EVENT_ENTRY_PARTICIPANTS:
-                                object.put(EVENT_ENTRY_PARTICIPANTS, listToArray(mParticipants));
+                                object.put(EVENT_ENTRY_PARTICIPANTS, collectionToArray(mParticipants.values()));
                                 break;
                             default:
                                 return;
@@ -332,7 +343,14 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         dest.writeString(dateToString(mDate));
         dest.writeString(mPlace);
         dest.writeParcelable(mPicture, flags);
-        dest.writeParcelableArray(mParticipants.toArray(new PFMember[0]), flags);
+        List<String> participantKeys = new ArrayList<>();
+        List<PFMember> participants = new ArrayList<>();
+        for(String s : mParticipants.keySet()) {
+            participantKeys.add(s);
+            participants.add(mParticipants.get(s));
+        }
+        dest.writeStringList(participantKeys);
+        dest.writeTypedList(participants);
     }
 
     @Override

@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
@@ -36,7 +38,7 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
  * but we do not download its list of groups (otherwise we may end up with downloading all the groups)
  * just keep it so we may still be able to add it to the group or remove it.
  */
-public final class PFMember extends PFEntity {
+public final class PFMember extends PFEntity implements Parcelable {
 
     private final static String PARSE_TABLE_USER = USER_TABLE_NAME;
 
@@ -67,6 +69,19 @@ public final class PFMember extends PFEntity {
         this.mPicture = bitmap;
         this.mRoles = new ArrayList<>(roles);
         this.mGroups = new ArrayList<>(groups);
+    }
+
+    public PFMember(Parcel source) {
+        super(source, PARSE_TABLE_USER);
+        mUsername = source.readString();
+        mFirstName = source.readString();
+        mLastName = source.readString();
+        mEmail = source.readString();
+        mPhoneNumber = source.readString();
+        mAboutUser = source.readString();
+        mPicture = source.readParcelable(Bitmap.class.getClassLoader());
+        mRoles = source.createStringArrayList();
+        mGroups = source.createStringArrayList();
     }
 
     @Override
@@ -343,10 +358,34 @@ public final class PFMember extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(mId);
+        dest.writeString(dateToString(lastModified));
+        dest.writeString(mUsername);
+        dest.writeString(mFirstName);
+        dest.writeString(mLastName);
+        dest.writeString(mNickname);
+        dest.writeString(mEmail);
+        dest.writeString(mPhoneNumber);
+        dest.writeString(mAboutUser);
+        dest.writeParcelable(mPicture, flags);
+        dest.writeStringList(mRoles);
+        dest.writeStringList(mGroups);
     }
 
     public String getName() {
         return getLastname() + " - " + getFirstname();
     }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+
+        @Override
+        public PFMember createFromParcel(Parcel source) {
+            return new PFMember(source);
+        }
+
+        @Override
+        public PFMember[] newArray(int size) {
+            return new PFMember[size];
+        }
+    };
 }
