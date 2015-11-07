@@ -54,7 +54,7 @@ public final class PFGroup extends PFEntity {
 
     private HashMap<String, PFMember> mMembers;
 
-    private List<PFEvent> mEvents;
+    private HashMap<String, PFEvent> mEvents;
 
     private String mName;
     private String mDescription;
@@ -72,8 +72,8 @@ public final class PFGroup extends PFEntity {
         in.readStringList(rolesZip);
         List<String[]> roles = unzipRoles(rolesZip);
         fillMembersMap(users, nicknames, roles);
-        mEvents = new ArrayList<>();
-        in.readTypedList(mEvents, PFEvent.CREATOR);
+        mEvents = new HashMap<>();
+        // in.readTypedList(mEvents, PFEvent.CREATOR);
         mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
         mDescription = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
@@ -89,10 +89,10 @@ public final class PFGroup extends PFEntity {
             throw new IllegalArgumentException("Arrays' size don't match for group " + groupId + " " + users.size() + " " + nicknames.size() + " " + roles.size());
         }
         fillMembersMap(users, nicknames, roles);
-        mEvents = new ArrayList<>();
+        mEvents = new HashMap<>();
         for (String eventId : events) {
             try {
-                mEvents.add(PFEvent.fetchExistingEvent(eventId));
+                mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId));
             } catch (PFException e) {
                 // Do not add the event but to nothing
             }
@@ -152,8 +152,8 @@ public final class PFGroup extends PFEntity {
                 String[] eventsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
 
                 HashSet<String> oldEvents = new HashSet<>();
-                for (PFEvent event : mEvents) {
-                    oldEvents.add(event.getId());
+                for (String eventId : mEvents.keySet()) {
+                    oldEvents.add(eventId);
                 }
                 HashSet<String> newEvents = new HashSet<>();
                 for (int i = 0; i < eventsArray.length; i++) {
@@ -161,10 +161,11 @@ public final class PFGroup extends PFEntity {
                 }
 
                 if (!newEvents.equals(oldEvents)) {
-                    mEvents = new ArrayList<>();
+                    mEvents = new HashMap<>();
                     for (int i = 0; i < eventsArray.length; i++) {
                         try {
-                            mEvents.add(PFEvent.fetchExistingEvent(eventsArray[i]));
+                            String eventId = eventsArray[i];
+                            mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId));
                         } catch (PFException e) {
                             // Do not add the event but to nothing
                         }
@@ -180,7 +181,7 @@ public final class PFGroup extends PFEntity {
             for (PFMember member : mMembers.values()) {
                 member.reload();
             }
-            for (PFEvent event : mEvents) {
+            for (PFEvent event : mEvents.values()) {
                 event.reload();
             }
         } catch (ParseException e) {
@@ -218,7 +219,7 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_ROLES, rolesArray);
                             break;
                         case GROUP_ENTRY_EVENTS:
-                            object.put(GROUP_ENTRY_EVENTS, listToArray(mEvents));
+                            object.put(GROUP_ENTRY_EVENTS, listToArray(new ArrayList<PFEntity>(mEvents.values())));
                             break;
                         case GROUP_ENTRY_DESCRIPTION:
                             object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
@@ -348,15 +349,75 @@ public final class PFGroup extends PFEntity {
     }
 
     public List<PFEvent> getEvents() {
-        return mEvents;
-    }
-
-    public void addEvent(PFEvent event) {
-        mEvents.add(event);
+        return new ArrayList<>(mEvents.values());
     }
 
     public boolean hasMembers() {
         return (mMembers != null && !mMembers.isEmpty());
+    }
+
+    /**
+     * Add an event to the list of events of this group
+     *
+     * @param event The event we want to add
+     */
+    public void addEvent(PFEvent event) {
+        if (!mEvents.containsKey(event.getId())) {
+            try {
+                mEvents.put(event.getId(), event);
+                updateToServer(GROUP_ENTRY_EVENTS);
+            } catch (PFException e) {
+                mEvents.remove(event.getId());
+            }
+        }
+    }
+
+    /**
+     * Add an event to the list of events of this group
+     *
+     * @param eventId The if of the event we want to add
+     */
+    public void addEvent(String eventId) {
+        if (!mEvents.containsKey(eventId)) {
+            try {
+                addEvent(PFEvent.fetchExistingEvent(eventId));
+            } catch (PFException e) {
+                // TODO what ?
+            }
+        }
+    }
+
+    /**
+     * Remove an event to the list of events of this group
+     *
+     * @param event The event we want to remove
+     */
+    public void removeEvent(PFEvent event) {
+        if (mEvents.containsKey(event.getId())) {
+            try {
+                mEvents.remove(event.getId());
+                updateToServer(GROUP_ENTRY_EVENTS);
+                // Delete also the event of the server
+                event.delete();
+            } catch (PFException e) {
+                mEvents.put(event.getId(), event);
+            }
+        }
+    }
+
+    /**
+     * Remove an event to the list of events of this group
+     *
+     * @param eventId The if of the event we want to remove
+     */
+    public void removeEvent(String eventId) {
+        if (mEvents.containsKey(eventId)) {
+            try {
+                removeEvent(PFEvent.fetchExistingEvent(eventId));
+            } catch (PFException e) {
+                // TODO what ?
+            }
+        }
     }
 
     /**
@@ -664,7 +725,7 @@ public final class PFGroup extends PFEntity {
         }
         dest.writeStringList(nicknames);
         dest.writeStringList(rolesZip);
-        dest.writeTypedList(mEvents);
+        //dest.writeTypedList(mEvents);
         if (mIsPrivate) {
             dest.writeInt(0);
         } else {

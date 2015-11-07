@@ -30,6 +30,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
+import static ch.epfl.sweng.opengm.parse.PFUtils.listToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public final class PFEvent extends PFEntity implements Parcelable, Comparable<PFEvent> {
@@ -196,9 +197,9 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                             case EVENT_ENTRY_PLACE:
                                 object.put(EVENT_ENTRY_PLACE, mPlace);
                                 break;
-//                            case EVENT_ENTRY_PARTICIPANTS:
-//                                object.put(EVENT_ENTRY_PARTICIPANTS, ???);
-//                                break;
+                            case EVENT_ENTRY_PARTICIPANTS:
+                                object.put(EVENT_ENTRY_PARTICIPANTS, listToArray(mParticipants));
+                                break;
                             default:
                                 return;
                         }
@@ -218,6 +219,21 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 }
             }
         });
+    }
+
+    /**
+     * Delete the current event on the server
+     *
+     * @throws PFException if something bad happened while communicating with the serve
+     */
+    public void delete() throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_EVENT);
+        try {
+            ParseObject object = query.get(getId());
+            object.delete();
+        } catch (ParseException e) {
+            throw new PFException();
+        }
     }
 
     public static PFEvent createEvent(String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
@@ -321,4 +337,5 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     public int compareTo(PFEvent another) {
         return mDate.compareTo(another.mDate);
     }
+
 }
