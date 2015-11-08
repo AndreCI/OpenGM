@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/dialog_add_member_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/dialog_add_member_title"
+        android:textSize="30dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/dialog_add_member_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_add_member_title"
+        android:text="@string/dialog_add_member_text"/>
+
+    <EditText
+        android:id="@+id/dialog_add_member_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_add_member_text"/>
+
+</RelativeLayout>

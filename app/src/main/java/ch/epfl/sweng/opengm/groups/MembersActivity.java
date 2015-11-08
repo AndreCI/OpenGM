@@ -1,6 +1,8 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -22,6 +24,7 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class MembersActivity extends AppCompatActivity {
 
+    private AlertDialog addMember;
     private ListView list;
     private PFGroup group;
     private MembersAdapter adapter;
@@ -39,6 +42,24 @@ public class MembersActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         selectMode = false;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.dialog_add_member, null))
+
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        addMember = builder.create();
 
         int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
         group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
@@ -135,7 +156,7 @@ public class MembersActivity extends AppCompatActivity {
     }
 
     private void addPerson() {
-
+        addMember.show();
     }
 
     private void removePerson() {
