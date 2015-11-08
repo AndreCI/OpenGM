@@ -119,7 +119,8 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_leave:
-                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment(currentGroup);
+                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment();
+                leaveGroupDialog.setGroupToLeave(currentGroup);
                 leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
                 break;
             case R.id.nav_home:
