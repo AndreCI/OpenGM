@@ -73,7 +73,7 @@ public class ShowEventActivity extends AppCompatActivity {
     private void fillEventParticipants() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Participants:");
-        for (PFMember participant : event.getParticipants()) {
+        for (PFMember participant : event.getParticipants().values()) {
             stringBuilder.append('\n');
 
             stringBuilder.append(participant.getUsername());

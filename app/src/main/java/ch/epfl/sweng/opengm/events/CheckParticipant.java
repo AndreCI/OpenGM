@@ -13,7 +13,7 @@ public class CheckParticipant {
         return mParticipant.getName();
     }
 
-    public boolean getCheck() {
+    public boolean isChecked() {
         return mIsCheck;
     }
 

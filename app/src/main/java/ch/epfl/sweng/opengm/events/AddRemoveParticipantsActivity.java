@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +34,6 @@ import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
     public static final String ADD_REMOVE_PARTICIPANTS_RESULT = "CL4P-TP";
-    public static int geneId = 0; //TODO : used for the quickClass to test, delete it later.
-    private HashMap<String, PFMember> members;
-    private HashMap<String, PFMember> membersToAdd;
-    private List<String> sortedMembers;
     private CustomAdapter participantsAdapter;
 
     @Override
@@ -45,36 +42,38 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_remove_participants);
         Intent intent = getIntent();
         PFEvent currentEvent = intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
-        sortedMembers = new ArrayList<>();
+        HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
-            membersToAdd = currentEvent.getParticipants();
+            membersToAdd.putAll(currentEvent.getParticipants());
         } else {
-            membersToAdd = new HashMap<>();
+            try {
+                membersToAdd.put("N47JlrQTSA", PFMember.fetchExistingMember("N47JlrQTSA"));
+                membersToAdd.put("QdGhRMLGPt", PFMember.fetchExistingMember("QdGhRMLGPt"));
+            } catch (PFException e) {
+                e.printStackTrace();
+            }
         }
         PFGroup currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
+
+        HashMap<String, PFMember> allMembers = new HashMap<>();
         if (currentGroup != null && currentGroup.hasMembers()) {
-            members = currentGroup.getMembers();
+            allMembers.putAll(currentGroup.getMembers());
         } else {
-            members = new HashMap<>();
             try {
-                members.put("oqMblls8Cb", PFMember.fetchExistingMember("oqMblls8Cb"));
+                allMembers.put("oqMblls8Cb", PFMember.fetchExistingMember("oqMblls8Cb"));
+                allMembers.put("f9PMNCFLXN", PFMember.fetchExistingMember("f9PMNCFLXN"));
+                allMembers.put("N47JlrQTSA", PFMember.fetchExistingMember("N47JlrQTSA"));
+                allMembers.put("QdGhRMLGPt", PFMember.fetchExistingMember("QdGhRMLGPt"));
+
             } catch (PFException e) {
                 e.printStackTrace();
             }
         }
 
-        List<CheckParticipant> checkParticipants = new ArrayList<>(members.size());
+        List<CheckParticipant> checkParticipants = new ArrayList<>(allMembers.size());
 
-        for (PFMember m : membersToAdd.values()) {
-            checkParticipants.add(new CheckParticipant(m, true));
-            sortedMembers.add(m.getName());
-        }
-        List<PFMember> notAddedMembers = new ArrayList<>();
-        notAddedMembers.addAll(members.values());
-        notAddedMembers.removeAll(membersToAdd.values());
-        for (PFMember m : notAddedMembers) {
-            checkParticipants.add(new CheckParticipant(m, false));
-            sortedMembers.add(m.getName());
+        for (PFMember m : allMembers.values()) {
+            checkParticipants.add(new CheckParticipant(m, membersToAdd.keySet().contains(m.getId())));
         }
 
         participantsAdapter = new CustomAdapter(this, R.layout.check_participant_info, checkParticipants);
@@ -89,12 +88,6 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
                 checkBox.performClick();
                 CheckParticipant checkParticipant = (CheckParticipant) checkBox.getTag();
                 checkParticipant.setCheck(checkBox.isChecked());
-                PFMember member = checkParticipant.getParticipant();
-                if (checkParticipant.getCheck()) {
-                    membersToAdd.put(member.getId(), member);
-                } else {
-                    membersToAdd.remove(member);
-                }
             }
         });
 
@@ -102,56 +95,53 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
-                Collections.sort(sortedMembers, getComparator(query));
+                Collections.sort(participantsAdapter.participants, getComparator(query));
                 displayParticipants(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-                Collections.sort(sortedMembers, getComparator(newText));
+                Collections.sort(participantsAdapter.participants, getComparator(newText));
                 displayParticipants(newText);
                 return true;
             }
         });
-        Collections.sort(sortedMembers, getComparator(""));
+        Collections.sort(participantsAdapter.participants, getComparator(""));
         displayParticipants("");
     }
 
-    /**
-     * When click on okay button, this should return all the checked members to an other activity
-     * //TODO : code it!
-     *
-     * @param v
-     */
     public void clickOnOkayButton(View v) {
         Intent intent = new Intent();
-        intent.putParcelableArrayListExtra(ADD_REMOVE_PARTICIPANTS_RESULT, new ArrayList<>(membersToAdd.values()));
+        ArrayList<Parcelable> result = participantsAdapter.checkList();
+        intent.putParcelableArrayListExtra(ADD_REMOVE_PARTICIPANTS_RESULT, result);
         setResult(Activity.RESULT_OK, intent);
-        Toast.makeText(this, "members to add size" + membersToAdd.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "members to add size" + result.size(), Toast.LENGTH_SHORT).show();
 
         //finish();
     }
 
     /**
      * A private method to compare members, depending on their name. Maybe later we can implements
-     * others way to sort? //TODO : add comparator option to sort members
+     * others way to sort?
      *
      * @param s : if the member's name contains s, it will have a higher priority
      * @return : the comparator
      */
-    private Comparator<String> getComparator(final String s) {
-        return new Comparator<String>() {
+    private Comparator<CheckParticipant> getComparator(final String s) {
+        return new Comparator<CheckParticipant>() {
             @Override
-            public int compare(String lhs, String rhs) {
-                if (lhs.contains(s) && rhs.contains(s)) {
-                    return lhs.compareTo(rhs);
-                } else if (lhs.contains(s) && !rhs.contains(s)) {
+            public int compare(CheckParticipant lhs, CheckParticipant rhs) {
+                String lName = lhs.getName();
+                String rName = rhs.getName();
+                if (lName.contains(s) && rName.contains(s)) {
+                    return lName.compareTo(rName);
+                } else if (lName.contains(s) && !rName.contains(s)) {
                     return -1;
-                } else if (!lhs.contains(s) && rhs.contains(s)) {
+                } else if (!lName.contains(s) && rName.contains(s)) {
                     return 1;
                 } else {
-                    return lhs.compareTo(rhs);
+                    return lName.compareTo(rName);
                 }
             }
         };
@@ -186,7 +176,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            ViewHolder holder = null;
+            ViewHolder holder;
 
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(
@@ -203,11 +193,22 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
             CheckParticipant checkParticipant = participants.get(position);
             holder.textView.setText(checkParticipant.getName());
-            holder.checkBox.setChecked(checkParticipant.getCheck());
+            holder.checkBox.setChecked(checkParticipant.isChecked());
             holder.checkBox.setTag(checkParticipant);
             holder.textView.setTag(checkParticipant);
 
             return convertView;
+        }
+
+        private ArrayList<Parcelable> checkList() {
+            ArrayList<Parcelable> list = new ArrayList<>();
+            for(int i = 0; i < participants.size(); ++i) {
+                CheckParticipant checkParticipant = participants.get(i);
+                if(checkParticipant.isChecked()) {
+                    list.add(checkParticipant.getParticipant());
+                }
+            }
+            return list;
         }
     }
 }
