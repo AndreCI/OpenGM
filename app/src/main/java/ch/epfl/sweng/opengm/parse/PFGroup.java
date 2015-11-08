@@ -177,6 +177,16 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
+     * Getter for a particular member
+     *
+     * @param userId The user id of the member to retrieve
+     * @return The member
+     */
+    public PFMember getMember(String userId) {
+        return mMembers.get(userId);
+    }
+
+    /**
      * getter for the description of the group
      *
      * @return A string containing the description of the group
@@ -268,8 +278,8 @@ public final class PFGroup extends PFEntity {
     /**
      * Check if a member is already in this group
      *
-     * @param userId the user id of the member
-     * @return if the member belong to this group
+     * @param userId The user id of the member
+     * @return If the member belong to this group
      */
     public boolean containsMember(String userId) {
         return mMembers.containsKey(userId);
