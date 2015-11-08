@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import java.util.List;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -51,6 +53,24 @@ public class MyGroupsActivity extends AppCompatActivity {
             DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
             noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
         }
+
+        final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
+        swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeToRefreshLayout.setRefreshing(true);
+
+                try {
+                    Thread.sleep(1000);
+                    getCurrentUser().reload();  // TODO: make reload returns a boolean
+                    findViewById(R.id.myGroupsMainLayout).invalidate(); // TODO: relaucnh the whole activity
+                } catch (InterruptedException | PFException e) {
+                    e.printStackTrace();
+                }
+
+                swipeToRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     public void gotoGroup(View view) {
