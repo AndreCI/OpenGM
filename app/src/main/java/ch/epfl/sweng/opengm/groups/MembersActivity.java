@@ -170,20 +170,21 @@ public class MembersActivity extends AppCompatActivity {
         addMember.show();
     }
 
+    // if no connection we'll get a consitency problem between members and what actually is on parse
     private void removePerson() {
-        //TODO: implement method
+        ArrayList<String> userIds = getCheckedIds(true);
+
+        adapter.notifyDataSetChanged();
+
+        for (String userId : userIds) {
+            group.removeUser(userId);
+        }
+
+        setSelectMode(false);
     }
 
     private void changeRoles() {
-        ArrayList<String> userIds = new ArrayList<>();
-
-        for (int i = 0; i < list.getCount(); i++) {
-            View v = list.getChildAt(i);
-            CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
-            if (c.isChecked()) {
-                userIds.add(members.get(i).getId());
-            }
-        }
+        ArrayList<String> userIds = getCheckedIds(false);
 
         Intent intent = new Intent(this, ManageRolesActivity.class);
         intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
@@ -225,5 +226,27 @@ public class MembersActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // get the user ids of the checked user and delete them from members if rm is true
+    private ArrayList<String> getCheckedIds(boolean rm) {
+        ArrayList<String> userIds = new ArrayList<>();
+        ArrayList<PFMember> membersToRemove = new ArrayList<>();
+
+        for (int i = 0; i < list.getCount(); i++) {
+            View v = list.getChildAt(i);
+            CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
+            if (c.isChecked()) {
+                c.setChecked(false);
+                userIds.add(members.get(i).getId());
+                if (rm) {
+                    membersToRemove.add(members.get(i));
+                }
+            }
+        }
+
+        members.removeAll(membersToRemove);
+
+        return userIds;
     }
 }
