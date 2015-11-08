@@ -63,20 +63,16 @@ public final class PFGroup extends PFEntity {
     public PFGroup(Parcel in) {
         super(in, PARSE_TABLE_GROUP);
         this.mName = in.readString();
-        List<String> users = new ArrayList<>();
-        in.readStringList(users);
-        List<String> nicknames = new ArrayList<>();
-        in.readStringList(nicknames);
-        List<String> rolesZip = new ArrayList<>();
-        in.readStringList(rolesZip);
+        List<String> users = in.createStringArrayList();
+        List<String> nicknames = in.createStringArrayList();
+        List<String> rolesZip = in.createStringArrayList();
         List<String[]> roles = unzipRoles(rolesZip);
         fillMembersMap(users, nicknames, roles);
         mEvents = new HashMap<>();
-        List<String> eventKeys = new ArrayList<>();
-        in.readStringList(eventKeys);
+        List<String> eventKeys = in.createStringArrayList();
         List<PFEvent> events = new ArrayList<>();
         in.readTypedList(events, PFEvent.CREATOR);
-        for(int i = 0; i < events.size(); ++i) {
+        for (int i = 0; i < events.size(); ++i) {
             mEvents.put(eventKeys.get(i), events.get(i));
         }
         mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
@@ -99,7 +95,7 @@ public final class PFGroup extends PFEntity {
             try {
                 mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId));
             } catch (PFException e) {
-                // Do not add the event but to nothing
+                // Do not add the event but do nothing
             }
         }
         mName = name;
@@ -108,17 +104,21 @@ public final class PFGroup extends PFEntity {
         mPicture = picture;
     }
 
-    private void fillMembersMap(List<String> users, List<String> surnames, List<String[]> roles) {
+    private void fillMembersMap(List<String> users, List<String> nicknames, List<String[]> roles) {
         mMembers = new HashMap<>();
-        for (int i = 0; i < users.size(); i++) {
-            try {
-                String userId = users.get(i);
-                String nickname = surnames.get(i);
-                String[] role = roles.get(i);
-                mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
-            } catch (PFException e) {
-                //TODO : what to do?
+        if (users.size() == nicknames.size() && users.size() == roles.size()) {
+            for (int i = 0; i < users.size(); i++) {
+                try {
+                    String userId = users.get(i);
+                    String nickname = nicknames.get(i);
+                    String[] role = roles.get(i);
+                    mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
+                } catch (PFException e) {
+                    //TODO : what to do ?
+                }
             }
+        } else {
+            throw new IllegalArgumentException("list size different: " + users.size() + '-' + nicknames.size() + '-' + roles.size());
         }
     }
 
@@ -718,9 +718,10 @@ public final class PFGroup extends PFEntity {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mId);
         dest.writeString(dateToString(lastModified));
+        dest.writeString(mName);
         List<String> ids = new ArrayList<>();
         List<PFMember> members = new ArrayList<>();
-        for(String s: mMembers.keySet()) {
+        for (String s : mMembers.keySet()) {
             ids.add(s);
             members.add(mMembers.get(s));
         }
@@ -735,7 +736,7 @@ public final class PFGroup extends PFEntity {
         dest.writeStringList(rolesZip);
         List<String> eventKeys = new ArrayList<>();
         List<PFEvent> events = new ArrayList<>();
-        for(String s : mEvents.keySet()) {
+        for (String s : mEvents.keySet()) {
             eventKeys.add(s);
             events.add(mEvents.get(s));
         }

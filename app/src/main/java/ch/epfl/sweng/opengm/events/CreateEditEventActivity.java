@@ -38,7 +38,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
         if (event == null) {
             editing = false;
             participants = new HashMap<>();
@@ -85,7 +85,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
-        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
+        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
         startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 

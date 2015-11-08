@@ -81,6 +81,7 @@ public class PFGroupTest {
 
         parcel.readString(); //group id
         parcel.readString(); //last modified
+        assertEquals(name, parcel.readString());
         ArrayList<String> ids = new ArrayList<>();
         parcel.readStringList(ids);
         assertEquals(1, ids.size());
@@ -102,8 +103,10 @@ public class PFGroupTest {
         assertNotNull(roles);
         assertEquals(1, roles.size());
         List<PFEvent> events = new ArrayList<>();
+        List<String> eventsKeys = parcel.createStringArrayList();
         parcel.readTypedList(events, PFEvent.CREATOR);
         assertEquals(0, events.size());
+        assertEquals(events.size(), eventsKeys.size());
         assertEquals(42, parcel.readInt());
         assertEquals(description, parcel.readString());
         assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));
@@ -112,12 +115,12 @@ public class PFGroupTest {
 
     @Test
     public void testConstructFromParcel() {
-        id1 = getRandomId();
-        String id = "1446907048032";
+        id1 = getRandomId(); //group
+        id2 = getRandomId(); //user
         String name = "testGroup";
         Date date = new Date();
         List<String> ids = new ArrayList<>();
-        ids.add(id);
+        ids.add(id2);
         List<String> nicknames = new ArrayList<>();
         nicknames.add(USERNAME);
         String[] role = new String[2];
@@ -125,6 +128,7 @@ public class PFGroupTest {
         role[1] = "bobbbbbbyyyyy!!!";
         List<String> roles = new ArrayList<>();
         roles.add(zipRole(role));
+        List<String> eventKeys = new ArrayList<>();
         List<PFEvent> events = new ArrayList<>();
         int isPrivate = 0;
         String description = "testDescription";
@@ -138,12 +142,19 @@ public class PFGroupTest {
         in.writeStringList(ids);
         in.writeStringList(nicknames);
         in.writeStringList(roles);
+        in.writeStringList(eventKeys);
         in.writeTypedList(events);
         in.writeInt(isPrivate);
         in.writeString(description);
         in.writeParcelable(picture, 0);
 
         in.setDataPosition(0);
+
+        try {
+            PFUser.createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
         PFGroup group = new PFGroup(in);
 
@@ -157,6 +168,7 @@ public class PFGroupTest {
         assertEquals(date.getMinutes(), lastModified.getMinutes());
         assertEquals(name, group.getName());
         assertEquals(description, group.getDescription());
+        assertEquals(eventKeys.size(), group.getEvents().size());
         assertEquals(events.size(), group.getEvents().size());
         assertEquals(true, group.isPrivate());
         assertNull(group.getPicture());
@@ -228,7 +240,7 @@ public class PFGroupTest {
             assertEquals(1, group.getMembers().size());
             assertTrue(group.getMembersWithoutUser(id1).isEmpty());
 
-            PFMember member = group.getMembers().get(0);
+            PFMember member = (PFMember) group.getMembers().values().toArray()[0];
 
             assertTrue(member.getRoles().isEmpty());
             assertEquals(USERNAME, member.getNickname());

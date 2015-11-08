@@ -45,29 +45,12 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
             membersToAdd.putAll(currentEvent.getParticipants());
-        } else {
-            try {
-                membersToAdd.put("N47JlrQTSA", PFMember.fetchExistingMember("N47JlrQTSA"));
-                membersToAdd.put("QdGhRMLGPt", PFMember.fetchExistingMember("QdGhRMLGPt"));
-            } catch (PFException e) {
-                e.printStackTrace();
-            }
         }
-        PFGroup currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
+        PFGroup currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
 
         HashMap<String, PFMember> allMembers = new HashMap<>();
         if (currentGroup != null && currentGroup.hasMembers()) {
             allMembers.putAll(currentGroup.getMembers());
-        } else {
-            try {
-                allMembers.put("oqMblls8Cb", PFMember.fetchExistingMember("oqMblls8Cb"));
-                allMembers.put("f9PMNCFLXN", PFMember.fetchExistingMember("f9PMNCFLXN"));
-                allMembers.put("N47JlrQTSA", PFMember.fetchExistingMember("N47JlrQTSA"));
-                allMembers.put("QdGhRMLGPt", PFMember.fetchExistingMember("QdGhRMLGPt"));
-
-            } catch (PFException e) {
-                e.printStackTrace();
-            }
         }
 
         List<CheckParticipant> checkParticipants = new ArrayList<>(allMembers.size());
@@ -116,9 +99,9 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         ArrayList<Parcelable> result = participantsAdapter.checkList();
         intent.putParcelableArrayListExtra(ADD_REMOVE_PARTICIPANTS_RESULT, result);
         setResult(Activity.RESULT_OK, intent);
-        Toast.makeText(this, "members to add size" + result.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "members to add size " + result.size(), Toast.LENGTH_SHORT).show();
 
-        //finish();
+        finish();
     }
 
     /**
