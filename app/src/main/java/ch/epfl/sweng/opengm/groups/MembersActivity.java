@@ -12,15 +12,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
+
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.utils.Alert;
 
 public class MembersActivity extends AppCompatActivity {
 
@@ -38,35 +46,37 @@ public class MembersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members);
 
+        // need to call it at the creation of each activity
+        OpenGMApplication.setCurrentActivity(this);
+
+        // get the group in which we are
+        int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
+        group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
+        members = group.getMembers();
+
         if (getActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         selectMode = false;
 
+        // create the dialog that add members which then only need to be shown
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(getLayoutInflater().inflate(R.layout.dialog_add_member, null))
-
+        View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_member, null);
+        final EditText edit = (EditText)dialogLayout.findViewById(R.id.dialog_add_member_username);
+        builder.setView(dialogLayout)
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        String username = String.valueOf(edit.getText());
+                        addUser(username);
+                        edit.getText().clear();
                     }
                 })
-
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+                .setNegativeButton(R.string.cancel, null);
         addMember = builder.create();
 
-        int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
-        group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
-        members = group.getMembers();
-
+        // set the adapter for the list of member
         list = (ListView) findViewById(R.id.member_list);
-
         adapter = new MembersAdapter(this, R.layout.item_member, members, selectMode);
         list.setAdapter(adapter);
 
@@ -80,10 +90,10 @@ public class MembersActivity extends AppCompatActivity {
             }
         });
 
+        // when select mode click on item selects it
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // when select mode click on item selects it
                 if (selectMode) {
                     ((CheckBox) view.findViewById(R.id.member_checkbox)).performClick();
                 }
@@ -91,6 +101,7 @@ public class MembersActivity extends AppCompatActivity {
         });
     }
 
+    // to leave select mode when done managing roles
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -160,7 +171,7 @@ public class MembersActivity extends AppCompatActivity {
     }
 
     private void removePerson() {
-
+        //TODO: implement method
     }
 
     private void changeRoles() {
@@ -177,9 +188,10 @@ public class MembersActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ManageRolesActivity.class);
         intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
         intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
+    // change to select mode or back to normal mode
     private void setSelectMode(boolean m) {
         selectMode = m;
         adapter.setSelectMode(selectMode);
@@ -190,5 +202,28 @@ public class MembersActivity extends AppCompatActivity {
         } else {
             setTitle(group.getName());
         }
+    }
+
+    // add a user to the group and to the list that is displayed in background according to a username
+    private void addUser(String username) {
+        ParseQuery query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
+        query.whereEqualTo(PFConstants.USER_ENTRY_USERNAME, username);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if (parseObject != null) {
+                    String userId = parseObject.getString(PFConstants.USER_ENTRY_USERID);
+                    if (!group.containsMember(userId)) {
+                        group.addUser(userId);
+                        members.add(group.getMember(userId));
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Alert.displayAlert("User already belongs to this group.");
+                    }
+                } else {
+                    Alert.displayAlert("Could not found this username");
+                }
+            }
+        });
     }
 }
