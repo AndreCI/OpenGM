@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.parse.ParseUser;
@@ -44,7 +45,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         groupsRecyclerView.setLayoutManager(gridLayoutManager);
         groupsRecyclerView.setHasFixedSize(true);
 
-        List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
+        final List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
 
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);
@@ -62,8 +63,23 @@ public class MyGroupsActivity extends AppCompatActivity {
 
                 try {
                     Thread.sleep(1000);
-                    getCurrentUser().reload();  // TODO: make reload returns a boolean
-                    findViewById(R.id.myGroupsMainLayout).invalidate(); // TODO: relaucnh the whole activity
+                    getCurrentUser().reload();  // TODO: make reload returns a boolean ???
+
+                    groups.clear();
+                    groups.addAll(getCurrentUser().getGroups());
+
+                    // FIXME: at this point, getGroups() has all the previous groups, but has not added the new group to the list !
+                    Log.v("INFO", "User Groups reloaded");
+                    for (PFGroup group : groups) {
+                        Log.v("INFO", group.getName());
+                    }
+
+//                    ((RecyclerView) findViewById(R.id.groups_recycler_view)).invalidateItemDecorations();
+//                    findViewById(R.id.groups_recycler_view).invalidate();
+                    findViewById(R.id.myGroupsMainLayout).invalidate();
+
+                    Log.v("INFO", "Main View reloaded");
+
                 } catch (InterruptedException | PFException e) {
                     e.printStackTrace();
                 }
