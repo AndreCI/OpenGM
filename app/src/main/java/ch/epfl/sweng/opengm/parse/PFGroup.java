@@ -264,6 +264,16 @@ public final class PFGroup extends PFEntity {
     public boolean hasMembers() {
         return (mMembers != null && !mMembers.isEmpty());
     }
+
+    /**
+     * Check if a member is already in this group
+     *
+     * @param userId the user id of the member
+     * @return if the member belong to this group
+     */
+    public boolean containsMember(String userId) {
+        return mMembers.containsKey(userId);
+    }
     /**
      * Add a particular user to a group by adding its id
      *
@@ -271,7 +281,7 @@ public final class PFGroup extends PFEntity {
      *               user we would like to add to the group
      */
     public void addUser(String userId) {
-        if (mMembers.containsKey(userId)) {
+        if (containsMember(userId)) {
             Alert.displayAlert("User already belongs to this group.");
         } else {
             try {
@@ -293,7 +303,7 @@ public final class PFGroup extends PFEntity {
      *               user we would like to remove from the group
      */
     public void removeUser(String userId) {
-        if (!mMembers.containsKey(userId)) {
+        if (!containsMember(userId)) {
             Alert.displayAlert("User does not belong to this group.");
         } else {
             PFMember oldMember = mMembers.remove(userId);
@@ -319,7 +329,7 @@ public final class PFGroup extends PFEntity {
      */
     public void addRoleToUser(String role, String memberId) {
         if (checkNullArguments(role, "Role for user")) {
-            if (!mMembers.containsKey(memberId)) {
+            if (!containsMember(memberId)) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
                 PFMember member = mMembers.get(memberId);
@@ -342,7 +352,7 @@ public final class PFGroup extends PFEntity {
      */
     public void removeRoleToUser(String role, String memberId) {
         if (checkNullArguments(role, "Role for user")) {
-            if (!mMembers.containsKey(memberId)) {
+            if (!containsMember(memberId)) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
                 PFMember member = mMembers.get(memberId);
@@ -365,7 +375,7 @@ public final class PFGroup extends PFEntity {
      */
     public void setNicknameForUser(String nickname, String memberId) {
         if (checkNullArguments(nickname, "Surname for user")) {
-            if (!mMembers.containsKey(memberId)) {
+            if (!containsMember(memberId)) {
                 Alert.displayAlert("User does not belong to this group.");
             } else {
                 PFMember member = mMembers.get(memberId);
