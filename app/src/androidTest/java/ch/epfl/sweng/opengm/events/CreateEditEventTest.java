@@ -6,6 +6,11 @@ import android.support.test.espresso.ViewInteraction;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 
+import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.Before;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,7 +18,9 @@ import java.util.Date;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
@@ -26,6 +33,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
+import static ch.epfl.sweng.opengm.parse.PFGroup.createNewGroup;
+import static ch.epfl.sweng.opengm.parse.PFUser.createNewUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNot.not;
 
@@ -33,6 +44,26 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     public CreateEditEventTest() {
         super(CreateEditEventActivity.class);
     }
+
+    private final String EMAIL = "bobby.lapointe@caramail.co.uk";
+    private final String USERNAME = "BobTheBobbyGroupTest";
+    private final String FIRST_NAME = "Bobby";
+    private final String LAST_NAME = "LaPointe";
+
+    private PFEvent e;
+    private PFGroup group;
+    private PFUser user;
+    private String id;
+
+
+    @Before
+    public void newIds() {
+        e = null;
+        group = null;
+        id = null;
+        user = null;
+    }
+
 
     @Override
     public void setUp() throws Exception {
@@ -48,7 +79,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         nameText.check(matches(hasErrorText(act.getString(R.string.CreateEditEmptyNameErrorMessage))));
     }
 
-    public  void testNameButNoTime() {
+    public void testNameButNoTime() {
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
         closeSoftKeyboard();
@@ -61,8 +92,17 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     }
 
     public void testEventInIntent() throws PFException {
+        id = getRandomId();
+        String name = "Really Nice Group";
+        String description = "A group, much nicer than the previous one";
+        try {
+            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
         Intent i = new Intent();
-        PFEvent e = PFEvent.createEvent("testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
@@ -74,6 +114,15 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     }
 
     public void testNoParticipants() throws PFException {
+        id = getRandomId();
+        String name = "Really Nice Group";
+        String description = "A group, much nicer than the previous one";
+        try {
+            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
         Intent i = new Intent();
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -81,12 +130,29 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         int day = c.get(Calendar.DAY_OF_MONTH);
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
-        Date date = new Date(year, month+1, day, hour, min);
-        PFEvent e = PFEvent.createEvent("testName", "testPlace", date, new ArrayList<PFMember>(), "testDescription", null);
+        Date date = new Date(year, month + 1, day, hour, min);
+        e = PFEvent.createEvent(group, "testName", "testPlace", date, new ArrayList<PFMember>(), "testDescription", null);
         i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
         setActivityIntent(i);
         getActivity();
         onView(withId(R.id.CreateEditOkButton)).perform(click());
         onView(withText(R.string.CreateEditNoParticipants)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
+    }
+
+    @After
+    public void deleteAfterTesting() {
+        if (e != null) {
+            try {
+                e.delete();
+            } catch (PFException e1) {
+                e1.printStackTrace();
+            }
+        }
+        if (group != null) {
+            group.deleteGroup();
+        }
+        if(user != null) {
+            deleteUserWithId(id);
+        }
     }
 }

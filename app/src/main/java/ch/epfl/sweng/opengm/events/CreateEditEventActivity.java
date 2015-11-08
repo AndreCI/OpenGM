@@ -56,12 +56,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+                participants.clear();
                 for(PFMember member : members) {
                     participants.put(member.getId(), member);
                 }
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
+            } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
             }
         }

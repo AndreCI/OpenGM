@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -248,7 +249,6 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     }
 
     public static PFEvent createEvent(PFGroup group, String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
-
         ParseObject object = new ParseObject(EVENT_TABLE_NAME);
         object.put(EVENT_ENTRY_TITLE, name);
         object.put(EVENT_ENTRY_PLACE, place);
@@ -357,5 +357,4 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     public int compareTo(PFEvent another) {
         return mDate.compareTo(another.mDate);
     }
-
 }
