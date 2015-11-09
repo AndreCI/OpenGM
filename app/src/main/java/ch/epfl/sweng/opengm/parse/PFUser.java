@@ -286,7 +286,7 @@ public final class PFUser extends PFEntity {
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
-                group.addUser(getId());
+                group.addUserWithId(getId());
                 mGroups.add(group);
                 throw new PFException();
             }

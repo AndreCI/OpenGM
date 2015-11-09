@@ -10,6 +10,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -452,7 +453,7 @@ public final class PFGroup extends PFEntity {
      * @param userId The string that corresponds to the id of the
      *               user we would like to add to the group
      */
-    public void addUser(String userId) {
+    public void addUserWithId(String userId) {
 
         if (!containsMember(userId)) {
             try {
@@ -463,6 +464,42 @@ public final class PFGroup extends PFEntity {
             } catch (PFException e) {
                 mMembers.remove(userId);
             }
+        }
+    }
+
+    /**
+     * Add a particular user to a group by adding its username
+     *
+     * @param username The string that corresponds to the username of the
+     *              user we would like to add to the group
+     * @throws PFException If something went wrong with the server
+     */
+    public void addUserWithUsername(String username) throws PFException {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo(PFConstants._USER_TABLE_USERNAME, username);
+        try {
+            ParseObject object = query.getFirst();
+            addUserWithId(object.getObjectId());
+        } catch (ParseException e) {
+            throw new PFException();
+        }
+    }
+
+    /**
+     * Add a particular user to a group by adding its email
+     *
+     * @param email The string that corresponds to the email of the
+     *              user we would like to add to the group
+     * @throws PFException If something went wrong with the server
+     */
+    public void addUserWithEmail(String email) throws PFException {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo(PFConstants._USER_TABLE_EMAIL, email);
+        try {
+            ParseObject object = query.getFirst();
+            addUserWithId(object.getObjectId());
+        } catch (ParseException e) {
+            throw new PFException();
         }
     }
 
