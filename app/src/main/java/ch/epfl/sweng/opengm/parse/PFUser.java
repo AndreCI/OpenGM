@@ -462,7 +462,7 @@ public final class PFUser extends PFEntity {
 
                 ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                ParseObject mailObject = mailQuery.getFirst();
+                ParseObject mailObject = mailQuery.get(id);
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
