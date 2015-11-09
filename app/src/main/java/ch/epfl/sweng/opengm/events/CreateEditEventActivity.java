@@ -22,6 +22,7 @@ import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
@@ -73,7 +74,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, EventListActivity.class);
                 intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
                 setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT, intent);
-                finish();
+                if(NetworkUtils.haveInternet(getBaseContext())) {
+                    finish();
+                }
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
