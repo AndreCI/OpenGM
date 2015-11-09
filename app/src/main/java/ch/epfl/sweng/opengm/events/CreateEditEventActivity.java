@@ -127,7 +127,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
-        //intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
+       // intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
         startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS);
     }
 
@@ -165,8 +165,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
 
         startActivityForResult(chooserIntent, CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP);
-        //intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
-        //startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 
     private void fillTexts(PFEvent event) {
