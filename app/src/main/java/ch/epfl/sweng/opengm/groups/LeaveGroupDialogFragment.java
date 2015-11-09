@@ -42,7 +42,7 @@ public class LeaveGroupDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.leaveTheGroup, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Remove the user from this group
-                        if(NetworkUtils.haveInternet(getContext())) {
+                        if(NetworkUtils.haveInternet(getActivity())) {
                             try {
                                 getCurrentUser().removeFromGroup(groupToLeave.getId());
                             } catch (PFException e) {
