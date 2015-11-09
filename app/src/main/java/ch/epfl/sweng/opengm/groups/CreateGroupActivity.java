@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -53,25 +54,25 @@ public class CreateGroupActivity extends AppCompatActivity {
                     getCurrentUser().addToAGroup(newGroup);
                     startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
                 } catch (PFException e) {
-                    // TODO "Couldn't create the group, there were problems when contacting the server."
+                    Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
                 }
             } else {
                 String errorMessage;
                 switch (groupNameValid) {
                     case INPUT_TOO_SHORT:
-                        errorMessage = "Group name is too short";
+                        errorMessage = getString(R.string.groupNameTooShort);
                         break;
                     case INPUT_TOO_LONG:
-                        errorMessage = "Group name is too long";
+                        errorMessage = getString(R.string.groupNameTooLong);
                         break;
                     case INPUT_BEGINS_WITH_SPACE:
-                        errorMessage = "Group name cannot start with a space";
+                        errorMessage = getString(R.string.groupNameStartsWithSpace);
                         break;
                     case INPUT_WITH_SYMBOL:
-                        errorMessage = "Group name contains illegal characters, only letters, numbers and spaces allowed.";
+                        errorMessage = getString(R.string.groupNameIllegalCharacters);
                         break;
                     default:
-                        errorMessage = "Group name is invalid";
+                        errorMessage = getString(R.string.groupNameInvalid);
                         break;
                 }
                 mGroupName.setError(errorMessage);
