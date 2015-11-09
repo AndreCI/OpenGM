@@ -29,7 +29,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         event = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
         displayEventInformation();
     }
 
@@ -76,7 +76,7 @@ public class ShowEventActivity extends AppCompatActivity {
     private void fillEventParticipants() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Participants:");
-        for (PFMember participant : event.getParticipants()) {
+        for (PFMember participant : event.getParticipants().values()) {
             stringBuilder.append('\n');
 
             stringBuilder.append(participant.getUsername());
@@ -92,7 +92,7 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
         intent.putExtra(SHOW_EVENT_MESSAGE_EVENT, event);
-        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
+        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
         startActivity(intent);
     }
 }

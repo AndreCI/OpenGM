@@ -7,9 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.parse.ParseUser;
-
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -17,10 +16,15 @@ import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class LeaveGroupDialogFragment extends DialogFragment {
 
-    final PFGroup groupToLeave;
+    private PFGroup groupToLeave;
 
-    public LeaveGroupDialogFragment(PFGroup groupToLeave) {
+    public LeaveGroupDialogFragment() {
+        groupToLeave = null;
+    }
+
+    public LeaveGroupDialogFragment setGroupToLeave(PFGroup groupToLeave) {
         this.groupToLeave = groupToLeave;
+        return this;
     }
 
     @Override
@@ -33,7 +37,11 @@ public class LeaveGroupDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.leaveTheGroup, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Remove the user from this group
-                        getCurrentUser().removeFromGroup(groupToLeave.getId());
+                        try {
+                            getCurrentUser().removeFromGroup(groupToLeave.getId());
+                        } catch (PFException e) {
+                            // TODO Toast?
+                        }
                         // Go back to MyGroupsActivity
                         Intent intent = new Intent(getActivity(), MyGroupsActivity.class);
                         intent.putExtra(RELOAD_USER_KEY, false);

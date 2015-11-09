@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
+import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -92,34 +93,12 @@ public class GroupsHomeActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.groups_home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
         switch (item.getItemId()) {
             case R.id.nav_leave:
-                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment(currentGroup);
+                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment().setGroupToLeave(currentGroup);
                 leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
                 break;
             case R.id.nav_home:
@@ -131,7 +110,9 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(new Intent(GroupsHomeActivity.this, Members.class).putExtra(GROUP_INDEX, groupPos));
                 break;
             case R.id.nav_events:
-                startActivity(new Intent(GroupsHomeActivity.this, CreateEditEventActivity.class));
+                Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
+                intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
+                startActivity(intent);
                 break;
             case R.id.nav_messages:
                 break;

@@ -3,8 +3,6 @@ package ch.epfl.sweng.opengm.groups;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -12,7 +10,6 @@ import android.widget.RelativeLayout;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.utils.Alert;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOSEN_GROUP_KEY;
@@ -41,28 +38,6 @@ public class CreateGroupActivity extends AppCompatActivity {
         mGroupDescription = (EditText) findViewById(R.id.enterGroupDescription);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_group, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void createGroup(View view) {
         String name = mGroupName.getText().toString();
         String description = mGroupDescription.getText().toString();
@@ -76,7 +51,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 getCurrentUser().addToAGroup(newGroup);
                 startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
             } catch (PFException e) {
-                Alert.displayAlert("Couldn't create the group, there were problems when contacting the server.");
+                // TODO "Couldn't create the group, there were problems when contacting the server."
             }
         } else {
             String errorMessage;

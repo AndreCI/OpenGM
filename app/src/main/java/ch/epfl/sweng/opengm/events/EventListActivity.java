@@ -24,11 +24,12 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+
 public class EventListActivity extends AppCompatActivity {
 
     public final static String EVENT_LIST_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.EVENT_LIST_EVENT";
-    public final static String EVENT_LIST_MESSAGE_GROUP = "ch.epfl.sweng.opengm.events.EVENT_LIST_GROUP";
-
+    public final static String EVENT_LIST_INTENT_GROUP = "ch.epfl.sweng.opengl.events.EVENT_LIST";
 
     private List<PFEvent> eventList;
     private PFGroup currentGroup;
@@ -37,70 +38,10 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*//For the purpose of test only.
-        //TODO : Event is not up to date, it doesn't implements PFEntity
-        eventList = new ArrayList<>();
-        PFEvent tester1 = new PFEvent();
-        PFEvent tester2 = new PFEvent();
-        PFEvent tester3 = new PFEvent();
-        PFEvent tester4 = new PFEvent();
-        PFEvent tester5 = new PFEvent();
-        PFEvent tester6 = new PFEvent();
-        PFEvent tester7 = new PFEvent();
-        PFEvent tester8 = new PFEvent();
-        PFEvent tester9 = new PFEvent();
-        PFEvent tester10 = new PFEvent();
-        PFEvent tester11 = new PFEvent();
-        tester1.setName("E1");
-        tester2.setName("E2");
-        tester3.setName("E3");
-        tester4.setName("E4");
-        tester5.setName("E5");
-        tester6.setName("E6");
-        tester7.setName("E7");
-        tester8.setName("E8");
-        tester9.setName("E9");
-        tester10.setName("E10");
-        tester11.setName("E11");
-        tester1.setDate(new Date(1995, 1, 29));
-        tester2.setDate(new Date(2000,1,29));
-        tester3.setDate(new Date(1999,2,22));
-        tester4.setDate(new Date(1994,6,29));
-        tester5.setDate(new Date(1995,1,28));
-        tester6.setDate(new Date(1995,1,27));
-        tester7.setDate(new Date(1995,1,26));
-        tester8.setDate(new Date(1995,1,25));
-        tester9.setDate(new Date(1995,1,24));
-        tester10.setDate(new Date(1995,1,23));
-        tester11.setDate(new Date(1995,1,22));
-        eventList.add(tester1);
-        eventList.add(tester2);
-        eventList.add(tester3);
-        eventList.add(tester4);
-        eventList.add(tester5);
-        eventList.add(tester6);
-        eventList.add(tester7);
-        eventList.add(tester8);
-        eventList.add(tester9);
-        eventList.add(tester10);
-        eventList.add(tester11);*/
         super.onCreate(savedInstanceState);
+
         Intent intent = getIntent();
-        //TODO : check with other ppl for intent name
-        currentGroup = intent.getParcelableExtra("intentNameToDetermine");
-        PFUser user = null;
-        try {
-            user = PFUser.createNewUser("testuser", "lolNoMail4U", "toto", "titi", "tata");
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        try {
-            currentGroup = PFGroup.createNewGroup(user, "testgroup", "testdescription", null);
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        currentGroup.addEvent(new PFEvent("id", "name", "place", Utils.stringToDate("2018-0-1-12-12"), "description", new ArrayList<PFMember>()));
-        currentGroup.addUser("oqMblls8Cb");
+        currentGroup = intent.getParcelableExtra(EVENT_LIST_INTENT_GROUP);
         eventList = currentGroup.getEvents();
         setContentView(R.layout.activity_event_list);
         displayEvents();
@@ -129,12 +70,12 @@ public class EventListActivity extends AppCompatActivity {
 
     /**
      * When the button is click, it's supposed to open an other Activity (CreateEditEventActivity)
-     * Then get the Activity created this way, add it to the calendar and then display the caledar again.
+     * Then get the Activity created this way, add it to the calendar and then display the calendar again.
      * @param v The View.
      */
     public void clickOnAddButton(View v){
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(EVENT_LIST_MESSAGE_GROUP, currentGroup);
+        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
 
         startActivityForResult(intent, RESULT_CODE_FOR_CREATE_EDIT);
     }
@@ -182,7 +123,7 @@ public class EventListActivity extends AppCompatActivity {
 
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
-        intent.putExtra(EVENT_LIST_MESSAGE_GROUP, currentGroup);
+        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
         intent.putExtra(EVENT_LIST_MESSAGE_EVENT, currentEvent);
         startActivity(intent);
     }

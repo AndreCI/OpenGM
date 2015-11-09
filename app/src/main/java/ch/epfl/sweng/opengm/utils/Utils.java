@@ -7,6 +7,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.text.Normalizer;
 
 import ch.epfl.sweng.opengm.R;
@@ -38,11 +41,36 @@ public class Utils {
         return dialog;
     }
 
+
+    public static List<String[]> unzipRoles(List<String> rolesZip) {
+        List<String[]> res = new ArrayList<>();
+        for(String s : rolesZip) {
+            res.add(s.split(" -- "));
+        }
+        return res;
+    }
+
+    public static String zipRole(String[] roles) {
+        return zipRole(Arrays.asList(roles));
+    }
+
+    public static String zipRole(List<String> roles) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if(roles.size() > 0 ) {
+            for (int i = 0; i < roles.size() - 1; ++i) {
+                stringBuilder.append(roles.get(i));
+                stringBuilder.append(" -- ");
+            }
+            stringBuilder.append(roles.get(roles.size()-1));
+        }
+        return stringBuilder.toString();
+    }
+
+
     public static String stripAccents(String s) {
         String res = s.toLowerCase();
         res = Normalizer.normalize(res, Normalizer.Form.NFD);
         res = res.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return res;
     }
-
 }

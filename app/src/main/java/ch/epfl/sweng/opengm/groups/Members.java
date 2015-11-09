@@ -41,7 +41,7 @@ public class Members extends AppCompatActivity {
 
         int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
         group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
-        members = group.getMembers();
+        members = new ArrayList<>(group.getMembers().values());
 
 //        // hardcoded the getting of user for tests
 //        //-----------------------------------------
