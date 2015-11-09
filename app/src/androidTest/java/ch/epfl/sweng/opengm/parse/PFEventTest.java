@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
@@ -19,7 +18,6 @@ import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -96,11 +94,8 @@ public class PFEventTest {
         parcel.readTypedList(participants, PFMember.CREATOR);
         assertEquals(1, participants.size());
         assertEquals(id, participantKeys.get(0));
-        assertTrue(participants.get(0) instanceof PFMember);
-        assertTrue(participants.get(0).getId() instanceof String);
-        /*String id2 = participants.get(0).getId();
-        assertEquals(id, id2);*/
-        assertTrue(EMAIL.equals(participants.get(0).getEmail()));
+        assertEquals(id, participants.get(0).getId());
+        assertEquals(EMAIL, participants.get(0).getEmail());
     }
 
     @Test
@@ -153,18 +148,18 @@ public class PFEventTest {
     }
 
     @After
-    public void deleteAfterTesting()    {
-        if(group != null) {
+    public void deleteAfterTesting() {
+        if (group != null) {
             group.deleteGroup();
         }
-        if(event != null) {
+        if (event != null) {
             try {
                 event.delete();
             } catch (PFException e) {
                 e.printStackTrace();
             }
         }
-        if(user != null) {
+        if (user != null) {
             deleteUserWithId(id);
         }
     }

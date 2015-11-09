@@ -40,6 +40,8 @@ public class PFMemberTest {
         group = null;
     }
 
+    //TODO: test writeToParcel and createFromParcel
+
     @Test
     public void testFetchingWithIdNull() {
         try {
