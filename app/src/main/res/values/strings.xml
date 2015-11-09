@@ -85,7 +85,7 @@
 
     <string name="title_activity_groups_home">GroupsHomeActivity</string>
 
-    <string name="leaveGroupWarning">Are you sure you want to leave the group [group] ?</string>
+    <string name="leaveGroupWarning">Are you sure you want to leave the group %s ?</string>
     <string name="leaveTheGroup">Leave the group</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

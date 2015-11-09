@@ -34,8 +34,8 @@ public class LeaveGroupDialogFragment extends DialogFragment {
         if(groupToLeave == null){
             throw new UnsupportedOperationException();
         }
-        String leaveThisGroupWarning = getString(R.string.leaveGroupWarning);
-        leaveThisGroupWarning = leaveThisGroupWarning.replace("[group]", groupToLeave.getName());
+
+        String leaveThisGroupWarning = String.format(getString(R.string.leaveGroupWarning), groupToLeave.getName());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(leaveThisGroupWarning)
