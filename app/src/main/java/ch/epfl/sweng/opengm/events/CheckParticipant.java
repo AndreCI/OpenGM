@@ -1,21 +1,19 @@
 package ch.epfl.sweng.opengm.events;
 
+import ch.epfl.sweng.opengm.parse.PFMember;
+
 /**
  * Created by virgile on 26/10/2015.
  */
 public class CheckParticipant {
-    private String mParticipantName;
+    private PFMember mParticipant;
     private boolean mIsCheck;
 
     public String getName() {
-        return mParticipantName;
+        return mParticipant.getName();
     }
 
-    public void setName(String mParticipantName) {
-        this.mParticipantName = mParticipantName;
-    }
-
-    public boolean getCheck() {
+    public boolean isChecked() {
         return mIsCheck;
     }
 
@@ -23,8 +21,13 @@ public class CheckParticipant {
         this.mIsCheck = mIsCheck;
     }
 
-    public CheckParticipant(String participantName, boolean isCheck) {
-        mParticipantName = participantName;
+    public PFMember getParticipant() {
+        return mParticipant;
+    }
+
+
+    public CheckParticipant(PFMember participant, boolean isCheck) {
+        mParticipant = participant;
         mIsCheck = isCheck;
     }
 }

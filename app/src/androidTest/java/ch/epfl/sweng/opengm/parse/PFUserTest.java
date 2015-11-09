@@ -167,7 +167,11 @@ public class PFUserTest {
         String about = "Director of EPFL";
         String phoneNumber = "02100044433";
 
-        user1.setUsername(username);
+        try {
+            user1.setUsername(username);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
         Thread.sleep(2000);
 
@@ -185,7 +189,11 @@ public class PFUserTest {
             Assert.fail("Should have thrown an exception");
         }
 
-        user1.setFirstName(firstname);
+        try {
+            user1.setFirstName(firstname);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
         Thread.sleep(2000);
 
@@ -203,7 +211,11 @@ public class PFUserTest {
             Assert.fail("Should have thrown an exception");
         }
 
-        user1.setLastName(lastname);
+        try {
+            user1.setLastName(lastname);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
         Thread.sleep(2000);
 
@@ -221,7 +233,11 @@ public class PFUserTest {
             Assert.fail("Should have thrown an exception");
         }
 
-        user1.setAboutUser(about);
+        try {
+            user1.setAboutUser(about);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
         Thread.sleep(2000);
 
@@ -239,7 +255,11 @@ public class PFUserTest {
             Assert.fail("Should have thrown an exception");
         }
 
-        user1.setPhoneNumber(phoneNumber);
+        try {
+            user1.setPhoneNumber(phoneNumber);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
         Thread.sleep(2000);
 
@@ -257,7 +277,11 @@ public class PFUserTest {
             Assert.fail("Should have thrown an exception");
         }
 
-        user1.setUsername(null);
+        try {
+            user1.setUsername(null);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
 
     }
 

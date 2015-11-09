@@ -2,11 +2,13 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -14,8 +16,11 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
@@ -34,25 +39,28 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
  * but we do not download its list of groups (otherwise we may end up with downloading all the groups)
  * just keep it so we may still be able to add it to the group or remove it.
  */
-public final class PFMember extends PFEntity {
+public final class PFMember extends PFEntity implements Parcelable {
+
+    private final static String PARSE_TABLE_USER = USER_TABLE_NAME;
 
     private final List<String> mRoles;
 
     // Only needed when you add or remove someone from a group
     private final List<String> mGroups;
 
-    private final String mUsername;
-    private final String mFirstName;
-    private final String mLastName;
+    private String mUsername;
+    private String mFirstName;
+    private String mLastName;
+    private String mPhoneNumber;
+    private String mAboutUser;
+    private Bitmap mPicture;
+
     private final String mEmail;
-    private final String mPhoneNumber;
-    private final String mAboutUser;
-    private final Bitmap mPicture;
 
     private String mNickname;
 
-    private PFMember(String id, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
-        super(id, USER_TABLE_NAME);
+    private PFMember(String id, Date date, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
+        super(id, PARSE_TABLE_USER, date);
         this.mUsername = username;
         this.mFirstName = firstName;
         this.mLastName = lastName;
@@ -64,6 +72,51 @@ public final class PFMember extends PFEntity {
         this.mRoles = new ArrayList<>(roles);
         this.mGroups = new ArrayList<>(groups);
     }
+
+    public PFMember(Parcel source) {
+        super(source, PARSE_TABLE_USER);
+        mUsername = source.readString();
+        mFirstName = source.readString();
+        mLastName = source.readString();
+        mEmail = source.readString();
+        mPhoneNumber = source.readString();
+        mAboutUser = source.readString();
+        mPicture = source.readParcelable(Bitmap.class.getClassLoader());
+        mRoles = source.createStringArrayList();
+        mGroups = source.createStringArrayList();
+    }
+
+    @Override
+    public void reload() throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_USER);
+        query.whereEqualTo(USER_ENTRY_USERID, getId());
+        try {
+            ParseObject object = query.getFirst();
+            if (hasBeenModified(object)) {
+                setLastModified(object);
+                mUsername = object.getString(USER_ENTRY_USERNAME);
+                mFirstName = object.getString(USER_ENTRY_FIRSTNAME);
+                mLastName = object.getString(USER_ENTRY_LASTNAME);
+                mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
+                mAboutUser = object.getString(USER_ENTRY_ABOUT);
+
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
+                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+
+                HashSet<String> oldGroups = new HashSet<>(mGroups);
+
+                if (!oldGroups.equals(new HashSet<>(groups))) {
+                    mGroups.clear();
+                    mGroups.addAll(groups);
+                }
+            }
+        } catch (ParseException e) {
+            throw new PFException();
+        }
+    }
+
 
     @Override
     protected void updateToServer(String entry) throws PFException {
@@ -261,10 +314,9 @@ public final class PFMember extends PFEntity {
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
 
-                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
-                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+                ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                ParseObject mailObject = query.getFirst();
+                ParseObject mailObject = mailQuery.getFirst();
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
@@ -272,7 +324,7 @@ public final class PFMember extends PFEntity {
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new PFMember(id, username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
+                return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -299,10 +351,34 @@ public final class PFMember extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(mId);
+        dest.writeString(dateToString(lastModified));
+        dest.writeString(mUsername);
+        dest.writeString(mFirstName);
+        dest.writeString(mLastName);
+        dest.writeString(mNickname);
+        dest.writeString(mEmail);
+        dest.writeString(mPhoneNumber);
+        dest.writeString(mAboutUser);
+        dest.writeParcelable(mPicture, flags);
+        dest.writeStringList(mRoles);
+        dest.writeStringList(mGroups);
     }
 
     public String getName() {
         return getLastname() + " - " + getFirstname();
     }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+
+        @Override
+        public PFMember createFromParcel(Parcel source) {
+            return new PFMember(source);
+        }
+
+        @Override
+        public PFMember[] newArray(int size) {
+            return new PFMember[size];
+        }
+    };
 }

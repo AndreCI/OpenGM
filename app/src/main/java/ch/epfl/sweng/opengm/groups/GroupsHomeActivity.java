@@ -9,18 +9,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
+import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.Members.GROUP_INDEX;
+import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
@@ -62,11 +61,11 @@ public class GroupsHomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO add a member
             }
         });
 
@@ -92,35 +91,12 @@ public class GroupsHomeActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.groups_home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
         switch (item.getItemId()) {
             case R.id.nav_leave:
-                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment();
-                leaveGroupDialog.setGroupToLeave(currentGroup);
+                LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment().setGroupToLeave(currentGroup);
                 leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
                 break;
             case R.id.nav_home:
@@ -129,10 +105,12 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivity(new Intent(GroupsHomeActivity.this, Members.class).putExtra(GROUP_INDEX, groupPos));
+                startActivity(new Intent(GroupsHomeActivity.this, MembersActivity.class).putExtra(GROUP_INDEX, groupPos));
                 break;
             case R.id.nav_events:
-                startActivity(new Intent(GroupsHomeActivity.this, CreateEditEventActivity.class));
+                Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
+                intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
+                startActivity(intent);
                 break;
             case R.id.nav_messages:
                 break;
@@ -147,4 +125,5 @@ public class GroupsHomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

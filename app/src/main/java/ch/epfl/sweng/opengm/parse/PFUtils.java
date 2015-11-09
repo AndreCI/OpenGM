@@ -11,9 +11,9 @@ import com.parse.ParseObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Collection;
 import java.util.List;
-
-import ch.epfl.sweng.opengm.utils.Alert;
+import java.util.Set;
 
 /**
  * This class contains some static methods that may be called for conversion, saving or checking purposes
@@ -88,13 +88,13 @@ public final class PFUtils {
     /**
      * Converts a list of PFEntities into a JSonarray whose elements are the id of the entities
      *
-     * @param entitiesList A list that contains some PFEntity we want to get the ids
+     * @param entities A collection that contains some PFEntity we want to get the ids
      * @return A JSONArray whose elements are the ids of the parameter
      */
-    public static JSONArray listToArray(List<? extends PFEntity> entitiesList) {
+    public static JSONArray collectionToArray(Collection<? extends PFEntity> entities) {
         JSONArray array = new JSONArray();
-        for (int i = 0; i < entitiesList.size(); i++) {
-            array.put(entitiesList.get(i).getId());
+        for (PFEntity entity : entities) {
+            array.put(entity.getId());
         }
         return array;
     }
@@ -103,30 +103,20 @@ public final class PFUtils {
      * Checks if the argument is not null and not empty. If it is, displays an Toast with the message given in parameter
      *
      * @param arg            The string argument to be checked
-     * @param displayedError The message that will be displayed in case of error
      * @return True if the argument is correct, false otherwise
      */
-    public static boolean checkArguments(String arg, String displayedError) {
-        if (arg == null || arg.isEmpty()) {
-            Alert.displayAlert(displayedError + " is null or empty.");
-            return false;
-        }
-        return true;
+    public static boolean checkArguments(String arg) {
+        return !(arg == null || arg.isEmpty());
     }
 
     /**
      * Checks if the argument is not null. If it is, displays an Toast with the message given in parameter
      *
      * @param arg            The string argument to be checked
-     * @param displayedError The message that will be displayed in case of error
      * @return True if the argument is correct, false otherwise
      */
-    public static boolean checkNullArguments(String arg, String displayedError) {
-        if (arg == null) {
-            Alert.displayAlert(displayedError + " is null.");
-            return false;
-        }
-        return true;
+    public static boolean checkNullArguments(String arg) {
+        return (arg != null);
     }
 
 

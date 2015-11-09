@@ -23,8 +23,10 @@ import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTextStyleCorrect;
 
@@ -103,8 +105,10 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_email)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_email_activity_register), true)));
 
+        String email = EMAIL_CORRECT;
+
         //short password1
-        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(email));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.short_password_activity_register), true)));
@@ -156,12 +160,12 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.button_signup)).perform(click());
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             Assert.fail("Waiting instruction failed");
         }
 
-        onView(withId(R.id.groups_recycler_view)).check(matches(isDisplayed()));
+        onView(withText(R.string.noGroupsYet)).inRoot(isDialog()).check(matches(isDisplayed()));
 
         PFUser user = OpenGMApplication.getCurrentUser();
 
@@ -171,6 +175,8 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         id = user.getId();
 
         assertEquals(id, ParseUser.getCurrentUser().getObjectId());
+
+        assertEquals(email, ParseUser.getCurrentUser().getEmail());
 
         OpenGMApplication.logOut();
     }

@@ -9,32 +9,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
-
-import static android.app.PendingIntent.getActivity;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;
     private boolean editing;
-    private List<PFMember> participants;
+    private HashMap<String, PFMember> participants;
     private PFGroup currentGroup;
 
     @Override
@@ -44,10 +39,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
         if (event == null) {
             editing = false;
-            participants = new ArrayList<>();
+            participants = new HashMap<>();
         } else {
             editedEvent = event;
             editing = true;
@@ -60,11 +55,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
-            if(resultCode == Activity.RESULT_OK){
-                participants = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+            if (resultCode == Activity.RESULT_OK) {
+                ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+                participants.clear();
+                for(PFMember member : members) {
+                    participants.put(member.getId(), member);
+                }
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
+            } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
             }
         }
@@ -76,7 +74,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, EventListActivity.class);
                 intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
                 setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT, intent);
-                finish();
+                if(NetworkUtils.haveInternet(getBaseContext())) {
+                    finish();
+                }
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
@@ -85,10 +85,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     public void onParticipantsButtonClick(View v) {
         Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
-        if(editing) {
+        if (editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
-        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
+        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
         startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 
@@ -99,7 +99,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         Date date = event.getDate();
         String timeString = String.format("%d : %02d", date.getHours(), date.getMinutes());
         ((Button) findViewById(R.id.CreateEditEventTimeText)).setText(timeString);
-        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth()+1, date.getYear());
+        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth() + 1, date.getYear());
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
@@ -116,27 +116,26 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
-        String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
-        String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
-        String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
+        String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
+        String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
+        String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
 
-        //TODO : get new id for creating event maybe asynchronously in onCreate
-        ParseObject parseObject = new ParseObject(PFConstants.EVENT_TABLE_NAME);
         try {
-            parseObject.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
+            return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, null);
+        } catch (PFException e) {
+            // TODO toast ?
+            return null;
         }
-        return new PFEvent(parseObject.getObjectId(), name, place, date, description, participants);
     }
 
     private PFEvent editEvent() {
         int[] timeArray = getTimeFromText();
         int[] dateArray = getDateFromText();
         Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
-        String name = ((TextView) findViewById(R.id.CreateEditEventNameText)).getText().toString();
-        String description = ((TextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
-        String place = ((TextView) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
+
+        String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
+        String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
+        String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         editedEvent.setName(name);
         editedEvent.setDate(date);
         editedEvent.setDescription(description);
@@ -148,8 +147,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with hours(24h format) at index 0 and minutes at index 1
      */
     private int[] getTimeFromText() {
-        Button button = (Button) findViewById(R.id.CreateEditEventTimeText);
-        String[] timeString = button.getText().toString().split(" : ");
+        String[] timeString = ((Button) findViewById(R.id.CreateEditEventTimeText)).getText().toString().split(" : ");
         if (timeString.length != 2) {
             return new int[]{};
         }
@@ -162,8 +160,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * @return an array of int with year at index 0, month at index 1 and day at index 2
      */
     private int[] getDateFromText() {
-        Button button = (Button) findViewById(R.id.CreateEditEventDateText);
-        String[] dateString = button.getText().toString().split("/");
+        String[] dateString = ((Button) findViewById(R.id.CreateEditEventDateText)).getText().toString().split("/");
         if (dateString.length != 3) {
             return new int[]{};
         }
@@ -178,10 +175,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
      * display a toast while it's not.
      */
     private boolean legalArguments() {
-        EditText eventNameText = (EditText) findViewById(R.id.CreateEditEventNameText);
-        String name = eventNameText.getText().toString();
+        String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         if (name.isEmpty()) {
-            eventNameText.setError(getString(R.string.CreateEditEmptyNameErrorMessage));
+            ((EditText) findViewById(R.id.CreateEditEventNameText)).setError(getString(R.string.CreateEditEmptyNameErrorMessage));
             return false;
         }
         int[] timeArray = getTimeFromText();
@@ -215,7 +211,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.CreateEditEarlyDate), Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(participants.isEmpty()) {
+        if (participants.isEmpty()) {
             Toast.makeText(this, getString(R.string.CreateEditNoParticipants), Toast.LENGTH_SHORT).show();
             return false;
         }
