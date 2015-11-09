@@ -18,6 +18,7 @@ import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -55,17 +56,20 @@ public class PFEventTest {
             user = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             e.printStackTrace();
+            fail("create new user");
         }
         try {
             group = PFGroup.createNewGroup(user, NAME, DESCRIPTION, PICTURE);
         } catch (PFException e) {
             e.printStackTrace();
+            fail("create new group");
         }
         PFMember member = null;
         try {
             member = PFMember.fetchExistingMember(id);
         } catch (PFException e) {
             e.printStackTrace();
+            fail("fetch existing user");
         }
         participants = new ArrayList<>();
         participants.add(member);

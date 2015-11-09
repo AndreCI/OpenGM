@@ -23,6 +23,7 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -58,12 +59,14 @@ public class PFMemberTest {
             user = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             e.printStackTrace();
+            fail("create new user");
         }
         try {
             user.setPhoneNumber(PHONE_NUMBER);
             user.setAboutUser(ABOUT_USER);
         } catch (PFException e) {
             e.printStackTrace();
+            fail("setPhone/About user");
         }
 
         PFMember member = null;
@@ -71,6 +74,7 @@ public class PFMemberTest {
             member = PFMember.fetchExistingMember(id1);
         } catch (PFException e) {
             e.printStackTrace();
+            fail("fetch existing user");
         }
         member.setNickname(FIRST_NAME + LAST_NAME);
         Parcel parcel = Parcel.obtain();
