@@ -6,10 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOSEN_GROUP_KEY;
@@ -39,41 +41,43 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     public void createGroup(View view) {
-        String name = mGroupName.getText().toString();
-        String description = mGroupDescription.getText().toString();
-        // TODO : retrieve image from button
-        // If next activity is group page, also call function to put new group in the database
+        if(NetworkUtils.haveInternet(getBaseContext())) {
+            String name = mGroupName.getText().toString();
+            String description = mGroupDescription.getText().toString();
+            // TODO : retrieve image from button
+            // If next activity is group page, also call function to put new group in the database
 
-        int groupNameValid = isGroupNameValid(name);
-        if (groupNameValid == INPUT_CORRECT) {
-            try {
-                PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
-                getCurrentUser().addToAGroup(newGroup);
-                startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
-            } catch (PFException e) {
-                // TODO "Couldn't create the group, there were problems when contacting the server."
+            int groupNameValid = isGroupNameValid(name);
+            if (groupNameValid == INPUT_CORRECT) {
+                try {
+                    PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
+                    getCurrentUser().addToAGroup(newGroup);
+                    startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
+                } catch (PFException e) {
+                    Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                String errorMessage;
+                switch (groupNameValid) {
+                    case INPUT_TOO_SHORT:
+                        errorMessage = getString(R.string.groupNameTooShort);
+                        break;
+                    case INPUT_TOO_LONG:
+                        errorMessage = getString(R.string.groupNameTooLong);
+                        break;
+                    case INPUT_BEGINS_WITH_SPACE:
+                        errorMessage = getString(R.string.groupNameStartsWithSpace);
+                        break;
+                    case INPUT_WITH_SYMBOL:
+                        errorMessage = getString(R.string.groupNameIllegalCharacters);
+                        break;
+                    default:
+                        errorMessage = getString(R.string.groupNameInvalid);
+                        break;
+                }
+                mGroupName.setError(errorMessage);
+                mGroupName.requestFocus();
             }
-        } else {
-            String errorMessage;
-            switch (groupNameValid) {
-                case INPUT_TOO_SHORT:
-                    errorMessage = "Group name is too short";
-                    break;
-                case INPUT_TOO_LONG:
-                    errorMessage = "Group name is too long";
-                    break;
-                case INPUT_BEGINS_WITH_SPACE:
-                    errorMessage = "Group name cannot start with a space";
-                    break;
-                case INPUT_WITH_SYMBOL:
-                    errorMessage = "Group name contains illegal characters, only letters, numbers and spaces allowed.";
-                    break;
-                default:
-                    errorMessage = "Group name is invalid";
-                    break;
-            }
-            mGroupName.setError(errorMessage);
-            mGroupName.requestFocus();
         }
     }
 }

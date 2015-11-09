@@ -9,19 +9,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.events.CreateEditEventActivity;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.Members.GROUP_INDEX;
+import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
@@ -63,11 +61,11 @@ public class GroupsHomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO add a member
             }
         });
 
@@ -107,7 +105,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivity(new Intent(GroupsHomeActivity.this, Members.class).putExtra(GROUP_INDEX, groupPos));
+                startActivity(new Intent(GroupsHomeActivity.this, MembersActivity.class).putExtra(GROUP_INDEX, groupPos));
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
@@ -127,4 +125,5 @@ public class GroupsHomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

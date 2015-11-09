@@ -16,9 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -281,7 +279,7 @@ public class PFGroupTest {
         String description = "Can we add members to this group?";
 
         group = createNewGroup(user1, name, description, null);
-        group.addUser(id2);
+        group.addUserWithId(id2);
 
         Set<PFMember> members = new HashSet<>(asList(fetchExistingMember(id1),
                 fetchExistingMember(id2)));
@@ -419,7 +417,7 @@ public class PFGroupTest {
             Assert.fail("Network error");
         }
 
-        group.addUser(user2.getId());
+        group.addUserWithId(user2.getId());
 
         Thread.sleep(2000);
 

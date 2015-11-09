@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
@@ -49,36 +51,38 @@ public class ManageRolesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_roles);
 
-        boxesAndRows = new Hashtable<>();
-        modifiedCheckBoxes = new Hashtable<>();
+        if(NetworkUtils.haveInternet(getBaseContext())) {
+            boxesAndRows = new Hashtable<>();
+            modifiedCheckBoxes = new Hashtable<>();
 
-        roles = new ArrayList<>();
-        Intent intent = getIntent();
-        //Uncomment this when testing with real app
-        String groupId = intent.getStringExtra(GROUP_ID);
-        List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
-        PFMember member;
-        groupMembers = new ArrayList<>();
-        try {
-            currentGroup = PFGroup.fetchExistingGroup(groupId);
-            List<String> rolesFromServer = currentGroup.getRolesForUser(memberIDs.get(0));
-            if(rolesFromServer != null){
-                roles = new ArrayList<>(rolesFromServer);
-            } else {
-                // TODO "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.";
+            roles = new ArrayList<>();
+            Intent intent = getIntent();
+            //Uncomment this when testing with real app
+            String groupId = intent.getStringExtra(GROUP_ID);
+            List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
+            PFMember member;
+            groupMembers = new ArrayList<>();
+            try {
+                currentGroup = PFGroup.fetchExistingGroup(groupId);
+                List<String> rolesFromServer = currentGroup.getRolesForUser(memberIDs.get(0));
+                if (rolesFromServer != null) {
+                    roles = new ArrayList<>(rolesFromServer);
+                } else {
+                    // TODO "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.";
+                }
+                for (String memberID : memberIDs) {
+                    member = PFMember.fetchExistingMember(memberID);
+                    keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
+                    groupMembers.add(member);
+                }
+            } catch (PFException e) {
+                e.printStackTrace();
             }
-            for(String memberID : memberIDs) {
-                member = PFMember.fetchExistingMember(memberID);
-                keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
-                groupMembers.add(member);
-            }
-        } catch (PFException e) {
-            e.printStackTrace();
+
+            rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
+            fillWithRoles();
+            addNewRoleRow();
         }
-        
-        rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
-        fillWithRoles();
-        addNewRoleRow();
     }
 
     private void keepIntersectionRoles(List<String> otherRoles){
@@ -266,15 +270,18 @@ public class ManageRolesActivity extends AppCompatActivity {
     }
 
     public void doneManageRoles(View view){
-        for(CheckBox box : boxesAndRows.keySet()){
-            for(PFMember member : groupMembers){
-                if(box.isChecked() && modifiedCheckBoxes.get(box)){
-                    currentGroup.addRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
-                } else if(!box.isChecked() && modifiedCheckBoxes.get(box)){
-                    currentGroup.removeRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
+        if(NetworkUtils.haveInternet(getBaseContext())) {
+            for (CheckBox box : boxesAndRows.keySet()) {
+                for (PFMember member : groupMembers) {
+                    if (box.isChecked() && modifiedCheckBoxes.get(box)) {
+                        currentGroup.addRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
+                    } else if (!box.isChecked() && modifiedCheckBoxes.get(box)) {
+                        currentGroup.removeRoleToUser(((TextView) boxesAndRows.get(box).getChildAt(1)).getText().toString(), member.getId());
+                    }
                 }
             }
+            setResult(Activity.RESULT_OK);
+            finish();
         }
-        finish();
     }
 }

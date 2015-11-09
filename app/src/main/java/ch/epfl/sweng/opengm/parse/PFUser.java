@@ -8,6 +8,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -116,7 +117,7 @@ public final class PFUser extends PFEntity {
             for (PFGroup group : mGroups)
                 group.reload();
         } catch (ParseException e) {
-            throw new PFException();
+            throw new PFException(e);
         }
     }
 
@@ -286,7 +287,7 @@ public final class PFUser extends PFEntity {
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
-                group.addUser(getId());
+                group.addUserWithId(getId());
                 mGroups.add(group);
                 throw new PFException();
             }
@@ -459,10 +460,9 @@ public final class PFUser extends PFEntity {
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
 
-                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
-                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+                ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                ParseObject mailObject = query.getFirst();
+                ParseObject mailObject = mailQuery.getFirst();
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
@@ -475,6 +475,7 @@ public final class PFUser extends PFEntity {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }

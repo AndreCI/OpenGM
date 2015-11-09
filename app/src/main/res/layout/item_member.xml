@@ -8,7 +8,9 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/member_img"
         android:layout_alignBottom="@id/member_img"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 
     <ImageView
         android:id="@+id/member_img"
