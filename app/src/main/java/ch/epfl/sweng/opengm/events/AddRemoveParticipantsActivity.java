@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,7 +98,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         ArrayList<Parcelable> result = participantsAdapter.checkList();
         intent.putParcelableArrayListExtra(ADD_REMOVE_PARTICIPANTS_RESULT, result);
         setResult(Activity.RESULT_OK, intent);
-        //Toast.makeText(this, "members to add size " + result.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "members to add size " + result.size(), Toast.LENGTH_SHORT).show();
 
         finish();
     }

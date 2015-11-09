@@ -60,6 +60,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 for(PFMember member : members) {
                     participants.put(member.getId(), member);
                 }
+
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
