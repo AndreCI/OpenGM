@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -275,6 +276,7 @@ public class ManageRolesActivity extends AppCompatActivity {
                 }
             }
         }
+        setResult(Activity.RESULT_OK);
         finish();
     }
 }

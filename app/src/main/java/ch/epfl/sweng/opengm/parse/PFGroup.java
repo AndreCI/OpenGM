@@ -270,10 +270,20 @@ public final class PFGroup extends PFEntity {
     /**
      * Getter for the list of members in the group
      *
-     * @return A list of members in the group
+     * @return A map of members in the group
      */
     public HashMap<String, PFMember> getMembers() {
         return new HashMap<>(mMembers);
+    }
+
+    /**
+     * Getter for a particular member
+     *
+     * @param userId The user id of the member to retrieve
+     * @return The member
+     */
+    public PFMember getMember(String userId) {
+        return mMembers.get(userId);
     }
 
     /**
@@ -393,6 +403,7 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
+     <<<<<<< HEAD
      * Remove an event to the list of events of this group
      *
      * @param event The event we want to remove
@@ -426,13 +437,24 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
+     * Check if a member is already in this group
+     *
+     * @param userId The user id of the member
+     * @return If the member belong to this group
+     */
+    public boolean containsMember(String userId) {
+        return mMembers.containsKey(userId);
+    }
+
+    /**
      * Add a particular user to a group by adding its id
      *
      * @param userId The string that corresponds to the id of the
      *               user we would like to add to the group
      */
     public void addUser(String userId) {
-        if (!mMembers.containsKey(userId)) {
+
+        if (!containsMember(userId)) {
             try {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
@@ -451,7 +473,7 @@ public final class PFGroup extends PFEntity {
      *               user we would like to remove from the group
      */
     public void removeUser(String userId) {
-        if (mMembers.containsKey(userId)) {
+        if (containsMember(userId)) {
             PFMember oldMember = mMembers.remove(userId);
             oldMember.removeFromGroup(getId());
             try {
@@ -473,8 +495,9 @@ public final class PFGroup extends PFEntity {
      * @param memberId The id of the user that will have a new role
      */
     public void addRoleToUser(String role, String memberId) {
+
         if (checkNullArguments(role)) {
-            if (mMembers.containsKey(memberId)) {
+            if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.addRole(role);
                 try {
@@ -493,8 +516,9 @@ public final class PFGroup extends PFEntity {
      * @param memberId The id of the user that will have a role removed
      */
     public void removeRoleToUser(String role, String memberId) {
+
         if (checkNullArguments(role)) {
-            if (mMembers.containsKey(memberId)) {
+            if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.removeRole(role);
                 try {
@@ -514,7 +538,7 @@ public final class PFGroup extends PFEntity {
      */
     public void setNicknameForUser(String nickname, String memberId) {
         if (checkNullArguments(nickname)) {
-            if (mMembers.containsKey(memberId)) {
+            if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 String oldSurname = member.getNickname();
                 member.setNickname(nickname);

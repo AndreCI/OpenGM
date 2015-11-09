@@ -50,7 +50,7 @@
         </activity>
 
         <activity
-            android:name=".groups.Members"
+            android:name=".groups.MembersActivity"
             android:parentActivityName=".groups.GroupsHomeActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_members"
