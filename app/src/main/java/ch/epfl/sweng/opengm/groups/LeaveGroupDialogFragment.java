@@ -19,6 +19,7 @@ public class LeaveGroupDialogFragment extends DialogFragment {
 
     private PFGroup groupToLeave;
 
+
     public LeaveGroupDialogFragment() {
         groupToLeave = null;
     }
@@ -30,6 +31,9 @@ public class LeaveGroupDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if(groupToLeave == null){
+            throw new UnsupportedOperationException();
+        }
         String leaveThisGroupWarning = getString(R.string.leaveGroupWarning);
         leaveThisGroupWarning = leaveThisGroupWarning.replace("[group]", groupToLeave.getName());
 
