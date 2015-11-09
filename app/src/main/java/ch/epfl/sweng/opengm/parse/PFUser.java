@@ -475,6 +475,7 @@ public final class PFUser extends PFEntity {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }

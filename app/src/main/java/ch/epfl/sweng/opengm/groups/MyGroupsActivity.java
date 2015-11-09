@@ -39,18 +39,12 @@ public class MyGroupsActivity extends AppCompatActivity {
 
         final List<PFGroup> groups = new ArrayList<>();
 
-        Log.d("USER", OpenGMApplication.getCurrentUser() + "");
-        Log.d("USER2", ParseUser.getCurrentUser() + "");
-
         try {
             OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
             groups.addAll(getCurrentUser().getGroups());
         } catch (PFException e) {
-            e.printStackTrace();
             Toast.makeText(getBaseContext(), "Error while retrieving your groups" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-        Log.d("USER3", OpenGMApplication.getCurrentUser() + "");
 
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -75,6 +69,7 @@ public class MyGroupsActivity extends AppCompatActivity {
 
                 try {
                     // Thread.sleep(1000);
+
                     getCurrentUser().reload();  // TODO: make reload returns a boolean ???
 
                     groups.clear();
