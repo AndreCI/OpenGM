@@ -209,6 +209,10 @@ public final class PFMember extends PFEntity implements Parcelable {
         return mPhoneNumber;
     }
 
+    public void setPhoneNumber(String phoneNumber) {
+        mPhoneNumber = phoneNumber;
+    }
+
     /**
      * Getter for the description of the member
      *
