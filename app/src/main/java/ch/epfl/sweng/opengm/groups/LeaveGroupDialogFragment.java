@@ -10,6 +10,7 @@ import android.os.Bundle;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
@@ -37,15 +38,17 @@ public class LeaveGroupDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.leaveTheGroup, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Remove the user from this group
-                        try {
-                            getCurrentUser().removeFromGroup(groupToLeave.getId());
-                        } catch (PFException e) {
-                            // TODO Toast?
+                        if(NetworkUtils.haveInternet(getContext())) {
+                            try {
+                                getCurrentUser().removeFromGroup(groupToLeave.getId());
+                            } catch (PFException e) {
+                                // TODO Toast?
+                            }
+                            // Go back to MyGroupsActivity
+                            Intent intent = new Intent(getActivity(), MyGroupsActivity.class);
+                            intent.putExtra(RELOAD_USER_KEY, false);
+                            startActivity(intent);
                         }
-                        // Go back to MyGroupsActivity
-                        Intent intent = new Intent(getActivity(), MyGroupsActivity.class);
-                        intent.putExtra(RELOAD_USER_KEY, false);
-                        startActivity(intent);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

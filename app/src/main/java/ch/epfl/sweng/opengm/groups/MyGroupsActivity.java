@@ -24,6 +24,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
@@ -36,70 +37,72 @@ public class MyGroupsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
+        if(NetworkUtils.haveInternet(getBaseContext())) {
 
-        final List<PFGroup> groups = new ArrayList<>();
+            final List<PFGroup> groups = new ArrayList<>();
 
-        Log.d("USER", OpenGMApplication.getCurrentUser() + "");
-        Log.d("USER2", ParseUser.getCurrentUser() + "");
+            Log.d("USER", OpenGMApplication.getCurrentUser() + "");
+            Log.d("USER2", ParseUser.getCurrentUser() + "");
 
-        try {
-            OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
-            groups.addAll(getCurrentUser().getGroups());
-        } catch (PFException e) {
-            e.printStackTrace();
-            Toast.makeText(getBaseContext(), "Error while retrieving your groups" + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+            try {
+                OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+                groups.addAll(getCurrentUser().getGroups());
+            } catch (PFException e) {
+                e.printStackTrace();
+                Toast.makeText(getBaseContext(), "Error while retrieving your groups" + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
 
-        Log.d("USER3", OpenGMApplication.getCurrentUser() + "");
+            Log.d("USER3", OpenGMApplication.getCurrentUser() + "");
 
-        RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
+            RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 //        groupsRecyclerView.setLayoutManager(linearLayoutManager);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        groupsRecyclerView.setLayoutManager(gridLayoutManager);
-        groupsRecyclerView.setHasFixedSize(true);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+            groupsRecyclerView.setLayoutManager(gridLayoutManager);
+            groupsRecyclerView.setHasFixedSize(true);
 
-        GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
-        groupsRecyclerView.setAdapter(groupCardViewAdapter);
+            GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
+            groupsRecyclerView.setAdapter(groupCardViewAdapter);
 
-        if (groups.size() == 0) {
-            DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
-            noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
-        }
+            if (groups.size() == 0) {
+                DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
+                noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
+            }
 
-        final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
-        swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeToRefreshLayout.setRefreshing(true);
+            final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
+            swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeToRefreshLayout.setRefreshing(true);
 
-                try {
-                    // Thread.sleep(1000);
-                    getCurrentUser().reload();  // TODO: make reload returns a boolean ???
+                    try {
+                        // Thread.sleep(1000);
+                        getCurrentUser().reload();  // TODO: make reload returns a boolean ???
 
-                    groups.clear();
-                    groups.addAll(getCurrentUser().getGroups());
+                        groups.clear();
+                        groups.addAll(getCurrentUser().getGroups());
 
-                    // FIXME: at this point, getGroups() has all the previous groups, but has not added the new group to the list !
-                    Log.v("INFO", "User Groups reloaded");
-                    for (PFGroup group : groups) {
-                        Log.v("INFO", group.getName());
+                        // FIXME: at this point, getGroups() has all the previous groups, but has not added the new group to the list !
+                        Log.v("INFO", "User Groups reloaded");
+                        for (PFGroup group : groups) {
+                            Log.v("INFO", group.getName());
+                        }
+
+                        // ((RecyclerView) findViewById(R.id.groups_recycler_view)).invalidateItemDecorations();
+                        // findViewById(R.id.groups_recycler_view).invalidate();
+
+                        findViewById(R.id.myGroupsMainLayout).invalidate();
+
+                        Log.v("INFO", "Main View reloaded");
+
+                    } catch (PFException e) {
+                        e.printStackTrace();
                     }
 
-                    // ((RecyclerView) findViewById(R.id.groups_recycler_view)).invalidateItemDecorations();
-                    // findViewById(R.id.groups_recycler_view).invalidate();
-
-                    findViewById(R.id.myGroupsMainLayout).invalidate();
-
-                    Log.v("INFO", "Main View reloaded");
-
-                } catch (PFException e) {
-                    e.printStackTrace();
+                    swipeToRefreshLayout.setRefreshing(false);
                 }
-
-                swipeToRefreshLayout.setRefreshing(false);
-            }
-        });
+            });
+        }
     }
 
     public void gotoGroup(View view) {
