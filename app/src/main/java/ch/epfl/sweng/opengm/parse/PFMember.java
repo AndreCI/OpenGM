@@ -321,7 +321,7 @@ public final class PFMember extends PFEntity implements Parcelable {
 
                 ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                ParseObject mailObject = mailQuery.getFirst();
+                ParseObject mailObject = mailQuery.get(id);
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 

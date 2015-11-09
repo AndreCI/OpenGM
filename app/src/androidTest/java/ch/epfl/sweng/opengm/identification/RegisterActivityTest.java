@@ -176,7 +176,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
         assertEquals(id, ParseUser.getCurrentUser().getObjectId());
 
-        assertEquals(email, ParseUser.getCurrentUser().getEmail());
+        assertEquals(email, user.getEmail());
 
         OpenGMApplication.logOut();
     }
