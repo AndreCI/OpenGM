@@ -74,7 +74,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                 swipeToRefreshLayout.setRefreshing(true);
 
                 try {
-                    Thread.sleep(1000);
+                    // Thread.sleep(1000);
                     getCurrentUser().reload();  // TODO: make reload returns a boolean ???
 
                     groups.clear();
@@ -86,13 +86,14 @@ public class MyGroupsActivity extends AppCompatActivity {
                         Log.v("INFO", group.getName());
                     }
 
-//                    ((RecyclerView) findViewById(R.id.groups_recycler_view)).invalidateItemDecorations();
-//                    findViewById(R.id.groups_recycler_view).invalidate();
+                    // ((RecyclerView) findViewById(R.id.groups_recycler_view)).invalidateItemDecorations();
+                    // findViewById(R.id.groups_recycler_view).invalidate();
+
                     findViewById(R.id.myGroupsMainLayout).invalidate();
 
                     Log.v("INFO", "Main View reloaded");
 
-                } catch (InterruptedException | PFException e) {
+                } catch (PFException e) {
                     e.printStackTrace();
                 }
 

@@ -116,7 +116,7 @@ public final class PFUser extends PFEntity {
             for (PFGroup group : mGroups)
                 group.reload();
         } catch (ParseException e) {
-            throw new PFException();
+            throw new PFException(e);
         }
     }
 
