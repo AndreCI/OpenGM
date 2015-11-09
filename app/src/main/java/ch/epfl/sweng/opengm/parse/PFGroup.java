@@ -77,7 +77,7 @@ public final class PFGroup extends PFEntity {
         }
         mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
         mDescription = in.readString();
-        mPicture = in.readParcelable(Bitmap.class.getClassLoader());
+        mPicture = null;//in.readParcelable(Bitmap.class.getClassLoader());
     }
 
 

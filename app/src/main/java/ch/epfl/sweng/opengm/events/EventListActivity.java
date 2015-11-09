@@ -40,7 +40,12 @@ public class EventListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
+        Intent intent = new Intent(EVENT_LIST_INTENT_GROUP);
+        try {
+            intent.putExtra(EVENT_LIST_INTENT_GROUP, PFGroup.fetchExistingGroup("7IaTwKtc9j"));
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
         currentGroup = intent.getParcelableExtra(EVENT_LIST_INTENT_GROUP);
         eventList = currentGroup.getEvents();
         setContentView(R.layout.activity_event_list);

@@ -79,7 +79,7 @@ public final class PFMember extends PFEntity implements Parcelable {
         mEmail = source.readString();
         mPhoneNumber = source.readString();
         mAboutUser = source.readString();
-        mPicture = source.readParcelable(Bitmap.class.getClassLoader());
+        mPicture = null;// source.readParcelable(Bitmap.class.getClassLoader());
         mRoles = source.createStringArrayList();
         mGroups = source.createStringArrayList();
     }

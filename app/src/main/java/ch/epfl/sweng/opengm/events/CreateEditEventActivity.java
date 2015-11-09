@@ -41,8 +41,9 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
-    public static final int CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS = 42;
+    public static final int CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS = 52;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP = 69;
+    public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;
     private boolean editing;
     private HashMap<String, PFMember> participants;
@@ -71,7 +72,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 42){ //CREATE_EDIT_EVENT_RESULT_CODE) {
+        if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
                 participants.clear();
@@ -127,8 +128,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
-       // intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_GROUP, currentGroup);
-        startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS);
+        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
+        startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 
     public void onBrowseButtonClick(View v){
