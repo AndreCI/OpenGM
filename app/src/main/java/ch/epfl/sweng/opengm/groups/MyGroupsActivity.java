@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
 
@@ -36,7 +37,20 @@ public class MyGroupsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
 
-        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+        final List<PFGroup> groups = new ArrayList<>();
+
+        Log.d("USER", OpenGMApplication.getCurrentUser() + "");
+        Log.d("USER2", ParseUser.getCurrentUser() + "");
+
+        try {
+            OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+            groups.addAll(getCurrentUser().getGroups());
+        } catch (PFException e) {
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Error while retrieving your groups" + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        Log.d("USER3", OpenGMApplication.getCurrentUser() + "");
 
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -44,8 +58,6 @@ public class MyGroupsActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         groupsRecyclerView.setLayoutManager(gridLayoutManager);
         groupsRecyclerView.setHasFixedSize(true);
-
-        final List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
 
         GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
         groupsRecyclerView.setAdapter(groupCardViewAdapter);

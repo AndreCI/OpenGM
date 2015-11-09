@@ -1,6 +1,5 @@
 package ch.epfl.sweng.opengm;
 
-import android.app.Activity;
 import android.app.Application;
 
 import com.parse.Parse;
@@ -28,12 +27,12 @@ public class OpenGMApplication extends Application {
         return currentUser;
     }
 
-    public static PFUser setCurrentUser(String id) {
+    public static PFUser setCurrentUser(String id) throws PFException {
         if (currentUser == null && id != null) {
             try {
                 currentUser = PFUser.fetchExistingUser(id);
             } catch (PFException e) {
-                // TODO : what to do?
+                throw new PFException(e);
             }
         }
         return currentUser;
