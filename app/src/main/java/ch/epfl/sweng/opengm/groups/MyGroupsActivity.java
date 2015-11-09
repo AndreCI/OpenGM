@@ -49,6 +49,8 @@ public class MyGroupsActivity extends AppCompatActivity {
             finish();
         }
 
+            Log.d("EMAIL", getCurrentUser().getEmail());
+
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 //        groupsRecyclerView.setLayoutManager(linearLayoutManager);
