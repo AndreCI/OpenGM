@@ -78,6 +78,7 @@ public final class PFMember extends PFEntity implements Parcelable {
         mUsername = source.readString();
         mFirstName = source.readString();
         mLastName = source.readString();
+        mNickname = source.readString();
         mEmail = source.readString();
         mPhoneNumber = source.readString();
         mAboutUser = source.readString();
