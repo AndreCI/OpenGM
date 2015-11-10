@@ -85,22 +85,28 @@
 
     <string name="title_activity_groups_home">GroupsHomeActivity</string>
 
-    <string name="leaveGroupWarning">Are you sure you want to leave the group [group] ?</string>
+    <string name="leaveGroupWarning">Are you sure you want to leave the group %s ?</string>
     <string name="leaveTheGroup">Leave the group</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <string name="title_activity_members">Members</string>
     <string name="title_members_select_mode">Select</string>
-    <string name="members_hint">Type mail address...</string>
+    <string name="members_hint">Type mail address&#8230;</string>
     <string name="members_text">Add new member</string>
     <string name="invite">Invite</string>
     <string name="action_add_person">Add member</string>
     <string name="action_remove_person">Remove member</string>
     <string name="action_change_roles">Change roles</string>
+    <string name="dialog_add_member_title">Add a member</string>
+    <string name="dialog_add_member_text">Enter username:</string>
+    <string name="add">Add</string>
+
     <string name="title_activity_modify_group">ModifyGroup</string>
     <string name="modify_group_add">Add members</string>
     <string name="modify_group_roles">Create new roles</string>
+
     <string name="CreateEditEarlyDate">Invalide date (already past)</string>
     <string name="CreateEditEmptyTimeDateErrorMessage">Time and Date must be specified</string>
     <string name="CreateEditEmptyDateErrorMessage">Date must be specified</string>
@@ -111,4 +117,11 @@
     <string name="EventListFailToAdd">Couldn\'t add the new event</string>
     <string name="CreateEditFailToAddParticipants">Fail to add participants</string>
     <string name="CreateEditSuccessfullAddParticipants">Successfully added participants</string>
+    <string name="groupNameTooShort">Group name is too short</string>
+    <string name="groupNameTooLong">Group name is too long</string>
+    <string name="groupNameStartsWithSpace">Group name cannot start with a space</string>
+    <string name="groupNameIllegalCharacters">Group name contains illegal characters, only letters, numbers and spaces allowed.</string>
+    <string name="groupNameInvalid">Group name is invalid</string>
+
+
 </resources>

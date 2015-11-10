@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import ch.epfl.sweng.opengm.R;
 
-public class ModifyGroup extends AppCompatActivity {
+public class GroupSettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

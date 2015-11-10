@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import ch.epfl.sweng.opengm.R;
 
-public class JoinGroup extends AppCompatActivity {
+public class JoinGroupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
