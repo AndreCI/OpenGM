@@ -26,7 +26,8 @@ import ch.epfl.sweng.opengm.utils.NetworkUtils;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
-    public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
+    public static final String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
+    public static String CREATE_EDIT_GROUP_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_GROUP";
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;
     private boolean editing;
@@ -40,7 +41,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
+        currentGroup = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_GROUP);
         if (event == null) {
             editing = false;
             participants = new HashMap<>();
@@ -57,7 +58,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.ADD_REMOVE_PARTICIPANTS_RESULT);
+                ArrayList<PFMember> members = data.getParcelableArrayListExtra(CREATE_EDIT_EVENT_MESSAGE);
                 participants.clear();
                 for(PFMember member : members) {
                     participants.put(member.getId(), member);
@@ -73,12 +74,13 @@ public class CreateEditEventActivity extends AppCompatActivity {
     public void onOkButtonClick(View v) {
         if (legalArguments()) {
             if (participants != null) {
-                Intent intent = new Intent(this, EventListActivity.class);
+                Intent intent = new Intent(/*this, EventListActivity.class*/);
                 intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
-                setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT, intent);
+                setResult(EventListActivity.EVENT_LIST_RESULT_CODE, intent);
                 if(NetworkUtils.haveInternet(getBaseContext())) {
-                    finish();
+                    //TODO: update to serv
                 }
+                finish();
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
@@ -90,7 +92,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (editing) {
             intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
         }
-        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
+        intent.putExtra(CREATE_EDIT_GROUP_MESSAGE, currentGroup);
         startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 
@@ -182,8 +184,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int day = c.get(Calendar.DAY_OF_MONTH);
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
-        //Date currentDate = new Date(year, month, day, hour, min);
-        Date currentDate = new Date();
+        Date currentDate = new Date(year, month, day, hour, min);
         if (date.before(currentDate)) {
             if (year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
                 ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");

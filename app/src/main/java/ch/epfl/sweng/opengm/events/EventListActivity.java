@@ -23,11 +23,11 @@ public class EventListActivity extends AppCompatActivity {
 
     public final static String EVENT_LIST_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.EVENT_LIST_EVENT";
     public final static String EVENT_LIST_INTENT_GROUP = "ch.epfl.sweng.opengl.events.EVENT_LIST";
+    public static final int EVENT_LIST_RESULT_CODE = 666;
 
     private List<PFEvent> eventList;
     private PFGroup currentGroup;
 
-    public static final int RESULT_CODE_FOR_CREATE_EDIT = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class EventListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent eventIntent) {
 
-        if (requestCode == RESULT_CODE_FOR_CREATE_EDIT) {
+        if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
                 eventList.add(event);
@@ -70,7 +70,7 @@ public class EventListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
         intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
 
-        startActivityForResult(intent, RESULT_CODE_FOR_CREATE_EDIT);
+        startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 
     /**
@@ -117,6 +117,6 @@ public class EventListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ShowEventActivity.class);
         intent.putExtra(EVENT_LIST_MESSAGE_EVENT, currentEvent);
         intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
-        startActivity(intent);
+        startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 }
