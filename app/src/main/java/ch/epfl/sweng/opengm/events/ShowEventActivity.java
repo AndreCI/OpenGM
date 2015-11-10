@@ -53,10 +53,9 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventDate() {
-        Date date = event.getDate();
-        String hourString = String.format("%d : %02d", date.getHours(), date.getMinutes());
+        String hourString = String.format("%d : %02d", event.getHours(), event.getMinutes());
         ((TextView)findViewById(R.id.ShowEventHourText)).setText(hourString);
-        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth()+1, date.getYear());
+        String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
         ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
     }
 

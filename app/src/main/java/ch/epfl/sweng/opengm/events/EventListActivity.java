@@ -11,20 +11,13 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
-import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.parse.PFUser;
-
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -103,8 +96,7 @@ public class EventListActivity extends AppCompatActivity {
         });
         for(PFEvent event : eventList){
             final Button b = new Button(this);
-            Date date = event.getDate();
-            b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), date.getDate(), date.getMonth(), date.getYear(), date.getHours(), date.getMinutes()));
+            b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
             b.setTag(event);
             b.setLayoutParams(eventListLP);
             b.setOnClickListener(new View.OnClickListener() {

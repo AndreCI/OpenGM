@@ -23,6 +23,8 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
@@ -96,10 +98,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.CreateEditEventNameText)).setText(event.getName());
         ((EditText) findViewById(R.id.CreateEditEventPlaceText)).setText(event.getPlace());
         ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).setText(event.getDescription());
-        Date date = event.getDate();
-        String timeString = String.format("%d : %02d", date.getHours(), date.getMinutes());
+        String timeString = String.format("%d : %02d", event.getHours(), event.getMinutes());
         ((Button) findViewById(R.id.CreateEditEventTimeText)).setText(timeString);
-        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth() + 1, date.getYear());
+        String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
     }
 
@@ -113,9 +114,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     private PFEvent createEvent() {
 
-        int[] timeArray = getTimeFromText();
-        int[] dateArray = getDateFromText();
-        Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
+        Date date = getDateFromText();
         String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
@@ -129,9 +128,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     private PFEvent editEvent() {
-        int[] timeArray = getTimeFromText();
-        int[] dateArray = getDateFromText();
-        Date date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], timeArray[0], timeArray[1]);
+        Date date = getDateFromText();
 
         String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
@@ -144,30 +141,20 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
     /**
-     * @return an array of int with hours(24h format) at index 0 and minutes at index 1
-     */
-    private int[] getTimeFromText() {
-        String[] timeString = ((Button) findViewById(R.id.CreateEditEventTimeText)).getText().toString().split(" : ");
-        if (timeString.length != 2) {
-            return new int[]{};
-        }
-        int hours = Integer.parseInt(timeString[0]);
-        int minutes = Integer.parseInt(timeString[1]);
-        return new int[]{hours, minutes};
-    }
-
-    /**
      * @return an array of int with year at index 0, month at index 1 and day at index 2
      */
-    private int[] getDateFromText() {
+    public Date getDateFromText() {
         String[] dateString = ((Button) findViewById(R.id.CreateEditEventDateText)).getText().toString().split("/");
-        if (dateString.length != 3) {
-            return new int[]{};
+        String[] timeString = ((Button) findViewById(R.id.CreateEditEventTimeText)).getText().toString().split(" : ");
+        if (dateString.length != 3 || timeString.length != 2) {
+            return null;
         }
         int year = Integer.parseInt(dateString[2]);
         int month = Integer.parseInt(dateString[1]) - 1;
         int day = Integer.parseInt(dateString[0]);
-        return new int[]{year, month, day};
+        int hours = Integer.parseInt(timeString[0]);
+        int minutes = Integer.parseInt(timeString[1]);
+        return new Date(year, month, day, hours, minutes);
     }
 
     /**
@@ -180,28 +167,23 @@ public class CreateEditEventActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.CreateEditEventNameText)).setError(getString(R.string.CreateEditEmptyNameErrorMessage));
             return false;
         }
-        int[] timeArray = getTimeFromText();
-        int[] dateArray = getDateFromText();
+        Date date = getDateFromText();
 
-        if (timeArray.length == 0 || dateArray.length == 0) {
-            if (timeArray.length == 0) {
-                ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
-            }
-            if (dateArray.length == 0) {
-                ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
-            }
+        if (date == null) {
+            ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
+            ((Button) findViewById(R.id.CreateEditEventDateText)).setError("");
             Toast.makeText(this, getString(R.string.CreateEditEmptyTimeDateErrorMessage), Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        Date date = new Date(dateArray[0], dateArray[1], dateArray[2], timeArray[0], timeArray[1]);
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
-        Date currentDate = new Date(year, month, day, hour, min);
+        //Date currentDate = new Date(year, month, day, hour, min);
+        Date currentDate = new Date();
         if (date.before(currentDate)) {
             if (year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
                 ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
@@ -220,11 +202,21 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     public void showTimePickerDialog(View view) {
         DialogFragment dialogFragment = new TimePickerFragment();
-        dialogFragment.show(getFragmentManager(), "timePicker");
+        Date date = getDateFromText();
+        if(date != null) {
+            dialogFragment.show(getFragmentManager(), dateToString(date));
+        } else {
+            dialogFragment.show(getFragmentManager(), "");
+        }
     }
 
     public void showDatePickerDialog(View view) {
         DialogFragment dialogFragment = new DatePickerFragment();
-        dialogFragment.show(getFragmentManager(), "datePicker");
+        Date date = getDateFromText();
+        if(date != null) {
+            dialogFragment.show(getFragmentManager(), dateToString(date));
+        } else {
+            dialogFragment.show(getFragmentManager(), "");
+        }
     }
 }

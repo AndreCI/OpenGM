@@ -92,6 +92,26 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         this.mPicture = picture;
     }
 
+    public int getYear() {
+        return mDate.getYear();
+    }
+
+    public int getMonth() {
+        return mDate.getMonth() +1;
+    }
+
+    public int getDay() {
+        return mDate.getDate();
+    }
+
+    public int getHours() {
+        return mDate.getHours();
+    }
+
+    public int getMinutes() {
+        return mDate.getMinutes();
+    }
+
     public String getName() {
         return mTitle;
     }

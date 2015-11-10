@@ -18,6 +18,6 @@ public class Utils {
     }
 
     public static String dateToString(Date d) {
-        return String.format("%d-%d-%d-%d-%d", d.getYear(), d.getMonth()+1, d.getDate(), d.getHours(), d.getMinutes());
+        return String.format("%04d-%02d-%02d-%02d-%02d", d.getYear(), d.getMonth()+1, d.getDate(), d.getHours(), d.getMinutes());
     }
 }
