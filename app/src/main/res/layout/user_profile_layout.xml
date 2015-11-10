@@ -3,7 +3,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="100"
-    android:id="@+id/">
+    android:id="@+id/userProfile">
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fabEditProfile"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@mipmap/ic_add_white_24dp">-->
+    <!--</android.support.design.widget.FloatingActionButton>-->
 
     <LinearLayout
         android:orientation="horizontal"
@@ -75,4 +82,5 @@
             android:layout_margin="10dp"
             android:textSize="16sp" />
     </LinearLayout>
+
 </LinearLayout>

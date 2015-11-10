@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:opengm="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_change_roles"
+        android:icon="@mipmap/ic_edit_white_18dp"
+        android:title="@string/action_change_roles"
+        opengm:showAsAction="ifRoom">
+    </item>
+
+</menu>
