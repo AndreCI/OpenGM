@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -55,7 +56,12 @@ public class MyGroupsActivity extends AppCompatActivity {
             groupsRecyclerView.setLayoutManager(gridLayoutManager);
             groupsRecyclerView.setHasFixedSize(true);
 
-            GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
+            // Get the screen size
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+            // Pass to the adapter the group list, and the screen dimensions
+            GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups, metrics);
             groupsRecyclerView.setAdapter(groupCardViewAdapter);
 
             if (groups.size() == 0) {
