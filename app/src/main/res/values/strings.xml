@@ -370,5 +370,6 @@
     </string-array>
 
     <string name="invalid_phone_number">Wrong country code</string>
+    <string name="title_phone_number">"Select your country"</string>
 
 </resources>

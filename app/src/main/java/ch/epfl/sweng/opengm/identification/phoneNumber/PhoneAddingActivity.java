@@ -78,7 +78,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
     public void showCodeList(View v) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Select your country");
+        builder.setTitle(R.string.title_phone_number);
 
         final LayoutInflater inflater = getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_choose_country_code, null);
@@ -93,16 +93,15 @@ public class PhoneAddingActivity extends AppCompatActivity {
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
-                return showResult(query);
+                return showResult(view, query);
             }
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-                return showResult(newText);
+                return showResult(view, newText);
             }
         });
         Collections.sort(mAdapter.getObjects());
-
 
         builder.setView(view);
         final AlertDialog dialog = builder.create();
@@ -122,7 +121,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
     }
 
-    private boolean showResult(String query) {
+    private boolean showResult(View view, String query) {
         Collections.sort(mAdapter.getObjects(), sortList(query));
         List<CountryCode> displayedCc = new ArrayList<>();
         for (CountryCode cc : mAdapter.getObjects()) {
@@ -130,8 +129,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
                 displayedCc.add(cc);
             }
         }
-        mAdapter = new CountryCodeAdapter(this, R.layout.item_countrycode, displayedCc);
-        list.setAdapter(mAdapter);
+        list.setAdapter(new CountryCodeAdapter(view.getContext(), R.layout.item_countrycode, displayedCc));
         return true;
     }
 
