@@ -101,16 +101,16 @@ public class EventListActivity extends AppCompatActivity {
                 return rhs.getDate().compareTo(lhs.getDate());
             }
         });
-        for(PFEvent e : eventList){
+        for(PFEvent event : eventList){
             final Button b = new Button(this);
-            Date date = e.getDate();
-            b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", e.getName(), date.getDate(), date.getMonth(), date.getYear(), date.getHours(), date.getMinutes()));
-            b.setTag(e);
+            Date date = event.getDate();
+            b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), date.getDate(), date.getMonth(), date.getYear(), date.getHours(), date.getMinutes()));
+            b.setTag(event);
             b.setLayoutParams(eventListLP);
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showEvent((PFEvent)b.getTag());
+                    showEvent((PFEvent) b.getTag());
                 }
             });
 
@@ -123,8 +123,8 @@ public class EventListActivity extends AppCompatActivity {
 
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
-        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
         intent.putExtra(EVENT_LIST_MESSAGE_EVENT, currentEvent);
+        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
         startActivity(intent);
     }
 }

@@ -54,12 +54,12 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         mPlace = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
         List<String> participantKeys = in.createStringArrayList();
-        //Parcelable[] array = in.readParcelableArray(getClass().getClassLoader());
+        Parcelable[] array = in.readParcelableArray(getClass().getClassLoader());
         List<PFMember> participants = new ArrayList<>();
-        in.readList(participants, getClass().getClassLoader());
-       /* for(Parcelable parcelable : array) {
+        //in.readList(participants, getClass().getClassLoader());
+        for(Parcelable parcelable : array) {
             participants.add((PFMember) parcelable);
-        }*/
+        }
         mParticipants = new HashMap<>();
         for(int i = 0; i < participants.size(); ++i) {
             mParticipants.put(participantKeys.get(i), participants.get(i));
@@ -353,7 +353,9 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             participants.add(mParticipants.get(s));
         }
         dest.writeStringList(participantKeys);
-        dest.writeTypedList(participants);
+        Parcelable[] array = new Parcelable[participants.size()];
+        dest.writeParcelableArray(participants.toArray(array), 0);
+        //dest.writeTypedList(participants);
     }
 
     @Override
