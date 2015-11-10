@@ -26,6 +26,10 @@ public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
         this.objects = objects;
     }
 
+    public List<CountryCode> getObjects() {
+        return objects;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
@@ -33,9 +37,7 @@ public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
 
         if (row == null) {
             row = ((Activity) context).getLayoutInflater().inflate(ressource, parent, false);
-
             holder = new CountryCodeHolder(row);
-
             row.setTag(holder);
         } else {
             holder = (CountryCodeHolder) row.getTag();
@@ -55,8 +57,6 @@ public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
         private CountryCodeHolder(View row) {
             country = (TextView) row.findViewById(R.id.member_country_name);
             code = (TextView) row.findViewById(R.id.member_country_code);
-            Log.d("HOL1", "" + country);
-            Log.d("HOL2", "" + code);
         }
 
     }

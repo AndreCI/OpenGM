@@ -369,4 +369,6 @@
         <item>263;Zimbabwe</item>
     </string-array>
 
+    <string name="invalid_phone_number">Wrong country code</string>
+
 </resources>
