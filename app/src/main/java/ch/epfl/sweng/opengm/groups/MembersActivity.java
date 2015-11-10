@@ -92,7 +92,7 @@ public class MembersActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectMode) {
-                    ((CheckBox) view.findViewById(R.id.member_checkbox)).performClick();
+                    view.findViewById(R.id.member_checkbox).performClick();
                 }
             }
         });
@@ -212,7 +212,7 @@ public class MembersActivity extends AppCompatActivity {
                 if (parseObject != null) {
                     String userId = parseObject.getString(PFConstants.USER_ENTRY_USERID);
                     if (!group.containsMember(userId)) {
-                        group.addUser(userId);
+                        group.addUserWithId(userId);
                         members.add(group.getMember(userId));
                         adapter.notifyDataSetChanged();
                     } else {

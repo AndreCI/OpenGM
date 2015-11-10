@@ -47,7 +47,10 @@ public class MyGroupsActivity extends AppCompatActivity {
             groups.addAll(getCurrentUser().getGroups());
         } catch (PFException e) {
             Toast.makeText(getBaseContext(), "Error while retrieving your groups" + e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
         }
+
+            Log.d("EMAIL", getCurrentUser().getEmail());
 
         RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

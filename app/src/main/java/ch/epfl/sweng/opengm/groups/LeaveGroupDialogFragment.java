@@ -19,6 +19,7 @@ public class LeaveGroupDialogFragment extends DialogFragment {
 
     private PFGroup groupToLeave;
 
+
     public LeaveGroupDialogFragment() {
         groupToLeave = null;
     }
@@ -30,15 +31,18 @@ public class LeaveGroupDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String leaveThisGroupWarning = getString(R.string.leaveGroupWarning);
-        leaveThisGroupWarning = leaveThisGroupWarning.replace("[group]", groupToLeave.getName());
+        if(groupToLeave == null){
+            throw new UnsupportedOperationException();
+        }
+
+        String leaveThisGroupWarning = String.format(getString(R.string.leaveGroupWarning), groupToLeave.getName());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(leaveThisGroupWarning)
                 .setPositiveButton(R.string.leaveTheGroup, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Remove the user from this group
-                        if(NetworkUtils.haveInternet(getContext())) {
+                        if(NetworkUtils.haveInternet(getActivity())) {
                             try {
                                 getCurrentUser().removeFromGroup(groupToLeave.getId());
                             } catch (PFException e) {

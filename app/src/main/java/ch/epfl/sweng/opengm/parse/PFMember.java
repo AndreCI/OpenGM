@@ -8,6 +8,7 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -50,10 +51,11 @@ public final class PFMember extends PFEntity implements Parcelable {
     private String mUsername;
     private String mFirstName;
     private String mLastName;
-    private String mEmail;
     private String mPhoneNumber;
     private String mAboutUser;
     private Bitmap mPicture;
+
+    private final String mEmail;
 
     private String mNickname;
 
@@ -98,14 +100,6 @@ public final class PFMember extends PFEntity implements Parcelable {
                 mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 mAboutUser = object.getString(USER_ENTRY_ABOUT);
 
-                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
-                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, getId());
-
-                ParseObject mailObject = query.getFirst();
-
-                if (mailObject != null) {
-                    mEmail = mailObject.getString(_USER_TABLE_EMAIL);
-                }
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
@@ -320,10 +314,9 @@ public final class PFMember extends PFEntity implements Parcelable {
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
 
-                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
-                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
+                ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                ParseObject mailObject = query.getFirst();
+                ParseObject mailObject = mailQuery.get(id);
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 

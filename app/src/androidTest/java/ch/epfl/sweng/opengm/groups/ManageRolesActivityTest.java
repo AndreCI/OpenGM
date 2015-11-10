@@ -236,7 +236,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
         Thread.sleep(1000);
         PFUser additionalUser = PFUser.createNewUser("additionalUser", "addi@tional.com", "additional", "addi", "tional");
-        testGroup.addUser(additionalUser.getId());
+        testGroup.addUserWithId(additionalUser.getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, additionalUser.getId());
         Thread.sleep(1000);
         getActivityAndLayout();
@@ -326,7 +326,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup = PFGroup.createNewGroup(firstUser, TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         for(int i = 1; i < numUser; i++){
             testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
-            testGroup.addUser(TEST_USER_ID_PREFIX + i);
+            testGroup.addUserWithId(TEST_USER_ID_PREFIX + i);
         }
     }
 

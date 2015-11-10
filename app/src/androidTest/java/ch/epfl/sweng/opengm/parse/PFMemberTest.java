@@ -114,7 +114,7 @@ public class PFMemberTest {
             Assert.fail("Network error");
         }
 
-        group.addUser(id2);
+        group.addUserWithId(id2);
 
         Thread.sleep(2000);
 

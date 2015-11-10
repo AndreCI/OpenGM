@@ -85,7 +85,7 @@
 
     <string name="title_activity_groups_home">GroupsHomeActivity</string>
 
-    <string name="leaveGroupWarning">Are you sure you want to leave the group [group] ?</string>
+    <string name="leaveGroupWarning">Are you sure you want to leave the group %s ?</string>
     <string name="leaveTheGroup">Leave the group</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -117,4 +117,11 @@
     <string name="EventListFailToAdd">Couldn\'t add the new event</string>
     <string name="CreateEditFailToAddParticipants">Fail to add participants</string>
     <string name="CreateEditSuccessfullAddParticipants">Successfully added participants</string>
+    <string name="groupNameTooShort">Group name is too short</string>
+    <string name="groupNameTooLong">Group name is too long</string>
+    <string name="groupNameStartsWithSpace">Group name cannot start with a space</string>
+    <string name="groupNameIllegalCharacters">Group name contains illegal characters, only letters, numbers and spaces allowed.</string>
+    <string name="groupNameInvalid">Group name is invalid</string>
+
+
 </resources>
