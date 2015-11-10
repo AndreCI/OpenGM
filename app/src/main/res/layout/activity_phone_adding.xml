@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="100"
+    android:id="@+id/phone_adding_outmostLayout"
     tools:context="ch.epfl.sweng.opengm.identification.phoneNumber.PhoneAddingActivity">
 
     <LinearLayout

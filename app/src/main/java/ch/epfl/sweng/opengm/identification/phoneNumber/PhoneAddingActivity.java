@@ -21,6 +21,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 
+import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class PhoneAddingActivity extends AppCompatActivity {
@@ -42,6 +43,8 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
         mEditCountry = (TextView) findViewById(R.id.country_name);
         mEditCode = (TextView) findViewById(R.id.country_code);
+
+        onTapOutsideBehaviour(findViewById(R.id.phone_adding_outmostLayout), this);
 
         mEditCode.addTextChangedListener(new TextWatcher() {
             @Override

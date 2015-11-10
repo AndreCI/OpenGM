@@ -21,6 +21,7 @@
         android:layout_gravity="center_horizontal"
         android:background="@color/bluegreen"
         android:inputType="text"
-        android:padding="20dp"
-        android:queryHint="Query here" />
+        android:queryHint="Query here"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp" />
 </LinearLayout>

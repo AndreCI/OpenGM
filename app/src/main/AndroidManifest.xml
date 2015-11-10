@@ -15,7 +15,7 @@
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="adjustPan">
             <!--            <intent-filter>
                             <action android:name="android.intent.action.MAIN" />
 
@@ -90,6 +90,7 @@
         </activity>
         <activity
             android:name=".identification.phoneNumber.PhoneAddingActivity"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
