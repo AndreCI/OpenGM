@@ -128,8 +128,8 @@ public class EventListActivity extends AppCompatActivity {
 
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
-        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
         intent.putExtra(EVENT_LIST_MESSAGE_EVENT, currentEvent);
+        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
         startActivity(intent);
     }
 }

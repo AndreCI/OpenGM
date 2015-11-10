@@ -29,8 +29,8 @@ public class ShowEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
         event = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT);
+        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
 
         displayEventInformation();
     }

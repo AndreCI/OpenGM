@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.events;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
@@ -137,6 +138,43 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         getActivity();
         onView(withId(R.id.CreateEditOkButton)).perform(click());
         onView(withText(R.string.CreateEditNoParticipants)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
+    }
+
+    public void testCanClickOnBrowseButton() throws PFException{
+        id = getRandomId();
+        String name = "Really Nice Group to test BrowseButton";
+        String description = "A group, much nicer than the previous one";
+        try {
+            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+        Intent i = new Intent();
+        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
+        setActivityIntent(i);
+        onView(withId(R.id.CreateEditEventBitmapBrowseButton)).perform(click());
+    }
+
+    public void NoTestImageNameChanged() throws PFException{
+        id = getRandomId();
+        String name = "Really Nice Group to test BrowseButton";
+        String description = "A group, much nicer than the previous one";
+        try {
+            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+        Intent i = new Intent();
+        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
+        setActivityIntent(i);
+        CreateEditEventActivity a = getActivity();
+        Intent data = null;
+        a.onActivityResult(CreateEditEventActivity.CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP,
+                Activity.RESULT_OK, data);
     }
 
     @After
