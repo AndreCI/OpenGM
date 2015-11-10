@@ -129,15 +129,7 @@ public class MembersActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // handle up navigation according to select mode
-                if (selectMode) {
-                    setSelectMode(false);
-                } else {
-                    NavUtils.navigateUpFromSameTask(this);
-                }
-                return true;
-            case R.id.action_add_person:
+            case R.menu.menu_phone_number:
                 addPerson();
                 return true;
             case R.id.action_remove_person:
