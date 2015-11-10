@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,10 +20,6 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.parse.PFUser;
-
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -34,7 +29,8 @@ public class EventListActivity extends AppCompatActivity {
     private List<PFEvent> eventList;
     private PFGroup currentGroup;
 
-    public static final int RESULT_CODE_FOR_CREATE_EDIT = 42;
+    public static final int RESULT_CODE_FOR_CREATE_EDIT_EVENT_ADDED = 42;
+    public static final int RESULT_CODE_FOR_CREATE_EDIT_EVENT_DELETE = 69;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +53,7 @@ public class EventListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent eventIntent) {
 
-        if (requestCode == RESULT_CODE_FOR_CREATE_EDIT) {
+        if (requestCode == RESULT_CODE_FOR_CREATE_EDIT_EVENT_ADDED) {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
                 eventList.add(event);
@@ -69,6 +65,12 @@ public class EventListActivity extends AppCompatActivity {
                 Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListFailToAdd), Toast.LENGTH_SHORT);
                 t.show();
                 displayEvents();
+            }
+        }else if(requestCode == RESULT_CODE_FOR_CREATE_EDIT_EVENT_DELETE){
+            if(resultCode == Activity.RESULT_OK){
+                (Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT)).show();
+            }else if(resultCode == Activity.RESULT_CANCELED){
+                (Toast.makeText(getApplicationContext(), "Event couldn't get deleted", Toast.LENGTH_SHORT)).show();
             }
         }
     }
@@ -82,7 +84,7 @@ public class EventListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
         intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
 
-        startActivityForResult(intent, RESULT_CODE_FOR_CREATE_EDIT);
+        startActivityForResult(intent, RESULT_CODE_FOR_CREATE_EDIT_EVENT_ADDED);
     }
 
     /**

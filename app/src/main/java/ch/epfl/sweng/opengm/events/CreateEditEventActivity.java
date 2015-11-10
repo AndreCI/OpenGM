@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConstants;
@@ -110,13 +111,26 @@ public class CreateEditEventActivity extends AppCompatActivity {
             }
         }
     }
+    public void onDeleteButtonClick(View v)  {
+        currentGroup.removeEvent(editedEvent);
+        try {
+            editedEvent.delete();
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(this, EventListActivity.class);
+        setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT_EVENT_DELETE, intent);
+        if(NetworkUtils.haveInternet(getBaseContext())) {
+            finish();
+        }
+    }
 
     public void onOkButtonClick(View v) {
         if (legalArguments()) {
             if (participants != null) {
                 Intent intent = new Intent(this, EventListActivity.class);
                 intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
-                setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT, intent);
+                setResult(EventListActivity.RESULT_CODE_FOR_CREATE_EDIT_EVENT_ADDED, intent);
                 if(NetworkUtils.haveInternet(getBaseContext())) {
                     finish();
                 }
