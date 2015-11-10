@@ -3,9 +3,9 @@
     xmlns:opengm="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_change_roles"
-        android:icon="@mipmap/ic_edit_white_18dp"
-        android:title="@string/action_change_roles"
+        android:id="@+id/action_edit_user_profile"
+        android:icon="@mipmap/ic_edit_white_48dp"
+        android:title="Edit Profile"
         opengm:showAsAction="ifRoom">
     </item>
 
