@@ -53,7 +53,7 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    private PFUser(String userId, Date date, String email, String username, String firstName, String lastName, String phoneNumber, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
+    private PFUser(String userId, Date date, String phoneNumber, String email, String username, String firstName, String lastName, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
         super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
         this.mUsername = username;
@@ -470,7 +470,7 @@ public final class PFUser extends PFEntity {
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = (groupsArray == null ? new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
-                return new PFUser(id, object.getUpdatedAt(), email, username, firstName, lastName, phoneNumber, description, picture[0], groups);
+                return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username, firstName, lastName, description, picture[0], groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -490,18 +490,18 @@ public final class PFUser extends PFEntity {
      * @return The new user that contains all the given parameters
      * @throws PFException If something wrong happened with the server
      */
-    public static PFUser createNewUser(String id, String email, String username, String firstName, String lastName) throws PFException {
+    public static PFUser createNewUser(String id, String email, String phoneNumber, String username, String firstName, String lastName) throws PFException {
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);
         parseObject.put(USER_ENTRY_USERNAME, username);
         parseObject.put(USER_ENTRY_FIRSTNAME, firstName);
         parseObject.put(USER_ENTRY_LASTNAME, lastName);
         parseObject.put(USER_ENTRY_GROUPS, new JSONArray());
-        parseObject.put(USER_ENTRY_PHONENUMBER, "");
+        parseObject.put(USER_ENTRY_PHONENUMBER, phoneNumber);
         parseObject.put(USER_ENTRY_ABOUT, "");
         try {
             parseObject.save();
-            return new PFUser(id, parseObject.getUpdatedAt(), email, username, firstName, lastName, "", "", null, new ArrayList<String>());
+            return new PFUser(id, parseObject.getUpdatedAt(), phoneNumber, email, username, firstName, lastName, "", null, new ArrayList<String>());
         } catch (ParseException e) {
             throw new PFException();
         }
