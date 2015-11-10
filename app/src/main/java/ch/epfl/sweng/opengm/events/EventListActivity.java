@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +36,7 @@ public class EventListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         currentGroup = intent.getParcelableExtra(EVENT_LIST_INTENT_GROUP);
-        eventList = currentGroup.getEvents();
+        eventList = new ArrayList<>(currentGroup.getEvents());
         setContentView(R.layout.activity_event_list);
         displayEvents();
 
@@ -47,8 +48,10 @@ public class EventListActivity extends AppCompatActivity {
 
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
-                PFEvent event = eventIntent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
-                eventList.add(event);
+                PFEvent event = eventIntent.getParcelableExtra(EVENT_LIST_MESSAGE_EVENT);
+                currentGroup.updateEvent(event);
+                eventList.clear();
+                eventList.addAll(currentGroup.getEvents());
                 Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT);
                 t.show();
                 displayEvents();
@@ -115,6 +118,7 @@ public class EventListActivity extends AppCompatActivity {
 
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
+        currentGroup.updateEvent(currentEvent);
         intent.putExtra(EVENT_LIST_MESSAGE_EVENT, currentEvent);
         intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);

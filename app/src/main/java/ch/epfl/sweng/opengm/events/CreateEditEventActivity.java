@@ -64,7 +64,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 for(PFMember member : members) {
                     participants.put(member.getId(), member);
                 }
-
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
@@ -75,9 +74,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
     public void onOkButtonClick(View v) {
         if (legalArguments()) {
             if (participants != null) {
-                Intent intent = new Intent(/*this, EventListActivity.class*/);
-                intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
-                setResult(EventListActivity.EVENT_LIST_RESULT_CODE, intent);
+                Intent intent = new Intent();
+                intent.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, createEditEvent());
+                setResult(Activity.RESULT_OK, intent);
                 if(NetworkUtils.haveInternet(getBaseContext())) {
                     //TODO: update to serv
                 }
@@ -145,6 +144,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         editedEvent.setName(name);
         editedEvent.setDate(date);
         editedEvent.setDescription(description);
+        for(PFMember member : participants.values()) {
+            editedEvent.removeParticipant(member.getId());
+            editedEvent.addParticipant(member.getId(), member);
+        }
         editedEvent.setPlace(place);
         return editedEvent;
     }

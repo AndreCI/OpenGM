@@ -96,7 +96,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         Intent intent = new Intent();
         ArrayList<PFMember> result = participantsAdapter.checkList();
         intent.putParcelableArrayListExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE, result);
-        setResult(CreateEditEventActivity.CREATE_EDIT_EVENT_RESULT_CODE, intent);
+        setResult(Activity.RESULT_OK, intent);
         finish();
     }
 

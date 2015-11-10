@@ -403,8 +403,12 @@ public final class PFGroup extends PFEntity {
         }
     }
 
+    public void updateEvent(PFEvent event) {
+        removeEvent(event);
+        addEvent(event);
+    }
+
     /**
-     <<<<<<< HEAD
      * Remove an event to the list of events of this group
      *
      * @param event The event we want to remove
@@ -417,6 +421,7 @@ public final class PFGroup extends PFEntity {
                 // Delete also the event of the server
                 event.delete();
             } catch (PFException e) {
+                //TODO: ????
                 mEvents.put(event.getId(), event);
             }
         }

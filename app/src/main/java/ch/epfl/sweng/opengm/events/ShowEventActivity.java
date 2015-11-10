@@ -48,9 +48,9 @@ public class ShowEventActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(/*this, EventListActivity.class*/);
-        intent.putExtra(SHOW_EVENT_MESSAGE_EVENT, event);
-        setResult(EventListActivity.EVENT_LIST_RESULT_CODE, intent);
+        Intent intent = new Intent();
+        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT, event);
+        setResult(Activity.RESULT_OK, intent);
         finish();
     }
 
