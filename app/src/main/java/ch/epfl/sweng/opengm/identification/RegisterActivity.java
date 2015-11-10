@@ -157,7 +157,8 @@ public class RegisterActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 if (e == null) {
                                                     try {
-                                                        PFUser.createNewUser(user.getObjectId(), email, username, firstname, lastname);
+                                                        // TODO: change by the real phone number!
+                                                        PFUser.createNewUser(user.getObjectId(), "", email, username, firstname, lastname);
                                                         dialog.hide();
                                                         Intent intent = new Intent(RegisterActivity.this, MyGroupsActivity.class);
                                                         intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, true);
