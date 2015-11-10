@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100"
+    android:id="@+id/">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100"
+        android:layout_weight="50">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/userPhoto"
+            android:layout_weight="50"
+            android:src="@mipmap/ic_launcher"
+            android:scaleType="centerCrop"
+            android:maxWidth="50dp"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[Firsname]\n[Lastname]"
+            android:id="@+id/firstLastNameTextView"
+            android:layout_weight="50"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:password="false"
+            android:allowUndo="false"
+            android:maxWidth="50dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/userInfoLinearLayout"
+        android:layout_margin="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username : [username]"
+            android:id="@+id/usernameTextView"
+            android:layout_margin="10dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email : [email]"
+            android:id="@+id/emailTextView"
+            android:layout_margin="10dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone number : [phone]"
+            android:id="@+id/phoneNumberTextView"
+            android:layout_margin="10dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description : [description]"
+            android:id="@+id/descriptionTextView"
+            android:layout_margin="10dp"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>
