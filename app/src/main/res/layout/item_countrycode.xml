@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:gravity="center"
-        android:text="hello"
-        android:textSize="30sp" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/member_country_code"
@@ -21,8 +20,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center"
-        android:text="+33"
         android:textColor="@color/blue"
-        android:textSize="35sp" />
+        android:textSize="25sp" />
 
 </RelativeLayout>

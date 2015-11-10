@@ -32,9 +32,10 @@ public class PhoneAddingActivity extends AppCompatActivity {
             Log.d("CODE", new CountryCode(s).toString());
         }
 
-        mAdapter = new CountryCodeAdapter(this, R.layout.item_member, countryCodes);
+        mAdapter = new CountryCodeAdapter(this, R.layout.item_countrycode, countryCodes);
+        Log.d("LIST", list + "");
         list.setAdapter(mAdapter);
-
+        Log.d("LIST", list + "");
     }
 
     @Override

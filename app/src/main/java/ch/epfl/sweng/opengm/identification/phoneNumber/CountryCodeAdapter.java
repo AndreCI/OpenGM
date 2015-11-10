@@ -36,15 +36,10 @@ public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
 
             holder = new CountryCodeHolder(row);
 
-            Log.d("DEBUG", "HERE1");
-
             row.setTag(holder);
         } else {
-            Log.d("DEBUG", "HERE2");
             holder = (CountryCodeHolder) row.getTag();
         }
-
-        Log.d("DEBUG", holder + "");
 
         CountryCode countryCode = objects.get(position);
         holder.country.setText(countryCode.getCountry());
@@ -60,6 +55,8 @@ public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
         private CountryCodeHolder(View row) {
             country = (TextView) row.findViewById(R.id.member_country_name);
             code = (TextView) row.findViewById(R.id.member_country_code);
+            Log.d("HOL1", "" + country);
+            Log.d("HOL2", "" + code);
         }
 
     }
