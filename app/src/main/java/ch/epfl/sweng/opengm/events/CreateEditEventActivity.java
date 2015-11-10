@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -104,6 +105,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.CreateEditEventTimeText)).setText(timeString);
         String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
+        TextView participantsList = ((TextView) findViewById(R.id.CreateEditEventParticipantsTextView));
+        String participantsStringList = "";
+        for(PFMember member : event.getParticipants().values()) {
+            participantsStringList += member.getName() + "; ";
+        }
+        participantsList.setText(participantsStringList.substring(0, participantsStringList.length() - 2));
     }
 
     private PFEvent createEditEvent() {
