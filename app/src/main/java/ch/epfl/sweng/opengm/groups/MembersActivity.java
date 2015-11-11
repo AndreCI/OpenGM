@@ -29,6 +29,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class MembersActivity extends AppCompatActivity {
 
@@ -48,8 +49,11 @@ public class MembersActivity extends AppCompatActivity {
 
         // get the group in which we are
         int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
-        group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
-        members = new ArrayList<>(group.getMembers().values());
+        PFUser user = OpenGMApplication.getCurrentUser();
+        group = user.getGroups().get(groupId);
+        members = new ArrayList<>();
+        members.add(group.getMember(user.getId()));
+        members.addAll(group.getMembersWithoutUser(user.getId()));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -237,7 +241,12 @@ public class MembersActivity extends AppCompatActivity {
                 c.setChecked(false);
                 userIds.add(members.get(i).getId());
                 if (rm) {
-                    membersToRemove.add(members.get(i));
+                    if (i != 0) {
+                        membersToRemove.add(members.get(i));
+                    } else {
+                        userIds.remove(0);
+                        Toast.makeText(getBaseContext(), "You can't supress yourself from a group.", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }
