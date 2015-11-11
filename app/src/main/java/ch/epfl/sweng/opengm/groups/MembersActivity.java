@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -167,7 +168,13 @@ public class MembersActivity extends AppCompatActivity {
     }
 
     private void addPerson() {
+        // display the keyboard
+        addMember.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         addMember.show();
+
+        // focus the field to enter username
+        EditText edit = (EditText)addMember.findViewById(R.id.dialog_add_member_username);
+        edit.requestFocus();
     }
 
     // if no connection we'll get a consitency problem between members and what actually is on parse
@@ -186,10 +193,14 @@ public class MembersActivity extends AppCompatActivity {
     private void changeRoles() {
         ArrayList<String> userIds = getCheckedIds(false);
 
-        Intent intent = new Intent(this, ManageRolesActivity.class);
-        intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
-        intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
-        startActivityForResult(intent, 1);
+        if (!userIds.isEmpty()) {
+            Intent intent = new Intent(this, ManageRolesActivity.class);
+            intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
+            intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
+            startActivityForResult(intent, 1);
+        } else {
+            Toast.makeText(getBaseContext(), "Please select at least one member", Toast.LENGTH_LONG).show();
+        }
     }
 
     // change to select mode or back to normal mode
