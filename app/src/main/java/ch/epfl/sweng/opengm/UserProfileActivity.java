@@ -37,7 +37,7 @@ public class UserProfileActivity extends AppCompatActivity {
         // TODO: proper names in strings.xml file. + Name of activity
 
         ImageView userPhoto = (ImageView) findViewById(R.id.userPhoto);
-        userPhoto.setImageResource(R.drawable.emma);
+        userPhoto.setImageResource(R.drawable.lolcat);
 
         TextView nameTextView = (TextView) findViewById(R.id.nameTV);
 //        String text = getText(R.string.firstLastName);
