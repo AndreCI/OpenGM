@@ -86,14 +86,17 @@ public final class PFUser extends PFEntity {
                 mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 mAboutUser = object.getString(USER_ENTRY_ABOUT);
 
-                ParseQuery<ParseObject> mailQuery = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
-                mailQuery.whereEqualTo(PFConstants.USER_ENTRY_USERID, getId());
+                ParseObject mailObject = null;
 
-                ParseObject mailObject = query.getFirst();
+                ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                if (mailObject != null) {
+                try {
+                    mailObject = mailQuery.get(getId());
                     mEmail = mailObject.getString(_USER_TABLE_EMAIL);
+                } catch (ParseException pe) {
+                    // Do nothing
                 }
+
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
@@ -465,11 +468,9 @@ public final class PFUser extends PFEntity {
                 ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
                 try {
-
                     mailObject = mailQuery.get(id);
-
-                } catch (ParseException e) {
-
+                } catch (ParseException pe) {
+                    // Do nothing
                 }
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
