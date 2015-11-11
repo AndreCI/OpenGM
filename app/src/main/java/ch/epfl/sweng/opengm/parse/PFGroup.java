@@ -254,6 +254,7 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_USERS, usersArray);
                             object.put(GROUP_ENTRY_NICKNAMES, surnamesArray);
                             object.put(GROUP_ENTRY_ROLES, rolesArray);
+                            // BE CAREFUL: no break here!
                         case GROUP_ENTRY_ROLES_PERMISSIONS:
                             JSONArray rolesPermissions = new JSONArray();
                             for(Map.Entry<String, List<Integer>> entry : mRolesPermissions.entrySet()){
