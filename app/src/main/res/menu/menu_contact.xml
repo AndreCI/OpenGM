@@ -3,7 +3,7 @@
     xmlns:opengm="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/contact_search"
-        android:icon="@drawable/ic_action_group"
+        android:icon="@mipmap/ic_search_white_24dp"
         android:title="Search for a contact"
         opengm:actionViewClass="android.widget.SearchView"
         opengm:showAsAction="collapseActionView|ifRoom" />
