@@ -54,7 +54,7 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
         createGroupActivity = getActivity();
-        currentUser = PFUser.createNewUser(CURRENT_DATE, EMAIL, USERNAME, FIRSTNAME, LASTRNAME);
+        currentUser = PFUser.createNewUser(CURRENT_DATE, EMAIL,"0", USERNAME, FIRSTNAME, LASTRNAME);
 
         OpenGMApplication.setCurrentUser(currentUser.getId());
     }
@@ -116,7 +116,6 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         assertTrue(found);
     }
 
-    @AfterClass
     public void tearDown() {
         if (group != null)
             group.deleteGroup();

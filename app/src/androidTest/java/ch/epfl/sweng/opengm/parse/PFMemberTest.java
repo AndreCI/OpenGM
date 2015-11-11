@@ -66,7 +66,7 @@ public class PFMemberTest {
         id1 = getRandomId();
 
         try {
-            PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            PFUser.createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -93,7 +93,7 @@ public class PFMemberTest {
 
         PFUser user1 = null, user2, user3 = null;
         try {
-            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = PFUser.createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -101,7 +101,7 @@ public class PFMemberTest {
         id2 = getRandomId();
 
         try {
-            user3 = PFUser.createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user3 = PFUser.createNewUser(id2, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }

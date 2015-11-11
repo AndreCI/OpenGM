@@ -70,7 +70,7 @@ public class PFUserTest {
         id1 = getRandomId();
 
         try {
-            PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            PFUser.createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -87,7 +87,7 @@ public class PFUserTest {
                 assertEquals(LAST_NAME, o1.getString(PFConstants.USER_ENTRY_LASTNAME));
                 assertEquals(new JSONArray(), o1.getJSONArray(PFConstants.USER_ENTRY_GROUPS));
                 assertEquals("", o1.getString(PFConstants.USER_ENTRY_ABOUT));
-                assertEquals("", o1.getString(PFConstants.USER_ENTRY_PHONENUMBER));
+                assertEquals("0", o1.getString(PFConstants.USER_ENTRY_PHONENUMBER));
                 assertNull(o1.getParseFile(PFConstants.USER_ENTRY_PICTURE));
             }
         } catch (ParseException e) {
@@ -102,7 +102,7 @@ public class PFUserTest {
 
         PFUser user = null;
         try {
-            user = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = PFUser.createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -113,7 +113,7 @@ public class PFUserTest {
         assertEquals(FIRST_NAME, user.getFirstName());
         assertEquals(LAST_NAME, user.getLastName());
         assertEquals("", user.getAboutUser());
-        assertEquals("", user.getPhoneNumber());
+        assertEquals("0", user.getPhoneNumber());
         assertNull(user.getPicture());
         assertEquals(new ArrayList<PFGroup>(), user.getGroups());
     }
@@ -126,7 +126,7 @@ public class PFUserTest {
 
         PFUser user1 = null;
         try {
-            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = PFUser.createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -156,7 +156,7 @@ public class PFUserTest {
 
         PFUser user1 = null, user2;
         try {
-            user1 = PFUser.createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = PFUser.createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }

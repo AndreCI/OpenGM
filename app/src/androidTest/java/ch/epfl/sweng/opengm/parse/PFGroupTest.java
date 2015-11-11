@@ -68,7 +68,7 @@ public class PFGroupTest {
         id1 = getRandomId();
         PFUser user = null;
         try {
-            user = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
             group = createNewGroup(user, name, description, null);
         } catch (PFException e) {
             Assert.fail("Network error");
@@ -149,7 +149,7 @@ public class PFGroupTest {
         in.setDataPosition(0);
 
         try {
-            PFUser.createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            PFUser.createNewUser(id2, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             e.printStackTrace();
         }
@@ -183,7 +183,7 @@ public class PFGroupTest {
 
         PFUser user = null;
         try {
-            user = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -221,7 +221,7 @@ public class PFGroupTest {
 
         PFUser user = null;
         try {
-            user = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -263,14 +263,14 @@ public class PFGroupTest {
 
         PFUser user1 = null;
         try {
-            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
         id2 = getRandomId();
 
         try {
-            createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            createNewUser(id2, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -305,7 +305,7 @@ public class PFGroupTest {
 
         PFUser user1 = null;
         try {
-            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -313,7 +313,7 @@ public class PFGroupTest {
 
         PFUser user2 = null;
         try {
-            user2 = createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user2 = createNewUser(id2, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
