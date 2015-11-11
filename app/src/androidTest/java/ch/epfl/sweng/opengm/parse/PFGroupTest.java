@@ -240,7 +240,7 @@ public class PFGroupTest {
 
             PFMember member = (PFMember) group.getMembers().values().toArray()[0];
 
-            assertTrue(member.getRoles().isEmpty());
+            assertTrue(member.getRoles().contains("Administrator"));
             assertEquals(USERNAME, member.getNickname());
             assertEquals(user.getId(), member.getId());
             assertEquals(user.getUsername(), member.getUsername());
@@ -328,7 +328,7 @@ public class PFGroupTest {
         PFGroup group2;
 
         // Test if first user has "Administrator Role"
-        List<String> roles = group.getRolesForUser(id1);
+        List<String> roles = new ArrayList<>();
         roles.add("Administrator");
 
         try {
@@ -411,7 +411,7 @@ public class PFGroupTest {
 
         group.removeRoleToUser(role, user1.getId());
 
-        roles.clear();
+        roles.remove(role);
 
         Thread.sleep(2000);
 
