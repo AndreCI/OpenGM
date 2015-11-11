@@ -35,6 +35,7 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
 
     GroupCardViewAdapter(List<PFGroup> groups, DisplayMetrics metrics){
         this.groups = groups;
+        this.screenMetrics = metrics;
     }
 
     @Override

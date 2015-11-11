@@ -22,6 +22,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.UserProfileActivity;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -107,6 +108,9 @@ public class MyGroupsActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Just to skip from login to my activity directly :-)
+        startActivity(new Intent(MyGroupsActivity.this, UserProfileActivity.class));
     }
 
     public void gotoGroup(View view) {

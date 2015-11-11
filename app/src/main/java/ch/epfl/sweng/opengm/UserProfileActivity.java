@@ -23,16 +23,35 @@ public class UserProfileActivity extends AppCompatActivity {
 
         TextView nameTextView = (TextView) findViewById(R.id.firstLastNameTextView);
 //        String text = getText(R.string.firstLastName);
-        String firstAndLastName = "[Firstname]\n[Lastname]";
-        firstAndLastName = firstAndLastName.replaceFirst("[Firstname]", currentUser.getFirstName());
-        firstAndLastName = firstAndLastName.replace("[Lastname]", currentUser.getLastName());
+        String firstAndLastName = "[firstname]\n[lastname]";
+        firstAndLastName = firstAndLastName.replace("[firstname]", currentUser.getFirstName());
+        firstAndLastName = firstAndLastName.replace("[lastname]", currentUser.getLastName());
         nameTextView.setText(firstAndLastName);
 
-        TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
+        TextView usernameTextView = (TextView) findViewById(R.id.usernameTV);
 //        String username = getText(R.string.username);
         String username = "[username]";
         username = username.replace("[username]", currentUser.getUsername());
         usernameTextView.setText(username);
+
+        TextView emailTextView = (TextView) findViewById(R.id.emailTV);
+//        String email = getText(R.string.email);
+        String email = "[email]";
+        email = email.replace(email, currentUser.getEmail());
+        emailTextView.setText(email);
+
+        TextView phoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
+//        String phoneNumber = getText(R.string.phoneNumber);
+        String phoneNumber = "[phone]";
+        phoneNumber = phoneNumber.replace(phoneNumber, currentUser.getPhoneNumber());
+        phoneNumberTextView.setText(phoneNumber);
+
+        TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTV);
+//        String description = getText(R.string.description);
+        String description = "[description]";
+        description = description.replace(description, currentUser.getAboutUser());
+        descriptionTextView.setText(description);
+
     }
 
     @Override
