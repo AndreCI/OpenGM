@@ -108,9 +108,6 @@ public class MyGroupsActivity extends AppCompatActivity {
                 }
             });
         }
-
-        // Just to skip from login to my activity directly :-)
-        startActivity(new Intent(MyGroupsActivity.this, UserProfileActivity.class));
     }
 
     public void gotoGroup(View view) {
