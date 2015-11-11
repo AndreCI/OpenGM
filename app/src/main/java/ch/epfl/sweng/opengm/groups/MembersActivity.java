@@ -38,6 +38,7 @@ public class MembersActivity extends AppCompatActivity {
     private PFGroup group;
     private MembersAdapter adapter;
     private List<PFMember> members;
+    private int groupIndex;
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
@@ -48,9 +49,9 @@ public class MembersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_members);
 
         // get the group in which we are
-        int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
+        groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
         PFUser user = OpenGMApplication.getCurrentUser();
-        group = user.getGroups().get(groupId);
+        group = user.getGroups().get(groupIndex);
         members = new ArrayList<>();
         members.add(group.getMember(user.getId()));
         members.addAll(group.getMembersWithoutUser(user.getId()));
@@ -135,11 +136,7 @@ public class MembersActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // handle up navigation according to select mode
-                if (selectMode) {
-                    setSelectMode(false);
-                } else {
-                    NavUtils.navigateUpFromSameTask(this);
-                }
+                onBackPressed();
                 return true;
             case R.id.action_add_person:
                 addPerson();
@@ -163,7 +160,10 @@ public class MembersActivity extends AppCompatActivity {
         if (selectMode) {
             setSelectMode(false);
         } else {
-            super.onBackPressed();
+            Intent i = new Intent();
+            i.putExtra(GROUP_INDEX, groupIndex);
+            setResult(RESULT_OK, i);
+            finish();
         }
     }
 
