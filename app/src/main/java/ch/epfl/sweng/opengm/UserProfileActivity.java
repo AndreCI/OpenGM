@@ -16,6 +16,13 @@ import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class UserProfileActivity extends AppCompatActivity {
 
+    private ImageView mPhotoImageView;
+    private TextView mFirstLastNameTextView;
+    private TextView mUsernameTextView;
+    private TextView mEmailTextView;
+    private TextView mPhoneNumberTextView;
+    private TextView mDescriptionTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,41 +41,46 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         // *****************************************
 
+
         // TODO: proper names in strings.xml file. + Name of activity
 
-        ImageView userPhoto = (ImageView) findViewById(R.id.userPhoto);
-        userPhoto.setImageResource(R.drawable.lolcat);
 
-        TextView nameTextView = (TextView) findViewById(R.id.nameTV);
+        // Display profile picture of user :
+        mPhotoImageView = (ImageView) findViewById(R.id.userPhoto);
+        mPhotoImageView.setImageResource(R.drawable.lolcat);
+
+        // Display first name and last name of user :
+        mFirstLastNameTextView = (TextView) findViewById(R.id.nameTV);
 //        String text = getText(R.string.firstLastName);
         String firstAndLastName = "[name]";
         firstAndLastName = firstAndLastName.replace(firstAndLastName, currentUser.getFirstName());
         firstAndLastName += "\n" + currentUser.getLastName();
-        nameTextView.setText(firstAndLastName);
+        mFirstLastNameTextView.setText(firstAndLastName);
 
-        TextView usernameTextView = (TextView) findViewById(R.id.usernameTV);
+        // Display username of user :
+        mUsernameTextView = (TextView) findViewById(R.id.usernameTV);
 //        String username = getText(R.string.username);
         String username = "[username]";
         username = username.replace(username, currentUser.getUsername());
-        usernameTextView.setText(username);
+        mUsernameTextView.setText(username);
 
-        TextView emailTextView = (TextView) findViewById(R.id.emailTV);
+        // Display e-mail adress of user :
+        mEmailTextView = (TextView) findViewById(R.id.emailTV);
 //        String email = getText(R.string.email);
         String email = "[email]";
         email = email.replace(email, currentUser.getEmail());
-        emailTextView.setText(email);
+        mEmailTextView.setText(email);
 
-        TextView phoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
-//        String phoneNumber = getText(R.string.phoneNumber);
-        String phoneNumber = "[phone]";
-        phoneNumber = phoneNumber.replace(phoneNumber, currentUser.getPhoneNumber());
-        phoneNumberTextView.setText(phoneNumber);
+        // Display phone number of user :
+        mPhoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
+        mPhoneNumberTextView.setText(currentUser.getPhoneNumber());
 
-        TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTV);
+        // Display description of user :
+        mDescriptionTextView = (TextView) findViewById(R.id.descriptionTV);
 //        String description = getText(R.string.description);
         String description = "[description]";
         description = description.replace(description, currentUser.getAboutUser());
-        descriptionTextView.setText(description);
+        mDescriptionTextView.setText(description);
 
     }
 
