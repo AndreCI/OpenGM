@@ -1,9 +1,11 @@
 package ch.epfl.sweng.opengm.identification.phoneNumber;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -59,18 +61,15 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                CountryCode cc = codeForCountries.get(mEditCode.getText().toString());
-                if (cc == null) {
-                    mEditCountry.setText(R.string.invalid_phone_number);
-                } else {
-                    mEditCountry.setText(cc.getCountry());
-                }
+                mEditCountry.setText(getCountryForCode(mEditCode.getText().toString()));
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     s.append("+");
+                } else if (!s.toString().startsWith("+")) {
+                    s.insert(0, "+");
                 }
             }
         });
@@ -82,6 +81,29 @@ public class PhoneAddingActivity extends AppCompatActivity {
             countryCodes.add(cc);
             codeForCountries.put(cc.getCode(), cc);
         }
+
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String isoCode = tm.getSimCountryIso();
+
+        CountryCode cc = getPrefixForIso(isoCode);
+
+        mEditCode.setText(cc == null ? "+0" : cc.getCode());
+        mEditCountry.setText(cc == null ? getString(R.string.invalid_phone_number) : cc.getCountry());
+
+    }
+
+    private CountryCode getPrefixForIso(String iso) {
+        for (CountryCode c : codeForCountries.values()) {
+            if (c.containsIso(iso)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    private String getCountryForCode(String code) {
+        CountryCode cc = codeForCountries.get(code);
+        return cc == null ? getString(R.string.invalid_phone_number) : cc.getCountry();
     }
 
     public void showCodeList(View v) {

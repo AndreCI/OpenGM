@@ -27,7 +27,6 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:onClick="showCodeList"
-            android:text="Switzerland"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <LinearLayout
@@ -45,7 +44,6 @@
                 android:inputType="phone"
                 android:maxLines="1"
                 android:gravity="center"
-                android:text="+41"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <EditText
