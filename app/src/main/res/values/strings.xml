@@ -357,4 +357,8 @@
         Each country has its own code number : if you don\'t know yours, you can have a look at countrycode.org.\n
         Don\'t worry, they are safe and we will not share or even use them.</string>
 
+    <string name="invite_contact">Invite a contact</string>
+    <string name="cost_contact">Do you want to open the SMS application to invite %s? It may imply some additional costs.</string>
+    <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
+
 </resources>

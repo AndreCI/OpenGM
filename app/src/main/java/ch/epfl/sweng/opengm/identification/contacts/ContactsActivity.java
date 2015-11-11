@@ -1,8 +1,11 @@
 package ch.epfl.sweng.opengm.identification.contacts;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -26,6 +29,10 @@ import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class ContactsActivity extends AppCompatActivity {
 
+    private final static String SMS_TYPE = "vnd.android-dir/mms-sms";
+    private final static String SMS_NUMBER = "address";
+    private final static String SMS_BODY = "sms_body";
+
     private ContactAdapter mAdapter;
     private ListView list;
 
@@ -35,7 +42,6 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
-        fillContacts();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -43,14 +49,39 @@ public class ContactsActivity extends AppCompatActivity {
 
         list = (ListView) findViewById(R.id.contacts_list);
 
+        fillContacts();
+
         mAdapter = new ContactAdapter(this, R.layout.item_contact, mContacts);
         list.setAdapter(mAdapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Contact cc = mAdapter.getObjects().get(position);
-                Log.d("DEBUG", cc.toString());
+                final Contact cc = mAdapter.getObjects().get(position);
+                if (cc.isIsUsingTheApp()) {
+                    // Already uses the app
+                } else {
+                    final AlertDialog alertDialog = new AlertDialog.Builder(ContactsActivity.this).create();
+                    alertDialog.setTitle(getString(R.string.invite_contact));
+                    alertDialog.setMessage(String.format(getString(R.string.cost_contact), cc.getName()));
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+                                    smsIntent.setType(SMS_TYPE);
+                                    smsIntent.putExtra(SMS_NUMBER, cc.getPhoneNumber());
+                                    smsIntent.putExtra(SMS_BODY, getString(R.string.body_contact));
+                                    startActivity(smsIntent);
+                                }
+                            });
+                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                    alertDialog.show();
+                }
             }
         });
 
