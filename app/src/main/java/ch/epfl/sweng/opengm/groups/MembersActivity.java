@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +25,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
@@ -69,8 +69,8 @@ public class MembersActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String username = String.valueOf(edit.getText());
-                        addUser(username);
+                        String usernameOrMail = String.valueOf(edit.getText());
+                        addUser(usernameOrMail);
                         edit.getText().clear();
                     }
                 })
@@ -135,7 +135,6 @@ public class MembersActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // handle up navigation according to select mode
                 onBackPressed();
                 return true;
             case R.id.action_add_person:
@@ -207,15 +206,25 @@ public class MembersActivity extends AppCompatActivity {
     }
 
     // add a user to the group and to the list that is displayed in background according to a username
-    private void addUser(String username) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query.whereEqualTo(PFConstants.USER_ENTRY_USERNAME, username);
+    private void addUser(String usernameOrMail) {
+        // select between username or mail
+        String field;
+        if (InputUtils.isEmailValid(usernameOrMail)) {
+            field = PFConstants._USER_TABLE_EMAIL;
+        } else {
+            field = PFConstants._USER_TABLE_USERNAME;
+        }
+
+        // the actual query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+        query.whereEqualTo(field, usernameOrMail);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (parseObject != null) {
-                    String userId = parseObject.getString(PFConstants.USER_ENTRY_USERID);
+                    String userId = parseObject.getObjectId();
                     if (!group.containsMember(userId)) {
+                        // add the user to the group and to the list
                         group.addUserWithId(userId);
                         members.add(group.getMember(userId));
                         adapter.notifyDataSetChanged();
@@ -223,7 +232,7 @@ public class MembersActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "User already belongs to this group.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(getBaseContext(), "Could not found this username", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Could not find this user", Toast.LENGTH_LONG).show();
                 }
             }
         });
