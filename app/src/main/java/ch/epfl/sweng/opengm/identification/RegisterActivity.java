@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.identification;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.parse.SignUpCallback;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
+import ch.epfl.sweng.opengm.identification.phoneNumber.PhoneAddingActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
@@ -36,6 +38,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registeractivity.username";
     public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registeractivity.password";
+    public static final String PHONE_KEY = "ch.epfl.ch.opengm.identification.registeractivity.phone";
+    private static final int PHONE_ACT_KEY = 1061;
+
 
     private EditText mEditUsername;
     private EditText mEditPassword1;
@@ -43,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mEditFirstname;
     private EditText mEditLastname;
     private EditText mEditEmail;
+    private EditText mEditPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEditFirstname = (EditText) findViewById(R.id.register_firstname);
         mEditLastname = (EditText) findViewById(R.id.register_lastname);
         mEditEmail = (EditText) findViewById(R.id.register_email);
+        mEditPhone = (EditText) findViewById(R.id.register_phone);
 
         // Auto complete fields if user fills first the login fields
         mEditUsername.setText(registerIntent.getStringExtra(USERNAME_KEY));
@@ -188,5 +195,24 @@ public class RegisterActivity extends AppCompatActivity {
                 );
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == PHONE_ACT_KEY) {
+            if (resultCode == Activity.RESULT_OK) {
+                mEditPhone.setText(data.getStringExtra(PHONE_KEY));
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
+
+
+    public void showPhoneChoice(View v) {
+        Intent i = new Intent(this, PhoneAddingActivity.class);
+        startActivityForResult(i, PHONE_ACT_KEY);
     }
 }

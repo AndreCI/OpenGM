@@ -1,9 +1,12 @@
 package ch.epfl.sweng.opengm.identification.phoneNumber;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -25,6 +28,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.InputUtils;
+import ch.epfl.sweng.opengm.identification.RegisterActivity;
 
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
@@ -194,15 +198,11 @@ public class PhoneAddingActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_phone_number_help).setVisible(true);
-        menu.findItem(R.id.action_phone_number_validate).setVisible(true);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.action_phone_number_help:
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle(getString(R.string.help_phone_number));
@@ -218,7 +218,10 @@ public class PhoneAddingActivity extends AppCompatActivity {
             case R.id.action_phone_number_validate:
                 // Intent
                 if (InputUtils.isPhoneNumberValid(mEditNumber.getText().toString())) {
-
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra(RegisterActivity.PHONE_KEY, mEditCode.getText() + " " + mEditNumber.getText());
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
                 } else {
                     mEditNumber.setError(getString(R.string.invalid_phone_input));
                 }
@@ -228,4 +231,8 @@ public class PhoneAddingActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

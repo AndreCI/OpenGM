@@ -28,6 +28,7 @@
     <string name="hint_password_activity_register">Password</string>
     <string name="hint_firstname_activity_register">First name</string>
     <string name="hint_lastname_activity_register">Last name</string>
+    <string name="hint_phone_activity_register">Phone number</string>
     <string name="hint_email_activity_register">Email</string>
     <string name="hint_confirm_password_activity_register">Confirm password</string>
     <string name="sign_up_activity_register">Sign up</string>
