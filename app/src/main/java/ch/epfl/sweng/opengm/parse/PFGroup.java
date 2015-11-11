@@ -254,6 +254,16 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_USERS, usersArray);
                             object.put(GROUP_ENTRY_NICKNAMES, surnamesArray);
                             object.put(GROUP_ENTRY_ROLES, rolesArray);
+                        case GROUP_ENTRY_ROLES_PERMISSIONS:
+                            JSONArray rolesPermissions = new JSONArray();
+                            for(Map.Entry<String, List<Integer>> entry : mRolesPermissions.entrySet()){
+                                String role = entry.getKey();
+                                rolesPermissions.put(role);
+                                for(Integer permission : entry.getValue()){
+                                    rolesPermissions.put(permission);
+                                }
+                            }
+                            object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
                             break;
                         case GROUP_ENTRY_EVENTS:
                             object.put(GROUP_ENTRY_EVENTS, PFUtils.collectionToArray(new ArrayList<PFEntity>(mEvents.values())));
@@ -271,17 +281,6 @@ public final class PFGroup extends PFEntity {
                             ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
                             file.saveInBackground();
                             object.put(GROUP_ENTRY_PICTURE, mPicture);
-                            break;
-                        case GROUP_ENTRY_ROLES_PERMISSIONS:
-                            JSONArray rolesPermissions = new JSONArray();
-                            for(Map.Entry<String, List<Integer>> entry : mRolesPermissions.entrySet()){
-                                String role = entry.getKey();
-                                rolesPermissions.put(role);
-                                for(Integer permission : entry.getValue()){
-                                    rolesPermissions.put(permission);
-                                }
-                            }
-                            object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
                             break;
                         default:
                             return;
@@ -501,6 +500,8 @@ public final class PFGroup extends PFEntity {
             try {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
+                member.addRole("User");
+                mRolesPermissions.put("User", Arrays.asList(new Integer[]{1, 2, 3, 4, 5, 6}));
                 mMembers.put(userId, member);
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
@@ -799,11 +800,18 @@ public final class PFGroup extends PFEntity {
         JSONArray roles = new JSONArray();
         roles.put(new JSONArray());
         List<String[]> rolesList = new ArrayList<>();
-        rolesList.add(new String[0]);
+        rolesList.add(new String[]{"Administrator"});
+
 
         JSONArray events = new JSONArray();
 
         JSONArray rolesPermissions = new JSONArray();
+        JSONArray permissions = new JSONArray();
+        permissions.put("Administrator");
+        for(int i = 0; i < 7; i++){
+            permissions.put(i);
+        }
+        rolesPermissions.put(permissions);
         Map<String, List<Integer>> rolesPermissionsMap = new HashMap<>();
 
         String about = (description == null) ? "" : description;
