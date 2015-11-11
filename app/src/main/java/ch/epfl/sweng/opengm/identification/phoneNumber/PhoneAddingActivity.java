@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.InputUtils;
 
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
@@ -39,6 +40,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
     private TextView mEditCountry;
     private TextView mEditCode;
+    private TextView mEditNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
         mEditCountry = (TextView) findViewById(R.id.country_name);
         mEditCode = (TextView) findViewById(R.id.country_code);
+        mEditNumber = (TextView) findViewById(R.id.input_phoneNumber);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -214,6 +217,11 @@ public class PhoneAddingActivity extends AppCompatActivity {
                 return true;
             case R.id.action_phone_number_validate:
                 // Intent
+                if (InputUtils.isPhoneNumberValid(mEditNumber.getText().toString())) {
+
+                } else {
+                    mEditNumber.setError(getString(R.string.invalid_phone_input));
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

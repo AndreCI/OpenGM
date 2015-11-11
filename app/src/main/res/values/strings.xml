@@ -348,6 +348,7 @@
     </string-array>
 
     <string name="invalid_phone_number">Wrong country code</string>
+    <string name="invalid_phone_input">This does not seem to be a correct phone number</string>
     <string name="title_phone_number">Select your country</string>
     <string name="help_phone_number">Information</string>
     <string name="validate_phone_number">Validate</string>
