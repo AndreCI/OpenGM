@@ -327,6 +327,17 @@ public class PFGroupTest {
 
         PFGroup group2;
 
+        // Test if first user has "Administrator Role"
+        List<String> roles = group.getRolesForUser(id1);
+        roles.add("Administrator");
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(roles, group2.getRolesForUser(id1));
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
         String name = "Gojira";
         String description = "A jazz band";
         String nicknameForUser1 = "The man in the corner";
@@ -382,7 +393,6 @@ public class PFGroupTest {
 
         group.addRoleToUser(role, user1.getId());
 
-        List<String> roles = new ArrayList<>();
         roles.add(role);
 
         Thread.sleep(2000);
@@ -427,6 +437,7 @@ public class PFGroupTest {
             assertEquals(group.getDescription(), group2.getDescription());
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
+            assertTrue(group2.getRolesForUser(id2).contains("User"));
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -470,6 +481,10 @@ public class PFGroupTest {
         } catch (PFException e) {
             // Success
         }
+
+    }
+
+    public void testNewGroupHasRolesAndPermissions(){
 
     }
 
