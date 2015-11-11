@@ -329,6 +329,7 @@ public final class PFMember extends PFEntity implements Parcelable {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }
