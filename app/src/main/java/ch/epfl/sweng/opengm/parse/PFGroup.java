@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ch.epfl.sweng.opengm.R;
+
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
@@ -60,6 +62,12 @@ public final class PFGroup extends PFEntity {
     private String mDescription;
     private boolean mIsPrivate;
     private Bitmap mPicture;
+
+    private Map<String, List<Permission>> rolesPermissions;
+
+    public static enum Permission {
+        ADD_MEMBER, REMOVE_MEMBER, MANAGE_ROLES, ADD_ROLES, ADD_EVENT, MANAGE_EVENT, MANAGE_GROUP
+    }
 
     public PFGroup(Parcel in) {
         super(in, PARSE_TABLE_GROUP);
@@ -826,4 +834,62 @@ public final class PFGroup extends PFEntity {
         }
     };
 
+    /**
+     * Gets the permissions of a given role.
+     *
+     * @param role the role for which to get the permissions
+     * @return the list of permissions for the role
+     */
+    public List<Permission> getPermissionsForRole(String role){
+        return new ArrayList<>(rolesPermissions.get(role));
+    }
+
+    /**
+     * Gets the permissions for a given user. This method gets all the permissions
+     * for the roles which the user has.
+     *
+     * @param userId The ID of the user for which to get the roles
+     * @return the list of permissions of a user
+     */
+    public List<Permission> getPermissionsForUser(String userId){
+        List<String> rolesForUser = getRolesForUser(userId);
+        List<Permission> permissionsForUser = new ArrayList<>();
+
+        for(String role : rolesForUser){
+            permissionsForUser.addAll(getPermissionsForRole(role));
+        }
+
+        return permissionsForUser;
+    }
+
+    /**
+     * Add a permission to role. This adds the permission to all users who have
+     * the role.
+     *
+     * @param role the role to which add the permission
+     * @param permission the permission to add to the role
+     */
+    public void addPermissionToRole(String role, Permission permission){
+        if(rolesPermissions.containsKey(role)){
+            rolesPermissions.get(role).add(permission);
+        } else {
+            List<Permission> newPermissions = new ArrayList<>();
+            newPermissions.add(permission);
+            rolesPermissions.put(role, newPermissions);
+        }
+    }
+
+    /**
+     * Adds a permission to a user. This gives the permission to every role in
+     * which the user is.
+     *
+     * @param userId the ID of the user for which to add the permission
+     * @param permission the permission to add
+     */
+    public void addPermissionToUser(String userId, Permission permission){
+        List<String> rolesForUser = new ArrayList<>();
+        for(String role : rolesForUser){
+            addPermissionToRole(role, permission);
+        }
+    }
 }
