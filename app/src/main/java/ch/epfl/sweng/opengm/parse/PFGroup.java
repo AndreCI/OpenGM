@@ -259,10 +259,13 @@ public final class PFGroup extends PFEntity {
                             JSONArray rolesPermissions = new JSONArray();
                             for(Map.Entry<String, List<Integer>> entry : mRolesPermissions.entrySet()){
                                 String role = entry.getKey();
-                                rolesPermissions.put(role);
+                                JSONArray permissions = new JSONArray();
+                                permissions.put(role);
                                 for(Integer permission : entry.getValue()){
-                                    rolesPermissions.put(permission);
+                                    permissions.put(permission);
                                 }
+                                Log.d("PUTTING", "PUTTING: " + role);
+                                rolesPermissions.put(permissions);
                             }
                             object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
                             break;
@@ -502,7 +505,7 @@ public final class PFGroup extends PFEntity {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
                 member.addRole("User");
-                mRolesPermissions.put("User", Arrays.asList(new Integer[]{1, 2, 3, 4, 5, 6}));
+                mRolesPermissions.put("User", Arrays.asList(new Integer[]{0, 1, 2, 3, 4, 5, 6}));
                 mMembers.put(userId, member);
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
@@ -816,6 +819,7 @@ public final class PFGroup extends PFEntity {
         }
         rolesPermissions.put(permissions);
         Map<String, List<Integer>> rolesPermissionsMap = new HashMap<>();
+        rolesPermissionsMap.put("Administrator", Arrays.asList(new Integer[]{0, 1, 2, 3, 4, 5, 6}));
 
         String about = (description == null) ? "" : description;
 
