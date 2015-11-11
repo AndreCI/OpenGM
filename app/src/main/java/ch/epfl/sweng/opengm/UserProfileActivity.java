@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.parse.ParseUser;
 
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -21,17 +22,30 @@ public class UserProfileActivity extends AppCompatActivity {
 
         PFUser currentUser = getCurrentUser();
 
-        TextView nameTextView = (TextView) findViewById(R.id.firstLastNameTextView);
+        // TODO: tests with setters :
+        // *****************************************
+        try {
+            currentUser.setPhoneNumber("06 45 72 12 43");
+            currentUser.setAboutUser("I'm just a random person, with a random name. This is a description." +
+                "I know, it's a bit long, but we'll see if evrything can fit in !");
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
+        // *****************************************
+
+        // TODO: proper names in strings.xml file. + Name of activity
+
+        TextView nameTextView = (TextView) findViewById(R.id.nameTV);
 //        String text = getText(R.string.firstLastName);
-        String firstAndLastName = "[firstname]\n[lastname]";
-        firstAndLastName = firstAndLastName.replace("[firstname]", currentUser.getFirstName());
-        firstAndLastName = firstAndLastName.replace("[lastname]", currentUser.getLastName());
+        String firstAndLastName = "[name]";
+        firstAndLastName = firstAndLastName.replace(firstAndLastName, currentUser.getFirstName());
+        firstAndLastName += "\n" + currentUser.getLastName();
         nameTextView.setText(firstAndLastName);
 
         TextView usernameTextView = (TextView) findViewById(R.id.usernameTV);
 //        String username = getText(R.string.username);
         String username = "[username]";
-        username = username.replace("[username]", currentUser.getUsername());
+        username = username.replace(username, currentUser.getUsername());
         usernameTextView.setText(username);
 
         TextView emailTextView = (TextView) findViewById(R.id.emailTV);

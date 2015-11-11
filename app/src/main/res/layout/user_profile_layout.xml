@@ -20,20 +20,20 @@
         android:layout_weight="200">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/userPhoto"
             android:layout_weight="50"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/emma"
             android:scaleType="centerCrop"
             android:maxWidth="50dp"
             android:layout_margin="10dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="[Firsname]\n[Lastname]"
-            android:id="@+id/firstLastNameTextView"
+            android:text="[name]"
+            android:id="@+id/nameTV"
             android:layout_gravity="center"
             android:textSize="20sp"
             android:textStyle="bold"
