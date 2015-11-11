@@ -799,7 +799,9 @@ public final class PFGroup extends PFEntity {
         nickNamesList.add(user.getUsername());
 
         JSONArray roles = new JSONArray();
-        roles.put(new JSONArray());
+        JSONArray rolesForFounder = new JSONArray();
+        rolesForFounder.put("Administrator");
+        roles.put(rolesForFounder);
         List<String[]> rolesList = new ArrayList<>();
         rolesList.add(new String[]{"Administrator"});
 
