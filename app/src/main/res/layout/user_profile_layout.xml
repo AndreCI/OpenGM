@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:id="@+id/userPhoto"
             android:layout_weight="50"
-            android:src="@drawable/emma"
+            android:src="@drawable/android_robot_question"
             android:scaleType="centerCrop"
             android:maxWidth="50dp"
             android:layout_margin="10dp" />

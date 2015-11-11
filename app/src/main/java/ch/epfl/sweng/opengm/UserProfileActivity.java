@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
@@ -34,6 +35,9 @@ public class UserProfileActivity extends AppCompatActivity {
         // *****************************************
 
         // TODO: proper names in strings.xml file. + Name of activity
+
+        ImageView userPhoto = (ImageView) findViewById(R.id.userPhoto);
+        userPhoto.setImageResource(R.drawable.emma);
 
         TextView nameTextView = (TextView) findViewById(R.id.nameTV);
 //        String text = getText(R.string.firstLastName);
