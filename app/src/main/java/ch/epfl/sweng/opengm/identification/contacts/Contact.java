@@ -14,12 +14,21 @@ public class Contact implements Comparable<Contact> {
     private final String mName;
     private final String mPhoneNumber;
     private boolean mIsUsingTheApp;
+    private boolean mIsInOneOfMyGroup;
     private PFMember mMember;
 
-    public Contact(String name, String number) {
+    public Contact(PFMember member) {
+        mPhoneNumber = member.getPhoneNumber();
+        mName = member.getName();
+        mIsUsingTheApp = true;
+        mIsInOneOfMyGroup = true;
+        mMember = member;
+    }
+
+    public Contact(String name, String number, boolean isContact) {
         mPhoneNumber = number;
         mName = name;
-
+        mIsInOneOfMyGroup = isContact;
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
         query.whereEqualTo(PFConstants.USER_ENTRY_PHONENUMBER, number);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -55,6 +64,10 @@ public class Contact implements Comparable<Contact> {
 
     public PFMember getMember() {
         return mMember;
+    }
+
+    public boolean isAppContact() {
+        return mIsInOneOfMyGroup;
     }
 
     @Override

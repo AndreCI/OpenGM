@@ -91,7 +91,7 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name=".identification.contacts.ContactsActivity"
+            android:name=".identification.contacts.PhoneContactsActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
