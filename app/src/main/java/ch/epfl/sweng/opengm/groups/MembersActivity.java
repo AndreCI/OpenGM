@@ -5,11 +5,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -26,9 +26,11 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class MembersActivity extends AppCompatActivity {
 
@@ -37,6 +39,7 @@ public class MembersActivity extends AppCompatActivity {
     private PFGroup group;
     private MembersAdapter adapter;
     private List<PFMember> members;
+    private int groupIndex;
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
@@ -47,9 +50,12 @@ public class MembersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_members);
 
         // get the group in which we are
-        int groupId = getIntent().getIntExtra(GROUP_INDEX, -1);
-        group = OpenGMApplication.getCurrentUser().getGroups().get(groupId);
-        members = new ArrayList<>(group.getMembers().values());
+        groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
+        PFUser user = OpenGMApplication.getCurrentUser();
+        group = user.getGroups().get(groupIndex);
+        members = new ArrayList<>();
+        members.add(group.getMember(user.getId()));
+        members.addAll(group.getMembersWithoutUser(user.getId()));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -64,8 +70,8 @@ public class MembersActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String username = String.valueOf(edit.getText());
-                        addUser(username);
+                        String usernameOrMail = String.valueOf(edit.getText());
+                        addUser(usernameOrMail);
                         edit.getText().clear();
                     }
                 })
@@ -130,6 +136,11 @@ public class MembersActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.menu.menu_phone_number:
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_add_person:
                 addPerson();
                 return true;
             case R.id.action_remove_person:
@@ -151,12 +162,21 @@ public class MembersActivity extends AppCompatActivity {
         if (selectMode) {
             setSelectMode(false);
         } else {
-            super.onBackPressed();
+            Intent i = new Intent();
+            i.putExtra(GROUP_INDEX, groupIndex);
+            setResult(RESULT_OK, i);
+            finish();
         }
     }
 
     private void addPerson() {
+        // display the keyboard
+        addMember.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         addMember.show();
+
+        // focus the field to enter username
+        EditText edit = (EditText) addMember.findViewById(R.id.dialog_add_member_username);
+        edit.requestFocus();
     }
 
     // if no connection we'll get a consitency problem between members and what actually is on parse
@@ -175,10 +195,14 @@ public class MembersActivity extends AppCompatActivity {
     private void changeRoles() {
         ArrayList<String> userIds = getCheckedIds(false);
 
-        Intent intent = new Intent(this, ManageRolesActivity.class);
-        intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
-        intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
-        startActivityForResult(intent, 1);
+        if (!userIds.isEmpty()) {
+            Intent intent = new Intent(this, ManageRolesActivity.class);
+            intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
+            intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
+            startActivityForResult(intent, 1);
+        } else {
+            Toast.makeText(getBaseContext(), "Please select at least one member", Toast.LENGTH_LONG).show();
+        }
     }
 
     // change to select mode or back to normal mode
@@ -195,15 +219,25 @@ public class MembersActivity extends AppCompatActivity {
     }
 
     // add a user to the group and to the list that is displayed in background according to a username
-    private void addUser(String username) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query.whereEqualTo(PFConstants.USER_ENTRY_USERNAME, username);
+    private void addUser(String usernameOrMail) {
+        // select between username or mail
+        String field;
+        if (InputUtils.isEmailValid(usernameOrMail)) {
+            field = PFConstants._USER_TABLE_EMAIL;
+        } else {
+            field = PFConstants._USER_TABLE_USERNAME;
+        }
+
+        // the actual query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+        query.whereEqualTo(field, usernameOrMail);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (parseObject != null) {
-                    String userId = parseObject.getString(PFConstants.USER_ENTRY_USERID);
+                    String userId = parseObject.getObjectId();
                     if (!group.containsMember(userId)) {
+                        // add the user to the group and to the list
                         group.addUserWithId(userId);
                         members.add(group.getMember(userId));
                         adapter.notifyDataSetChanged();
@@ -211,7 +245,7 @@ public class MembersActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "User already belongs to this group.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(getBaseContext(), "Could not found this username", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Could not find this user", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -229,7 +263,12 @@ public class MembersActivity extends AppCompatActivity {
                 c.setChecked(false);
                 userIds.add(members.get(i).getId());
                 if (rm) {
-                    membersToRemove.add(members.get(i));
+                    if (i != 0) {
+                        membersToRemove.add(members.get(i));
+                    } else {
+                        userIds.remove(0);
+                        Toast.makeText(getBaseContext(), "You can't supress yourself from a group.", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }
