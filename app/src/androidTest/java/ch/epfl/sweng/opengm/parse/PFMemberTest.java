@@ -78,7 +78,7 @@ public class PFMemberTest {
         assertEquals(FIRST_NAME, member.getFirstname());
         assertEquals(LAST_NAME, member.getLastname());
         assertEquals("", member.getAbout());
-        assertEquals("", member.getPhoneNumber());
+        assertEquals("0", member.getPhoneNumber());
         assertNull(member.getPicture());
         assertEquals(new ArrayList<String>(), member.getRoles());
 

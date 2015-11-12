@@ -99,12 +99,17 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
 
+        PFUser user2 = null;
+
         try {
-            currentUser = PFUser.fetchExistingUser(currentUser.getId());
+            user2 = PFUser.fetchExistingUser(currentUser.getId());
         } catch (PFException e) {
             Assert.fail("Network fail");
         }
-        List<PFGroup> groups = currentUser.getGroups();
+
+        Thread.sleep(1000);
+
+        List<PFGroup> groups = user2.getGroups();
 
         boolean found = false;
         for (PFGroup group : groups) {
