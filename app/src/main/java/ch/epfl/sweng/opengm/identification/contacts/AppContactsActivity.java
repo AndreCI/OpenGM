@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.identification.contacts;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -39,13 +40,13 @@ public class AppContactsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts);
+        setContentView(R.layout.activity_app_contacts);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        list = (ListView) findViewById(R.id.contacts_list);
+        list = (ListView) findViewById(R.id.app_contacts_list);
 
         fillContacts();
 
@@ -60,6 +61,10 @@ public class AppContactsActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void showPhoneContact(View v) {
+        startActivity(new Intent(this, PhoneContactsActivity.class));
     }
 
     @Override
