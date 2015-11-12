@@ -6,11 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -68,6 +68,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("CHANGED", s + "");
                 mEditCountry.setText(getCountryForCode(mEditCode.getText().toString()));
             }
 
@@ -217,13 +218,14 @@ public class PhoneAddingActivity extends AppCompatActivity {
                 return true;
             case R.id.action_phone_number_validate:
                 // Intent
-                if (InputUtils.isPhoneNumberValid(mEditNumber.getText().toString())) {
+                if (InputUtils.isPhoneNumberValid(mEditNumber.getText().toString()) && !mEditCountry.getText().equals(getString(R.string.invalid_phone_number))) {
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra(RegisterActivity.PHONE_KEY, mEditCode.getText() + " " + mEditNumber.getText());
                     setResult(Activity.RESULT_OK, returnIntent);
                     finish();
                 } else {
                     mEditNumber.setError(getString(R.string.invalid_phone_input));
+                    mEditNumber.requestFocus();
                 }
                 return true;
             default:

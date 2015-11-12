@@ -18,7 +18,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".identification.RegisterActivity"
@@ -93,17 +97,14 @@
         <activity
             android:name=".identification.contacts.AppContactsActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>App
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".identification.contacts.PhoneContactsActivity"
+            android:exported="true"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.searchable"

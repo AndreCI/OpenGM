@@ -38,6 +38,26 @@ public class CountryCode implements Comparable<CountryCode> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CountryCode that = (CountryCode) o;
+
+        if (mCountry != null ? !mCountry.equals(that.mCountry) : that.mCountry != null)
+            return false;
+        return mCode.equals(that.mCode);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mCountry != null ? mCountry.hashCode() : 0;
+        result = 31 * result + mCode.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         return mCountry + " : " + mCode;
     }

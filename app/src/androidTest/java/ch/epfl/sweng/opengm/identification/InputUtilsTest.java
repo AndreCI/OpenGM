@@ -16,6 +16,7 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_LETTE
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_NUMBER;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isEmailValid;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isPasswordInvalid;
+import static ch.epfl.sweng.opengm.identification.InputUtils.isPhoneNumberValid;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -64,5 +65,26 @@ public class InputUtilsTest {
         assertEquals("No caps", INPUT_NOT_CASE_SENSITIVE, isPasswordInvalid("1goodpassword"));
         assertEquals("Only caps", INPUT_NOT_CASE_SENSITIVE, isPasswordInvalid("1GOODPASSWORD"));
         assertEquals("Only numbers", INPUT_WITHOUT_LETTER, isPasswordInvalid("123456789"));
+    }
+
+    @Test
+    public void testPhoneNumber() {
+        assertFalse(isPhoneNumberValid("0"));
+        assertFalse(isPhoneNumberValid("00"));
+        assertFalse(isPhoneNumberValid("000"));
+        assertFalse(isPhoneNumberValid("0000"));
+        assertFalse(isPhoneNumberValid("00000"));
+        assertFalse(isPhoneNumberValid("000000"));
+        assertFalse(isPhoneNumberValid("0000000"));
+        assertFalse(isPhoneNumberValid("0000000a"));
+        assertFalse(isPhoneNumberValid("a"));
+        assertFalse(isPhoneNumberValid("aaaaaaaaa"));
+        assertFalse(isPhoneNumberValid("00000000000000"));
+        assertFalse(isPhoneNumberValid("+000000000000"));
+        assertTrue(isPhoneNumberValid("01234567"));
+        assertTrue(isPhoneNumberValid("012345678"));
+        assertTrue(isPhoneNumberValid("0123456789"));
+        assertTrue(isPhoneNumberValid("01234567891"));
+        assertTrue(isPhoneNumberValid("012345678910"));
     }
 }
