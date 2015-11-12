@@ -15,6 +15,9 @@
     <string name="success_dialog_password">Email successfully sent</string>
     <string name="error_dialog_password">Error while sending a new password by mail &#8230;</string>
 
+    <string name="how_to_password">A password should contain between 8 and 30 characters, with at least a cap, a lowercase letter and a number.</string>
+
+
     <string name="title_activity_register">RegisterActivity</string>
 
     <string name="title_activity_my_groups">My Groups</string>
@@ -40,6 +43,7 @@
     <string name="empty_lastname_activity_register">Last name should not be empty</string>
     <string name="incorrect_email_activity_register">Email has not a correct format</string>
     <string name="incorrect_password_activity_register">Passwords don\'t match</string>
+    <string name="incorrect_phone_number_activity_register">A valid phone number should be entered</string>
     <string name="short_password_activity_register">Password is too short</string>
     <string name="long_password_activity_register">Password is too long</string>
     <string name="case_password_activity_register">Password should contain at least a small and a cap letter</string>

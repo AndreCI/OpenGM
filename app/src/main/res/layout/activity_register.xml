@@ -34,8 +34,7 @@
             android:id="@+id/scrollView"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="70"
-            android:padding="0dp">
+            android:layout_weight="70">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,15 +95,24 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="27dp"
-                    android:paddingStart="30dp"
-                    android:paddingEnd="30dp">
+                    android:orientation="horizontal"
+                    android:weightSum="100">
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="3dp"
-                        android:layout_marginBottom="10dp"
                         android:layout_marginTop="15dp"
+                        android:layout_weight="40"
                         android:background="@android:color/white" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="10dp"
+                        android:background="@mipmap/ic_info_outline_white_24dp"
+                        android:layout_weight="60"
+                        android:onClick="displayHowToPwd"
+                        android:id="@+id/pwd_info" />
 
                 </LinearLayout>
 
@@ -158,8 +166,6 @@
                     android:layout_height="wrap_content"
                     android:cursorVisible="false"
                     android:drawableEnd="@mipmap/ic_call_white_24dp"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
                     android:hint="@string/hint_phone_activity_register"
                     android:inputType="phone"
                     android:lines="1"

@@ -81,4 +81,13 @@ public class InputUtils {
         return INPUT_CORRECT;
     }
 
+    public static boolean isPhoneEnteredValid(String number) {
+        if (number.contains(" ")) {
+            String prefix = number.split(" ")[0];
+            String phone = number.split(" ")[1];
+            return prefix.startsWith("+") && prefix.length() < 5 && isPhoneNumberValid(phone);
+        } else {
+            return isPhoneNumberValid(number);
+        }
+    }
 }

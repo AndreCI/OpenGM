@@ -116,7 +116,6 @@ public class PhoneActivityTest extends ActivityInstrumentationTestCase2<PhoneAdd
         onView(withId(R.id.input_phoneNumber)).check(matches(isTextStyleCorrect(activity.getString(R.string.invalid_phone_input), true)));
 
         onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("0000000000"));
-        // onView(withId(R.id.input_phoneNumber)).check(matches(not(isDisplayed())));
     }
 
     public void testInformationDialog() {

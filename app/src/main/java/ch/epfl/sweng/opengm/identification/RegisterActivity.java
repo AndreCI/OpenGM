@@ -3,11 +3,14 @@ package ch.epfl.sweng.opengm.identification;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -49,6 +52,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mEditLastname;
     private EditText mEditEmail;
     private EditText mEditPhone;
+    private PopupWindow popup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +70,34 @@ public class RegisterActivity extends AppCompatActivity {
         mEditEmail = (EditText) findViewById(R.id.register_email);
         mEditPhone = (EditText) findViewById(R.id.register_phone);
 
+        popup = new PopupWindow(RegisterActivity.this);
+
         // Auto complete fields if user fills first the login fields
         mEditUsername.setText(registerIntent.getStringExtra(USERNAME_KEY));
         mEditPassword1.setText(registerIntent.getStringExtra(PASSWORD_KEY));
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.register_outmostLayout);
         onTapOutsideBehaviour(layout, this);
+    }
+
+    public void displayHowToPwd(View anchorView) {
+        View layout = getLayoutInflater().inflate(R.layout.popup_password, null);
+        popup.setContentView(layout);
+        popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+        popup.setOutsideTouchable(true);
+        popup.setFocusable(true);
+        popup.setBackgroundDrawable(new BitmapDrawable());
+        popup.showAsDropDown(anchorView == null ? findViewById(R.id.pwd_info) : anchorView);
+    }
+
+    public void dismisssPopUp() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                popup.dismiss();
+            }
+        });
     }
 
     public void onClickRegister(View v) {
@@ -81,6 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
             final String lastname = mEditLastname.getText().toString();
             final String firstname = mEditFirstname.getText().toString();
             final String email = mEditEmail.getText().toString();
+            final String number = mEditPhone.getText().toString();
 
             mEditUsername.setError(null);
             mEditPassword1.setError(null);
@@ -88,6 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
             mEditLastname.setError(null);
             mEditFirstname.setError(null);
             mEditEmail.setError(null);
+            mEditPhone.setError(null);
 
             int inputErrorCode;
             boolean cancel = false;
@@ -101,10 +130,12 @@ public class RegisterActivity extends AppCompatActivity {
                 mEditPassword1.setError(getString(R.string.empty_password_activity_register));
                 focusView = mEditPassword1;
                 cancel = true;
+                displayHowToPwd(null);
             } else if (TextUtils.isEmpty(password2)) {
                 mEditPassword2.setError(getString(R.string.empty_password_activity_register));
                 focusView = mEditPassword2;
                 cancel = true;
+                displayHowToPwd(null);
             } else if (TextUtils.isEmpty(firstname)) {
                 mEditFirstname.setError(getString(R.string.empty_firstname_activity_register));
                 focusView = mEditFirstname;
@@ -120,6 +151,10 @@ public class RegisterActivity extends AppCompatActivity {
             } else if (!InputUtils.isEmailValid(email)) {
                 mEditEmail.setError(getString(R.string.incorrect_email_activity_register));
                 focusView = mEditEmail;
+                cancel = true;
+            } else if (!InputUtils.isPhoneEnteredValid(number)) {
+                mEditPhone.setError(getString(R.string.incorrect_phone_number_activity_register));
+                focusView = mEditPhone;
                 cancel = true;
             } else if ((inputErrorCode = InputUtils.isPasswordInvalid(password1)) != INPUT_CORRECT) {
                 String errorString = "";
@@ -144,6 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                 mEditPassword1.setError(errorString);
                 focusView = mEditPassword1;
                 cancel = true;
+                displayHowToPwd(null);
             } else if (!password1.equals(password2)) {
                 mEditPassword1.setError(getString(R.string.incorrect_password_activity_register));
                 focusView = mEditPassword1;
@@ -164,8 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 if (e == null) {
                                                     try {
-                                                        // TODO: change by the real phone number!
-                                                        PFUser.createNewUser(user.getObjectId(), "", email, username, firstname, lastname);
+                                                        PFUser.createNewUser(user.getObjectId(), number, email, username, firstname, lastname);
                                                         dialog.hide();
                                                         Intent intent = new Intent(RegisterActivity.this, MyGroupsActivity.class);
                                                         intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, true);
