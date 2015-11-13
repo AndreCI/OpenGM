@@ -486,7 +486,7 @@ public class PFGroupTest {
     }
 
     @Test
-    public void testNewGroupHasRolesAndPermissions(){
+    public void testNewGroupHasRolesAndPermissions() throws InterruptedException {
         OpenGMApplication.logOut();
         id1 = getRandomId();
 
@@ -532,6 +532,8 @@ public class PFGroupTest {
 
         group.addUserWithId(user2.getId());
 
+        Thread.sleep(2000);
+
         try {
             group2 = fetchExistingGroup(group.getId());
             assertEquals(permissions, group2.getPermissionsForUser(user2.getId()));
@@ -545,6 +547,9 @@ public class PFGroupTest {
         } catch (PFException e) {
             Assert.fail("Network error");
         }
+
+        group.removeUser(user1.getId());
+        group.removeUser(user2.getId());
     }
 
     @After
