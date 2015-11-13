@@ -530,7 +530,7 @@ public final class PFGroup extends PFEntity {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
                 member.addRole("User");
-                mRolesPermissions.put("User", Arrays.asList(Permission.values()));
+                mRolesPermissions.put("User", new ArrayList<>(Arrays.asList(Permission.values())));
                 mMembers.put(userId, member);
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
@@ -844,7 +844,7 @@ public final class PFGroup extends PFEntity {
         }
         rolesPermissions.put(permissions);
         Map<String, List<Permission>> rolesPermissionsMap = new HashMap<>();
-        rolesPermissionsMap.put("Administrator", Arrays.asList(Permission.values()));
+        rolesPermissionsMap.put("Administrator", new ArrayList<>(Arrays.asList(Permission.values())));
 
         String about = (description == null) ? "" : description;
 
