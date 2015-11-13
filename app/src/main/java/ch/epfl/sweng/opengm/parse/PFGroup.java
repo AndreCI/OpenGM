@@ -962,4 +962,16 @@ public final class PFGroup extends PFEntity {
             addPermissionToRole(role, permission);
         }
     }
+
+    /**
+     * Returns true if the specified user has the permission.
+     *
+     * @param userId the user to check
+     * @param permission the permission to check
+     * @return true if userId has the specified permission
+     */
+    public boolean userHavePermission(String userId, Integer permission){
+        List<Integer> permissionsForUser = getPermissionsForUser(userId);
+        return permissionsForUser.contains(permission);
+    }
 }
