@@ -62,15 +62,40 @@ public final class PFGroup extends PFEntity {
     private boolean mIsPrivate;
     private Bitmap mPicture;
 
-    private Map<String, List<Integer>> mRolesPermissions;
+    private Map<String, List<Permission>> mRolesPermissions;
 
-    public final static int ADD_MEMBER = 0;
+    /*public final static int ADD_MEMBER = 0;
     public final static int REMOVE_MEMBER = 1;
     public final static int MANAGE_ROLES = 2;
     public final static int ADD_ROLES = 3;
     public final static int ADD_EVENT = 4;
     public final static int MANAGE_EVENT = 5;
-    public final static int MANAGE_GROUP = 6;
+    public final static int MANAGE_GROUP = 6;*/
+
+    public static enum Permission{
+        ADD_MEMBER(0), REMOVE_MEMBER(1), MANAGE_ROLES(2), ADD_ROLES(3), ADD_EVENT(4), MANAGE_EVENT(5), MANAGE_GROUP(6);
+
+        private int value;
+        private static Map<Integer, Permission> intToPermission = new HashMap<>();
+
+        static{
+            for(Permission p : Permission.values()){
+                intToPermission.put(p.getValue(), p);
+            }
+        }
+
+        public static Permission forInt(int value){
+            return intToPermission.get(value);
+        }
+
+        Permission(int value){
+            this.value = value;
+        }
+
+        public int getValue(){
+            return value;
+        }
+    }
 
     public PFGroup(Parcel in) {
         super(in, PARSE_TABLE_GROUP);
@@ -93,7 +118,7 @@ public final class PFGroup extends PFEntity {
     }
 
 
-    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture, Map<String, List<Integer>> rolesPermissions) {
+    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
         super(groupId, PARSE_TABLE_GROUP, date);
         if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
             throw new IllegalArgumentException("One of the array  is null");
@@ -197,15 +222,15 @@ public final class PFGroup extends PFEntity {
                 mPicture = picture[0];
 
                 // TODO : Modularize this part
-                HashMap<String, List<Integer>> rolesPermissions = new HashMap<>();
+                HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
                 for(int i = 0; i < permissionsForRoles.length(); i++){
                     try{
                         JSONArray current = (JSONArray)permissionsForRoles.get(i);
                         String role = (String)current.get(0);
-                        List<Integer> permissions = new ArrayList<>();
-                        for(int j = 1; j < current.length(); i++){
-                            permissions.add(current.getInt(i));
+                        List<Permission> permissions = new ArrayList<>();
+                        for(Permission value : Permission.values()){
+                            permissions.add(value);
                         }
                         rolesPermissions.put(role, permissions);
                     } catch (JSONException e){
@@ -257,12 +282,12 @@ public final class PFGroup extends PFEntity {
                             // BE CAREFUL: no break here!
                         case GROUP_ENTRY_ROLES_PERMISSIONS:
                             JSONArray rolesPermissions = new JSONArray();
-                            for(Map.Entry<String, List<Integer>> entry : mRolesPermissions.entrySet()){
+                            for(Map.Entry<String, List<Permission>> entry : mRolesPermissions.entrySet()){
                                 String role = entry.getKey();
                                 JSONArray permissions = new JSONArray();
                                 permissions.put(role);
-                                for(Integer permission : entry.getValue()){
-                                    permissions.put(permission);
+                                for(Permission permission : entry.getValue()){
+                                    permissions.put(permission.getValue());
                                 }
                                 Log.d("PUTTING", "PUTTING: " + role);
                                 rolesPermissions.put(permissions);
@@ -505,7 +530,7 @@ public final class PFGroup extends PFEntity {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
                 member.addRole("User");
-                mRolesPermissions.put("User", Arrays.asList(new Integer[]{0, 1, 2, 3, 4, 5, 6}));
+                mRolesPermissions.put("User", Arrays.asList(Permission.values()));
                 mMembers.put(userId, member);
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
@@ -745,15 +770,15 @@ public final class PFGroup extends PFEntity {
                     }
                 }
 
-                HashMap<String, List<Integer>> rolesPermissions = new HashMap<>();
+                HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
                 for(int i = 0; i < permissionsForRoles.length(); i++){
                     try{
                         JSONArray current = (JSONArray)permissionsForRoles.get(i);
                         String role = (String)current.get(0);
-                        List<Integer> permissions = new ArrayList<>();
+                        List<Permission> permissions = new ArrayList<>();
                         for(int j = 1; j < current.length(); i++){
-                            permissions.add(current.getInt(i));
+                            permissions.add(Permission.forInt(current.getInt(i)));
                         }
                         rolesPermissions.put(role, permissions);
                     } catch (JSONException e){
@@ -818,8 +843,8 @@ public final class PFGroup extends PFEntity {
             permissions.put(i);
         }
         rolesPermissions.put(permissions);
-        Map<String, List<Integer>> rolesPermissionsMap = new HashMap<>();
-        rolesPermissionsMap.put("Administrator", Arrays.asList(new Integer[]{0, 1, 2, 3, 4, 5, 6}));
+        Map<String, List<Permission>> rolesPermissionsMap = new HashMap<>();
+        rolesPermissionsMap.put("Administrator", Arrays.asList(Permission.values()));
 
         String about = (description == null) ? "" : description;
 
@@ -910,7 +935,7 @@ public final class PFGroup extends PFEntity {
      * @param role the role for which to get the permissions
      * @return the list of permissions for the role
      */
-    public List<Integer> getPermissionsForRole(String role){
+    public List<Permission> getPermissionsForRole(String role){
         return new ArrayList<>(mRolesPermissions.get(role));
     }
 
@@ -921,9 +946,9 @@ public final class PFGroup extends PFEntity {
      * @param userId The ID of the user for which to get the roles
      * @return the list of permissions of a user
      */
-    public List<Integer> getPermissionsForUser(String userId){
+    public List<Permission> getPermissionsForUser(String userId){
         List<String> rolesForUser = getRolesForUser(userId);
-        List<Integer> permissionsForUser = new ArrayList<>();
+        List<Permission> permissionsForUser = new ArrayList<>();
 
         for(String role : rolesForUser){
             permissionsForUser.addAll(getPermissionsForRole(role));
@@ -939,11 +964,11 @@ public final class PFGroup extends PFEntity {
      * @param role the role to which add the permission
      * @param permission the permission to add to the role
      */
-    public void addPermissionToRole(String role, int permission){
+    public void addPermissionToRole(String role, Permission permission){
         if(mRolesPermissions.containsKey(role)){
             mRolesPermissions.get(role).add(permission);
         } else {
-            List<Integer> newPermissions = new ArrayList<>();
+            List<Permission> newPermissions = new ArrayList<>();
             newPermissions.add(permission);
             mRolesPermissions.put(role, newPermissions);
         }
@@ -956,7 +981,7 @@ public final class PFGroup extends PFEntity {
      * @param userId the ID of the user for which to add the permission
      * @param permission the permission to add
      */
-    public void addPermissionToUser(String userId, Integer permission){
+    public void addPermissionToUser(String userId, Permission permission){
         List<String> rolesForUser = new ArrayList<>();
         for(String role : rolesForUser){
             addPermissionToRole(role, permission);
@@ -970,8 +995,8 @@ public final class PFGroup extends PFEntity {
      * @param permission the permission to check
      * @return true if userId has the specified permission
      */
-    public boolean userHavePermission(String userId, Integer permission){
-        List<Integer> permissionsForUser = getPermissionsForUser(userId);
+    public boolean userHavePermission(String userId, Permission permission){
+        List<Permission> permissionsForUser = getPermissionsForUser(userId);
         return permissionsForUser.contains(permission);
     }
 }
