@@ -564,14 +564,6 @@ public class PFGroupTest {
             Assert.fail("Network error");
         }
 
-        PFUser user2 = null;
-        id2 = getRandomId();
-        try {
-            user2 = createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
-        } catch (PFException e) {
-            Assert.fail("Network error");
-        }
-
         List<PFGroup.Permission> permissions = new ArrayList<>(Arrays.asList(PFGroup.Permission.values()));
 
         group = null;
