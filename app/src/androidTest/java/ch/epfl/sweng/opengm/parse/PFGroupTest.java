@@ -553,7 +553,7 @@ public class PFGroupTest {
     }
 
     @Test
-    public void testPermissionsRemove(){
+    public void testPermissionsRemove() throws InterruptedException {
         OpenGMApplication.logOut();
         id1 = getRandomId();
 
@@ -586,6 +586,8 @@ public class PFGroupTest {
         group.removePermissionFromRole("Administrator", PFGroup.Permission.ADD_EVENT);
         permissions.remove(PFGroup.Permission.ADD_EVENT);
 
+        Thread.sleep(2000);
+
         try {
             group2 = fetchExistingGroup(group.getId());
             assertEquals(permissions, group2.getPermissionsForRole("Administrator"));
@@ -595,6 +597,7 @@ public class PFGroupTest {
 
         group.removePermissionFromUser(user1.getId(), PFGroup.Permission.ADD_MEMBER);
         permissions.remove(PFGroup.Permission.ADD_MEMBER);
+        Thread.sleep(2000);
 
         try {
             group2 = fetchExistingGroup(group.getId());
