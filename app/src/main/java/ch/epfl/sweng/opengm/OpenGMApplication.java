@@ -21,11 +21,6 @@ public class OpenGMApplication extends Application {
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, PARSE_APP_ID, PARSE_KEY);
         ParseUser.enableRevocableSessionInBackground();
-        try {
-            setCurrentUser("8W5tak5Mbu");
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
     }
 
     public static PFUser getCurrentUser() {
