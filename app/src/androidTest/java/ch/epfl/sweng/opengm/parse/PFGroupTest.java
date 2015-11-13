@@ -553,7 +553,7 @@ public class PFGroupTest {
     }
 
     @Test
-    public void testPermissionsRemove() throws InterruptedException {
+    public void testPermissionsRemoveAndAdd() throws InterruptedException{
         OpenGMApplication.logOut();
         id1 = getRandomId();
 
@@ -595,7 +595,31 @@ public class PFGroupTest {
             group2 = fetchExistingGroup(group.getId());
             assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
         } catch (PFException e) {
-            e.printStackTrace();
+            Assert.fail("Network error");
+        }
+
+        group.addPermissionToRole("Administrator", PFGroup.Permission.ADD_EVENT);
+        permissions.add(PFGroup.Permission.ADD_EVENT);
+
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForRole("Administrator"));
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        group.addPermissionToUser(user1.getId(), PFGroup.Permission.ADD_MEMBER);
+        permissions.add(PFGroup.Permission.ADD_MEMBER);
+
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
+        } catch (PFException e) {
+            Assert.fail("Network error");
         }
     }
 
