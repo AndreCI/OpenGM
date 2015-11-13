@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -484,8 +485,66 @@ public class PFGroupTest {
 
     }
 
+    @Test
     public void testNewGroupHasRolesAndPermissions(){
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
 
+        PFUser user1 = null;
+        try {
+            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        PFUser user2 = null;
+        id2 = getRandomId();
+        try {
+            user2 = createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        List<PFGroup.Permission> permissions = Arrays.asList(PFGroup.Permission.values());
+
+        group = null;
+        try {
+            group = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        PFGroup group2;
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
+            assertEquals(permissions, group2.getPermissionsForRole("Administrator"));
+            assertEquals(permissions, group.getPermissionsForUser(user1.getId()));
+            assertEquals(permissions, group.getPermissionsForRole("Administrator"));
+            for(PFGroup.Permission permission : permissions){
+                assertTrue(group2.userHavePermission(user1.getId(), permission));
+                assertTrue(group.userHavePermission(user1.getId(), permission));
+            }
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        group.addUserWithId(user2.getId());
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user2.getId()));
+            assertEquals(permissions, group2.getPermissionsForRole("User"));
+            assertEquals(permissions, group.getPermissionsForUser(user2.getId()));
+            assertEquals(permissions, group.getPermissionsForRole("User"));
+            for(PFGroup.Permission permission : permissions){
+                assertTrue(group2.userHavePermission(user2.getId(), permission));
+                assertTrue(group.userHavePermission(user2.getId(), permission));
+            }
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
     }
 
     @After
