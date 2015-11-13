@@ -1012,7 +1012,6 @@ public final class PFGroup extends PFEntity {
      * @param permission permission to remove
      */
     public void removePermissionFromRole(String role, Permission permission){
-        List<Permission> permissionsForRole = getPermissionsForRole(role);
         if(mRolesPermissions.containsKey(role)){
             mRolesPermissions.get(role).remove(permission);
             try {
