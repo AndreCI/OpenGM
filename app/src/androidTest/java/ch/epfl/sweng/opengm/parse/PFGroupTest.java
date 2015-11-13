@@ -553,7 +553,7 @@ public class PFGroupTest {
     }
 
     @Test
-    public void testPermissionsSetters(){
+    public void testPermissionsRemove(){
         OpenGMApplication.logOut();
         id1 = getRandomId();
 
@@ -572,7 +572,7 @@ public class PFGroupTest {
             Assert.fail("Network error");
         }
 
-        List<PFGroup.Permission> permissions = Arrays.asList(PFGroup.Permission.values());
+        List<PFGroup.Permission> permissions = new ArrayList<>(Arrays.asList(PFGroup.Permission.values()));
 
         group = null;
         try {
@@ -582,6 +582,26 @@ public class PFGroupTest {
         }
 
         PFGroup group2;
+
+        group.removePermissionFromRole("Administrator", PFGroup.Permission.ADD_EVENT);
+        permissions.remove(PFGroup.Permission.ADD_EVENT);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForRole("Administrator"));
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        group.removePermissionFromUser(user1.getId(), PFGroup.Permission.ADD_MEMBER);
+        permissions.remove(PFGroup.Permission.ADD_MEMBER);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
     }
 
     @After
