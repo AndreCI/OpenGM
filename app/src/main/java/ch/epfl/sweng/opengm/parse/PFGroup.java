@@ -971,6 +971,11 @@ public final class PFGroup extends PFEntity {
             List<Permission> newPermissions = new ArrayList<>();
             newPermissions.add(permission);
             mRolesPermissions.put(role, newPermissions);
+            try {
+                updateToServer(GROUP_ENTRY_ROLES_PERMISSIONS);
+            } catch (PFException e) {
+                mRolesPermissions.remove(role);
+            }
         }
     }
 

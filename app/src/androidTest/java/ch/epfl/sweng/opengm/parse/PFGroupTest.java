@@ -552,6 +552,38 @@ public class PFGroupTest {
         group.removeUser(user2.getId());
     }
 
+    @Test
+    public void testPermissionsSetters(){
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
+
+        PFUser user1 = null;
+        try {
+            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        PFUser user2 = null;
+        id2 = getRandomId();
+        try {
+            user2 = createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        List<PFGroup.Permission> permissions = Arrays.asList(PFGroup.Permission.values());
+
+        group = null;
+        try {
+            group = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
+        } catch (PFException e) {
+            Assert.fail("Network error");
+        }
+
+        PFGroup group2;
+    }
+
     @After
     public void deleteAfterTesting() {
         deleteUserWithId(id1);
