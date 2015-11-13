@@ -777,8 +777,8 @@ public final class PFGroup extends PFEntity {
                         JSONArray current = (JSONArray)permissionsForRoles.get(i);
                         String role = (String)current.get(0);
                         List<Permission> permissions = new ArrayList<>();
-                        for(int j = 1; j < current.length(); i++){
-                            permissions.add(Permission.forInt(current.getInt(i)));
+                        for(int j = 1; j < current.length(); j++){
+                            permissions.add(Permission.forInt(current.getInt(j)));
                         }
                         rolesPermissions.put(role, permissions);
                     } catch (JSONException e){
