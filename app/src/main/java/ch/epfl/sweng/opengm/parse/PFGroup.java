@@ -987,7 +987,7 @@ public final class PFGroup extends PFEntity {
      * @param permission the permission to add
      */
     public void addPermissionToUser(String userId, Permission permission){
-        List<String> rolesForUser = new ArrayList<>();
+        List<String> rolesForUser = new ArrayList<>(getRolesForUser(userId));
         for(String role : rolesForUser){
             addPermissionToRole(role, permission);
         }
@@ -1003,5 +1003,37 @@ public final class PFGroup extends PFEntity {
     public boolean userHavePermission(String userId, Permission permission){
         List<Permission> permissionsForUser = getPermissionsForUser(userId);
         return permissionsForUser.contains(permission);
+    }
+
+    /**
+     * Removes a permission for every user having the specified role
+     *
+     * @param role for which to remove the permission
+     * @param permission permission to remove
+     */
+    public void removePermissionFromRole(String role, Permission permission){
+        List<Permission> permissionsForRole = getPermissionsForRole(role);
+        if(mRolesPermissions.containsKey(role)){
+            mRolesPermissions.get(role).remove(permission);
+            try {
+                updateToServer(GROUP_ENTRY_ROLES_PERMISSIONS);
+            } catch (PFException e) {
+                mRolesPermissions.get(role).add(permission);
+            }
+        }
+    }
+
+    /**
+     * Removes a permission for a user. This permission is removed from every
+     * role the user is in.
+     *
+     * @param userId the ID of the user for which to remove the role
+     * @param permission the permission to remove from the user
+     */
+    public void removePermissionFromUser(String userId, Permission permission){
+        List<String> rolesForUser = getRolesForUser(userId);
+        for(String role : rolesForUser){
+            removePermissionFromRole(role, permission);
+        }
     }
 }
