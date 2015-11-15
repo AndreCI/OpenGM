@@ -30,17 +30,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         PFUser currentUser = getCurrentUser();
 
-        // TODO: tests with setters :
-        // *****************************************
-        try {
-            currentUser.setPhoneNumber("06 45 72 12 43");
-            currentUser.setAboutUser("I'm just a random person, with a random name. This is a description." +
-                "I know, it's a bit long, but we'll see if evrything can fit in !");
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        // *****************************************
-
+        // TODO: tests with setters --> See whether it prints the real informations
 
         // TODO: proper names in strings.xml file. + Name of activity
 

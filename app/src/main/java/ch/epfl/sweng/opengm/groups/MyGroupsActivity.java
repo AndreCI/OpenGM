@@ -22,7 +22,6 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.UserProfileActivity;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
