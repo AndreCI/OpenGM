@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,8 +28,7 @@ import ch.epfl.sweng.opengm.utils.NetworkUtils;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
-    public static final String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
-    public static String CREATE_EDIT_GROUP_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_GROUP";
+
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;
     private boolean editing;
@@ -41,8 +41,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_edit_event);
 
         Intent intent = getIntent();
-        PFEvent event = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_GROUP);
+        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        PFEvent event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         if (event == null) {
             editing = false;
             participants = new HashMap<>();
@@ -59,7 +60,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                ArrayList<PFMember> members = data.getParcelableArrayListExtra(CREATE_EDIT_EVENT_MESSAGE);
+                ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.PARTICIPANTS_LIST_RESULT);
                 participants.clear();
                 for(PFMember member : members) {
                     participants.put(member.getId(), member);
@@ -75,7 +76,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (legalArguments()) {
             if (participants != null) {
                 Intent intent = new Intent();
-                intent.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, createEditEvent());
+                intent.putExtra(Utils.EVENT_INTENT_MESSAGE, createEditEvent());
                 setResult(Activity.RESULT_OK, intent);
                 if(NetworkUtils.haveInternet(getBaseContext())) {
                     //TODO: update to serv
@@ -89,10 +90,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     public void onParticipantsButtonClick(View v) {
         Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         if (editing) {
-            intent.putExtra(CREATE_EDIT_EVENT_MESSAGE, createEditEvent());
+            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, createEditEvent());
         }
-        intent.putExtra(CREATE_EDIT_GROUP_MESSAGE, currentGroup);
         startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 

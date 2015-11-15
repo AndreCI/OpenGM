@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
+    public static final String PARTICIPANTS_LIST_RESULT = "ch.epfl.opengm.participants_list_result";
 
     private CustomAdapter participantsAdapter;
 
@@ -39,22 +41,24 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_remove_participants);
         Intent intent = getIntent();
-        PFEvent currentEvent = intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
+        PFGroup currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        PFEvent currentEvent = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
             membersToAdd.putAll(currentEvent.getParticipants());
         }
-        PFGroup currentGroup = intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_GROUP_MESSAGE);
-
         HashMap<String, PFMember> allMembers = new HashMap<>();
         if (currentGroup != null && currentGroup.hasMembers()) {
             allMembers.putAll(currentGroup.getMembers());
         }
 
+        Log.v("group member size", Integer.toString(currentGroup.getMembers().size()));
+        Log.v("currentEvent members", Integer.toString(membersToAdd.size()));
+
         List<CheckParticipant> checkParticipants = new ArrayList<>(allMembers.size());
 
-        for (PFMember m : allMembers.values()) {
-            checkParticipants.add(new CheckParticipant(m, membersToAdd.keySet().contains(m.getId())));
+        for (PFMember member : allMembers.values()) {
+            checkParticipants.add(new CheckParticipant(member, membersToAdd.keySet().contains(member.getId())));
         }
 
         participantsAdapter = new CustomAdapter(this, R.layout.check_participant_info, checkParticipants);
@@ -95,7 +99,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
     public void clickOnOkayButton(View v) {
         Intent intent = new Intent();
         ArrayList<PFMember> result = participantsAdapter.checkList();
-        intent.putParcelableArrayListExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE, result);
+        intent.putParcelableArrayListExtra(PARTICIPANTS_LIST_RESULT, result);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

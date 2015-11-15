@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
+import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -109,7 +110,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
-                intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
+                intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:

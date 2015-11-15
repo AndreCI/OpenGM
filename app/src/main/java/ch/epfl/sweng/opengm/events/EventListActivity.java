@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,8 +23,6 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class EventListActivity extends AppCompatActivity {
 
-    public final static String EVENT_LIST_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.EVENT_LIST_EVENT";
-    public final static String EVENT_LIST_INTENT_GROUP = "ch.epfl.sweng.opengl.events.EVENT_LIST";
     public static final int EVENT_LIST_RESULT_CODE = 666;
 
     private List<PFEvent> eventList;
@@ -35,7 +34,8 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(EVENT_LIST_INTENT_GROUP);
+        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         eventList = new ArrayList<>(currentGroup.getEvents());
         setContentView(R.layout.activity_event_list);
         displayEvents();
@@ -48,7 +48,7 @@ public class EventListActivity extends AppCompatActivity {
 
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
-                PFEvent event = eventIntent.getParcelableExtra(EVENT_LIST_MESSAGE_EVENT);
+                PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 currentGroup.updateEvent(event);
                 eventList.clear();
                 eventList.addAll(currentGroup.getEvents());
@@ -71,7 +71,7 @@ public class EventListActivity extends AppCompatActivity {
      */
     public void clickOnAddButton(View v){
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
 
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
@@ -119,8 +119,8 @@ public class EventListActivity extends AppCompatActivity {
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
         currentGroup.updateEvent(currentEvent);
-        intent.putExtra(EVENT_LIST_MESSAGE_EVENT, currentEvent);
-        intent.putExtra(EVENT_LIST_INTENT_GROUP, currentGroup);
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 }

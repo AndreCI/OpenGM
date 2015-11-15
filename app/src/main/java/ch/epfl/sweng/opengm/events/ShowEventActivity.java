@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,8 +15,7 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class ShowEventActivity extends AppCompatActivity {
-    public final static String SHOW_EVENT_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.SHOW_EVENT_EVENT";
-    public static final String SHOW_EVENT_MESSAGE_GROUP = "ch.epfl.sweng.opengm.events.SHOW_EVENT_GROUP";
+
     public final static int SHOW_EVENT_RESULT_CODE = 1000;
 
     private PFEvent event;
@@ -27,8 +27,9 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        event = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
+        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         displayEventInformation();
     }
 
@@ -37,7 +38,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
         if (requestCode == SHOW_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                event = data.getParcelableExtra(SHOW_EVENT_MESSAGE_EVENT);
+                event = data.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 Toast.makeText(this, "event updated", Toast.LENGTH_SHORT).show();
                 displayEventInformation();
             } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -49,7 +50,7 @@ public class ShowEventActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT, event);
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
@@ -105,8 +106,8 @@ public class ShowEventActivity extends AppCompatActivity {
 
     public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(SHOW_EVENT_MESSAGE_EVENT, event);
-        intent.putExtra(SHOW_EVENT_MESSAGE_GROUP, currentGroup);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
         startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
     }
 }

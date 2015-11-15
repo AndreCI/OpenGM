@@ -4,6 +4,9 @@ import java.util.Date;
 
 public class Utils {
 
+    public static final String GROUP_INTENT_MESSAGE = "ch.epfl.opengm.group_intent_message";
+    public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
+
     public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");
         if(stringArray.length != 5) {
