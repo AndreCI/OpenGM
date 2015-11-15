@@ -78,9 +78,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra(Utils.EVENT_INTENT_MESSAGE, createEditEvent());
                 setResult(Activity.RESULT_OK, intent);
-                if(NetworkUtils.haveInternet(getBaseContext())) {
-                    //TODO: update to serv
-                }
                 finish();
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();

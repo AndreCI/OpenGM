@@ -20,6 +20,7 @@ import java.util.List;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -49,12 +50,15 @@ public class EventListActivity extends AppCompatActivity {
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
-                currentGroup.updateEvent(event);
                 eventList.clear();
                 eventList.addAll(currentGroup.getEvents());
                 Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT);
                 t.show();
                 displayEvents();
+                if(NetworkUtils.haveInternet(getBaseContext())) {
+                    currentGroup.updateEvent(event);
+                    //TODO: update to serv
+                }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListFailToAdd), Toast.LENGTH_SHORT);
