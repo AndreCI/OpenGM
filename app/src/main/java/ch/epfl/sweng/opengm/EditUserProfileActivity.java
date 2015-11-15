@@ -1,8 +1,9 @@
 package ch.epfl.sweng.opengm;
 
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -10,8 +11,7 @@ import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
-
-public class UserProfileActivity extends AppCompatActivity {
+public class EditUserProfileActivity extends AppCompatActivity {
 
     private ImageView mPhotoImageView;
     private TextView mFirstLastNameTextView;
@@ -23,14 +23,9 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_profile_layout);
+        setContentView(R.layout.user_profile_edit_layout);
 
         PFUser currentUser = getCurrentUser();
-
-        // TODO: tests with setters --> See whether it prints the real information
-
-        // TODO: proper names in strings.xml file. + Name of activity
-
 
         // Display profile picture of user :
         mPhotoImageView = (ImageView) findViewById(R.id.userPhoto);
@@ -57,12 +52,6 @@ public class UserProfileActivity extends AppCompatActivity {
         mDescriptionTextView = (TextView) findViewById(R.id.descriptionTV);
         mDescriptionTextView.setText(currentUser.getAboutUser());
 
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_user_profile, menu);
-        return super.onCreateOptionsMenu(menu);
     }
-
 }
