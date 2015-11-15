@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -90,6 +89,26 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             //TODO : participants is list of String or PFMemeber?
         }
         this.mPicture = picture;
+    }
+
+    public int getYear() {
+        return mDate.getYear();
+    }
+
+    public int getMonth() {
+        return mDate.getMonth() +1;
+    }
+
+    public int getDay() {
+        return mDate.getDate();
+    }
+
+    public int getHours() {
+        return mDate.getHours();
+    }
+
+    public int getMinutes() {
+        return mDate.getMinutes();
     }
 
     public String getName() {
