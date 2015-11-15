@@ -19,6 +19,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
@@ -50,14 +51,20 @@ public class EventListActivity extends AppCompatActivity {
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
-                eventList.clear();
-                eventList.addAll(currentGroup.getEvents());
+                Log.v("event from parcel", event.getId());
+                eventList.remove(event);
+                eventList.add(event);
                 Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT);
                 t.show();
                 displayEvents();
                 if(NetworkUtils.haveInternet(getBaseContext())) {
+                    Log.v("event id", event.getId());
                     currentGroup.updateEvent(event);
-                    //TODO: update to serv
+                    try {
+                        PFEvent.updateEvent(event);
+                    } catch (PFException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             if (resultCode == Activity.RESULT_CANCELED) {

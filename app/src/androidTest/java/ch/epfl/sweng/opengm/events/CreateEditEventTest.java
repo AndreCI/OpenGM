@@ -103,7 +103,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         }
         Intent i = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
-        i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
+        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).check(matches(withText("testName")));
@@ -132,7 +132,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         int min = c.get(Calendar.MINUTE);
         Date date = new Date(year, month + 1, day, hour, min);
         e = PFEvent.createEvent(group, "testName", "testPlace", date, new ArrayList<PFMember>(), "testDescription", null);
-        i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
+        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         getActivity();
         onView(withId(R.id.CreateEditOkButton)).perform(click());

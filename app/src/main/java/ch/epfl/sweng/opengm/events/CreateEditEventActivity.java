@@ -76,8 +76,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (legalArguments()) {
             if (participants != null) {
                 Intent intent = new Intent();
-                intent.putExtra(Utils.EVENT_INTENT_MESSAGE, createEditEvent());
+                PFEvent event = createEditEvent();
+                intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
                 setResult(Activity.RESULT_OK, intent);
+                Log.v("event send in CreateEd", event.getId());
                 finish();
             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();

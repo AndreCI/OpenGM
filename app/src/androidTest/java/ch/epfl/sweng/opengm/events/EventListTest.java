@@ -61,7 +61,7 @@ public EventListTest() {
         } catch (PFException e) {
             e.printStackTrace();
         }
-        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, group);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
         setActivityIntent(intent);
         getActivity();
         onView(withId(R.id.eventListAddButton)).perform(click());
