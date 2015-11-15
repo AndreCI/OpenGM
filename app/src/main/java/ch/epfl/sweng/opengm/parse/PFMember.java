@@ -319,9 +319,15 @@ public final class PFMember extends PFEntity implements Parcelable {
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
 
+                ParseObject mailObject = null;
+
                 ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
-                ParseObject mailObject = mailQuery.get(id);
+                try {
+                    mailObject = mailQuery.get(id);
+                } catch (ParseException pe) {
+                    // Do nothing
+                }
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
