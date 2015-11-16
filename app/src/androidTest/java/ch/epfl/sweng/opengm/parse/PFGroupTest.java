@@ -19,8 +19,10 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -70,6 +72,12 @@ public class PFGroupTest {
         Parcel parcel = Parcel.obtain();
         String name = "testGroup";
         String description = "testDescription";
+        List<List<Integer>> permissions = new ArrayList<>();
+        List<Integer> actualPermissions = new ArrayList<>();
+        for(PFGroup.Permission permission : PFGroup.Permission.values()){
+            actualPermissions.add(permission.getValue());
+        }
+        permissions.add(actualPermissions);
         id1 = getRandomId();
         PFUser user = null;
         try {
@@ -113,6 +121,8 @@ public class PFGroupTest {
         assertEquals(42, parcel.readInt());
         assertEquals(description, parcel.readString());
         assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));
+        parcel.createStringArrayList();
+        assertEquals(permissions, parcel.readArrayList(List.class.getClassLoader()));
     }
 
 
@@ -136,6 +146,16 @@ public class PFGroupTest {
         int isPrivate = 0;
         String description = "testDescription";
         Bitmap picture = null;
+        List<String> rolesList = new ArrayList<>();
+        List<List<Integer>> permissions = new ArrayList<>();
+        rolesList.add(adminRole);
+        List<Integer> permissionsForAdministrator = new ArrayList<>();
+        List<PFGroup.Permission> actualPermissions = new ArrayList<>();
+        for(PFGroup.Permission permission : PFGroup.Permission.values()){
+            permissionsForAdministrator.add(permission.getValue());
+            actualPermissions.add(permission);
+        }
+        permissions.add(permissionsForAdministrator);
 
         Parcel in = Parcel.obtain();
 
@@ -150,6 +170,8 @@ public class PFGroupTest {
         in.writeInt(isPrivate);
         in.writeString(description);
         in.writeParcelable(picture, 0);
+        in.writeStringList(rolesList);
+        in.writeList(permissions);
 
         in.setDataPosition(0);
 
@@ -177,6 +199,7 @@ public class PFGroupTest {
         assertNull(group.getPicture());
         assertEquals(ids.size(), group.getMembers().size());
         assertEquals(role.length, group.getRoles().size());
+        assertEquals(actualPermissions, group.getPermissionsForRole(adminRole));
     }
 
 
