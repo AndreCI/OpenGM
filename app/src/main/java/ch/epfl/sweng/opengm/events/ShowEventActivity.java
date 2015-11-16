@@ -64,7 +64,7 @@ public class ShowEventActivity extends AppCompatActivity {
         fillEventDate();
         fillEventDescription();
         fillEventParticipants();
-        fillEventBitmap();
+      //  fillEventBitmap();
     }
 
     private void fillEventName() {

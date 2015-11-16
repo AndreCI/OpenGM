@@ -208,7 +208,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         Bitmap b = null;
         try {
             parseObject.save();
-             b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
+            if(selectedImageUri!=null) {
+                b = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+            }
+            b=null;
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -231,11 +234,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         Bitmap b = null;
-        try {
+     /*   try {
             b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         editedEvent.setName(name);
         editedEvent.setDate(date);
         editedEvent.setDescription(description);

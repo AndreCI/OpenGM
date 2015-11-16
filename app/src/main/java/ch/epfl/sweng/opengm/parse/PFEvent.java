@@ -287,7 +287,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         object.put(EVENT_ENTRY_PLACE, place);
         object.put(EVENT_ENTRY_DATE, date);
         object.put(EVENT_ENTRY_DESCRIPTION, description);
-        object.put(EVENT_ENTRY_PICTURE, picture);
+//        object.put(EVENT_ENTRY_PICTURE, picture);
 
         JSONArray participantsIds = new JSONArray();
         for (PFMember member : participants) {
