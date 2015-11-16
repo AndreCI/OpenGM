@@ -124,6 +124,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
         finish();
     }
+    public void onArchiveButtonClick(View v) {
+        //TODO : coder cette methode
+    }
 
     public void onOkButtonClick(View v) {
         if (legalArguments()) {
@@ -218,7 +221,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         Bitmap b = null;
         try {
             parseObject.save();
-             b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
+            if(selectedImageUri!=null) {
+                b = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

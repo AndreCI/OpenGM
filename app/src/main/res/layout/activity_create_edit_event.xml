@@ -100,7 +100,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/CreateEditEventArchiveButton"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:clickable="true"
+            android:onClick="onArchiveButtonClick"
+            android:text="archive"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

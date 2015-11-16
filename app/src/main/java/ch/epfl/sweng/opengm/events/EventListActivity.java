@@ -50,8 +50,6 @@ public class EventListActivity extends AppCompatActivity {
         eventList = new ArrayList<>(currentGroup.getEvents());
         setContentView(R.layout.activity_event_list);
         displayEvents();
-
-
     }
 
     @Override
