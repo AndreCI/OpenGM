@@ -67,11 +67,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
             editing = false;
             participants = new HashMap<>();
             Button del = (Button) findViewById(R.id.CreateEditEventDeleteButton);
-            Button arch = (Button) findViewById(R.id.CreateEditEventArchiveButton);
             del.setClickable(false);
-            arch.setClickable(false);
             del.setVisibility(View.INVISIBLE);
-            arch.setVisibility(View.INVISIBLE);
         } else {
             editedEvent = event;
             editing = true;
@@ -129,9 +126,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
             setResult(Utils.DELETE_FAILED, intent);
         }
         finish();
-    }
-    public void onArchiveButtonClick(View v) {
-        //TODO : coder cette methode
     }
 
     public void onOkButtonClick(View v) {
@@ -254,9 +248,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         Bitmap b = null;
         try {
-            b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
+//            b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImageUri);
+            throw new IOException();
         } catch (IOException e) {
-            e.printStackTrace();
+            (Toast.makeText(getApplicationContext(),"Can't retrieve image for this event", Toast.LENGTH_LONG)).show();
         }
         editedEvent.setName(name);
         editedEvent.setDate(date);

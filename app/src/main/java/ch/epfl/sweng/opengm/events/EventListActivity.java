@@ -7,14 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -92,12 +95,41 @@ public class EventListActivity extends AppCompatActivity {
         intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
+    public void clickOnCheckBoxForPastEvent(View v){
+        updateEventList();
+        displayEvents();
+    }
 
+    private boolean compareDate(Date eventDate){
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hour = c.get(Calendar.HOUR_OF_DAY) + 1;
+        int min = c.get(Calendar.MINUTE);
+        Date currentDate = new Date(year, month, day, hour, min);
+
+        return currentDate.before(eventDate);
+    }
+
+    private void updateEventList(){
+        try {
+            currentGroup.reload();
+            eventList = currentGroup.getEvents();
+            for(PFEvent e : eventList){
+                e.reload();
+            }
+        } catch (PFException e) {
+            (Toast.makeText(getApplicationContext(), "Couldn't reload", Toast.LENGTH_SHORT)).show();
+        }
+
+    }
     /**
      * Call this method to refresh the calendar on the screen.
      */
     public void displayEvents(){
         RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.ScrollViewParentLayout);
+        screenLayout.removeAllViews();
         ScrollView scrollViewForEvents = new ScrollView(this);
         ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
         scrollViewForEvents.setLayoutParams(scrollViewLP);
@@ -107,6 +139,8 @@ public class EventListActivity extends AppCompatActivity {
         LinearLayout.LayoutParams eventListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         linearLayoutListEvents.setLayoutParams(eventListLP);
 
+        CheckBox checkboxForPastEvent = (CheckBox) findViewById(R.id.eventListCheckBoxForPastEvent);
+        boolean displayPastEvents = checkboxForPastEvent.isChecked();
 
         Collections.sort(eventList, new Comparator<PFEvent>() {
             @Override
@@ -114,20 +148,22 @@ public class EventListActivity extends AppCompatActivity {
                 return rhs.getDate().compareTo(lhs.getDate());
             }
         });
-        for(PFEvent event : eventList){
-            final Button b = new Button(this);
-            b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
-            b.setTag(event);
-            b.setLayoutParams(eventListLP);
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showEvent((PFEvent) b.getTag());
-                }
-            });
+        for(PFEvent event : eventList) {
+            if (displayPastEvents || compareDate(event.getDate())) {
+                final Button b = new Button(this);
+                b.setText((displayPastEvents ? "sure " : "Nooop ") +String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
+                b.setTag(event);
+                b.setLayoutParams(eventListLP);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showEvent((PFEvent) b.getTag());
+                    }
+                });
 
 
-            linearLayoutListEvents.addView(b);
+                linearLayoutListEvents.addView(b);
+            }
         }
         scrollViewForEvents.addView(linearLayoutListEvents);
         screenLayout.addView(scrollViewForEvents);

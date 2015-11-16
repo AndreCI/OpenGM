@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class ShowEventActivity extends AppCompatActivity {
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         displayEventInformation();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

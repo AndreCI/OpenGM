@@ -14,16 +14,31 @@
         android:id="@+id/ScrollViewParentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/eventListAddButton">
+        android:layout_above="@+id/eventListBottomLayout">
     </RelativeLayout>
-        <Button
-            android:id="@+id/eventListAddButton"
-            android:text="@string/addButtonText"
-            android:onClick="clickOnAddButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/eventListBottomLayout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/eventListCheckBoxForPastEvent"
+                android:onClick="clickOnCheckBoxForPastEvent"
+               android:layout_weight="1"
+               android:text="Show past events"/>
+            <Button
+                android:id="@+id/eventListAddButton"
+                android:text="@string/addButtonText"
+                android:onClick="clickOnAddButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_centerHorizontal="true" />
+        </LinearLayout>
     </RelativeLayout>
 
 
