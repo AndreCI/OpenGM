@@ -121,7 +121,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
     public void onDeleteButtonClick(View v)  {
 
-        Intent intent = new Intent(this, EventListActivity.class);
+        Intent intent = new Intent(this, ShowEventActivity.class);
         try {
             currentGroup.removeEvent(editedEvent);
             setResult(Utils.DELETE_COMPLETED, intent);
@@ -230,6 +230,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if(selectedImageUri!=null) {
                 b = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
             }
+            b=null; //TODO : Debbuge ca
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

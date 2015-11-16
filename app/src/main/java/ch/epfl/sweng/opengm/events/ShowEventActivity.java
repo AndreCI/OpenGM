@@ -46,6 +46,14 @@ public class ShowEventActivity extends AppCompatActivity {
                 displayEventInformation();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, "event not updated", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == Utils.DELETE_COMPLETED){
+                Intent intent = new Intent(this, EventListActivity.class);
+                setResult(Utils.DELETE_COMPLETED, intent);
+                finish();
+            }else if (resultCode == Utils.DELETE_FAILED) {
+                Intent intent = new Intent(this, EventListActivity.class);
+                setResult(Utils.DELETE_FAILED, intent);
+                finish();
             }
         }
     }
@@ -64,7 +72,7 @@ public class ShowEventActivity extends AppCompatActivity {
         fillEventDate();
         fillEventDescription();
         fillEventParticipants();
-        fillEventBitmap();
+     //   fillEventBitmap();
     }
 
     private void fillEventName() {
