@@ -26,6 +26,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.UserProfileActivity;
 import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -99,15 +100,21 @@ public class MembersActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectMode) {
                     view.findViewById(R.id.member_checkbox).performClick();
+                } else {
+                    Intent i = new Intent(MembersActivity.this, UserProfileActivity.class);
+                    i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
+                    i.putExtra(UserProfileActivity.GROUP_INDEX, groupIndex);
+                    startActivity(i);
                 }
             }
         });
     }
 
-    // to leave select mode when done managing roles
+    // handle back from different activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            // done managing roles
             case 1:
                 if (resultCode == Activity.RESULT_OK) {
                     setSelectMode(false);

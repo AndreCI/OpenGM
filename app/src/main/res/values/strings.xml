@@ -128,6 +128,12 @@
     <string name="groupNameIllegalCharacters">Group name contains illegal characters, only letters, numbers and spaces allowed.</string>
     <string name="groupNameInvalid">Group name is invalid</string>
 
+    <string name="title_activity_user_profile">UserProfileActivity</string>
+
+    <string name="title_activity_edit_user_profile">EditUserProfileActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
 
 
 

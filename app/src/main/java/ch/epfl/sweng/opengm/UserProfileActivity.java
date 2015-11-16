@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -7,72 +8,66 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ch.epfl.sweng.opengm.parse.PFException;
-import ch.epfl.sweng.opengm.parse.PFUser;
-
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
 
 public class UserProfileActivity extends AppCompatActivity {
+
+    private ImageView mPhotoImageView;
+    private TextView mFirstLastNameTextView;
+    private TextView mUsernameTextView;
+    private TextView mEmailTextView;
+    private TextView mPhoneNumberTextView;
+    private TextView mDescriptionTextView;
+
+    public static final String USER_ID = "ch.epfl.sweng.opengm.userprofileactivity.userid";
+    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.userprofileactivity.groupindex";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_layout);
 
+        Intent i = getIntent();
+        String userId = i.getStringExtra(USER_ID);
+        int groupIndex = i.getIntExtra(GROUP_INDEX, -1);
+        PFMember currentUser = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex).getMember(userId);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        PFUser currentUser = getCurrentUser();
+        setTitle(currentUser.getUsername() + " profile");
 
-        // TODO: tests with setters :
-        // *****************************************
-        try {
-            currentUser.setPhoneNumber("06 45 72 12 43");
-            currentUser.setAboutUser("I'm just a random person, with a random name. This is a description." +
-                "I know, it's a bit long, but we'll see if evrything can fit in !");
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        // *****************************************
+        // TODO: tests with setters --> See whether it prints the real information
 
         // TODO: proper names in strings.xml file. + Name of activity
 
-        ImageView userPhoto = (ImageView) findViewById(R.id.userPhoto);
-        userPhoto.setImageResource(R.drawable.lolcat);
 
-        TextView nameTextView = (TextView) findViewById(R.id.nameTV);
-//        String text = getText(R.string.firstLastName);
-        String firstAndLastName = "[name]";
-        firstAndLastName = firstAndLastName.replace(firstAndLastName, currentUser.getFirstName());
-        firstAndLastName += "\n" + currentUser.getLastName();
-        nameTextView.setText(firstAndLastName);
+        // Display profile picture of user :
+        mPhotoImageView = (ImageView) findViewById(R.id.userPhoto);
+        mPhotoImageView.setImageResource(R.drawable.lolcat);
 
-        TextView usernameTextView = (TextView) findViewById(R.id.usernameTV);
-//        String username = getText(R.string.username);
-        String username = "[username]";
-        username = username.replace(username, currentUser.getUsername());
-        usernameTextView.setText(username);
+        // Display first name and last name of user :
+        mFirstLastNameTextView = (TextView) findViewById(R.id.nameTV);
+        String firstAndLastName = currentUser.getFirstname() + "\n" + currentUser.getLastname();
+        mFirstLastNameTextView.setText(firstAndLastName);
 
-        TextView emailTextView = (TextView) findViewById(R.id.emailTV);
-//        String email = getText(R.string.email);
-        String email = "[email]";
-        email = email.replace(email, currentUser.getEmail());
-        emailTextView.setText(email);
+        // Display username of user :
+        mUsernameTextView = (TextView) findViewById(R.id.usernameTV);
+        mUsernameTextView.setText(currentUser.getUsername());
 
-        TextView phoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
-//        String phoneNumber = getText(R.string.phoneNumber);
-        String phoneNumber = "[phone]";
-        phoneNumber = phoneNumber.replace(phoneNumber, currentUser.getPhoneNumber());
-        phoneNumberTextView.setText(phoneNumber);
+        // Display e-mail adress of user :
+        mEmailTextView = (TextView) findViewById(R.id.emailTV);
+        mEmailTextView.setText(currentUser.getEmail());
 
-        TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTV);
-//        String description = getText(R.string.description);
-        String description = "[description]";
-        description = description.replace(description, currentUser.getAboutUser());
-        descriptionTextView.setText(description);
+        // Display phone number of user :
+        mPhoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
+        mPhoneNumberTextView.setText(currentUser.getPhoneNumber());
 
+        // Display description of user :
+        mDescriptionTextView = (TextView) findViewById(R.id.descriptionTV);
+        mDescriptionTextView.setText(currentUser.getAbout());
     }
 
     @Override
@@ -85,11 +80,10 @@ public class UserProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }
