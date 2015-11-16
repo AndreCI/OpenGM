@@ -7,12 +7,14 @@ import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -24,6 +26,7 @@ import ch.epfl.sweng.opengm.events.Utils;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DATE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PARTICIPANTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
@@ -162,7 +165,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                     mDate = object.getDate(EVENT_ENTRY_DATE);
 
                     Bitmap[] picture = {null};
-                    retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                    retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
                     mPicture = picture[0];
 
                     String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
@@ -215,6 +218,14 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                             case EVENT_ENTRY_PARTICIPANTS:
                                 object.put(EVENT_ENTRY_PARTICIPANTS, collectionToArray(mParticipants.values()));
                                 break;
+                            case EVENT_ENTRY_PICTURE:
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] image = stream.toByteArray();
+                                ParseFile file = new ParseFile(String.format("event%s.png", getId()), image);
+                                file.saveInBackground();
+                                object.put(EVENT_ENTRY_PICTURE, mPicture);
+                                break;
                             default:
                                 return;
                         }
@@ -257,6 +268,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         object.put(EVENT_ENTRY_PLACE, place);
         object.put(EVENT_ENTRY_DATE, date);
         object.put(EVENT_ENTRY_DESCRIPTION, description);
+        object.put(EVENT_ENTRY_PICTURE, picture);
 
         JSONArray participantsIds = new JSONArray();
         for (PFMember member : participants) {
@@ -265,7 +277,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         object.put(EVENT_ENTRY_PARTICIPANTS, participantsIds);
 
         if (picture != null) {
-            object.put(GROUP_ENTRY_PICTURE, picture);
+            object.put(EVENT_ENTRY_PICTURE, picture);
         }
 
         try {
@@ -308,7 +320,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 Date date = object.getDate(EVENT_ENTRY_DATE);
 
                 Bitmap[] picture = {null};
-                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
+                retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                 List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
 
