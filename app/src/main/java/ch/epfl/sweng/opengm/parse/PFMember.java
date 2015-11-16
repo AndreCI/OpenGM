@@ -376,6 +376,11 @@ public final class PFMember extends PFEntity implements Parcelable {
         return getLastname() + " - " + getFirstname();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
 
         @Override

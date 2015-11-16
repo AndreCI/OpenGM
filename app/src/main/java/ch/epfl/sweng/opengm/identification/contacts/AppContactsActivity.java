@@ -50,7 +50,7 @@ public class AppContactsActivity extends AppCompatActivity {
 
         fillContacts();
 
-        mAdapter = new ContactAdapter(this, R.layout.item_contact, mContacts);
+        mAdapter = new ContactAdapter(this, R.layout.item_contact, mContacts, true);
         list.setAdapter(mAdapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -105,7 +105,7 @@ public class AppContactsActivity extends AppCompatActivity {
                 displayedCc.add(cc);
             }
         }
-        list.setAdapter(new ContactAdapter(this, R.layout.item_contact, displayedCc));
+        list.setAdapter(new ContactAdapter(this, R.layout.item_contact, displayedCc, true));
         return true;
     }
 

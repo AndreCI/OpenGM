@@ -14,16 +14,18 @@ import ch.epfl.sweng.opengm.R;
 
 public class ContactAdapter extends ArrayAdapter<Contact> {
 
-    private Context context;
-    private int ressource;
-    private List<Contact> objects;
+    private final Context context;
+    private final int ressource;
+    private final List<Contact> objects;
+    private final boolean appContact;
 
 
-    public ContactAdapter(Context context, int resource, List<Contact> objects) {
+    public ContactAdapter(Context context, int resource, List<Contact> objects, boolean appContact) {
         super(context, resource, objects);
         this.context = context;
         this.ressource = resource;
         this.objects = objects;
+        this.appContact = appContact;
     }
 
     public List<Contact> getObjects() {
@@ -46,7 +48,11 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         Contact contact = objects.get(position);
         holder.name.setText(contact.getName());
         holder.number.setText(contact.getPhoneNumber());
-        holder.isUsingTheApp.setText(contact.isIsUsingTheApp() ? "Y" : "N");
+        if (appContact) {
+            holder.isUsingTheApp.setBackgroundResource(R.mipmap.ic_arrow_forward_white_24dp);
+        } else {
+            holder.isUsingTheApp.setText(contact.isIsUsingTheApp() ? "Y" : "N");
+        }
         return row;
     }
 
