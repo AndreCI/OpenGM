@@ -1,14 +1,14 @@
 package ch.epfl.sweng.opengm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
-
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -20,12 +20,18 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView mPhoneNumberTextView;
     private TextView mDescriptionTextView;
 
+    public static final String USER_ID = "ch.epfl.sweng.opengm.userprofileactivity.userid";
+    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.userprofileactivity.groupindex";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_layout);
 
-        PFUser currentUser = getCurrentUser();
+        Intent i = getIntent();
+        String userId = i.getStringExtra(USER_ID);
+        int groupIndex = i.getIntExtra(GROUP_INDEX, -1);
+        PFMember currentUser = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex).getMember(userId);
 
         // TODO: tests with setters --> See whether it prints the real information
 
@@ -38,7 +44,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         // Display first name and last name of user :
         mFirstLastNameTextView = (TextView) findViewById(R.id.nameTV);
-        String firstAndLastName = currentUser.getFirstName() + "\n" + currentUser.getLastName();
+        String firstAndLastName = currentUser.getFirstname() + "\n" + currentUser.getLastname();
         mFirstLastNameTextView.setText(firstAndLastName);
 
         // Display username of user :
@@ -55,8 +61,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         // Display description of user :
         mDescriptionTextView = (TextView) findViewById(R.id.descriptionTV);
-        mDescriptionTextView.setText(currentUser.getAboutUser());
-
+        mDescriptionTextView.setText(currentUser.getAbout());
     }
 
     @Override
@@ -64,5 +69,4 @@ public class UserProfileActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_user_profile, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
 }
