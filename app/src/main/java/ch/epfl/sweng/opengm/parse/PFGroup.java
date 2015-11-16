@@ -65,6 +65,7 @@ public final class PFGroup extends PFEntity {
     private Map<String, List<Permission>> mRolesPermissions;
 
     private final static String adminRole = "Administrator";
+    private final static String userRole = "User";
 
     public static enum Permission{
         ADD_MEMBER(0), REMOVE_MEMBER(1), MANAGE_ROLES(2), ADD_ROLES(3), ADD_EVENT(4), MANAGE_EVENT(5), MANAGE_GROUP(6);
@@ -523,8 +524,8 @@ public final class PFGroup extends PFEntity {
             try {
                 PFMember member = PFMember.fetchExistingMember(userId);
                 member.addToGroup(getId());
-                member.addRole("User");
-                mRolesPermissions.put("User", new ArrayList<>(Arrays.asList(Permission.values())));
+                member.addRole(userRole);
+                mRolesPermissions.put(userRole, new ArrayList<>(Arrays.asList(Permission.values())));
                 mMembers.put(userId, member);
                 updateToServer(GROUP_ENTRY_USERS);
             } catch (PFException e) {
