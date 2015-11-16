@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -110,6 +111,17 @@ public final class PFGroup extends PFEntity {
         mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
         mDescription = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
+        List<String> rolesR = in.createStringArrayList();
+        List<List<Integer>> permissions = in.readArrayList(ArrayList.class.getClassLoader());
+        mRolesPermissions = new HashMap<>();
+        for(int i = 0; i < rolesR.size(); i++){
+            String currRole = rolesR.get(i);
+            List<Permission> actualPermissions = new ArrayList<>();
+            for(Integer integer : permissions.get(i)){
+                actualPermissions.add(Permission.forInt(integer));
+            }
+            mRolesPermissions.put(currRole, actualPermissions);
+        }
     }
 
 
@@ -909,6 +921,18 @@ public final class PFGroup extends PFEntity {
         }
         dest.writeString(mDescription);
         dest.writeParcelable(mPicture, flags);
+        List<String> rolesList = new ArrayList<>();
+        List<List<Integer>> permissions = new ArrayList<>();
+        for(Map.Entry<String, List<Permission>> entry : mRolesPermissions.entrySet()){
+            rolesList.add(entry.getKey());
+            List<Integer> current = new ArrayList<>();
+            for(Permission permission : entry.getValue()){
+                current.add(permission.getValue());
+            }
+            permissions.add(current);
+        }
+        dest.writeStringList(rolesList);
+        dest.writeList(permissions);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
