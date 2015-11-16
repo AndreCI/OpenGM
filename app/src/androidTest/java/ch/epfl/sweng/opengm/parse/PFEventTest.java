@@ -56,7 +56,7 @@ public class PFEventTest {
             assertEquals(date, event.getDate());
             assertEquals(description, event.getDescription());
             assertEquals(image, event.getPicture());
-            assertEquals(members, event.getParticipants().values());
+            assertEquals(members.size(), event.getParticipants().values().size());
             assertTrue(group.getEvents().contains(event));
         } catch (PFException e) {
             Assert.fail("Network error");
