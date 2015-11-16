@@ -110,10 +110,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testIfAddsRoles() throws Exception {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX);
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(isChecked()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(not(isEnabled())));
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
+        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(isChecked()));
+        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(not(isEnabled())));
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
         updateReferencesFromDatabase();
@@ -126,10 +126,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testIfRemovingAddedRoleDoesntGoToDatabase() throws Exception {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX);
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "0")))).check(doesNotExist());
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
+        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).perform(click());
+        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "1")))).check(doesNotExist());
 
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
@@ -145,7 +145,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         Thread.sleep(1000);
         getActivityAndLayout();
 
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).perform(click());
+        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).perform(click());
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
         updateReferencesFromDatabase();
@@ -193,7 +193,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         prepareIntentAndDatabase(2);
         Thread.sleep(1000);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX);
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "0");
         onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
         onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(isChecked()));
         onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(not(isEnabled())));
@@ -279,11 +279,11 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(result3);
     }
 
-    private void addNewRoleWithView(String newRole){
+    private void addNewRoleWithView(String newRole, String index){
         onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
         onView(withTagValue(is((Object) NEW_ROLE_EDIT))).perform(typeText(newRole));
         onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "0")))).check(matches(withText(newRole)));
+        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + index)))).check(matches(withText(newRole)));
     }
 
     private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
