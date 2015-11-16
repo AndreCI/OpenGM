@@ -2,8 +2,10 @@ package ch.epfl.sweng.opengm;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +34,12 @@ public class UserProfileActivity extends AppCompatActivity {
         String userId = i.getStringExtra(USER_ID);
         int groupIndex = i.getIntExtra(GROUP_INDEX, -1);
         PFMember currentUser = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex).getMember(userId);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        setTitle(currentUser.getUsername() + " profile");
 
         // TODO: tests with setters --> See whether it prints the real information
 
@@ -68,5 +76,16 @@ public class UserProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user_profile, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
