@@ -21,3 +21,4 @@ The team
 - Virgile Neu
 - Aurélien Soccard
 
+Under the supervisation of Ireneu Pla and Mohammad Dashti

@@ -137,4 +137,18 @@
     </LinearLayout>
 
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView3"
+        android:layout_below="@+id/CreateEditEventParticipantsButton"
+        android:layout_above="@id/CreateEditOkButton"
+        android:isScrollContainer="false" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/CreateEditEventParticipantsTextView" />
+    </ScrollView>
+
 </RelativeLayout>

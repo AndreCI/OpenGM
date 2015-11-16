@@ -4,6 +4,9 @@ import java.util.Date;
 
 public class Utils {
 
+    public static final String GROUP_INTENT_MESSAGE = "ch.epfl.opengm.group_intent_message";
+    public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
+
     public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");
         if(stringArray.length != 5) {
@@ -18,6 +21,6 @@ public class Utils {
     }
 
     public static String dateToString(Date d) {
-        return String.format("%d-%d-%d-%d-%d", d.getYear(), d.getMonth()+1, d.getDate(), d.getHours(), d.getMinutes());
+        return String.format("%04d-%02d-%02d-%02d-%02d", d.getYear(), d.getMonth()+1, d.getDate(), d.getHours(), d.getMinutes());
     }
 }
