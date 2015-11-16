@@ -6,6 +6,7 @@ public class Utils {
 
     public static final String GROUP_INTENT_MESSAGE = "ch.epfl.opengm.group_intent_message";
     public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
+    public static final String EDIT_INTENT_MESSAGE = "ch.epfl.opengm.edit_intent_message";
 
     public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");

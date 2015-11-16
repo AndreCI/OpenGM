@@ -23,15 +23,14 @@ import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
 
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
-    private PFEvent editedEvent;
-    private boolean editing;
+    private PFEvent event;
+    private boolean editing = false;
     private HashMap<String, PFMember> participants;
     private PFGroup currentGroup;
 
@@ -48,9 +47,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
             editing = false;
             participants = new HashMap<>();
         } else {
-            editedEvent = event;
+            this.event = event;
             editing = true;
-            participants = editedEvent.getParticipants();
+            participants = this.event.getParticipants();
             fillTexts(event);
         }
     }
@@ -78,6 +77,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 PFEvent event = createEditEvent();
                 intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+                intent.putExtra(Utils.EDIT_INTENT_MESSAGE, editing);
                 setResult(Activity.RESULT_OK, intent);
                 Log.v("event send in CreateEd", event.getId());
                 finish();
@@ -128,6 +128,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
 
         try {
+            //TODO: picture not null
             return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, null);
         } catch (PFException e) {
             // TODO toast ?
@@ -141,15 +142,15 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
-        editedEvent.setName(name);
-        editedEvent.setDate(date);
-        editedEvent.setDescription(description);
+        event.setName(name);
+        event.setDate(date);
+        event.setDescription(description);
         for(PFMember member : participants.values()) {
-            editedEvent.removeParticipant(member.getId());
-            editedEvent.addParticipant(member.getId(), member);
+            event.removeParticipant(member.getId());
+            event.addParticipant(member.getId(), member);
         }
-        editedEvent.setPlace(place);
-        return editedEvent;
+        event.setPlace(place);
+        return event;
     }
 
     /**

@@ -51,7 +51,10 @@ public class EventListActivity extends AppCompatActivity {
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+                boolean edited = eventIntent.getBooleanExtra(Utils.EDIT_INTENT_MESSAGE, false);
                 Log.v("event from parcel", event.getId());
+                eventList.clear();
+                eventList.addAll(currentGroup.getEvents());
                 eventList.remove(event);
                 eventList.add(event);
                 Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT);
@@ -61,7 +64,9 @@ public class EventListActivity extends AppCompatActivity {
                     Log.v("event id", event.getId());
                     currentGroup.updateEvent(event);
                     try {
-                        PFEvent.updateEvent(event);
+                        if(edited) {
+                            PFEvent.updateEvent(event);
+                        }
                     } catch (PFException e) {
                         e.printStackTrace();
                     }

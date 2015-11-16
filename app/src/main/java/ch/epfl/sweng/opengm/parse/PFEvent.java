@@ -293,6 +293,11 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         if(updatedEvent.getPicture() != null) {
             object.put(GROUP_ENTRY_PICTURE, updatedEvent.getPicture());
         }
+        try {
+            object.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public static PFEvent createEvent(PFGroup group, String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
