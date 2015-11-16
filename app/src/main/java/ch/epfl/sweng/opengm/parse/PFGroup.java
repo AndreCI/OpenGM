@@ -64,13 +64,7 @@ public final class PFGroup extends PFEntity {
 
     private Map<String, List<Permission>> mRolesPermissions;
 
-    /*public final static int ADD_MEMBER = 0;
-    public final static int REMOVE_MEMBER = 1;
-    public final static int MANAGE_ROLES = 2;
-    public final static int ADD_ROLES = 3;
-    public final static int ADD_EVENT = 4;
-    public final static int MANAGE_EVENT = 5;
-    public final static int MANAGE_GROUP = 6;*/
+    private final static String adminRole = "Administrator";
 
     public static enum Permission{
         ADD_MEMBER(0), REMOVE_MEMBER(1), MANAGE_ROLES(2), ADD_ROLES(3), ADD_EVENT(4), MANAGE_EVENT(5), MANAGE_GROUP(6);
@@ -828,23 +822,23 @@ public final class PFGroup extends PFEntity {
 
         JSONArray roles = new JSONArray();
         JSONArray rolesForFounder = new JSONArray();
-        rolesForFounder.put("Administrator");
+        rolesForFounder.put(adminRole);
         roles.put(rolesForFounder);
         List<String[]> rolesList = new ArrayList<>();
-        rolesList.add(new String[]{"Administrator"});
+        rolesList.add(new String[]{adminRole});
 
 
         JSONArray events = new JSONArray();
 
         JSONArray rolesPermissions = new JSONArray();
         JSONArray permissions = new JSONArray();
-        permissions.put("Administrator");
-        for(int i = 0; i < 7; i++){
-            permissions.put(i);
+        permissions.put(adminRole);
+        for(Permission permission : Permission.values()){
+            permissions.put(permission.getValue());
         }
         rolesPermissions.put(permissions);
         Map<String, List<Permission>> rolesPermissionsMap = new HashMap<>();
-        rolesPermissionsMap.put("Administrator", new ArrayList<>(Arrays.asList(Permission.values())));
+        rolesPermissionsMap.put(adminRole, new ArrayList<>(Arrays.asList(Permission.values())));
 
         String about = (description == null) ? "" : description;
 
