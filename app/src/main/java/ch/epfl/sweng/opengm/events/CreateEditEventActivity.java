@@ -66,6 +66,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (event == null) {
             editing = false;
             participants = new HashMap<>();
+            Button del = (Button) findViewById(R.id.CreateEditEventDeleteButton);
+            Button arch = (Button) findViewById(R.id.CreateEditEventArchiveButton);
+            del.setClickable(false);
+            arch.setClickable(false);
+            del.setVisibility(View.INVISIBLE);
+            arch.setVisibility(View.INVISIBLE);
         } else {
             editedEvent = event;
             editing = true;
@@ -114,10 +120,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
     }
     public void onDeleteButtonClick(View v)  {
-        currentGroup.removeEvent(editedEvent);
+
         Intent intent = new Intent(this, EventListActivity.class);
         try {
-            editedEvent.delete();
+            currentGroup.removeEvent(editedEvent);
             setResult(Utils.DELETE_COMPLETED, intent);
         } catch (PFException e) {
             setResult(Utils.DELETE_FAILED, intent);

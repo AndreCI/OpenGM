@@ -136,8 +136,8 @@ public class EventListActivity extends AppCompatActivity {
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
         currentGroup.updateEvent(currentEvent);
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
         intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 }

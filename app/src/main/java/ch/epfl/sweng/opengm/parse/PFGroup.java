@@ -404,7 +404,11 @@ public final class PFGroup extends PFEntity {
     }
 
     public void updateEvent(PFEvent event) {
-        removeEvent(event);
+        try {
+            removeEvent(event);
+        } catch (PFException e) {
+            e.printStackTrace();
+        }
         addEvent(event);
     }
 
@@ -413,7 +417,7 @@ public final class PFGroup extends PFEntity {
      *
      * @param event The event we want to remove
      */
-    public void removeEvent(PFEvent event) {
+    public void removeEvent(PFEvent event) throws PFException {
         if (mEvents.containsKey(event.getId())) {
             try {
                 mEvents.remove(event.getId());
@@ -421,8 +425,8 @@ public final class PFGroup extends PFEntity {
                 // Delete also the event of the server
                 event.delete();
             } catch (PFException e) {
-                //TODO: ????
                 mEvents.put(event.getId(), event);
+                throw new PFException("Can't remove event");
             }
         }
     }
