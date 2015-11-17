@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +32,8 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
+    public static final String PARTICIPANTS_LIST_RESULT = "ch.epfl.opengm.participants_list_result";
 
-    public static final String ADD_REMOVE_PARTICIPANTS_RESULT = "CL4P-TP";
     private CustomAdapter participantsAdapter;
 
     @Override
@@ -39,22 +41,24 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_remove_participants);
         Intent intent = getIntent();
-        PFEvent currentEvent = intent.getParcelableExtra(CreateEditEventActivity.CREATE_EDIT_EVENT_MESSAGE);
+        PFGroup currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        PFEvent currentEvent = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
             membersToAdd.putAll(currentEvent.getParticipants());
         }
-        PFGroup currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
-
         HashMap<String, PFMember> allMembers = new HashMap<>();
         if (currentGroup != null && currentGroup.hasMembers()) {
             allMembers.putAll(currentGroup.getMembers());
         }
 
+        Log.v("group member size", Integer.toString(currentGroup.getMembers().size()));
+        Log.v("currentEvent members", Integer.toString(membersToAdd.size()));
+
         List<CheckParticipant> checkParticipants = new ArrayList<>(allMembers.size());
 
-        for (PFMember m : allMembers.values()) {
-            checkParticipants.add(new CheckParticipant(m, membersToAdd.keySet().contains(m.getId())));
+        for (PFMember member : allMembers.values()) {
+            checkParticipants.add(new CheckParticipant(member, membersToAdd.keySet().contains(member.getId())));
         }
 
         participantsAdapter = new CustomAdapter(this, R.layout.check_participant_info, checkParticipants);
@@ -94,11 +98,9 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
 
     public void clickOnOkayButton(View v) {
         Intent intent = new Intent();
-        ArrayList<Parcelable> result = participantsAdapter.checkList();
-        intent.putParcelableArrayListExtra(ADD_REMOVE_PARTICIPANTS_RESULT, result);
+        ArrayList<PFMember> result = participantsAdapter.checkList();
+        intent.putParcelableArrayListExtra(PARTICIPANTS_LIST_RESULT, result);
         setResult(Activity.RESULT_OK, intent);
-        //Toast.makeText(this, "members to add size " + result.size(), Toast.LENGTH_SHORT).show();
-
         finish();
     }
 
@@ -181,8 +183,8 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
             return convertView;
         }
 
-        private ArrayList<Parcelable> checkList() {
-            ArrayList<Parcelable> list = new ArrayList<>();
+        private ArrayList<PFMember> checkList() {
+            ArrayList<PFMember> list = new ArrayList<>();
             for(int i = 0; i < participants.size(); ++i) {
                 CheckParticipant checkParticipant = participants.get(i);
                 if(checkParticipant.isChecked()) {

@@ -81,17 +81,32 @@
         android:layout_alignParentEnd="false"
         android:textAlignment="gravity"
         android:gravity="top|left" />
-
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/CreateEditOkButton"
-        android:textAlignment="center"
-        android:text="@string/OkEditButtonText"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:onClick="onOkButtonClick"
-        android:layout_centerHorizontal="true" />
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/CreateEditEventDeleteButton"
+            android:textAlignment="center"
+            android:clickable="true"
+            android:onClick="onDeleteButtonClick"
+            android:text="delete"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/CreateEditOkButton"
+            android:layout_weight="1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center"
+            android:text="@string/OkEditButtonText"
+            android:clickable="true"
+            android:onClick="onOkButtonClick" />
+    </LinearLayout>
 
     <Button
         android:layout_width="fill_parent"
@@ -104,5 +119,51 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/CreateEditEventDescriptionText"
         android:layout_alignParentEnd="true" />
+    <LinearLayout
+        android:id="@+id/CreateEditEventBitmapLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/CreateEditEventParticipantsButton"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:layout_above="@+id/CreateEditOkButton">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/CreateEditEventBitmapNameText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="No image selected yet"
+            android:textAlignment="center"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/CreateEditEventBitmapBrowseButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:hint="Browse..."
+            android:textAlignment="center"
+            android:onClick="onBrowseButtonClick" />
+
+    </LinearLayout>
+
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView3"
+        android:layout_below="@+id/CreateEditEventParticipantsButton"
+        android:layout_above="@id/CreateEditOkButton"
+        android:isScrollContainer="false" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/CreateEditEventParticipantsTextView" />
+    </ScrollView>
 
 </RelativeLayout>

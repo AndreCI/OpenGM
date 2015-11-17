@@ -42,9 +42,11 @@ public final class PFConstants {
     // Entries for "Event" table :
 
     public static final String EVENT_TABLE_NAME = "Event";
+    public static final String EVENT_ENTRY_ID = "objectId";
     public static final String EVENT_ENTRY_TITLE = "title";
     public static final String EVENT_ENTRY_DESCRIPTION = "description";
     public static final String EVENT_ENTRY_DATE = "date";
     public static final String EVENT_ENTRY_PLACE = "place";
     public static final String EVENT_ENTRY_PARTICIPANTS = "participants";
+    public static final String EVENT_ENTRY_PICTURE = "eventPicture";
 }

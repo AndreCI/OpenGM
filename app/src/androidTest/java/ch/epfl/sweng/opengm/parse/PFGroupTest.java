@@ -52,6 +52,7 @@ public class PFGroupTest {
     private final String USERNAME = "BobTheBobbyGroupTest";
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
+    private final String PHONE_NUMBER = "0123456789";
 
     private final String parseExceptionFailTest = "Network error";
     private final String adminRole = "Administrator";
@@ -519,7 +520,7 @@ public class PFGroupTest {
 
         PFUser user1 = null;
         try {
-            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = createNewUser(id1, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail(parseExceptionFailTest);
         }
@@ -527,7 +528,7 @@ public class PFGroupTest {
         PFUser user2 = null;
         id2 = getRandomId();
         try {
-            user2 = createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user2 = createNewUser(id2, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail(parseExceptionFailTest);
         }
@@ -586,7 +587,7 @@ public class PFGroupTest {
 
         PFUser user1 = null;
         try {
-            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user1 = createNewUser(id1, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             Assert.fail(parseExceptionFailTest);
         }

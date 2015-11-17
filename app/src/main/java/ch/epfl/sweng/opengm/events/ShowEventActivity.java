@@ -1,13 +1,16 @@
 package ch.epfl.sweng.opengm.events;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Date;
+import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
@@ -15,7 +18,8 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
 public class ShowEventActivity extends AppCompatActivity {
-    public final static String SHOW_EVENT_MESSAGE_EVENT = "ch.epfl.sweng.opengm.events.SHOW_EVENT_EVENT";
+
+    public final static int SHOW_EVENT_RESULT_CODE = 1000;
 
     private PFEvent event;
     private PFGroup currentGroup;
@@ -26,9 +30,43 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        event = intent.getParcelableExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT);
-        currentGroup = intent.getParcelableExtra(EventListActivity.EVENT_LIST_INTENT_GROUP);
+
+        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         displayEventInformation();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == SHOW_EVENT_RESULT_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                event = data.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+                Toast.makeText(this, "event updated", Toast.LENGTH_SHORT).show();
+                Log.v("event received in Show", event.getId());
+                displayEventInformation();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, "event not updated", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == Utils.DELETE_COMPLETED){
+                Intent intent = new Intent(this, EventListActivity.class);
+                setResult(Utils.DELETE_COMPLETED, intent);
+                finish();
+            }else if (resultCode == Utils.DELETE_FAILED) {
+                Intent intent = new Intent(this, EventListActivity.class);
+                setResult(Utils.DELETE_FAILED, intent);
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     private void displayEventInformation() {
@@ -37,6 +75,7 @@ public class ShowEventActivity extends AppCompatActivity {
         fillEventDate();
         fillEventDescription();
         fillEventParticipants();
+     //   fillEventBitmap();
     }
 
     private void fillEventName() {
@@ -53,10 +92,9 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventDate() {
-        Date date = event.getDate();
-        String hourString = String.format("%d : %02d", date.getHours(), date.getMinutes());
+        String hourString = String.format("%d : %02d", event.getHours(), event.getMinutes());
         ((TextView)findViewById(R.id.ShowEventHourText)).setText(hourString);
-        String dateString = String.format("%d/%02d/%04d", date.getDate(), date.getMonth()+1, date.getYear());
+        String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
         ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
     }
 
@@ -80,11 +118,16 @@ public class ShowEventActivity extends AppCompatActivity {
         }
         ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
     }
+    private void fillEventBitmap(){
+        Bitmap b = event.getPicture();
+        ImageView iv = (ImageView) findViewById(R.id.ShowEventBitmap);
+        iv.setImageBitmap(b);
+    }
 
     public void onEditButtonClick(View view) {
         Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(SHOW_EVENT_MESSAGE_EVENT, event);
-        intent.putExtra(EventListActivity.EVENT_LIST_INTENT_GROUP, currentGroup);
-        startActivity(intent);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+        startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
     }
 }

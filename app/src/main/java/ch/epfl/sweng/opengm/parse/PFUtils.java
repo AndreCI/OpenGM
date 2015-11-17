@@ -52,7 +52,7 @@ public final class PFUtils {
      */
     public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap[] image) {
         if (image.length != 1) {
-            // TOOD : empty array
+            // TODO : empty array
         }
         ParseFile fileObject = (ParseFile) object.get(entry);
         if (fileObject != null) {

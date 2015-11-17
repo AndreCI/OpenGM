@@ -78,6 +78,7 @@ public final class PFMember extends PFEntity implements Parcelable {
         mUsername = source.readString();
         mFirstName = source.readString();
         mLastName = source.readString();
+        mNickname = source.readString();
         mEmail = source.readString();
         mPhoneNumber = source.readString();
         mAboutUser = source.readString();
@@ -116,7 +117,6 @@ public final class PFMember extends PFEntity implements Parcelable {
             throw new PFException();
         }
     }
-
 
     @Override
     protected void updateToServer(String entry) throws PFException {
@@ -200,6 +200,10 @@ public final class PFMember extends PFEntity implements Parcelable {
      */
     public String getPhoneNumber() {
         return mPhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        mPhoneNumber = phoneNumber;
     }
 
     /**
