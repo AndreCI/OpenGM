@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 public class CreateEditEventTest extends ActivityInstrumentationTestCase2<CreateEditEventActivity> {
+    private static final String PHONE_NUMBER = "0123456789";
+
     public CreateEditEventTest() {
         super(CreateEditEventActivity.class);
     }
@@ -139,20 +142,19 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withText(R.string.CreateEditNoParticipants)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 
-<<<<<<< HEAD
     public void testCanClickOnBrowseButton() throws PFException{
         id = getRandomId();
         String name = "Really Nice Group to test BrowseButton";
         String description = "A group, much nicer than the previous one";
         try {
-            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
             group = createNewGroup(user, name, description, null);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
         Intent i = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
-        i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
+        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         onView(withId(R.id.CreateEditEventBitmapBrowseButton)).perform(click());
     }
@@ -162,14 +164,14 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         String name = "Really Nice Group to test BrowseButton";
         String description = "A group, much nicer than the previous one";
         try {
-            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
             group = createNewGroup(user, name, description, null);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
         Intent i = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
-        i.putExtra(ShowEventActivity.SHOW_EVENT_MESSAGE_EVENT, e);
+        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity a = getActivity();
         Intent data = null;
@@ -179,9 +181,6 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
 
     @After
     public void deleteAfterTesting() {
-=======
-    public void tearDown() {
->>>>>>> testParcelPFEvent
         if (e != null) {
             try {
                 e.delete();
