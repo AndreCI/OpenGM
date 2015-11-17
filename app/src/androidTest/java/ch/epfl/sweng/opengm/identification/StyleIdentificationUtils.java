@@ -1,6 +1,5 @@
 package ch.epfl.sweng.opengm.identification;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 

@@ -1,105 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ch.epfl.sweng.opengm">
+    package="ch.epfl.sweng.opengm" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".OpenGMApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".UserProfileActivity"
+            android:label="@string/title_activity_user_profile"
+            android:screenOrientation="portrait" >
+        </activity>
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".identification.RegisterActivity"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden" >
         </activity>
-
         <activity
             android:name=".groups.MyGroupsActivity"
             android:label="@string/title_activity_my_groups"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden" >
         </activity>
-
         <activity
             android:name=".groups.ManageRolesActivity"
             android:label="@string/title_activity_manage_roles"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".groups.JoinGroupActivity"
             android:label="@string/title_activity_join_group"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".groups.MembersActivity"
+            android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_members"
-            android:theme="@style/Theme.AppCompat">
+            android:theme="@style/Theme.AppCompat" >
         </activity>
-
         <activity
             android:name=".groups.CreateGroupActivity"
             android:label="@string/title_activity_create_group"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".events.EventListActivity"
             android:label="@string/title_activity_event_list"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".events.ShowEventActivity"
             android:label="@string/title_activity_show_event"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".events.CreateEditEventActivity"
             android:label="@string/title_activity_create_edit_event"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".events.AddRemoveParticipantsActivity"
             android:label="@string/title_activity_add_remove_participants"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".groups.GroupsHomeActivity"
             android:label="@string/title_activity_groups_home"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-
         <activity
             android:name=".groups.GroupSettingsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_modify_group">
+            android:label="@string/title_activity_modify_group"
+            android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".identification.phoneNumber.PhoneAddingActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name=".identification.contacts.AppContactsActivity"
+            android:screenOrientation="portrait">
 
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".identification.contacts.PhoneContactsActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".EditUserProfileActivity"
+            android:label="@string/title_activity_edit_user_profile" >
+        </activity>
     </application>
 
 </manifest>

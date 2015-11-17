@@ -10,7 +10,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,7 +24,9 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.UserProfileActivity;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
+import ch.epfl.sweng.opengm.identification.contacts.AppContactsActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
@@ -37,6 +42,11 @@ public class MyGroupsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         if(NetworkUtils.haveInternet(getBaseContext())) {
 
             final List<PFGroup> groups = new ArrayList<>();
@@ -58,7 +68,12 @@ public class MyGroupsActivity extends AppCompatActivity {
             groupsRecyclerView.setLayoutManager(gridLayoutManager);
             groupsRecyclerView.setHasFixedSize(true);
 
-            GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups);
+            // Get the screen size
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+            // Pass to the adapter the group list, and the screen dimensions
+            GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups, metrics);
             groupsRecyclerView.setAdapter(groupCardViewAdapter);
 
             if (groups.size() == 0) {
@@ -102,6 +117,31 @@ public class MyGroupsActivity extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_personal, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_show_contacts:
+                startActivity(new Intent(this, AppContactsActivity.class));
+                return true;
+            case R.id.action_show_settings:
+                startActivity(new Intent(this, UserProfileActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
 
     public void gotoGroup(View view) {
 //         FIXME: change color --> Add behaviour of clicked card
