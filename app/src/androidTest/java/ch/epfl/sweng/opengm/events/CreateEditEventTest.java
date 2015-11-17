@@ -73,7 +73,22 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     }
 
-    public void testNoName() {
+    public void testNoName() throws PFException {
+        id = getRandomId();
+        String name = "testEventInIntent";
+        String description = "A group, much nicer than the previous one";
+        try {
+            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            e.printStackTrace();
+            Assert.fail("Network error");
+        }
+        Intent i = new Intent();
+        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
+        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
+        setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
         ViewInteraction nameText = onView(withId(R.id.CreateEditEventNameText));
         nameText.perform(clearText());
@@ -81,7 +96,20 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         nameText.check(matches(hasErrorText(act.getString(R.string.CreateEditEmptyNameErrorMessage))));
     }
 
-    public void testNameButNoTime() {
+    public void testNameButNoTime() throws PFException {
+        id = getRandomId();
+        String name = "testEventInIntent";
+        String description = "A group, much nicer than the previous one";
+        try {
+            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
+            group = createNewGroup(user, name, description, null);
+        } catch (PFException e) {
+            e.printStackTrace();
+            Assert.fail("Network error");
+        }
+        Intent i = new Intent();
+        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
+        setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
         closeSoftKeyboard();
@@ -136,6 +164,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         int min = c.get(Calendar.MINUTE);
         Date date = new Date(year, month + 1, day, hour, min);
         e = PFEvent.createEvent(group, "testName", "testPlace", date, new ArrayList<PFMember>(), "testDescription", null);
+        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
         i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         getActivity();
@@ -174,6 +203,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         }
         Intent i = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
         i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity a = getActivity();
