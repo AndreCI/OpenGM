@@ -44,7 +44,8 @@ import ch.epfl.sweng.opengm.utils.NetworkUtils;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
-
+    public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
+    public static final int CREATE_EDIT_EVENT_RESULT_CODE_ADDREMOVEPARTICIPANTS = 52;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP = 69;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent editedEvent;

@@ -46,4 +46,5 @@ public final class PFConstants {
     public static final String EVENT_ENTRY_DATE = "date";
     public static final String EVENT_ENTRY_PLACE = "place";
     public static final String EVENT_ENTRY_PARTICIPANTS = "participants";
+    public static final String EVENT_ENTRY_PICTURE = "eventPicture";
 }
