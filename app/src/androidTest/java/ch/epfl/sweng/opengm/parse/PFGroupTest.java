@@ -17,9 +17,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -50,6 +53,10 @@ public class PFGroupTest {
     private final String FIRST_NAME = "Bobby";
     private final String LAST_NAME = "LaPointe";
 
+    private final String parseExceptionFailTest = "Network error";
+    private final String adminRole = "Administrator";
+    private final String userRole = "User";
+
     private String id1, id2;
     private PFGroup group;
 
@@ -65,13 +72,19 @@ public class PFGroupTest {
         Parcel parcel = Parcel.obtain();
         String name = "testGroup";
         String description = "testDescription";
+        List<List<Integer>> permissions = new ArrayList<>();
+        List<Integer> actualPermissions = new ArrayList<>();
+        for(PFGroup.Permission permission : PFGroup.Permission.values()){
+            actualPermissions.add(permission.getValue());
+        }
+        permissions.add(actualPermissions);
         id1 = getRandomId();
         PFUser user = null;
         try {
             user = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
             group = createNewGroup(user, name, description, null);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
         group.writeToParcel(parcel, 0);
 
@@ -91,7 +104,7 @@ public class PFGroupTest {
         try {
             member = PFMember.fetchExistingMember(id1);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
         assertEquals(member.getNickname(), nicknames.get(0));
         ArrayList<String> rolesZip = new ArrayList<>();
@@ -108,6 +121,8 @@ public class PFGroupTest {
         assertEquals(42, parcel.readInt());
         assertEquals(description, parcel.readString());
         assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));
+        parcel.createStringArrayList();
+        assertEquals(permissions, parcel.readArrayList(List.class.getClassLoader()));
     }
 
 
@@ -131,6 +146,16 @@ public class PFGroupTest {
         int isPrivate = 0;
         String description = "testDescription";
         Bitmap picture = null;
+        List<String> rolesList = new ArrayList<>();
+        List<List<Integer>> permissions = new ArrayList<>();
+        rolesList.add(adminRole);
+        List<Integer> permissionsForAdministrator = new ArrayList<>();
+        List<PFGroup.Permission> actualPermissions = new ArrayList<>();
+        for(PFGroup.Permission permission : PFGroup.Permission.values()){
+            permissionsForAdministrator.add(permission.getValue());
+            actualPermissions.add(permission);
+        }
+        permissions.add(permissionsForAdministrator);
 
         Parcel in = Parcel.obtain();
 
@@ -145,6 +170,8 @@ public class PFGroupTest {
         in.writeInt(isPrivate);
         in.writeString(description);
         in.writeParcelable(picture, 0);
+        in.writeStringList(rolesList);
+        in.writeList(permissions);
 
         in.setDataPosition(0);
 
@@ -172,6 +199,7 @@ public class PFGroupTest {
         assertNull(group.getPicture());
         assertEquals(ids.size(), group.getMembers().size());
         assertEquals(role.length, group.getRoles().size());
+        assertEquals(actualPermissions, group.getPermissionsForRole(adminRole));
     }
 
 
@@ -185,7 +213,7 @@ public class PFGroupTest {
         try {
             user = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         String name = "Really Nice Group";
@@ -206,11 +234,11 @@ public class PFGroupTest {
                     // Success
                 }
             } catch (ParseException e) {
-                Assert.fail("Network error");
+                Assert.fail(parseExceptionFailTest);
             }
 
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
     }
 
@@ -223,7 +251,7 @@ public class PFGroupTest {
         try {
             user = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         String name = "Really Nice Group";
@@ -240,7 +268,7 @@ public class PFGroupTest {
 
             PFMember member = (PFMember) group.getMembers().values().toArray()[0];
 
-            assertTrue(member.getRoles().isEmpty());
+            assertTrue(member.getRoles().contains(adminRole));
             assertEquals(USERNAME, member.getNickname());
             assertEquals(user.getId(), member.getId());
             assertEquals(user.getUsername(), member.getUsername());
@@ -251,7 +279,7 @@ public class PFGroupTest {
 
             group.deleteGroup();
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
     }
@@ -265,14 +293,14 @@ public class PFGroupTest {
         try {
             user1 = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
         id2 = getRandomId();
 
         try {
             createNewUser(id2, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         String name = "Another group";
@@ -307,7 +335,7 @@ public class PFGroupTest {
         try {
             user1 = createNewUser(id1, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
         id2 = getRandomId();
 
@@ -315,17 +343,28 @@ public class PFGroupTest {
         try {
             user2 = createNewUser(id2, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group = null;
         try {
             group = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         PFGroup group2;
+
+        // Test if first user has "Administrator Role"
+        List<String> roles = new ArrayList<>();
+        roles.add(adminRole);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(roles, group2.getRolesForUser(id1));
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
 
         String name = "Gojira";
         String description = "A jazz band";
@@ -345,7 +384,7 @@ public class PFGroupTest {
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.setDescription(description);
@@ -361,7 +400,7 @@ public class PFGroupTest {
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.setNicknameForUser(nicknameForUser1, user1.getId());
@@ -377,12 +416,11 @@ public class PFGroupTest {
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.addRoleToUser(role, user1.getId());
 
-        List<String> roles = new ArrayList<>();
         roles.add(role);
 
         Thread.sleep(2000);
@@ -396,12 +434,12 @@ public class PFGroupTest {
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.removeRoleToUser(role, user1.getId());
 
-        roles.clear();
+        roles.remove(role);
 
         Thread.sleep(2000);
 
@@ -414,7 +452,7 @@ public class PFGroupTest {
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.addUserWithId(user2.getId());
@@ -427,8 +465,9 @@ public class PFGroupTest {
             assertEquals(group.getDescription(), group2.getDescription());
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
+            assertTrue(group2.getRolesForUser(id2).contains(userRole));
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         try {
@@ -443,7 +482,7 @@ public class PFGroupTest {
             assertEquals(1, user3.getGroups().size());
             assertEquals(group, user3.getGroups().get(0));
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.removeUser(user1.getId());
@@ -457,7 +496,7 @@ public class PFGroupTest {
             assertEquals(new HashSet<>(group.getMembers().values()), new HashSet<>(group2.getMembers().values()));
             assertEquals(group.getEvents(), group2.getEvents());
         } catch (PFException e) {
-            Assert.fail("Network error");
+            Assert.fail(parseExceptionFailTest);
         }
 
         group.removeUser(user2.getId());
@@ -471,6 +510,144 @@ public class PFGroupTest {
             // Success
         }
 
+    }
+
+    @Test
+    public void testNewGroupHasRolesAndPermissions() throws InterruptedException {
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
+
+        PFUser user1 = null;
+        try {
+            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        PFUser user2 = null;
+        id2 = getRandomId();
+        try {
+            user2 = createNewUser(id2, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        List<PFGroup.Permission> permissions = Arrays.asList(PFGroup.Permission.values());
+
+        group = null;
+        try {
+            group = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        PFGroup group2;
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
+            assertEquals(permissions, group2.getPermissionsForRole(adminRole));
+            assertEquals(permissions, group.getPermissionsForUser(user1.getId()));
+            assertEquals(permissions, group.getPermissionsForRole(adminRole));
+            for(PFGroup.Permission permission : permissions){
+                assertTrue(group2.userHavePermission(user1.getId(), permission));
+                assertTrue(group.userHavePermission(user1.getId(), permission));
+            }
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        group.addUserWithId(user2.getId());
+
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user2.getId()));
+            assertEquals(permissions, group2.getPermissionsForRole(userRole));
+            assertEquals(permissions, group.getPermissionsForUser(user2.getId()));
+            assertEquals(permissions, group.getPermissionsForRole(userRole));
+            for(PFGroup.Permission permission : permissions){
+                assertTrue(group2.userHavePermission(user2.getId(), permission));
+                assertTrue(group.userHavePermission(user2.getId(), permission));
+            }
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        group.removeUser(user1.getId());
+        group.removeUser(user2.getId());
+    }
+
+    @Test
+    public void testPermissionsRemoveAndAdd() throws InterruptedException{
+        OpenGMApplication.logOut();
+        id1 = getRandomId();
+
+        PFUser user1 = null;
+        try {
+            user1 = createNewUser(id1, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        List<PFGroup.Permission> permissions = new ArrayList<>(Arrays.asList(PFGroup.Permission.values()));
+
+        group = null;
+        try {
+            group = createNewGroup(user1, "OneDirection", "Death Metal Band", null);
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        PFGroup group2;
+
+        group.removePermissionFromRole(adminRole, PFGroup.Permission.ADD_EVENT);
+        permissions.remove(PFGroup.Permission.ADD_EVENT);
+
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForRole(adminRole));
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        group.removePermissionFromUser(user1.getId(), PFGroup.Permission.ADD_MEMBER);
+        permissions.remove(PFGroup.Permission.ADD_MEMBER);
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        group.addPermissionToRole(adminRole, PFGroup.Permission.ADD_EVENT);
+        permissions.add(PFGroup.Permission.ADD_EVENT);
+
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForRole(adminRole));
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
+
+        group.addPermissionToUser(user1.getId(), PFGroup.Permission.ADD_MEMBER);
+        permissions.add(PFGroup.Permission.ADD_MEMBER);
+
+        Thread.sleep(2000);
+
+        try {
+            group2 = fetchExistingGroup(group.getId());
+            assertEquals(permissions, group2.getPermissionsForUser(user1.getId()));
+        } catch (PFException e) {
+            Assert.fail(parseExceptionFailTest);
+        }
     }
 
     @After

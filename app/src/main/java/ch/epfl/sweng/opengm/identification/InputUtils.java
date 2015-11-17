@@ -63,12 +63,12 @@ public class InputUtils {
     }
 
     public static int isGroupNameValid(String name) {
-        if (name.charAt(0) == ' ') {
-            return INPUT_BEGINS_WITH_SPACE;
-        } else if (name.length() < GROUP_NAME_MIN_LENGTH) {
+        if (name.length() < GROUP_NAME_MIN_LENGTH) {
             return INPUT_TOO_SHORT;
         } else if (name.length() > GROUP_NAME_MAX_LENGTH) {
             return INPUT_TOO_LONG;
+        } else if (name.charAt(0) == ' '){
+            return INPUT_BEGINS_WITH_SPACE;
         } else {
             for (Character c : name.toCharArray()) {
                 if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
