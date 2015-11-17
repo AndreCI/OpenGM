@@ -118,7 +118,7 @@ public class EventListActivity extends AppCompatActivity {
         int min = c.get(Calendar.MINUTE);
         Date currentDate = new Date(year, month, day, hour, min);
 
-        return currentDate.before(eventDate);
+        return eventDate.before(currentDate);
     }
 
     private void updateEventList(){
