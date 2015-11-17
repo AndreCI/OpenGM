@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.groups;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +31,11 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
     }
 
     List<PFGroup> groups;
+    DisplayMetrics screenMetrics;
 
-    GroupCardViewAdapter(List<PFGroup> groups){
+    GroupCardViewAdapter(List<PFGroup> groups, DisplayMetrics metrics){
         this.groups = groups;
+        this.screenMetrics = metrics;
     }
 
     @Override
@@ -43,16 +46,6 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_card_layout, parent, false);
-
-//        ViewGroup.LayoutParams lpm = parent.getLayoutParams();
-//        lpm.height = 100;
-//        parent.setLayoutParams(lpm);    // FIXME: Attention, ceci est la "card VIEW globale" (qui contient les cards à l'intérieur)
-
-//        CardView groupCardView = (CardView) parent.findViewById(R.id.group_card_view);      // FIXME: null pointer exception
-//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) groupCardView.getLayoutParams();
-//        params.height = 300;
-//        groupCardView.setLayoutParams(params);
-
         GroupViewHolder gvh = new GroupViewHolder(v);
         return gvh;
     }
@@ -61,12 +54,7 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
     public void onBindViewHolder(GroupViewHolder holder, int position) {
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.cardView.getLayoutParams();
 
-        // TODO: get the screen size in pixels, within a static context
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        MyGroupsActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        int screenWidth = metrics.widthPixels;
-        int screenWidth = 1080; // (only for Nexus 5 which is 1080x1920)
-
+        int screenWidth = screenMetrics.widthPixels;
         layoutParams.height = screenWidth/2;
         holder.cardView.setLayoutParams(layoutParams);
 

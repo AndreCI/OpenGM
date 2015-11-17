@@ -37,6 +37,7 @@ public final class PFConstants {
     public static final String GROUP_ENTRY_DESCRIPTION = "description";
     public static final String GROUP_ENTRY_PICTURE = "groupPicture";
     public static final String GROUP_ENTRY_EVENTS = "events";
+    public static final String GROUP_ENTRY_ROLES_PERMISSIONS = "rolesPermissions";
 
     // Entries for "Event" table :
 

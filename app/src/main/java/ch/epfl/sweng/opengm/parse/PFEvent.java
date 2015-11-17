@@ -241,7 +241,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                         object.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e == null) {
+                                if (e != null) {
                                     // throw new ParseException("No object for the selected id.");
                                 }
                             }
@@ -312,7 +312,6 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             participantsIds.put(member.getId());
         }
         object.put(EVENT_ENTRY_PARTICIPANTS, participantsIds);
-
         if (picture != null) {
             object.put(GROUP_ENTRY_PICTURE, picture);
         }

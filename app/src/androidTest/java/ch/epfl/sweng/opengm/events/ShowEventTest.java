@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 
 import java.util.ArrayList;
@@ -62,10 +61,10 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
 
     public void testPreFillWithEventInIntent() throws PFException {
         id = getRandomId();
-        String name = "Really Nice Group";
+        String name = "testPreFillWithEventInIntent";
         String description = "A group, much nicer than the previous one";
         try {
-            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
             group = createNewGroup(user, name, description, null);
         } catch (PFException e) {
             Assert.fail("Network error");
@@ -83,8 +82,7 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Participants:")));
     }
 
-    @After
-    public void deleteAfterTesting() {
+    public void tearDown() {
         if (e != null) {
             try {
                 e.delete();

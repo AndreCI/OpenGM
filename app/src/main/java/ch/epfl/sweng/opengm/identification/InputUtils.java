@@ -20,11 +20,15 @@ public class InputUtils {
     private final static int GROUP_NAME_MIN_LENGTH = 3;
     private final static int GROUP_NAME_MAX_LENGTH = 30;
 
-    private final static Pattern emailPattern =
+    private final static Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 
+    private final static Pattern PHONE_PATTERN =
+            Pattern.compile("[0-9]{8,13}");
+
+
     public static boolean isEmailValid(String email) {
-        return emailPattern.matcher(email).matches();
+        return EMAIL_PATTERN.matcher(email).matches();
     }
 
     public static int isPasswordInvalid(String password) {
@@ -54,13 +58,17 @@ public class InputUtils {
         return INPUT_CORRECT;
     }
 
+    public static boolean isPhoneNumberValid(String number) {
+        return PHONE_PATTERN.matcher(number).matches();
+    }
+
     public static int isGroupNameValid(String name) {
-        if (name.charAt(0) == ' ') {
-            return INPUT_BEGINS_WITH_SPACE;
-        } else if (name.length() < GROUP_NAME_MIN_LENGTH) {
+        if (name.length() < GROUP_NAME_MIN_LENGTH) {
             return INPUT_TOO_SHORT;
         } else if (name.length() > GROUP_NAME_MAX_LENGTH) {
             return INPUT_TOO_LONG;
+        } else if (name.charAt(0) == ' '){
+            return INPUT_BEGINS_WITH_SPACE;
         } else {
             for (Character c : name.toCharArray()) {
                 if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
@@ -73,4 +81,13 @@ public class InputUtils {
         return INPUT_CORRECT;
     }
 
+    public static boolean isPhoneEnteredValid(String number) {
+        if (number.contains(" ")) {
+            String prefix = number.split(" ")[0];
+            String phone = number.split(" ")[1];
+            return prefix.startsWith("+") && prefix.length() < 5 && isPhoneNumberValid(phone);
+        } else {
+            return isPhoneNumberValid(number);
+        }
+    }
 }
