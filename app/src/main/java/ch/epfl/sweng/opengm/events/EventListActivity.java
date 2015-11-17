@@ -41,14 +41,15 @@ public class EventListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent(Utils.GROUP_INTENT_MESSAGE);
+        Intent intent = getIntent();
+        /*new Intent(Utils.GROUP_INTENT_MESSAGE);
+
         try {
             intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("AeLf1qc8u8"));
         } catch (PFException e) {
             e.printStackTrace();
-        }
+        }*/
         currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
-
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         eventList = new ArrayList<>(currentGroup.getEvents());
         setContentView(R.layout.activity_event_list);
@@ -57,8 +58,6 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent eventIntent) {
-
-
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
@@ -96,7 +95,6 @@ public class EventListActivity extends AppCompatActivity {
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
     public void clickOnCheckBoxForPastEvent(View v){
-        updateEventList();
         displayEvents();
     }
 
@@ -128,6 +126,7 @@ public class EventListActivity extends AppCompatActivity {
      * Call this method to refresh the calendar on the screen.
      */
     public void displayEvents(){
+        updateEventList();
         RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.ScrollViewParentLayout);
         screenLayout.removeAllViews();
         ScrollView scrollViewForEvents = new ScrollView(this);
@@ -151,7 +150,7 @@ public class EventListActivity extends AppCompatActivity {
         for(PFEvent event : eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
-                b.setText((displayPastEvents ? "sure " : "Nooop ") +String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
+                b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 b.setTag(event);
                 b.setLayoutParams(eventListLP);
                 b.setOnClickListener(new View.OnClickListener() {
