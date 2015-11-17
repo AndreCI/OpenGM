@@ -8,6 +8,8 @@ public class Utils {
     public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
     public static final int DELETE_COMPLETED = 690;
     public static final int DELETE_FAILED = 400;
+    public static final String EDIT_INTENT_MESSAGE = "ch.epfl.opengm.edit_intent_message";
+
     public static Date stringToDate(String s) {
         String[] stringArray = s.split("-");
         if(stringArray.length != 5) {

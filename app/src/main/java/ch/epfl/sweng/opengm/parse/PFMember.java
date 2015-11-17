@@ -339,6 +339,7 @@ public final class PFMember extends PFEntity implements Parcelable {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }
@@ -377,6 +378,11 @@ public final class PFMember extends PFEntity implements Parcelable {
 
     public String getName() {
         return getLastname() + " - " + getFirstname();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

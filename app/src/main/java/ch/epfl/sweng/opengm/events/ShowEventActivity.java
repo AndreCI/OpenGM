@@ -45,6 +45,7 @@ public class ShowEventActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 event = data.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 Toast.makeText(this, "event updated", Toast.LENGTH_SHORT).show();
+                Log.v("event received in Show", event.getId());
                 displayEventInformation();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, "event not updated", Toast.LENGTH_SHORT).show();

@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +26,7 @@ import static org.junit.Assert.fail;
 @LargeTest
 public class PFEventTest {
 
+    private static final String PHONE_NUMBER = "0123456789";
     private final String EMAIL = "pf.event@junit.test";
     private final String USERNAME = "jeanInPFEventTest";
     private final String FIRST_NAME = "Jean";
@@ -53,7 +56,7 @@ public class PFEventTest {
     public void writeToParcel() {
         id = getRandomId();
         try {
-            user = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = PFUser.createNewUser(id, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             e.printStackTrace();
             fail("create new user");
@@ -111,7 +114,7 @@ public class PFEventTest {
 
         id = getRandomId();
         try {
-            user = PFUser.createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = PFUser.createNewUser(id, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
         } catch (PFException e) {
             e.printStackTrace();
         }

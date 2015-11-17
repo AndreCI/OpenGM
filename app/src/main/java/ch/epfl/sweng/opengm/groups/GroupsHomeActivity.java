@@ -85,9 +85,6 @@ public class GroupsHomeActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-            Intent intent = new Intent(this, MyGroupsActivity.class);
-            startActivity(intent);
-            finish();
         }
     }
 
@@ -106,7 +103,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivity(new Intent(GroupsHomeActivity.this, MembersActivity.class).putExtra(GROUP_INDEX, groupPos));
+                startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class).putExtra(GROUP_INDEX, groupPos), 1);
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
@@ -127,4 +124,14 @@ public class GroupsHomeActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            // stay in the correct group home, comming back from MembersActivity
+            case 1:
+                groupPos = data.getIntExtra(GROUP_INDEX, -1);
+                break;
+            default:
+        }
+    }
 }

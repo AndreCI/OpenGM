@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 
 import java.util.ArrayList;
@@ -62,17 +61,17 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
 
     public void testPreFillWithEventInIntent() throws PFException {
         id = getRandomId();
-        String name = "Really Nice Group";
+        String name = "testPreFillWithEventInIntent";
         String description = "A group, much nicer than the previous one";
         try {
-            user = createNewUser(id, EMAIL, USERNAME, FIRST_NAME, LAST_NAME);
+            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
             group = createNewGroup(user, name, description, null);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
         Intent intent = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(1994, 5, 6, 2, 4), new ArrayList<PFMember>(), "testDescription", null);
-        intent.putExtra(EventListActivity.EVENT_LIST_MESSAGE_EVENT, e);
+        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(intent);
         ShowEventActivity activity = getActivity();
         onView(withId(R.id.ShowEventNameText)).check(matches(withText("testName")));
@@ -83,8 +82,7 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Participants:")));
     }
 
-    @After
-    public void deleteAfterTesting() {
+    public void tearDown() {
         if (e != null) {
             try {
                 e.delete();

@@ -53,7 +53,7 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
         OpenGMApplication.logOut();
 
         try {
-            user = PFUser.createNewUser(CURRENT_DATE, EMAIL, USERNAME, FIRSTNAME, LASTRNAME);
+            user = PFUser.createNewUser(CURRENT_DATE, EMAIL, "0", USERNAME, FIRSTNAME, LASTRNAME);
         } catch (PFException e) {
             Assert.fail("Network error");
         }

@@ -2,9 +2,6 @@ package ch.epfl.sweng.opengm.events;
 
 import ch.epfl.sweng.opengm.parse.PFMember;
 
-/**
- * Created by virgile on 26/10/2015.
- */
 public class CheckParticipant {
     private PFMember mParticipant;
     private boolean mIsCheck;

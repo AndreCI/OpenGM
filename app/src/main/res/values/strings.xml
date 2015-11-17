@@ -15,6 +15,9 @@
     <string name="success_dialog_password">Email successfully sent</string>
     <string name="error_dialog_password">Error while sending a new password by mail &#8230;</string>
 
+    <string name="how_to_password">A password should contain between 8 and 30 characters, with at least a cap, a lowercase letter and a number.</string>
+
+
     <string name="title_activity_register">RegisterActivity</string>
 
     <string name="title_activity_my_groups">My Groups</string>
@@ -28,6 +31,7 @@
     <string name="hint_password_activity_register">Password</string>
     <string name="hint_firstname_activity_register">First name</string>
     <string name="hint_lastname_activity_register">Last name</string>
+    <string name="hint_phone_activity_register">Phone number</string>
     <string name="hint_email_activity_register">Email</string>
     <string name="hint_confirm_password_activity_register">Confirm password</string>
     <string name="sign_up_activity_register">Sign up</string>
@@ -39,6 +43,7 @@
     <string name="empty_lastname_activity_register">Last name should not be empty</string>
     <string name="incorrect_email_activity_register">Email has not a correct format</string>
     <string name="incorrect_password_activity_register">Passwords don\'t match</string>
+    <string name="incorrect_phone_number_activity_register">A valid phone number should be entered</string>
     <string name="short_password_activity_register">Password is too short</string>
     <string name="long_password_activity_register">Password is too long</string>
     <string name="case_password_activity_register">Password should contain at least a small and a cap letter</string>
@@ -100,7 +105,7 @@
     <string name="action_remove_person">Remove member</string>
     <string name="action_change_roles">Change roles</string>
     <string name="dialog_add_member_title">Add a member</string>
-    <string name="dialog_add_member_text">Enter username:</string>
+    <string name="dialog_add_member_text">Enter username or mail:</string>
     <string name="add">Add</string>
 
     <string name="title_activity_modify_group">ModifyGroup</string>
@@ -123,5 +128,247 @@
     <string name="groupNameIllegalCharacters">Group name contains illegal characters, only letters, numbers and spaces allowed.</string>
     <string name="groupNameInvalid">Group name is invalid</string>
 
+    <string name="title_activity_user_profile">UserProfileActivity</string>
+
+    <string name="title_activity_edit_user_profile">EditUserProfileActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
+
+
+
+
+
+    <!-- Phones numbers -->
+
+    <string-array name="countryCodes">
+        <item>93;Afghanistan;AF / AFG</item>
+        <item>355;Albania;AL / ALB</item>
+        <item>213;Algeria;DZ / DZA</item>
+        <item>376;Andorra;AD / AND</item>
+        <item>244;Angola;AO / AGO</item>
+        <item>672;Antarctica;AQ / ATA</item>
+        <item>54;Argentina;AR / ARG</item>
+        <item>374;Armenia;AM / ARM</item>
+        <item>297;Aruba;AW / ABW</item>
+        <item>61;Australia;AU / AUS</item>
+        <item>43;Austria;AT / AUT</item>
+        <item>994;Azerbaijan;AZ / AZE</item>
+        <item>973;Bahrain;BH / BHR</item>
+        <item>880;Bangladesh;BD / BGD</item>
+        <item>375;Belarus;BY / BLR</item>
+        <item>32;Belgium;BE / BEL</item>
+        <item>501;Belize;BZ / BLZ</item>
+        <item>229;Benin;BJ / BEN</item>
+        <item>975;Bhutan;BT / BTN</item>
+        <item>591;Bolivia;BO / BOL</item>
+        <item>387;Bosnia and Herzegovina;BA / BIH</item>
+        <item>267;Botswana;BW / BWA</item>
+        <item>55;Brazil;BR / BRA</item>
+        <item>246;British Indian Ocean Territory;IO / IOT</item>
+        <item>673;Brunei;BN / BRN</item>
+        <item>359;Bulgaria;BG / BGR</item>
+        <item>226;Burkina Faso;BF / BFA</item>
+        <item>257;Burundi;BI / BDI</item>
+        <item>855;Cambodia;KH / KHM</item>
+        <item>237;Cameroon;CM / CMR</item>
+        <item>1;Canada;CA / CAN</item>
+        <item>238;Cape Verde;CV / CPV</item>
+        <item>236;Central African Republic;CF / CAF</item>
+        <item>235;Chad;TD / TCD</item>
+        <item>56;Chile;CL / CHL</item>
+        <item>86;China;CN / CHN</item>
+        <item>61;Christmas Island;CX / CXR</item>
+        <item>61;Cocos Islands;CC / CCK</item>
+        <item>57;Colombia;CO / COL</item>
+        <item>269;Comoros;KM / COM</item>
+        <item>682;Cook Islands;CK / COK</item>
+        <item>506;Costa Rica;CR / CRI</item>
+        <item>385;Croatia;HR / HRV</item>
+        <item>53;Cuba;CU / CUB</item>
+        <item>599;Curacao;CW / CUW</item>
+        <item>357;Cyprus;CY / CYP</item>
+        <item>420;Czech Republic;CZ / CZE</item>
+        <item>243;Democratic Republic of the Congo;CD / COD</item>
+        <item>45;Denmark;DK / DNK</item>
+        <item>253;Djibouti;DJ / DJI</item>
+        <item>670;East Timor;TL / TLS</item>
+        <item>593;Ecuador;EC / ECU</item>
+        <item>20;Egypt;EG / EGY</item>
+        <item>503;El Salvador;SV / SLV</item>
+        <item>240;Equatorial Guinea;GQ / GNQ</item>
+        <item>291;Eritrea;ER / ERI</item>
+        <item>372;Estonia;EE / EST</item>
+        <item>251;Ethiopia;ET / ETH</item>
+        <item>500;Falkland Islands;FK / FLK</item>
+        <item>298;Faroe Islands;FO / FRO</item>
+        <item>679;Fiji;FJ / FJI</item>
+        <item>358;Finland;FI / FIN</item>
+        <item>33;France;FR / FRA</item>
+        <item>689;French Polynesia;PF / PYF</item>
+        <item>241;Gabon;GA / GAB</item>
+        <item>220;Gambia;GM / GMB</item>
+        <item>995;Georgia;GE / GEO</item>
+        <item>49;Germany;DE / DEU</item>
+        <item>233;Ghana;GH / GHA</item>
+        <item>350;Gibraltar;GI / GIB</item>
+        <item>30;Greece;GR / GRC</item>
+        <item>299;Greenland;GL / GRL</item>
+        <item>502;Guatemala;GT / GTM</item>
+        <item>224;Guinea;GN / GIN</item>
+        <item>245;Guinea-Bissau;GW / GNB</item>
+        <item>592;Guyana;GY / GUY</item>
+        <item>509;Haiti;HT / HTI</item>
+        <item>504;Honduras;HN / HND</item>
+        <item>852;Hong Kong;HK / HKG</item>
+        <item>36;Hungary;HU / HUN</item>
+        <item>354;Iceland;IS / ISL</item>
+        <item>91;India;IN / IND</item>
+        <item>62;Indonesia;ID / IDN</item>
+        <item>98;Iran;IR / IRN</item>
+        <item>964;Iraq;IQ / IRQ</item>
+        <item>353;Ireland;IE / IRL</item>
+        <item>972;Israel;IL / ISR</item>
+        <item>39;Italy;IT / ITA</item>
+        <item>225;Ivory Coast;CI / CIV</item>
+        <item>81;Japan;JP / JPN</item>
+        <item>962;Jordan;JO / JOR</item>
+        <item>7;Kazakhstan;KZ / KAZ</item>
+        <item>254;Kenya;KE / KEN</item>
+        <item>686;Kiribati;KI / KIR</item>
+        <item>383;Kosovo;XK / XKX</item>
+        <item>965;Kuwait;KW / KWT</item>
+        <item>996;Kyrgyzstan;KG / KGZ</item>
+        <item>856;Laos;LA / LAO</item>
+        <item>371;Latvia;LV / LVA</item>
+        <item>961;Lebanon;LB / LBN</item>
+        <item>266;Lesotho;LS / LSO</item>
+        <item>231;Liberia;LR / LBR</item>
+        <item>218;Libya;LY / LBY</item>
+        <item>423;Liechtenstein;LI / LIE</item>
+        <item>370;Lithuania;LT / LTU</item>
+        <item>352;Luxembourg;LU / LUX</item>
+        <item>853;Macao;MO / MAC</item>
+        <item>389;Macedonia;MK / MKD</item>
+        <item>261;Madagascar;MG / MDG</item>
+        <item>265;Malawi;MW / MWI</item>
+        <item>60;Malaysia;MY / MYS</item>
+        <item>960;Maldives;MV / MDV</item>
+        <item>223;Mali;ML / MLI</item>
+        <item>356;Malta;MT / MLT</item>
+        <item>692;Marshall Islands;MH / MHL</item>
+        <item>222;Mauritania;MR / MRT</item>
+        <item>230;Mauritius;MU / MUS</item>
+        <item>262;Mayotte;YT / MYT</item>
+        <item>52;Mexico;MX / MEX</item>
+        <item>691;Micronesia;FM / FSM</item>
+        <item>373;Moldova;MD / MDA</item>
+        <item>377;Monaco;MC / MCO</item>
+        <item>976;Mongolia;MN / MNG</item>
+        <item>382;Montenegro;ME / MNE</item>
+        <item>212;Morocco;MA / MAR</item>
+        <item>258;Mozambique;MZ / MOZ</item>
+        <item>95;Myanmar;MM / MMR</item>
+        <item>264;Namibia;NA / NAM</item>
+        <item>674;Nauru;NR / NRU</item>
+        <item>977;Nepal;NP / NPL</item>
+        <item>31;Netherlands;NL / NLD</item>
+        <item>599;Netherlands Antilles;AN / ANT</item>
+        <item>687;New Caledonia;NC / NCL</item>
+        <item>64;New Zealand;NZ / NZL</item>
+        <item>505;Nicaragua;NI / NIC</item>
+        <item>227;Niger;NE / NER</item>
+        <item>234;Nigeria;NG / NGA</item>
+        <item>683;Niue;NU / NIU</item>
+        <item>850;North Korea;KP / PRK</item>
+        <item>47;Norway;NO / NOR</item>
+        <item>968;Oman;OM / OMN</item>
+        <item>92;Pakistan;PK / PAK</item>
+        <item>680;Palau;PW / PLW</item>
+        <item>970;Palestine;PS / PSE</item>
+        <item>507;Panama;PA / PAN</item>
+        <item>675;Papua New Guinea;PG / PNG</item>
+        <item>595;Paraguay;PY / PRY</item>
+        <item>51;Peru;PE / PER</item>
+        <item>63;Philippines;PH / PHL</item>
+        <item>64;Pitcairn;PN / PCN</item>
+        <item>48;Poland;PL / POL</item>
+        <item>351;Portugal;PT / PRT</item>
+        <item>974;Qatar;QA / QAT</item>
+        <item>242;Republic of the Congo;CG / COG</item>
+        <item>262;Reunion;RE / REU</item>
+        <item>40;Romania;RO / ROU</item>
+        <item>7;Russia;RU / RUS</item>
+        <item>250;Rwanda;RW / RWA</item>
+        <item>590;Saint Barthelemy;BL / BLM</item>
+        <item>290;Saint Helena;SH / SHN</item>
+        <item>590;Saint Martin;MF / MAF</item>
+        <item>508;Saint Pierre and Miquelon;PM / SPM</item>
+        <item>685;Samoa;WS / WSM</item>
+        <item>378;San Marino;SM / SMR</item>
+        <item>239;Sao Tome and Principe;ST / STP</item>
+        <item>966;Saudi Arabia;SA / SAU</item>
+        <item>221;Senegal;SN / SEN</item>
+        <item>381;Serbia;RS / SRB</item>
+        <item>248;Seychelles;SC / SYC</item>
+        <item>232;Sierra Leone;SL / SLE</item>
+        <item>65;Singapore;SG / SGP</item>
+        <item>421;Slovakia;SK / SVK</item>
+        <item>386;Slovenia;SI / SVN</item>
+        <item>677;Solomon Islands;SB / SLB</item>
+        <item>252;Somalia;SO / SOM</item>
+        <item>27;South Africa;ZA / ZAF</item>
+        <item>82;South Korea;KR / KOR</item>
+        <item>211;South Sudan;SS / SSD</item>
+        <item>34;Spain;ES / ESP</item>
+        <item>94;Sri Lanka;LK / LKA</item>
+        <item>249;Sudan;SD / SDN</item>
+        <item>597;Suriname;SR / SUR</item>
+        <item>47;Svalbard and Jan Mayen;SJ / SJM</item>
+        <item>268;Swaziland;SZ / SWZ</item>
+        <item>46;Sweden;SE / SWE</item>
+        <item>41;Switzerland;CH / CHE</item>
+        <item>963;Syria;SY / SYR</item>
+        <item>886;Taiwan;TW / TWN</item>
+        <item>992;Tajikistan;TJ / TJK</item>
+        <item>255;Tanzania;TZ / TZA</item>
+        <item>66;Thailand;TH / THA</item>
+        <item>228;Togo;TG / TGO</item>
+        <item>690;Tokelau;TK / TKL</item>
+        <item>676;Tonga;TO / TON</item>
+        <item>216;Tunisia;TN / TUN</item>
+        <item>90;Turkey;TR / TUR</item>
+        <item>993;Turkmenistan;TM / TKM</item>
+        <item>688;Tuvalu;TV / TUV</item>
+        <item>256;Uganda;UG / UGA</item>
+        <item>380;Ukraine;UA / UKR</item>
+        <item>971;United Arab Emirates;AE / ARE</item>
+        <item>44;United Kingdom;GB / GBR</item>
+        <item>1;United States;US / USA</item>
+        <item>598;Uruguay;UY / URY</item>
+        <item>998;Uzbekistan;UZ / UZB</item>
+        <item>678;Vanuatu;VU / VUT</item>
+        <item>379;Vatican;VA / VAT</item>
+        <item>58;Venezuela;VE / VEN</item>
+        <item>84;Vietnam;VN / VNM</item>
+        <item>681;Wallis and Futuna;WF / WLF</item>
+        <item>212;Western Sahara;EH / ESH</item>
+        <item>967;Yemen;YE / YEM</item>
+        <item>260;Zambia;ZM / ZMB</item>
+        <item>263;Zimbabwe;ZW / ZWE</item>
+    </string-array>
+
+    <string name="invalid_phone_number">Wrong country code</string>
+    <string name="invalid_phone_input">This does not seem to be a correct phone number</string>
+    <string name="title_phone_number">Select your country</string>
+    <string name="help_phone_number">Information</string>
+    <string name="validate_phone_number">Validate</string>
+    <string name="information_phone_number">We need your phone number retrieve your contacts.\n
+        Each country has its own code number : if you don\'t know yours, you can have a look at countrycode.org.\n
+        Don\'t worry, they are safe and we will not share or even use them.</string>
+
+    <string name="invite_contact">Invite a contact</string>
+    <string name="cost_contact">Do you want to open the SMS application to invite %s? It may imply some additional costs.</string>
+    <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
 
 </resources>

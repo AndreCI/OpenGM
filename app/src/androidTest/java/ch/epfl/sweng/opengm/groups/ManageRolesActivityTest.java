@@ -110,10 +110,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testIfAddsRoles() throws Exception {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX);
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(isChecked()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(not(isEnabled())));
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
+        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(isChecked()));
+        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(not(isEnabled())));
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
         updateReferencesFromDatabase();
@@ -126,10 +126,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testIfRemovingAddedRoleDoesntGoToDatabase() throws Exception {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX);
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "0")))).check(doesNotExist());
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
+        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
+        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).perform(click());
+        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "1")))).check(doesNotExist());
 
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
@@ -145,7 +145,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         Thread.sleep(1000);
         getActivityAndLayout();
 
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).perform(click());
+        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).perform(click());
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
         updateReferencesFromDatabase();
@@ -193,7 +193,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         prepareIntentAndDatabase(2);
         Thread.sleep(1000);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX);
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "0");
         onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
         onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(isChecked()));
         onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(not(isEnabled())));
@@ -235,7 +235,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
         Thread.sleep(1000);
-        PFUser additionalUser = PFUser.createNewUser("additionalUser", "addi@tional.com", "additional", "addi", "tional");
+        PFUser additionalUser = PFUser.createNewUser("additionalUser", "addi@tional.com", "0", "testDoesntAffectOtherUsers", "addi", "tional");
         testGroup.addUserWithId(additionalUser.getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, additionalUser.getId());
         Thread.sleep(1000);
@@ -279,11 +279,11 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(result3);
     }
 
-    private void addNewRoleWithView(String newRole){
+    private void addNewRoleWithView(String newRole, String index){
         onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
         onView(withTagValue(is((Object) NEW_ROLE_EDIT))).perform(typeText(newRole));
         onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "0")))).check(matches(withText(newRole)));
+        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + index)))).check(matches(withText(newRole)));
     }
 
     private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
@@ -320,12 +320,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     private void setUpTestingEnvironment(int numUser) throws PFException {
         testUsers = new ArrayList<>();
 
-        PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
+        PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
         testUsers.add(firstUser);
 
         testGroup = PFGroup.createNewGroup(firstUser, TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         for(int i = 1; i < numUser; i++){
-            testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
+            testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
             testGroup.addUserWithId(TEST_USER_ID_PREFIX + i);
         }
     }

@@ -27,6 +27,7 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PARTICIPANTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
@@ -251,7 +252,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                         object.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e == null) {
+                                if (e != null) {
                                     // throw new ParseException("No object for the selected id.");
                                 }
                             }
@@ -281,6 +282,35 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
     }
 
+    public static void deleteWithId(String id) throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_EVENT);
+        try {
+            ParseObject object = query.get(id);
+            object.delete();
+        } catch (ParseException e) {
+            throw new PFException();
+        }
+    }
+
+    public static void updateEvent(PFEvent updatedEvent) throws PFException {
+        deleteWithId(updatedEvent.getId());
+        ParseObject object = new ParseObject(EVENT_TABLE_NAME);
+        object.put(EVENT_ENTRY_ID, updatedEvent.getId());
+        object.put(EVENT_ENTRY_TITLE, updatedEvent.getName());
+        object.put(EVENT_ENTRY_PLACE, updatedEvent.getPlace());
+        object.put(EVENT_ENTRY_DATE, updatedEvent.getDate());
+        object.put(EVENT_ENTRY_DESCRIPTION, updatedEvent.getDescription());
+        object.put(EVENT_ENTRY_PARTICIPANTS, new ArrayList<>(updatedEvent.getParticipants().keySet()));
+        if(updatedEvent.getPicture() != null) {
+            object.put(GROUP_ENTRY_PICTURE, updatedEvent.getPicture());
+        }
+        try {
+            object.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static PFEvent createEvent(PFGroup group, String name, String place, Date date, List<PFMember> participants, String description, Bitmap picture) throws PFException {
         ParseObject object = new ParseObject(EVENT_TABLE_NAME);
         object.put(EVENT_ENTRY_TITLE, name);
@@ -294,7 +324,6 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             participantsIds.put(member.getId());
         }
         object.put(EVENT_ENTRY_PARTICIPANTS, participantsIds);
-
         if (picture != null) {
             object.put(EVENT_ENTRY_PICTURE, picture);
         }
