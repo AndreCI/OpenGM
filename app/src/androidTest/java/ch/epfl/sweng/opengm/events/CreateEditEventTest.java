@@ -106,6 +106,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         }
         Intent i = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "testDescription", null);
+        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
         i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
