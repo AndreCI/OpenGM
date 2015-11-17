@@ -85,6 +85,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:id="@+id/createEditEventOkayAndDeleteLayout"
         android:layout_alignParentBottom="true">
         <Button
             android:layout_width="wrap_content"
@@ -123,11 +124,11 @@
         android:id="@+id/CreateEditEventBitmapLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/CreateEditEventParticipantsButton"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:orientation="horizontal"
-        android:layout_above="@+id/CreateEditOkButton">
+        android:layout_below="@+id/scrollView3"
+        android:layout_above="@+id/createEditEventOkayAndDeleteLayout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -157,7 +158,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/scrollView3"
         android:layout_below="@+id/CreateEditEventParticipantsButton"
-        android:layout_above="@id/CreateEditOkButton"
         android:isScrollContainer="false" >
 
         <TextView
