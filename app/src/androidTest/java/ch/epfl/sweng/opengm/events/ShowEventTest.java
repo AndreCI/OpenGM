@@ -71,6 +71,7 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         }
         Intent intent = new Intent();
         e = PFEvent.createEvent(group, "testName", "testPlace", new Date(1994, 5, 6, 2, 4), new ArrayList<PFMember>(), "testDescription", null);
+        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(intent);
         ShowEventActivity activity = getActivity();

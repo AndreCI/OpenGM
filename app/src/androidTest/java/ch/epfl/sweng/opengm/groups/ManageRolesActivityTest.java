@@ -41,8 +41,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     private PFGroup testGroup;
     private List<PFUser> testUsers;
 
-
-
     private final static String TEST_USER_ID_PREFIX = "testUser";
     private final static String TEST_USER_MAIL_PREFIX = "testEmail";
     private final static String TEST_USER_MAIL_SUFFIX = "@test.com";

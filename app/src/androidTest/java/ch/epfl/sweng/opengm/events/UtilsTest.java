@@ -15,11 +15,11 @@ public class UtilsTest {
     public void legitDateShouldBeParsedCorrectly() {
         int year = 1994; int month = 5; int day = 6; int hour = 6; int min = 10;
         Date date = new Date(year, month, day, hour, min);
-        assertEquals("1994-6-6-6-10", Utils.dateToString(date));
+        assertEquals("1994-06-06-06-10", Utils.dateToString(date));
     }
     @Test
     public void LegitStringShouldProduceCorrectDate() {
-        String s = "2012-12-21-12-5";
+        String s = "2012-12-21-12-05";
         Date date = Utils.stringToDate(s);
         assertEquals(2012, date.getYear());
         assertEquals(12, date.getMonth()+1);

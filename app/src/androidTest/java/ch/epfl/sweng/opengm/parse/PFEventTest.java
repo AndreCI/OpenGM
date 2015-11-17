@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
@@ -98,18 +99,19 @@ public class PFEventTest {
         assertEquals(1, participantKeys.size());
         assertEquals(id, participantKeys.get(0));
         ArrayList<PFMember> participants = new ArrayList<>(participantKeys.size());
-        parcel.readTypedList(participants, PFMember.CREATOR);
+        Parcelable[] parcelables = parcel.readParcelableArray(PFMember.class.getClassLoader());
+        for(Parcelable parcelable : parcelables) {
+            participants.add((PFMember) parcelable);
+        }
         assertEquals(1, participants.size());
         assertEquals(id, participantKeys.get(0));
         assertEquals(id, participants.get(0).getId());
-        assertEquals(EMAIL, participants.get(0).getEmail());
     }
 
     @Test
     public void createFromParcel() {
         Parcel parcel = Parcel.obtain();
         ArrayList<String> participantKeys = new ArrayList<>();
-        ArrayList<PFMember> participants = new ArrayList<>();
         String idEvent = getRandomId();
 
         id = getRandomId();
@@ -125,7 +127,8 @@ public class PFEventTest {
             e.printStackTrace();
         }
         participantKeys.add(id);
-        participants.add(member);
+        Parcelable[] array = new Parcelable[1];
+        array[0] = member;
 
         parcel.writeString(idEvent);
         parcel.writeString(dateToString(DATE));
@@ -135,7 +138,7 @@ public class PFEventTest {
         parcel.writeString(PLACE);
         parcel.writeParcelable(PICTURE, 0);
         parcel.writeStringList(participantKeys);
-        parcel.writeTypedList(participants);
+        parcel.writeParcelableArray(array, 0);
 
         parcel.setDataPosition(0);
 
@@ -149,7 +152,7 @@ public class PFEventTest {
         assertEquals(PLACE, event.getPlace());
         assertNull(event.getPicture());
         assertEquals(participantKeys.size(), event.getParticipants().size());
-        assertEquals(participants.size(), event.getParticipants().size());
+        assertEquals(array.length, event.getParticipants().size());
         assertEquals(idEvent, event.getId());
 
     }
