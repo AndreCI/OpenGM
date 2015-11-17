@@ -34,6 +34,7 @@ public class ShowEventActivity extends AppCompatActivity {
         currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
+        setTitle("Event : "+event.getName() + " for the group : "+currentGroup.getName());
         displayEventInformation();
     }
 

@@ -53,6 +53,7 @@ public class EventListActivity extends AppCompatActivity {
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         eventList = new ArrayList<>(currentGroup.getEvents());
         setContentView(R.layout.activity_event_list);
+        setTitle("Events for the group : " + currentGroup.getName());
         displayEvents();
     }
 

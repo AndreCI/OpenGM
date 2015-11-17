@@ -69,10 +69,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
             Button del = (Button) findViewById(R.id.CreateEditEventDeleteButton);
             del.setClickable(false);
             del.setVisibility(View.INVISIBLE);
+            setTitle("Adding new Event for the group : "+currentGroup.getName());
         } else {
             this.event = event;
             editing = true;
             participants = this.event.getParticipants();
+            setTitle("Editing Event : "+event.getName() + " for the group : "+currentGroup.getName());
             fillTexts(event);
         }
     }
