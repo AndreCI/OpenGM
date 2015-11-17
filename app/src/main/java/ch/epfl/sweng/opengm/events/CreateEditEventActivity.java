@@ -312,7 +312,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
         Date currentDate = new Date(year, month, day, hour, min);
-        if (date.before(currentDate)) {
+        if (date.before(currentDate) && !editing) {
             if (year == date.getYear() && month == date.getMonth() && day == date.getDate()) {
                 ((Button) findViewById(R.id.CreateEditEventTimeText)).setError("");
             } else {
@@ -320,6 +320,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
             }
             Toast.makeText(this, getString(R.string.CreateEditEarlyDate), Toast.LENGTH_SHORT).show();
             return false;
+        }else if(date.before(currentDate) && editing){
+            Toast.makeText(this, "Careful, date is already past.", Toast.LENGTH_SHORT).show();
         }
         if (participants.isEmpty()) {
             Toast.makeText(this, getString(R.string.CreateEditNoParticipants), Toast.LENGTH_SHORT).show();
