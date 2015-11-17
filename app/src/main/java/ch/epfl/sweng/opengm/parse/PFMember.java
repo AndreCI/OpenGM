@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -325,6 +326,7 @@ public final class PFMember extends PFEntity implements Parcelable {
                 try {
                     mailObject = mailQuery.get(id);
                 } catch (ParseException pe) {
+                    Log.v("Parse exception", "mail not set");
                     // Do nothing
                 }
 
