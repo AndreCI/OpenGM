@@ -22,7 +22,7 @@
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -101,8 +101,7 @@
         </activity>
         <activity
             android:name=".identification.contacts.AppContactsActivity"
-            android:screenOrientation="portrait">
-
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -110,7 +109,7 @@
         <activity
             android:name=".identification.contacts.PhoneContactsActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -118,6 +117,15 @@
         <activity
             android:name=".EditUserProfileActivity"
             android:label="@string/title_activity_edit_user_profile" >
+        </activity>
+        <activity
+            android:name=".polls.CreatePollActivity"
+            android:label="@string/title_activity_create_poll"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity android:name=".polls.PollsListActivity" >
+        </activity>
+        <activity android:name=".polls.PollVoteActivity" >
         </activity>
     </application>
 
