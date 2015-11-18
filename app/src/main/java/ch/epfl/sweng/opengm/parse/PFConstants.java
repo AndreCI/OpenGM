@@ -49,4 +49,17 @@ public final class PFConstants {
     public static final String EVENT_ENTRY_PLACE = "place";
     public static final String EVENT_ENTRY_PARTICIPANTS = "participants";
     public static final String EVENT_ENTRY_PICTURE = "eventPicture";
+
+    // Entries for "Poll" table :
+
+    public static final String POLL_TABLE_NAME = "Poll";
+    public static final String POLL_ENTRY_NAME = "name";
+    public static final String POLL_ENTRY_DESCRIPTION = "description";
+    public static final String POLL_ENTRY_OPEN = "open";
+    public static final String POLL_ENTRY_DEADLINE = "deadline";
+    public static final String POLL_ENTRY_PARTICIPANTS = "members";
+    public static final String POLL_ENTRY_NUMBER_ANSWERS = "nOfPossibleAnswers";
+    public static final String POLL_ENTRY_ANSWERS = "answers";
+    public static final String POLL_ENTRY_RESULTS = "results";
+
 }
