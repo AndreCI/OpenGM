@@ -15,29 +15,12 @@
         android:onClick="doneManageRoles"
         android:layout_centerHorizontal="true" />
 
-    <ScrollView
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView2"
-        android:layout_above="@id/button"
+        android:id="@+id/listView"
         android:layout_alignParentTop="true"
-        android:layout_column="0" >
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal"
-            android:id="@+id/rolesAndButtons"
-            android:stretchColumns="1">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/button" />
 
 </RelativeLayout>
