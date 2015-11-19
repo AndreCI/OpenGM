@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -33,7 +34,10 @@ public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
     private Map<CheckBox, TableRow> boxesAndRows;
     private LinearLayout rolesAndButtons;
+    private ListView rolesListView;
     private TableRow addRoleRow;
+
+    private RolesAdapter adapter;
 
     private int roleRowCount;
     private int roleTextCount;
@@ -57,7 +61,6 @@ public class ManageRolesActivity extends AppCompatActivity {
 
             roles = new ArrayList<>();
             Intent intent = getIntent();
-            //Uncomment this when testing with real app
             String groupId = intent.getStringExtra(GROUP_ID);
             List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
             PFMember member;
@@ -79,9 +82,14 @@ public class ManageRolesActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
-            fillWithRoles();
-            addNewRoleRow();
+            rolesListView = (ListView) findViewById(R.id.rolesListView);
+            adapter = new RolesAdapter(this, R.layout.item_role, roles);
+            rolesListView.setAdapter(adapter);
+
+
+            //rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
+            //fillWithRoles();
+            //addNewRoleRow();
         }
     }
 
