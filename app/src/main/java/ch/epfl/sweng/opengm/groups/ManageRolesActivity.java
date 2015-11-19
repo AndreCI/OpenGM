@@ -60,7 +60,7 @@ public class ManageRolesActivity extends AppCompatActivity {
                 if (rolesFromServer != null) {
                     roles = new ArrayList<>(rolesFromServer);
                 } else {
-                    // TODO "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.";
+                    Toast.makeText(getBaseContext(), "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.", Toast.LENGTH_LONG).show();
                 }
                 for (String memberID : memberIDs) {
                     member = PFMember.fetchExistingMember(memberID);
