@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -347,8 +348,8 @@ public class ManageRolesActivity extends AppCompatActivity {
         return roles;
     }
 
-    public void doneManageRoles(View view){
-        if(NetworkUtils.haveInternet(getBaseContext())) {
+    public void saveChanges(View view){
+        /*if(NetworkUtils.haveInternet(getBaseContext())) {
             for (CheckBox box : boxesAndRows.keySet()) {
                 for (PFMember member : groupMembers) {
                     if (box.isChecked() && modifiedCheckBoxes.get(box)) {
@@ -360,6 +361,20 @@ public class ManageRolesActivity extends AppCompatActivity {
             }
             setResult(Activity.RESULT_OK);
             finish();
+        }*/
+        if(NetworkUtils.haveInternet(getBaseContext())){
+            for(PFMember member : groupMembers){
+                for(String role : addedRoles){
+                    currentGroup.addRoleToUser(role, member.getId());
+                }
+                for(String role : removedRoles){
+                    currentGroup.removeRoleToUser(role, member.getId());
+                }
+            }
+            setResult(Activity.RESULT_OK);
+            finish();
+        } else {
+            Toast.makeText(getBaseContext(), "No internet connection, cannot save.", Toast.LENGTH_LONG).show();
         }
     }
 }
