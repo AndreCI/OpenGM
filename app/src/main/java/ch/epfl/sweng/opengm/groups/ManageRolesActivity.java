@@ -2,7 +2,9 @@ package ch.epfl.sweng.opengm.groups;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -38,6 +41,8 @@ public class ManageRolesActivity extends AppCompatActivity {
     private LinearLayout rolesAndButtons;
     private ListView rolesListView;
     private TableRow addRoleRow;
+
+    private AlertDialog addRole;
 
     private RolesAdapter adapter;
 
@@ -87,9 +92,24 @@ public class ManageRolesActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_role, null);
+
+
             rolesListView = (ListView) findViewById(R.id.rolesListView);
             adapter = new RolesAdapter(this, R.layout.item_role, roles);
             rolesListView.setAdapter(adapter);
+            final EditText edit = (EditText)dialogLayout.findViewById(R.id.dialog_add_role_role);
+            alertBuilder.setView(dialogLayout).setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String role = edit.getText().toString();
+                    roles.add(role);
+                    addedRoles.add(role);
+                    adapter.notifyDataSetChanged();
+                }
+            }).setNegativeButton(R.string.cancel, null);
+            addRole = alertBuilder.create();
 
             //rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
             //fillWithRoles();
@@ -300,7 +320,11 @@ public class ManageRolesActivity extends AppCompatActivity {
     }
 
     private void addRole(){
+        addRole.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        addRole.show();
 
+        EditText editText = (EditText) addRole.findViewById(R.id.dialog_add_role_role);
+        editText.requestFocus();
     }
 
     private List<String> getCheckedRoles(){
