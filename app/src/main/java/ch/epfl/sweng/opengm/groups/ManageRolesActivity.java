@@ -316,7 +316,14 @@ public class ManageRolesActivity extends AppCompatActivity {
     }
 
     private void removeRole() {
-
+        List<String> rolesToRemove = getCheckedRoles();
+        for(String role : rolesToRemove){
+            if(!addedRoles.contains(role)){
+                removedRoles.add(role);
+            }
+            roles.remove(role);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private void addRole(){
