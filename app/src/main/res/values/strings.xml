@@ -375,5 +375,6 @@
     <string name="action_modify_permissions">Modify Permissions</string>
     <string name="dialog_add_role_title">Add Role</string>
     <string name="dialog_add_role_role_hint">Enter role name</string>
+    <string name="save">Save</string>
 
 </resources>
