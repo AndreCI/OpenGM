@@ -68,6 +68,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="50"
+                android:onClick="addParticipants"
                 android:text="Participants" />
         </LinearLayout>
 

@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.polls;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFPoll;
-import ch.epfl.sweng.opengm.utils.Utils;
+import ch.epfl.sweng.opengm.polls.participants.ListParticpantActivity;
 
 import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
@@ -87,7 +88,7 @@ public final class CreatePollActivity extends AppCompatActivity {
     }
 
     public void addParticipants(View view) {
-
+        startActivity(new Intent(this, ListParticpantActivity.class));
     }
 
     public void setDeadline(View view) {
@@ -136,7 +137,7 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_phone_number, menu);
+        getMenuInflater().inflate(R.menu.menu_valid_generic, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -146,19 +147,7 @@ public final class CreatePollActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_phone_number_help:
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle(getString(R.string.help_phone_number));
-                alertDialog.setMessage(getString(R.string.information_phone_number));
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-                return true;
-            case R.id.action_phone_number_validate:
+            case R.id.action_validate:
                 // Intent
                 String name = mNameEdit.getText().toString();
                 String description = mDescriptionEdit.getText().toString();
@@ -173,7 +162,7 @@ public final class CreatePollActivity extends AppCompatActivity {
                 } catch (PFException e) {
                     Toast.makeText(this, "Error while creating your poll", Toast.LENGTH_LONG).show();
                 }
-
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

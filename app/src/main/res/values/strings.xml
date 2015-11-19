@@ -377,5 +377,6 @@
 
     <string name="possible_answers_poll">Number of possible answers :</string>
     <string name="answers_poll">answer</string>
+    <string name="title_activity_list_particpant">ListParticpantActivity</string>
 
 </resources>

@@ -16,7 +16,7 @@
         <activity
             android:name=".UserProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
@@ -32,59 +32,59 @@
             android:name=".identification.RegisterActivity"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".groups.MyGroupsActivity"
             android:label="@string/title_activity_my_groups"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".groups.ManageRolesActivity"
             android:label="@string/title_activity_manage_roles"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".groups.JoinGroupActivity"
             android:label="@string/title_activity_join_group"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".groups.MembersActivity"
             android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat"></activity>
+            android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".groups.CreateGroupActivity"
             android:label="@string/title_activity_create_group"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".events.EventListActivity"
             android:label="@string/title_activity_event_list"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".events.ShowEventActivity"
             android:label="@string/title_activity_show_event"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".events.CreateEditEventActivity"
             android:label="@string/title_activity_create_edit_event"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".events.AddRemoveParticipantsActivity"
             android:label="@string/title_activity_add_remove_participants"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".groups.GroupsHomeActivity"
             android:label="@string/title_activity_groups_home"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".groups.GroupSettingsActivity"
             android:label="@string/title_activity_modify_group"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".identification.phoneNumber.PhoneAddingActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".identification.contacts.AppContactsActivity"
             android:screenOrientation="portrait">
@@ -102,16 +102,20 @@
         </activity>
         <activity
             android:name=".EditUserProfileActivity"
-            android:label="@string/title_activity_edit_user_profile"></activity>
+            android:label="@string/title_activity_edit_user_profile" />
         <activity
             android:name=".polls.CreatePollActivity"
             android:label="@string/title_activity_create_poll"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".polls.PollsListActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".polls.PollVoteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".polls.participants.ListParticpantActivity"
+            android:label="@string/title_activity_list_particpant"
             android:screenOrientation="portrait"></activity>
     </application>
 
