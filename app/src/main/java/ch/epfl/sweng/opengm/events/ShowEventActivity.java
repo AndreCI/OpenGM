@@ -12,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
@@ -50,14 +53,6 @@ public class ShowEventActivity extends AppCompatActivity {
                 displayEventInformation();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, "event not updated", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == Utils.DELETE_COMPLETED){
-                Intent intent = new Intent(this, EventListActivity.class);
-                setResult(Utils.DELETE_COMPLETED, intent);
-                finish();
-            }else if (resultCode == Utils.DELETE_FAILED) {
-                Intent intent = new Intent(this, EventListActivity.class);
-                setResult(Utils.DELETE_FAILED, intent);
-                finish();
             }
         }
     }
@@ -76,7 +71,7 @@ public class ShowEventActivity extends AppCompatActivity {
         fillEventDate();
         fillEventDescription();
         fillEventParticipants();
-     //   fillEventBitmap();
+        fillEventBitmap();
     }
 
     private void fillEventName() {
@@ -120,9 +115,19 @@ public class ShowEventActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
     }
     private void fillEventBitmap(){
-        Bitmap b = event.getPicture();
-        ImageView iv = (ImageView) findViewById(R.id.ShowEventBitmap);
-        iv.setImageBitmap(b);
+        String imagePath = event.getPicturePath();
+        if(imagePath!="error400wrongpath") {
+            Bitmap b;
+            try {
+                b = ch.epfl.sweng.opengm.utils.Utils.loadImageFromStorage(imagePath);
+                ImageView iv = (ImageView) findViewById(R.id.ShowEventBitmap);
+                iv.setImageBitmap(b);
+            } catch (FileNotFoundException e) {
+                Toast.makeText(getApplicationContext(), "Couldn't retrieve the image : Error 400 Wrong Path", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(getApplicationContext(), "Couldn't retrieve the image : Error 400 No Path Specified", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onEditButtonClick(View view) {
@@ -130,5 +135,16 @@ public class ShowEventActivity extends AppCompatActivity {
         intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
         startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
+    }
+
+    public void onDeleteButtonClick(View v){
+            Intent intent = new Intent(this, ShowEventActivity.class);
+            try {
+                currentGroup.removeEvent(event);
+                setResult(Utils.DELETE_COMPLETED, intent);
+            } catch (PFException e) {
+                setResult(Utils.DELETE_FAILED, intent);
+            }
+            finish();
     }
 }
