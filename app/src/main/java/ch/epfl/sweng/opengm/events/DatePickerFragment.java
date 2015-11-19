@@ -14,9 +14,6 @@ import ch.epfl.sweng.opengm.R;
 
 import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 
-/**
- * Created by virgile on 19/10/2015.
- */
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
@@ -36,7 +33,11 @@ public class DatePickerFragment extends DialogFragment
         }
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        DatePickerDialog picker = new DatePickerDialog(getActivity(), this, year, month, day);
+
+        picker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+
+        return picker;
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
