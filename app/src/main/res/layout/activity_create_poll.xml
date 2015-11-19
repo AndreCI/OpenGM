@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:id="@+id/createPoll_outmostLayout"
     tools:context="ch.epfl.sweng.opengm.polls.CreatePollActivity">
 
 
@@ -59,6 +60,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="50"
+                android:id="@+id/deadlineButton"
+                android:onClick="setDeadline"
                 android:text="Deadline" />
 
             <Button
