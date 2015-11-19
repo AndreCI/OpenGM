@@ -3,20 +3,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context="ch.epfl.sweng.opengm.polls.CreatePollActivity">
 
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="119dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:orientation="horizontal">
+        android:weightSum="100">
+
+        <EditText
+            android:id="@+id/namePollEditText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:hint="@string/EventNameTextHint"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/descriptionPollEditText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:hint="@string/EventDescriptionTextHint"
+            android:maxLines="3"
+            android:minLines="3"
+            android:textAlignment="gravity" />
+
+        <ListView
+            android:id="@+id/answersPollListView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="40" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:onClick="addAnswer"
+            android:text="Add an answer" />
+
+        <LinearLayout
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="50"
+                android:text="Deadline" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="50"
+                android:text="Participants" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="0dp"
+            android:layout_weight="10"
             android:orientation="horizontal"
             android:weightSum="100">
 
@@ -34,8 +89,8 @@
                 android:id="@+id/nOfAnswers_textView"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:gravity="center"
                 android:layout_weight="20"
+                android:gravity="center"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button

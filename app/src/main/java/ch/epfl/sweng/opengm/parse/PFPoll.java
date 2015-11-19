@@ -23,7 +23,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_DEADLINE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_NUMBER_ANSWERS;
-import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_OPEN;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_PARTICIPANTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_RESULTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_TABLE_NAME;
