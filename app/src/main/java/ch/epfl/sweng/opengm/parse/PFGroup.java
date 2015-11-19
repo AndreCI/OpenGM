@@ -1,7 +1,6 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -334,6 +333,16 @@ public final class PFGroup extends PFEntity {
                 }
             }
         });
+    }
+
+    public List<PFMember> getMembersWithRole(String role) {
+        List<PFMember> members = new ArrayList<>();
+        for (PFMember member : mMembers.values()) {
+            if (member.hasRole(role)) {
+                members.add(member);
+            }
+        }
+        return members;
     }
 
     /**
