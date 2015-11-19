@@ -372,4 +372,10 @@
     <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
     <string name="title_activity_create_poll">CreatePollActivity</string>
 
+
+    <!-- poll -->
+
+    <string name="possible_answers_poll">Number of possible answers :</string>
+    <string name="answers_poll">answer</string>
+
 </resources>
