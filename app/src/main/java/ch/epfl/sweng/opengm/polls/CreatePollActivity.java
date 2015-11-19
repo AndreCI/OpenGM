@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -13,18 +15,26 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.DatePickerFragment;
+import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFPoll;
 import ch.epfl.sweng.opengm.utils.Utils;
 
+import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
-public class CreatePollActivity extends AppCompatActivity {
+public final class CreatePollActivity extends AppCompatActivity {
 
     private EditText mNameEdit;
     private EditText mDescriptionEdit;
@@ -38,13 +48,22 @@ public class CreatePollActivity extends AppCompatActivity {
     private Date deadline;
 
     private final List<String> answers = new ArrayList<>();
+    private final List<String> participants = new ArrayList<>();
 
     private TextView nOfAnswersText;
+
+    private PFGroup currentGroup = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_poll);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        currentGroup = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
 
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
         mNameEdit = (EditText) findViewById(R.id.namePollEditText);
@@ -63,7 +82,7 @@ public class CreatePollActivity extends AppCompatActivity {
             }
         });
 
-        Utils.onTapOutsideBehaviour(findViewById(R.id.createPoll_outmostLayout), this);
+        onTapOutsideBehaviour(findViewById(R.id.createPoll_outmostLayout), this);
         nOfAnswersText.setText(String.format("%d", possibleAnswers));
     }
 
@@ -115,6 +134,57 @@ public class CreatePollActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_phone_number, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_phone_number_help:
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle(getString(R.string.help_phone_number));
+                alertDialog.setMessage(getString(R.string.information_phone_number));
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                return true;
+            case R.id.action_phone_number_validate:
+                // Intent
+                String name = mNameEdit.getText().toString();
+                String description = mDescriptionEdit.getText().toString();
+                HashMap<String, PFMember> memberHashMap = currentGroup.getMembers();
+
+                List<PFMember> eventsParticipants = new ArrayList<>();
+                for (String memberId : participants)
+                    eventsParticipants.add(memberHashMap.get(memberId));
+
+                try {
+                    PFPoll.createNewPoll(currentGroup, name, description, possibleAnswers, answers, deadline, eventsParticipants);
+                } catch (PFException e) {
+                    Toast.makeText(this, "Error while creating your poll", Toast.LENGTH_LONG).show();
+                }
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     private Date getDateFromText() {
         String[] dateString = mDeadlineButton.getText().toString().split("/");
         if (dateString.length != 3) {
@@ -126,11 +196,7 @@ public class CreatePollActivity extends AppCompatActivity {
         return new Date(year, month, day);
     }
 
-    public static class PollTimePickerFragment extends DatePickerFragment {
-
-        public PollTimePickerFragment(){
-
-        }
+    public final static class PollTimePickerFragment extends DatePickerFragment {
 
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
