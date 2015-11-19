@@ -42,7 +42,7 @@ public class PFPoll extends PFEntity {
     private final Date mDeadline;
     private final boolean isOpen;
 
-    private PFPoll(String id, Date updated, String name, Date deadline, String description, List<Answer> answers, int nOfAnswers, boolean isOpen, List<PFMember> participants) {
+    private PFPoll(String id, Date updated, String name, Date deadline, String description, List<Answer> answers, int nOfAnswers, List<PFMember> participants) {
         super(id, PARSE_TABLE_POLL, updated);
         this.mName = name;
         this.mDescription = description;
@@ -52,7 +52,7 @@ public class PFPoll extends PFEntity {
         }
         this.mAnswers = new ArrayList<>(answers);
         this.nOfAnswers = nOfAnswers;
-        this.isOpen = isOpen;
+        this.isOpen = deadline.after(new Date());
         this.mDeadline = deadline;
     }
 
@@ -157,7 +157,6 @@ public class PFPoll extends PFEntity {
                 String description = object.getString(POLL_ENTRY_DESCRIPTION);
                 Date deadline = object.getDate(POLL_ENTRY_DEADLINE);
                 int nAnswers = object.getInt(POLL_ENTRY_NUMBER_ANSWERS);
-                boolean open = object.getBoolean(POLL_ENTRY_OPEN);
 
                 String[] votesArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_RESULTS));
                 String[] answersArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_ANSWERS));
@@ -180,7 +179,7 @@ public class PFPoll extends PFEntity {
                         // Just do not add this guy :)
                     }
                 }
-                return new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nAnswers, open, members);
+                return new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nAnswers, members);
             } else {
                 throw new PFException("No object found for this idu");
             }
@@ -214,12 +213,11 @@ public class PFPoll extends PFEntity {
         object.put(POLL_ENTRY_ANSWERS, propositions);
         object.put(POLL_ENTRY_RESULTS, votes);
         object.put(POLL_ENTRY_PARTICIPANTS, participants);
-        object.put(POLL_ENTRY_OPEN, true);
 
         try {
             object.save();
             String id = object.getObjectId();
-            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, true, members);
+            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members);
             // TODO add the poll to the group
             return poll;
         } catch (ParseException e) {
