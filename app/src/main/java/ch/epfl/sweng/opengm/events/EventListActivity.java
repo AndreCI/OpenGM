@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFUtils;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class EventListActivity extends AppCompatActivity {
@@ -202,6 +204,15 @@ public class EventListActivity extends AppCompatActivity {
     }
 
     private void showEvent(PFEvent currentEvent) {
+        if(currentEvent.getPicturePath()==PFUtils.pathNotSpecified)
+        try {
+            currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.
+                    saveToInternalSorage(currentEvent.getPicture(),getApplicationContext(), currentEvent.getId()+"_event.jpg"));
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "Unable to write image or to retrieve image", Toast.LENGTH_SHORT).show();
+            currentEvent.setPicturePath(PFUtils.pathNotSpecified);
+        }
+
         Intent intent = new Intent(this, ShowEventActivity.class);
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
         intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);

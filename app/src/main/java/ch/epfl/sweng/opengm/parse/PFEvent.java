@@ -39,7 +39,6 @@ import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public final class PFEvent extends PFEntity implements Parcelable, Comparable<PFEvent> {
-
     private final static String PARSE_TABLE_EVENT = PFConstants.EVENT_TABLE_NAME;
 
     private String mTitle;
@@ -387,7 +386,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                         // Just do not add this guy :)
                     }
                 }
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members, "error400wrongpath",picture[0]);
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members, PFUtils.pathNotSpecified,picture[0]);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

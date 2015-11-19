@@ -17,6 +17,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUtils;
 
 public class ShowEventActivity extends AppCompatActivity {
 
@@ -113,7 +114,7 @@ public class ShowEventActivity extends AppCompatActivity {
     }
     private void fillEventBitmap(){
         String imagePath = event.getPicturePath();
-        if(imagePath!="error400wrongpath") {
+        if(imagePath!= PFUtils.pathNotSpecified) {
             Bitmap b;
             try {
                 b = ch.epfl.sweng.opengm.utils.Utils.loadImageFromStorage(imagePath);

@@ -20,6 +20,8 @@ import java.util.Set;
  */
 public final class PFUtils {
 
+    public static final String pathNotSpecified = "error400badrequest";
+
     /**
      * Converts a JSONArray into an array of String
      *

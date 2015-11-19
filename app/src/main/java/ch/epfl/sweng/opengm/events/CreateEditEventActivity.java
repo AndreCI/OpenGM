@@ -43,6 +43,7 @@ import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
+import ch.epfl.sweng.opengm.parse.PFUtils;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
@@ -213,7 +214,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         try {
             path= ch.epfl.sweng.opengm.utils.Utils.saveToInternalSorage(b,getApplicationContext(),event.getId()+"_event");
         } catch (IOException e) {
-            path = "Error while writing in internal storage";
+            path = PFUtils.pathNotSpecified;
         }
         return path;
     }
