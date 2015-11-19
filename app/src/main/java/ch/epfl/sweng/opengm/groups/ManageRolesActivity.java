@@ -86,7 +86,6 @@ public class ManageRolesActivity extends AppCompatActivity {
             adapter = new RolesAdapter(this, R.layout.item_role, roles);
             rolesListView.setAdapter(adapter);
 
-
             //rolesAndButtons = (LinearLayout) findViewById(R.id.rolesAndButtons);
             //fillWithRoles();
             //addNewRoleRow();
@@ -103,7 +102,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         roles.removeAll(toRemove);
     }
 
-    private void fillWithRoles() {
+    /*private void fillWithRoles() {
         for(String role : roles) {
             TextView currentRole = getNewTextView(role);
             currentRole.setTag("roleName" + roleTextCount);
@@ -253,7 +252,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         Button newButton = new Button(getApplicationContext());
         newButton.setText(text);
         return newButton;
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -267,14 +266,36 @@ public class ManageRolesActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()){
+            case R.menu.menu_phone_number:
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_add_role:
+                addRole();
+                return true;
+            case R.id.action_remove_role:
+                removeRole();
+                return true;
+            case R.id.action_modify_permissions:
+                modifyPermissions();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    private void modifyPermissions() {
+
+    }
+
+    private void removeRole() {
+
+    }
+
+    public void addRole(){
+
     }
 
     public void doneManageRoles(View view){
