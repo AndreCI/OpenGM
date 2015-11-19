@@ -5,16 +5,19 @@
     <item
         android:id="@+id/action_add_role"
         android:icon="@drawable/ic_action_add_person"
-        android:title="@string/action_add_role"/>
+        android:title="@string/action_add_role"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_remove_role"
         android:icon="@drawable/ic_action_remove"
-        android:title="@string/action_remove_role" />
+        android:title="@string/action_remove_role"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_modify_permissions"
         android:icon="@drawable/ic_action_group"
-        android:title="@string/action_modify_permissions" />
+        android:title="@string/action_modify_permissions"
+        app:showAsAction="ifRoom"/>
 
 </menu>
