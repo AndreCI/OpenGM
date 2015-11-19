@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -46,6 +48,9 @@ public class ManageRolesActivity extends AppCompatActivity {
     private List<PFMember> groupMembers;
     private PFGroup currentGroup;
     private Map<CheckBox, Boolean> modifiedCheckBoxes;
+
+    private List<String> addedRoles = new ArrayList<>();
+    private List<String> removedRoles = new ArrayList<>();
 
     public final static String GROUP_ID = "ch.epfl.ch.opengm.groups.manageroles.groupid";
     public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
@@ -294,8 +299,21 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     }
 
-    public void addRole(){
+    private void addRole(){
 
+    }
+
+    private List<String> getCheckedRoles(){
+        List<String> roles = new ArrayList<>();
+        for(int i = 0; i < rolesListView.getCount(); i++){
+            View v = rolesListView.getChildAt(i);
+            CheckBox checkBox = (CheckBox)v.findViewById(R.id.role_checkbox);
+            if(checkBox.isChecked()){
+                TextView roleText = (TextView)v.findViewById(R.id.role_name);
+                roles.add(roleText.getText().toString());
+            }
+        }
+        return roles;
     }
 
     public void doneManageRoles(View view){
