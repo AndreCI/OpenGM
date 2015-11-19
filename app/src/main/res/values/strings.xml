@@ -373,5 +373,7 @@
     <string name="action_add_role">Add role</string>
     <string name="action_remove_role">Remove role</string>
     <string name="action_modify_permissions">Modify Permissions</string>
+    <string name="dialog_add_role_title">Add Role</string>
+    <string name="dialog_add_role_role_hint">Enter role name</string>
 
 </resources>
