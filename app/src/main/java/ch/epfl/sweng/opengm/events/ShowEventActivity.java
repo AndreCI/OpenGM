@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import java.io.FileNotFoundException;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
-import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
@@ -33,7 +31,6 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-
         currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
@@ -139,12 +136,8 @@ public class ShowEventActivity extends AppCompatActivity {
 
     public void onDeleteButtonClick(View v){
             Intent intent = new Intent(this, ShowEventActivity.class);
-            try {
-                currentGroup.removeEvent(event);
-                setResult(Utils.DELETE_COMPLETED, intent);
-            } catch (PFException e) {
-                setResult(Utils.DELETE_FAILED, intent);
-            }
+            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+            setResult(Utils.DELETE_EVENT, intent);
             finish();
     }
 }

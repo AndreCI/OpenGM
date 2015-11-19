@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +19,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
@@ -30,7 +31,7 @@ public class EventListActivity extends AppCompatActivity {
 
     public static final int EVENT_LIST_RESULT_CODE = 666;
 
-    private List<PFEvent> eventList;
+    private Map<String,PFEvent> eventMap;
     private PFGroup currentGroup;
 
     public static final int RESULT_CODE_FOR_CREATE_EDIT_EVENT_ADDED = 42;
@@ -51,10 +52,28 @@ public class EventListActivity extends AppCompatActivity {
         }*/
         currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
-        eventList = new ArrayList<>(currentGroup.getEvents());
+        eventMap = new ArrayMap<>();
+        for(PFEvent e : currentGroup.getEvents()){
+            eventMap.put(e.getId(), e);
+        }
         setContentView(R.layout.activity_event_list);
         setTitle("Events for the group : " + currentGroup.getName());
         displayEvents();
+    }
+    private void updateWithServer() throws PFException{
+        currentGroup.reload();
+        for(PFEvent e : currentGroup.getEvents()){
+            if(!eventMap.containsValue(e)){
+                currentGroup.removeEvent(e);
+            }
+        }
+        for(PFEvent e : eventMap.values()){
+            if(currentGroup.getEvents().contains(e)){
+                currentGroup.updateEvent(e);
+            }else{
+                currentGroup.addEvent(e);
+            }
+        }
     }
 
     @Override
@@ -64,35 +83,42 @@ public class EventListActivity extends AppCompatActivity {
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 boolean edited = eventIntent.getBooleanExtra(Utils.EDIT_INTENT_MESSAGE, false);
                 Log.v("event from parcel", event.getId());
-                eventList.clear();
-                eventList.addAll(currentGroup.getEvents());
-                eventList.remove(event);
-                eventList.add(event);
-                Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT);
-                t.show();
-                displayEvents();
                 if(NetworkUtils.haveInternet(getBaseContext())) {
                     Log.v("event id", event.getId());
-                    currentGroup.updateEvent(event);
                     try {
                         if(edited) {
-                            PFEvent.updateEvent(event);
+                            currentGroup.updateEvent(event);
+                        }else{
+                            currentGroup.addEvent(event);
                         }
                     } catch (PFException e) {
                         e.printStackTrace();
                     }
+                    Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Couldn't add the event. Refresh later.",Toast.LENGTH_SHORT).show();
                 }
+                eventMap.put(event.getId(), event);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                Toast t = Toast.makeText(getApplicationContext(), getString(R.string.EventListFailToAdd), Toast.LENGTH_SHORT);
-                t.show();
-                displayEvents();
+                Toast.makeText(getApplicationContext(), getString(R.string.EventListFailToAdd), Toast.LENGTH_SHORT).show();
             }
-            if(resultCode == Utils.DELETE_COMPLETED){
-                (Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT)).show();
-            }else if(resultCode == Utils.DELETE_FAILED){
-                (Toast.makeText(getApplicationContext(), "Event couldn't get deleted", Toast.LENGTH_SHORT)).show();
+            if(resultCode == Utils.DELETE_EVENT){
+                PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+                if(NetworkUtils.haveInternet(getBaseContext())) {
+                    Log.v("event id", event.getId());
+                    try {
+                       currentGroup.removeEvent(event);
+                    } catch (PFException e) {
+                        e.printStackTrace();
+                    }
+                    (Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT)).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Couldn't delete the event. Refresh later.",Toast.LENGTH_SHORT).show();
+                }
+                eventMap.remove(event.getId());
             }
+            displayEvents();
         }
     }
 
@@ -109,6 +135,13 @@ public class EventListActivity extends AppCompatActivity {
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
     }
+    public void clickOnRefreshButton(View v){
+        try {
+            updateWithServer();
+        } catch (PFException e) {
+            Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private boolean compareDate(Date eventDate){
         final Calendar c = Calendar.getInstance();
@@ -122,23 +155,10 @@ public class EventListActivity extends AppCompatActivity {
         return eventDate.before(currentDate);
     }
 
-    private void updateEventList(){
-        try {
-            currentGroup.reload();
-            eventList = currentGroup.getEvents();
-            for(PFEvent e : eventList){
-                e.reload();
-            }
-        } catch (PFException e) {
-            (Toast.makeText(getApplicationContext(), "Couldn't reload", Toast.LENGTH_SHORT)).show();
-        }
-
-    }
     /**
      * Call this method to refresh the calendar on the screen.
      */
     public void displayEvents(){
-        updateEventList();
         RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.ScrollViewParentLayout);
         screenLayout.removeAllViews();
         ScrollView scrollViewForEvents = new ScrollView(this);
@@ -153,13 +173,14 @@ public class EventListActivity extends AppCompatActivity {
         CheckBox checkboxForPastEvent = (CheckBox) findViewById(R.id.eventListCheckBoxForPastEvent);
         boolean displayPastEvents = checkboxForPastEvent.isChecked();
 
+        ArrayList<PFEvent> eventList = new ArrayList<>(eventMap.values());
         Collections.sort(eventList, new Comparator<PFEvent>() {
             @Override
             public int compare(PFEvent lhs, PFEvent rhs) {
                 return rhs.getDate().compareTo(lhs.getDate());
             }
         });
-        for(PFEvent event : eventList) {
+        for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
                 b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
@@ -182,7 +203,6 @@ public class EventListActivity extends AppCompatActivity {
 
     private void showEvent(PFEvent currentEvent) {
         Intent intent = new Intent(this, ShowEventActivity.class);
-        currentGroup.updateEvent(currentEvent);
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
         intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);

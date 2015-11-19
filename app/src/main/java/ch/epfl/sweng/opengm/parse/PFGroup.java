@@ -451,16 +451,19 @@ public final class PFGroup extends PFEntity {
 
     /**
      * Add an event to the list of events of this group
+     * Update the server also
      *
      * @param event The event we want to add
+     *  @throws PFException if we cant add the event, it gets removed from mEvents
      */
-    public void addEvent(PFEvent event) {
+    public void addEvent(PFEvent event) throws PFException{
         if (!mEvents.containsKey(event.getId())) {
             try {
                 mEvents.put(event.getId(), event);
                 updateToServer(GROUP_ENTRY_EVENTS);
             } catch (PFException e) {
                 mEvents.remove(event.getId());
+                throw new PFException("Can't add the event");
             }
         }
     }
@@ -480,19 +483,23 @@ public final class PFGroup extends PFEntity {
         }
     }
 
-    public void updateEvent(PFEvent event) {
-        try {
-            removeEvent(event);
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
+    /**
+     * Remove then add the event.
+     * Also update the server
+     * @param event the event to update.
+     * @throws PFException if we cant remove it or add it back
+     */
+    public void updateEvent(PFEvent event) throws PFException{
+        removeEvent(event);
         addEvent(event);
     }
 
     /**
      * Remove an event to the list of events of this group
+     * Also delete the event on the server.
      *
      * @param event The event we want to remove
+     * @throws PFException : event is put back into the group.
      */
     public void removeEvent(PFEvent event) throws PFException {
         if (mEvents.containsKey(event.getId())) {
