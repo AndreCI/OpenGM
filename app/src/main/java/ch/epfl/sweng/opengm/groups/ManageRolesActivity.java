@@ -86,6 +86,7 @@ public class ManageRolesActivity extends AppCompatActivity {
                     roles.add(role);
                     addedRoles.add(role);
                     adapter.notifyDataSetChanged();
+                    edit.getText().clear();
                 }
             }).setNegativeButton(R.string.cancel, null);
             addRole = alertBuilder.create();
