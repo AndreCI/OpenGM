@@ -119,6 +119,14 @@
             android:name=".EditUserProfileActivity"
             android:label="@string/title_activity_edit_user_profile" >
         </activity>
+        <activity
+            android:name=".messages.ShowConversationsActivity"
+            android:label="@string/title_activity_show_conversation_activity" >
+        </activity>
+        <activity
+            android:name=".messages.ShowMessagesActivity"
+            android:label="@string/title_activity_show_messages_activity" >
+        </activity>
     </application>
 
 </manifest>

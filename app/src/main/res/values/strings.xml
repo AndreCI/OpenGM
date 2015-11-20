@@ -135,6 +135,9 @@
     <string name="hello_world">Hello world!</string>
 
 
+    <string name="title_activity_show_conversation_activity">ShowConversationActivity</string>
+    <string name="title_activity_show_messages_activity">ShowMessagesActivity</string>
+
 
 
 
