@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
@@ -74,15 +75,21 @@ public final class PFGroup extends PFEntity {
         private int value;
         private String name;
         private static Map<Integer, Permission> intToPermission = new HashMap<>();
+        private static Map<String, Permission> nameToPermission = new HashMap<>();
 
         static{
             for(Permission p : Permission.values()){
                 intToPermission.put(p.getValue(), p);
+                nameToPermission.put(p.name, p);
             }
         }
 
         public static Permission forInt(int value){
             return intToPermission.get(value);
+        }
+
+        public static Permission forName(String name){
+            return nameToPermission.get(name);
         }
 
         Permission(int value, String name){
