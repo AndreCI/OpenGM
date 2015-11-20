@@ -1,16 +1,14 @@
 package ch.epfl.sweng.opengm.messages;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
+
+import java.io.File;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.events.*;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class CreateNewConversationActivity extends AppCompatActivity {
@@ -31,7 +29,9 @@ public class CreateNewConversationActivity extends AppCompatActivity {
 
     private void sendBackResult() {
         Intent intent = new Intent();
-        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, new ConversationInformation("", "", ""));
+        String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
+        File file = new File(getFilesDir(), conversationName + ".txt");
+        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, new ConversationInformation(conversationName, currentGroup.getId(), file.getAbsolutePath()));
         setResult(ShowConversationsActivity.NEW_CONVERSATION_REQUEST_CODE, intent);
         finish();
     }
