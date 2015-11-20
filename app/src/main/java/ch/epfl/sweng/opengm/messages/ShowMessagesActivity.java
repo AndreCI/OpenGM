@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -50,14 +51,22 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 return handled;
             }
         });
+
+        ListView listView = (ListView) findViewById(R.id.message_list);
+        listView.setAdapter(customAdapter);
     }
 
     private void sendMessage() {
-        //TODO: get back text from textBar + send it.
+        /* TODO: get back text from textBar + send it.
+         * do it in back ground on the serv and localy while instantly adding it to the layout
+         */
+
     }
 
     private void fillMessages() {
-        //TODO: get File on serv or local device + read and parse it for messages and fill messages
+        /* TODO: get File on serv or local device + read and parse it for messages and fill messages
+         * idea : get serv file in background while displaying local one, then compare, then if modification, do them
+         */
     }
 
     public void clickOnSendButton(View view) {
