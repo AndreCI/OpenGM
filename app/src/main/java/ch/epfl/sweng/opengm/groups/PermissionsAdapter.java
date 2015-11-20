@@ -8,9 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -18,17 +16,15 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
     private Context context;
     private int resource;
-    private Map<PFGroup.Permission, Boolean> checkedPermissions = new HashMap<>();
     private List<PFGroup.Permission> permissions;
+    private List<Boolean> checks;
 
     public PermissionsAdapter(Context context, int resource, List<PFGroup.Permission> objects, List<Boolean> checks) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
-        for(int i = 0; i < objects.size(); i++){
-            checkedPermissions.put(objects.get(i), checks.get(i));
-        }
         this.permissions = objects;
+        this.checks = checks;
     }
 
     @Override
@@ -49,7 +45,7 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
         }
 
         holder.textView.setText(Integer.toString(permissions.get(position).getValue()));
-        holder.checkBox.setChecked(checkedPermissions.get(permissions.get(position)));
+        holder.checkBox.setChecked(checks.get(position));
 
         return row;
     }
