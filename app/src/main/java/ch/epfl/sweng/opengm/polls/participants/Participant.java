@@ -1,11 +1,13 @@
 package ch.epfl.sweng.opengm.polls.participants;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.parse.PFMember;
 
-public class Participant implements Comparable<Participant> {
+class Participant implements Comparable<Participant> {
 
     private final List<PFMember> participants;
     private final String prefix;
@@ -56,7 +58,7 @@ public class Participant implements Comparable<Participant> {
     }
 
     @Override
-    public int compareTo(Participant another) {
+    public int compareTo(@NonNull Participant another) {
         if (isGroup && !another.isGroup) {
             return -1;
         } else if (!isGroup && another.isGroup) {

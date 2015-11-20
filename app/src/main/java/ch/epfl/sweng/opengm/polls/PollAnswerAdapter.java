@@ -11,23 +11,18 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 
-public class PollAnswerAdapter extends ArrayAdapter<String> {
-
+class PollAnswerAdapter extends ArrayAdapter<String> {
 
     private final Context context;
-    private final int ressource;
+    private final int resource;
     private final List<String> objects;
 
 
-    public PollAnswerAdapter(Context context, int resource, List<String> objects) {
-        super(context, resource, objects);
+    public PollAnswerAdapter(Context context, List<String> objects) {
+        super(context, R.layout.item_answer_poll, objects);
         this.context = context;
-        this.ressource = resource;
+        this.resource = R.layout.item_answer_poll;
         this.objects = objects;
-    }
-
-    public List<String> getObjects() {
-        return objects;
     }
 
     @Override
@@ -36,7 +31,7 @@ public class PollAnswerAdapter extends ArrayAdapter<String> {
         AnswerHolder holder;
 
         if (row == null) {
-            row = ((Activity) context).getLayoutInflater().inflate(ressource, parent, false);
+            row = ((Activity) context).getLayoutInflater().inflate(resource, parent, false);
             holder = new AnswerHolder(row);
             row.setTag(holder);
         } else {

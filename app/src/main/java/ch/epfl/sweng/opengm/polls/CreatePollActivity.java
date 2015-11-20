@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.polls;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -12,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -37,6 +37,7 @@ import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
+@SuppressWarnings("UnusedParameters")
 public final class CreatePollActivity extends AppCompatActivity {
 
     public final static String PARTICIPANTS_KEY = "ch.epfl.sweng.opengm.polls.createpollactivity.participants";
@@ -45,7 +46,6 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     private EditText mNameEdit;
     private EditText mDescriptionEdit;
-    private ListView mAnswerList;
 
     private Button mDeadlineButton;
     private Button mParticipantsButton;
@@ -77,12 +77,12 @@ public final class CreatePollActivity extends AppCompatActivity {
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
         mNameEdit = (EditText) findViewById(R.id.namePollEditText);
         mDescriptionEdit = (EditText) findViewById(R.id.descriptionPollEditText);
-        mAnswerList = (ListView) findViewById(R.id.answersPollListView);
+        ListView mAnswerList = (ListView) findViewById(R.id.answersPollListView);
         mDeadlineButton = (Button) findViewById(R.id.deadlineButton);
         mParticipantsButton = (Button) findViewById(R.id.participantsButton);
 
 
-        mAdapter = new PollAnswerAdapter(this, R.layout.item_answer_poll, answers);
+        mAdapter = new PollAnswerAdapter(this, answers);
         mAnswerList.setAdapter(mAdapter);
 
         mAnswerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,7 +113,7 @@ public final class CreatePollActivity extends AppCompatActivity {
     public void addAnswer(View v) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final LayoutInflater inflater = getLayoutInflater();
-        final View view = inflater.inflate(R.layout.fragment_answer_input, null);
+        @SuppressLint("InflateParams") final View view = inflater.inflate(R.layout.fragment_answer_input, null);
 
         builder.setView(view)
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
@@ -200,9 +200,6 @@ public final class CreatePollActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 participants = new ArrayList<>(data.<PFMember>getParcelableArrayListExtra(PARTICIPANTS_KEY));
                 mParticipantsButton.setText(String.format(getString(R.string.participant_poll), participants.size()).concat(participants.size() > 1 ? "s" : ""));
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
             }
         }
     }

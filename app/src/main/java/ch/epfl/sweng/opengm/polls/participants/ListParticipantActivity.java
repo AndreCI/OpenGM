@@ -55,7 +55,7 @@ public class ListParticipantActivity extends AppCompatActivity {
 
         list = (ListView) findViewById(R.id.listView_PollParticipants);
 
-        mAdapter = new ParticipantAdapter(this, R.layout.item_poll_participant, participants);
+        mAdapter = new ParticipantAdapter(this, participants);
         list.setAdapter(mAdapter);
         list.setClickable(true);
 
@@ -65,7 +65,17 @@ public class ListParticipantActivity extends AppCompatActivity {
                 CheckBox box = ((CheckBox) view.findViewById(R.id.participant_box_poll));
                 boolean isChecked = box.isChecked();
                 box.setChecked(!isChecked);
-                participantsChecked.put(mAdapter.getObjects().get(position), !isChecked);
+                Participant p = mAdapter.getItem(position);
+                participantsChecked.put(p, !isChecked);
+                for (int i = 0; i < list.getChildCount(); i++) {
+                    if (i != position) {
+                        View row = list.getChildAt(i);
+                        Participant child = mAdapter.getItem(i);
+                        if (child.getParticipants().containsAll(p.getParticipants())) {
+                            ((CheckBox) row.findViewById(R.id.participant_box_poll)).setChecked(!isChecked);
+                        }
+                    }
+                }
             }
         });
 
@@ -85,6 +95,7 @@ public class ListParticipantActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressWarnings("SameReturnValue")
     private boolean showResult(String query) {
         Collections.sort(mAdapter.getObjects(), sortList(query));
         List<Participant> displayedP = new ArrayList<>();
@@ -93,7 +104,7 @@ public class ListParticipantActivity extends AppCompatActivity {
                 displayedP.add(p);
             }
         }
-        list.setAdapter(new ParticipantAdapter(this, R.layout.item_poll_participant, displayedP));
+        list.setAdapter(new ParticipantAdapter(this, displayedP));
         return true;
     }
 
