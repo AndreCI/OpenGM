@@ -21,8 +21,8 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
     private Map<PFGroup.Permission, Boolean> checkedPermissions = new HashMap<>();
     private List<PFGroup.Permission> permissions;
 
-    public PermissionsAdapter(Context context, int resource, int textViewResourceId, List<PFGroup.Permission> objects, List<Boolean> checks) {
-        super(context, resource, textViewResourceId, objects);
+    public PermissionsAdapter(Context context, int resource, List<PFGroup.Permission> objects, List<Boolean> checks) {
+        super(context, resource, objects);
         this.context = context;
         this.resource = resource;
         for(int i = 0; i < objects.size(); i++){
@@ -48,7 +48,7 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
             holder = (PermissionHolder) row.getTag();
         }
 
-        holder.textView.setText(permissions.get(position).getValue());
+        holder.textView.setText(Integer.toString(permissions.get(position).getValue()));
         holder.checkBox.setChecked(checkedPermissions.get(permissions.get(position)));
 
         return row;
