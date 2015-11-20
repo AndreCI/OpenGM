@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -52,7 +53,7 @@ public class ManageRolesActivity extends AppCompatActivity {
     private List<String> addedRoles = new ArrayList<>();
     private List<String> removedRoles = new ArrayList<>();
 
-    public final static String GROUP = "ch.epfl.ch.opengm.groups.manageroles.group";
+    public final static String GROUP_INDEX = "ch.epfl.ch.opengm.groups.manageroles.groupIndex";
     public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
 
     @Override
@@ -61,7 +62,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_roles);
         roles = new ArrayList<>();
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(GROUP);
+        currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(intent.getIntExtra(GROUP_INDEX, 1));
         List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
         HashMap<String, PFMember> idsMembers = currentGroup.getMembers();
         groupMembers = new ArrayList<>();
@@ -133,7 +134,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         for(int i = 0; i < listView.getCount(); i++){
             View view = listView.getChildAt(i);
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.role_checkbox);
-            PFGroup.Permission current = PFGroup.Permission.forInt(Integer.parseInt(((TextView)view.findViewById(R.id.role_name)).getText().toString()));
+            PFGroup.Permission current = PFGroup.Permission.forName(((TextView) view.findViewById(R.id.role_name)).getText().toString());
             if(checkBox.isChecked()){
                 if(!initialPermissions.contains(current)){
                     addPermission.add(current);
@@ -260,17 +261,10 @@ public class ManageRolesActivity extends AppCompatActivity {
                     currentGroup.removeRoleToUser(role, member.getId());
                 }
             }
-            onBackPressed();
+            setResult(Activity.RESULT_OK);
+            finish();
         } else {
             Toast.makeText(getBaseContext(), "No internet connection, cannot save.", Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra(MembersActivity.GROUP, currentGroup);
-        setResult(Activity.RESULT_OK, intent);
-        finish();
     }
 }
