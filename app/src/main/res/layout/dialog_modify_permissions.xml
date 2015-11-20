@@ -15,7 +15,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:id="@+id/dialog_modify_permissions_list"
         android:layout_below="@+id/dialog_modify_permissions_title"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
