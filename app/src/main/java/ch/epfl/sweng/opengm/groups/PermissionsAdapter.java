@@ -21,12 +21,12 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
     private Map<PFGroup.Permission, Boolean> checkedPermissions = new HashMap<>();
     private List<PFGroup.Permission> permissions;
 
-    public PermissionsAdapter(Context context, int resource, int textViewResourceId, List<PFGroup.Permission> objects) {
+    public PermissionsAdapter(Context context, int resource, int textViewResourceId, List<PFGroup.Permission> objects, List<Boolean> checks) {
         super(context, resource, textViewResourceId, objects);
         this.context = context;
         this.resource = resource;
-        for(PFGroup.Permission permission : objects){
-            checkedPermissions.put(permission, false);
+        for(int i = 0; i < objects.size(); i++){
+            checkedPermissions.put(objects.get(i), checks.get(i));
         }
         this.permissions = objects;
     }
