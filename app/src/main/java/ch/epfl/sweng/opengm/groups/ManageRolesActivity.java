@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,9 +41,10 @@ public class ManageRolesActivity extends AppCompatActivity {
     private RolesAdapter adapter;
     private PermissionsAdapter permissionsAdapter;
 
-    private HashMap<PFGroup.Permission, Boolean> checkedPermissions = new HashMap<>();
+    private List<PFGroup.Permission> initialPermissions = new ArrayList<>();
     private List<PFGroup.Permission> permissions;
     private List<Boolean> checks;
+    private List<String> modifyRoles = new ArrayList<>();
 
     private List<PFMember> groupMembers;
     private PFGroup currentGroup;
@@ -108,6 +111,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         permissionBuilder.setView(permissionLayout).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                savePermissionChanges(permissionList);
             }
         }).setNegativeButton(R.string.cancel, null);
         modifyPermissions = permissionBuilder.create();
@@ -121,6 +125,38 @@ public class ManageRolesActivity extends AppCompatActivity {
             }
         }
         roles.removeAll(toRemove);
+    }
+
+    private void savePermissionChanges(ListView listView){
+        List<PFGroup.Permission> addPermission = new ArrayList<>();
+        List<PFGroup.Permission> removePermission = new ArrayList<>();
+        for(int i = 0; i < listView.getCount(); i++){
+            View view = listView.getChildAt(i);
+            CheckBox checkBox = (CheckBox) view.findViewById(R.id.role_checkbox);
+            PFGroup.Permission current = PFGroup.Permission.forInt(Integer.parseInt(((TextView)view.findViewById(R.id.role_name)).getText().toString()));
+            if(checkBox.isChecked()){
+                if(!initialPermissions.contains(current)){
+                    addPermission.add(current);
+                }
+            } else {
+                if(initialPermissions.contains(current)){
+                    removePermission.add(current);
+                }
+            }
+            checks.set(i, checkBox.isChecked());
+            permissionsAdapter.notifyDataSetChanged();
+        }
+        for(String role : modifyRoles){
+            for(PFGroup.Permission permission : addPermission){
+                currentGroup.addPermissionToRole(role, permission);
+            }
+            for(PFGroup.Permission permission : removePermission){
+                currentGroup.removePermissionFromRole(role, permission);
+            }
+        }
+        modifyRoles.clear();
+        initialPermissions.clear();
+        permissionsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -158,6 +194,9 @@ public class ManageRolesActivity extends AppCompatActivity {
         for(int i = 1; i < checkedRoles.size(); i++){
             permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
         }
+        Log.d("TESTING", permissions.toString());
+        modifyRoles.addAll(checkedRoles);
+        initialPermissions.addAll(permissions);
         for(int i = 0; i < checks.size(); i++){
             if(permissions.contains(this.permissions.get(i))){
                 checks.set(i, true);
