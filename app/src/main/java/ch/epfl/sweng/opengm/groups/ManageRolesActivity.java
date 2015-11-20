@@ -135,7 +135,7 @@ public class ManageRolesActivity extends AppCompatActivity {
     }
 
     private void removeRole() {
-        List<String> rolesToRemove = getCheckedRoles();
+        List<String> rolesToRemove = getCheckedRoles(true);
         for(String role : rolesToRemove){
             if(!addedRoles.contains(role)){
                 removedRoles.add(role);
@@ -153,7 +153,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         editText.requestFocus();
     }
 
-    private List<String> getCheckedRoles(){
+    private List<String> getCheckedRoles(boolean uncheck){
         List<String> roles = new ArrayList<>();
         for(int i = 0; i < rolesListView.getCount(); i++){
             View v = rolesListView.getChildAt(i);
@@ -161,6 +161,7 @@ public class ManageRolesActivity extends AppCompatActivity {
             if(checkBox.isChecked()){
                 TextView roleText = (TextView)v.findViewById(R.id.role_name);
                 roles.add(roleText.getText().toString());
+                checkBox.setChecked(!uncheck);
             }
         }
         return roles;
