@@ -17,8 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
@@ -31,8 +34,14 @@ public class ManageRolesActivity extends AppCompatActivity {
     private ListView rolesListView;
 
     private AlertDialog addRole;
+    private AlertDialog modifyPermissions;
 
     private RolesAdapter adapter;
+    private PermissionsAdapter permissionsAdapter;
+
+    private HashMap<PFGroup.Permission, Boolean> checkedPermissions = new HashMap<>();
+    private List<PFGroup.Permission> permissions;
+    private List<Boolean> checks;
 
     private List<PFMember> groupMembers;
     private PFGroup currentGroup;
@@ -84,6 +93,24 @@ public class ManageRolesActivity extends AppCompatActivity {
             }
             }).setNegativeButton(R.string.cancel, null);
         addRole = alertBuilder.create();
+
+        permissions = new ArrayList<>(Arrays.asList(PFGroup.Permission.values()));
+        checks = new ArrayList<>();
+        for(int i = 0; i < permissions.size(); i++){
+            checks.add(false);
+        }
+
+        AlertDialog.Builder permissionBuilder = new AlertDialog.Builder(this);
+        View permissionLayout = getLayoutInflater().inflate(R.layout.dialog_modify_permissions, null);
+        final ListView permissionList = (ListView) permissionLayout.findViewById(R.id.dialog_modify_permissions_list);
+        permissionsAdapter = new PermissionsAdapter(this, R.layout.item_role, permissions, checks);
+        permissionList.setAdapter(permissionsAdapter);
+        permissionBuilder.setView(permissionLayout).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        }).setNegativeButton(R.string.cancel, null);
+        modifyPermissions = permissionBuilder.create();
     }
 
     private void keepIntersectionRoles(List<String> otherRoles){
@@ -125,7 +152,30 @@ public class ManageRolesActivity extends AppCompatActivity {
     }
 
     private void modifyPermissions() {
+        List<String> checkedRoles = getCheckedRoles(false);
+        List<PFGroup.Permission> permissions = new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(0)));
 
+        for(int i = 1; i < checkedRoles.size(); i++){
+            permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
+        }
+        for(int i = 0; i < checks.size(); i++){
+            if(permissions.contains(this.permissions.get(i))){
+                checks.set(i, true);
+            }
+        }
+        modifyPermissions.show();
+        permissionsAdapter.notifyDataSetChanged();
+    }
+
+    private List<PFGroup.Permission> keepPermissionIntersection(List<PFGroup.Permission> base, List<PFGroup.Permission> other){
+        ArrayList<PFGroup.Permission> toRemove = new ArrayList<>();
+        for(PFGroup.Permission permission : base){
+            if(!other.contains(permission)){
+                toRemove.add(permission);
+            }
+        }
+        base.removeAll(toRemove);
+        return base;
     }
 
     private void removeRole() {
