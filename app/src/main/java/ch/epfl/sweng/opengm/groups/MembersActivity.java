@@ -44,6 +44,7 @@ public class MembersActivity extends AppCompatActivity {
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
+    public static final String GROUP = "ch.epfl.sweng.opengm.groups.members.group";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +119,7 @@ public class MembersActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == Activity.RESULT_OK) {
                     setSelectMode(false);
+                    group = data.getParcelableExtra(GROUP);
                 }
                 break;
             default:

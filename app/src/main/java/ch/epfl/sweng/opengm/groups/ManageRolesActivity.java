@@ -260,10 +260,17 @@ public class ManageRolesActivity extends AppCompatActivity {
                     currentGroup.removeRoleToUser(role, member.getId());
                 }
             }
-            setResult(Activity.RESULT_OK);
-            finish();
+            onBackPressed();
         } else {
             Toast.makeText(getBaseContext(), "No internet connection, cannot save.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(MembersActivity.GROUP, currentGroup);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 }
