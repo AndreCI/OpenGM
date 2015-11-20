@@ -625,6 +625,7 @@ public final class PFGroup extends PFEntity {
             if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.addRole(role);
+                mRolesPermissions.put(role, new ArrayList<Permission>());
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
@@ -646,6 +647,7 @@ public final class PFGroup extends PFEntity {
             if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.removeRole(role);
+                mRolesPermissions.remove(role);
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
