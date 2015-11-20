@@ -19,11 +19,11 @@ public class ConversationInformation implements Parcelable {
         fileName = in.readString();
     }
 
-    public ConversationInformation(String conversationId, String conversationName, String groupId, String fileName) {
+    public ConversationInformation(String conversationId, String conversationName, String groupId, String textFilePath) {
         this.conversationId = conversationId;
         this.conversationName = conversationName;
         this.groupId = groupId;
-        this.fileName = fileName;
+        this.fileName = textFilePath;
     }
 
     public static final Creator<ConversationInformation> CREATOR = new Creator<ConversationInformation>() {
@@ -44,7 +44,7 @@ public class ConversationInformation implements Parcelable {
         return conversationId + '/' + conversationName + '/' + groupId + '/' + fileName;
     }
 
-    public static ConversationInformation createFromStrinng(String string) {
+    public static ConversationInformation createFromString(String string) {
         String[] split = string.split("/");
         if(split.length != 4) {
             throw new IllegalArgumentException("Invalid string, format must be convId/convName/groupId/fileName");

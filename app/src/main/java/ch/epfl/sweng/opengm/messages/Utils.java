@@ -14,6 +14,7 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
  */
 public class Utils {
     public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.file_info";
+    public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.conv_info";
 
     public static void writeMessageLocal(String pathToFile, MessageAdapter messageAdapter, Context context) {
         try {

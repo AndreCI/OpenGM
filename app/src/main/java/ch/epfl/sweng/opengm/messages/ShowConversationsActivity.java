@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.messages;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
     private List<ConversationInformation> conversationInformations;
     private final String CONV_INDEX_FORMAT = "conversationIndex_%s.txt";
     private Date serveurLastUpdate;
+    public static final int NEW_CONVERSATION_REQUEST_CODE = 968465;
     //TODO: model idea : group have a list of ids corresponding to text files in another parse table, 1 file per conv + 1 with all convInfo
 
     @Override
@@ -73,10 +75,22 @@ public class ShowConversationsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
+                startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
                 //TODO: add new Conversation
             }
         });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == NEW_CONVERSATION_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                conversationInformations.add((ConversationInformation) data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE));
+            } else {
+
+            }
+        }
     }
 
     private void generateConversationList() {
@@ -100,7 +114,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
                     line = bufferedReader.readLine();
                     while (line != null) {
                         try {
-                            list.add(ConversationInformation.createFromStrinng(line));
+                            list.add(ConversationInformation.createFromString(line));
                         } catch (IllegalArgumentException e) {
                             //don't add it
                         }
