@@ -17,30 +17,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 /**
  * Created by virgile on 18/11/2015.
  */
-public class ShowMessages extends AppCompatActivity {
+public class ShowConversationsActivity extends AppCompatActivity {
     private CustomAdapter adapter;
     private PFGroup currentGroup;
+    private List<ConversationInformation> conversationInformations;
 
+    //TODO: model idea : group have a list of ids corresponding to text files in another parse table
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_messages);
+        setContentView(R.layout.activity_show_conversations);
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        currentGroup = intent.getParcelableExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
+        conversationInformations = new ArrayList<>();
 
-        List<ConversationAdapter> conversations = new ArrayList<>();
-        /* TODO: implement this
-        for(String id : currentGroup.conversations) {
-            conversations.add(PFConversation.fetchExistingConversation(id));
-        }
-         */
+        //TODO: conversationInformations.addAll(currentGroup.getConversationsInformations());
+
+
+        List<ConversationAdapter> conversations = getConversations();
+
+        //TODO : check on serv which file is the most recent
 
         adapter = new CustomAdapter(this, R.layout.conversation_info, conversations);
 
@@ -51,15 +53,20 @@ public class ShowMessages extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = (TextView) view.findViewById(R.id.conversation_title);
-                //TODO : start activity of the conversation, use tag of textView
+                String title = ((ConversationAdapter) textView.getTag()).getTitle();
+                Intent intent; //.....
+                //TODO : start activity of the conversation,0 use tag of textView and send path of txt file with Utils.FILE_PATH_INTENT_MESSAGE
             }
         });
-
     }
 
-
-
-
+    private List<ConversationAdapter> getConversations() {
+        List<ConversationAdapter> result = new ArrayList<>();
+        for (ConversationInformation inf : conversationInformations) {
+            result.add(new ConversationAdapter(inf));
+        }
+        return result;
+    }
 
     private class CustomAdapter extends ArrayAdapter<ConversationAdapter> {
         private List<ConversationAdapter> conversations;
@@ -78,7 +85,7 @@ public class ShowMessages extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            if(convertView == null) {
+            if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = vi.inflate(R.layout.conversation_info, null);
                 holder = new ViewHolder();
@@ -91,7 +98,7 @@ public class ShowMessages extends AppCompatActivity {
 
             ConversationAdapter conversationAdapter = conversations.get(position);
             holder.textView.setText(conversationAdapter.getTitle());
-            holder.radioButton.setChecked(conversationAdapter.getNewMessage());
+            holder.radioButton.setChecked(false);
             holder.textView.setTag(conversationAdapter);
 
             return convertView;
