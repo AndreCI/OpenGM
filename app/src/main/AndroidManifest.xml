@@ -128,8 +128,7 @@
         </activity>
         <activity
             android:name=".messages.CreateNewConversationActivity"
-            android:label="@string/title_activity_create_new_conversation"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:label="@string/title_activity_create_new_conversation">
         </activity>
     </application>
 

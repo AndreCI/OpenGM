@@ -7,20 +7,17 @@ import android.os.Parcelable;
  * Created by virgile on 20/11/2015.
  */
 public class ConversationInformation implements Parcelable {
-    private String conversationId;
     private String conversationName;
     private String groupId;
     private String fileName;
 
     public ConversationInformation(Parcel in) {
-        conversationId = in.readString();
         conversationName = in.readString();
         groupId = in.readString();
         fileName = in.readString();
     }
 
-    public ConversationInformation(String conversationId, String conversationName, String groupId, String textFilePath) {
-        this.conversationId = conversationId;
+    public ConversationInformation(String conversationName, String groupId, String textFilePath) {
         this.conversationName = conversationName;
         this.groupId = groupId;
         this.fileName = textFilePath;
@@ -41,20 +38,16 @@ public class ConversationInformation implements Parcelable {
     @Override
     public String toString() {
 
-        return conversationId + '/' + conversationName + '/' + groupId + '/' + fileName;
+        return conversationName + '/' + groupId + '/' + fileName;
     }
 
     public static ConversationInformation createFromString(String string) {
         String[] split = string.split("/");
-        if(split.length != 4) {
-            throw new IllegalArgumentException("Invalid string, format must be convId/convName/groupId/fileName");
+        if(split.length != 3) {
+            throw new IllegalArgumentException("Invalid string, format must be convName/groupId/fileName");
         } else {
-            return new ConversationInformation(split[0], split[1], split[2], split[3]);
+            return new ConversationInformation(split[0], split[1], split[2]);
         }
-    }
-
-    public String getConversationId() {
-        return conversationId;
     }
 
     public String getConversationName() {
@@ -82,7 +75,6 @@ public class ConversationInformation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(conversationId);
         dest.writeString(conversationName);
         dest.writeString(groupId);
         dest.writeString(fileName);
