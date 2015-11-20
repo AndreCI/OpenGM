@@ -217,7 +217,7 @@ public class PFPoll extends PFEntity {
             object.save();
             String id = object.getObjectId();
             PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members);
-            // TODO add the poll to the group
+            group.addPoll(poll);
             return poll;
         } catch (ParseException e) {
             throw new PFException();

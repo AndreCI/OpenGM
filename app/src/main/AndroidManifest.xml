@@ -94,7 +94,6 @@
         </activity>
         <activity
             android:name=".identification.contacts.PhoneContactsActivity"
-            android:exported="true"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.searchable"
@@ -114,8 +113,7 @@
             android:name=".polls.PollVoteActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".polls.participants.ListParticpantActivity"
-            android:label="@string/title_activity_list_particpant"
+            android:name=".polls.participants.ListParticipantActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 

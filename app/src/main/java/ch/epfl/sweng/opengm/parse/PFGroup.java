@@ -33,11 +33,14 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_POLL;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES_PERMISSIONS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
+import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
@@ -51,11 +54,13 @@ import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
  */
 public final class PFGroup extends PFEntity {
 
-    private final static String PARSE_TABLE_GROUP = PFConstants.GROUP_TABLE_NAME;
+    private final static String PARSE_TABLE_GROUP = GROUP_TABLE_NAME;
 
     private HashMap<String, PFMember> mMembers;
 
     private HashMap<String, PFEvent> mEvents;
+
+    private HashMap<String, PFPoll> mPolls;
 
     private String mName;
     private String mDescription;
@@ -133,6 +138,7 @@ public final class PFGroup extends PFEntity {
             throw new IllegalArgumentException("Arrays' size don't match for group " + groupId + " " + users.size() + " " + nicknames.size() + " " + roles.size());
         }
         fillMembersMap(users, nicknames, roles);
+        mPolls = new HashMap<>();
         mEvents = new HashMap<>();
         for (String eventId : events) {
             try {
@@ -295,7 +301,6 @@ public final class PFGroup extends PFEntity {
                                 for(Permission permission : entry.getValue()){
                                     permissions.put(permission.getValue());
                                 }
-                                Log.d("PUTTING", "PUTTING: " + role);
                                 rolesPermissions.put(permissions);
                             }
                             object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
@@ -458,6 +463,28 @@ public final class PFGroup extends PFEntity {
         return (mMembers != null && !mMembers.isEmpty());
     }
 
+    public void addPoll(PFPoll poll) {
+        if (!mPolls.containsKey(poll.getId())) {
+            try {
+                mPolls.put(poll.getId(), poll);
+                updateToServer(GROUP_ENTRY_POLL);
+            } catch (PFException e) {
+                mPolls.remove(poll.getId());
+            }
+        }
+    }
+
+    public void removePoll(PFPoll poll) {
+        if (mPolls.containsKey(poll.getId())) {
+            try {
+                mPolls.remove(poll.getId());
+                updateToServer(GROUP_ENTRY_POLL);
+            } catch (PFException e) {
+                mPolls.put(poll.getId(), poll);
+            }
+        }
+    }
+
     /**
      * Add an event to the list of events of this group
      *
@@ -573,7 +600,7 @@ public final class PFGroup extends PFEntity {
      */
     public void addUserWithUsername(String username) throws PFException {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo(PFConstants._USER_TABLE_USERNAME, username);
+        query.whereEqualTo(_USER_TABLE_USERNAME, username);
         try {
             ParseObject object = query.getFirst();
             addUserWithId(object.getObjectId());
@@ -591,7 +618,7 @@ public final class PFGroup extends PFEntity {
      */
     public void addUserWithEmail(String email) throws PFException {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo(PFConstants._USER_TABLE_EMAIL, email);
+        query.whereEqualTo(_USER_TABLE_EMAIL, email);
         try {
             ParseObject object = query.getFirst();
             addUserWithId(object.getObjectId());

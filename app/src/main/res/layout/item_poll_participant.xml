@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:checked="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:gravity="center" />
 
     <TextView
@@ -19,7 +21,6 @@
         android:layout_height="match_parent"
         android:layout_weight="15"
         android:gravity="center"
-        android:text="WW"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold" />
 
@@ -27,8 +28,6 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="70"
-        android:clickable="false"
-        android:focusable="false"
         android:orientation="vertical"
         android:weightSum="100">
 
@@ -38,9 +37,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="15dp"
             android:layout_weight="50"
-            android:clickable="false"
             android:ellipsize="end"
-            android:focusable="false"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:text="Albert du Chateau de Versailles"
@@ -53,9 +50,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_weight="50"
-            android:clickable="false"
             android:ellipsize="end"
-            android:focusable="false"
             android:gravity="center_vertical|end"
             android:singleLine="true"
             android:text="son username est très très long"

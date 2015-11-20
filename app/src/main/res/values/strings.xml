@@ -377,6 +377,9 @@
 
     <string name="possible_answers_poll">Number of possible answers :</string>
     <string name="answers_poll">answer</string>
-    <string name="title_activity_list_particpant">ListParticpantActivity</string>
-
+    <string name="title_activity_list_participant">Add participants</string>
+    <string name="member_poll">%d member</string>
+    <string name="participant_poll">%d participant</string>
+    <string name="minus_poll">-</string>
+    <string name="plus_poll">+</string>
 </resources>

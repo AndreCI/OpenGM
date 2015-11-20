@@ -42,15 +42,18 @@
             android:layout_weight="40" />
 
         <Button
-            android:id="@+id/button5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@drawable/rounded_buttons"
             android:layout_weight="10"
             android:onClick="addAnswer"
+            android:textColor="@color/white"
             android:text="Add an answer" />
 
         <LinearLayout
             android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_weight="10"
             android:orientation="horizontal"
@@ -59,15 +62,21 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
                 android:layout_weight="50"
+                android:background="@drawable/rounded_buttons"
                 android:id="@+id/deadlineButton"
+                android:textColor="@color/white"
                 android:onClick="setDeadline"
                 android:text="Deadline" />
 
             <Button
+                android:id="@+id/participantsButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="50"
+                android:background="@drawable/rounded_buttons"
+                android:textColor="@color/white"
                 android:onClick="addParticipants"
                 android:text="Participants" />
         </LinearLayout>
@@ -102,17 +111,24 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_weight="15"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/rounded_buttons"
+                android:text="@string/minus_poll"
+                android:textColor="@color/white"
                 android:onClick="decreasePossibleAnswers"
-                android:text="-" />
+                android:textSize="40sp" />
 
             <Button
                 android:id="@+id/button6"
                 android:layout_width="0dp"
+                android:background="@drawable/rounded_buttons"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:text="@string/plus_poll"
+                android:textColor="@color/white"
                 android:layout_weight="15"
                 android:onClick="increasePossibleAnswers"
-                android:text="+" />
+                android:textSize="40sp" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -34,6 +34,7 @@ public final class PFConstants {
     public static final String GROUP_ENTRY_USERS = "users";
     public static final String GROUP_ENTRY_NICKNAMES = "nicknames";
     public static final String GROUP_ENTRY_ROLES = "roles";
+    public static final String GROUP_ENTRY_POLL = "polls";
     public static final String GROUP_ENTRY_DESCRIPTION = "description";
     public static final String GROUP_ENTRY_PICTURE = "groupPicture";
     public static final String GROUP_ENTRY_EVENTS = "events";

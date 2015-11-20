@@ -114,6 +114,8 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_messages:
                 break;
             case R.id.nav_manage:
+                break;
+            case R.id.nav_polls:
                 Intent intent1 = new Intent(GroupsHomeActivity.this, CreatePollActivity.class);
                 intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent1);

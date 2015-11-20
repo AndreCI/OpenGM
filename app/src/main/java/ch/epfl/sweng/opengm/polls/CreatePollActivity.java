@@ -1,15 +1,18 @@
 package ch.epfl.sweng.opengm.polls;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -20,7 +23,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -29,7 +31,7 @@ import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFPoll;
-import ch.epfl.sweng.opengm.polls.participants.ListParticpantActivity;
+import ch.epfl.sweng.opengm.polls.participants.ListParticipantActivity;
 
 import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
@@ -37,11 +39,16 @@ import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
 public final class CreatePollActivity extends AppCompatActivity {
 
+    public final static String PARTICIPANTS_KEY = "ch.epfl.sweng.opengm.polls.createpollactivity.participants";
+
+    private static final int PARTICIPANTS_ACT_KEY = 328;
+
     private EditText mNameEdit;
     private EditText mDescriptionEdit;
     private ListView mAnswerList;
 
     private Button mDeadlineButton;
+    private Button mParticipantsButton;
 
     private PollAnswerAdapter mAdapter;
 
@@ -49,7 +56,8 @@ public final class CreatePollActivity extends AppCompatActivity {
     private Date deadline;
 
     private final List<String> answers = new ArrayList<>();
-    private final List<String> participants = new ArrayList<>();
+
+    private List<PFMember> participants = new ArrayList<>();
 
     private TextView nOfAnswersText;
 
@@ -71,6 +79,8 @@ public final class CreatePollActivity extends AppCompatActivity {
         mDescriptionEdit = (EditText) findViewById(R.id.descriptionPollEditText);
         mAnswerList = (ListView) findViewById(R.id.answersPollListView);
         mDeadlineButton = (Button) findViewById(R.id.deadlineButton);
+        mParticipantsButton = (Button) findViewById(R.id.participantsButton);
+
 
         mAdapter = new PollAnswerAdapter(this, R.layout.item_answer_poll, answers);
         mAnswerList.setAdapter(mAdapter);
@@ -85,10 +95,13 @@ public final class CreatePollActivity extends AppCompatActivity {
 
         onTapOutsideBehaviour(findViewById(R.id.createPoll_outmostLayout), this);
         nOfAnswersText.setText(String.format("%d", possibleAnswers));
+
     }
 
     public void addParticipants(View view) {
-        startActivity(new Intent(this, ListParticpantActivity.class));
+        Intent i = new Intent(this, ListParticipantActivity.class);
+        i.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
+        startActivityForResult(i, PARTICIPANTS_ACT_KEY);
     }
 
     public void setDeadline(View view) {
@@ -148,24 +161,49 @@ public final class CreatePollActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.action_validate:
-                // Intent
-                String name = mNameEdit.getText().toString();
-                String description = mDescriptionEdit.getText().toString();
-                HashMap<String, PFMember> memberHashMap = currentGroup.getMembers();
 
-                List<PFMember> eventsParticipants = new ArrayList<>();
-                for (String memberId : participants)
-                    eventsParticipants.add(memberHashMap.get(memberId));
-
-                try {
-                    PFPoll.createNewPoll(currentGroup, name, description, possibleAnswers, answers, deadline, eventsParticipants);
-                } catch (PFException e) {
-                    Toast.makeText(this, "Error while creating your poll", Toast.LENGTH_LONG).show();
+                if (TextUtils.isEmpty(mNameEdit.getText())) {
+                    mNameEdit.setError("Name should not be empty");
+                    mNameEdit.requestFocus();
+                } else if (TextUtils.isEmpty(mDescriptionEdit.getText())) {
+                    mDescriptionEdit.setError("Description should not be empty");
+                    mDescriptionEdit.requestFocus();
+                } else if (answers.size() < 2) {
+                    Toast.makeText(getBaseContext(), "User should be able to choose among at least 2 answers", Toast.LENGTH_LONG).show();
+                } else if (deadline == null) {
+                    mDeadlineButton.setError("A deadline should be selected");
+                } else if (participants.isEmpty()) {
+                    mParticipantsButton.setError("A participant should be enrolled in this survey");
+                } else if (possibleAnswers == 0) {
+                    Toast.makeText(getBaseContext(), "User should be able to choose at least an answer", Toast.LENGTH_LONG).show();
+                } else {
+                    // Intent
+                    String name = mNameEdit.getText().toString();
+                    String description = mDescriptionEdit.getText().toString();
+                    try {
+                        PFPoll.createNewPoll(currentGroup, name, description, possibleAnswers, answers, deadline, participants);
+                    } catch (PFException e) {
+                        Toast.makeText(this, "Error while creating your poll", Toast.LENGTH_LONG).show();
+                    }
+                    finish();
                 }
-                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == PARTICIPANTS_ACT_KEY) {
+            if (resultCode == Activity.RESULT_OK) {
+                participants = new ArrayList<>(data.<PFMember>getParcelableArrayListExtra(PARTICIPANTS_KEY));
+                mParticipantsButton.setText(String.format(getString(R.string.participant_poll), participants.size()).concat(participants.size() > 1 ? "s" : ""));
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
         }
     }
 

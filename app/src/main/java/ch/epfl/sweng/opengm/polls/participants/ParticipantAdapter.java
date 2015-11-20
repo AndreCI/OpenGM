@@ -49,7 +49,7 @@ public class ParticipantAdapter extends ArrayAdapter<Participant> {
         holder.prefix.setText(participant.getPrefix());
         holder.name.setText(participant.getName());
         holder.info.setText(participant.getInfo());
-        holder.image.setBackgroundResource(participant.isGroup() ? R.drawable.ic_action_group : R.mipmap.ic_person_outline_white_24dp);
+        holder.image.setBackgroundResource(participant.isGroup() ? R.drawable.ic_action_group : R.drawable.ic_person);
 
         return row;
     }

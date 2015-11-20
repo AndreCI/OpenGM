@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ch.epfl.sweng.opengm.events.EventListActivity">
+    tools:context="ch.epfl.sweng.opengm.polls.participants.ListParticipantActivity">
 
     <SearchView
         android:id="@+id/searchView_PollParticipants"
