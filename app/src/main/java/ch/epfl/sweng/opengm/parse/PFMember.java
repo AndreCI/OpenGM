@@ -238,6 +238,10 @@ public final class PFMember extends PFEntity implements Parcelable {
         return mRoles.contains(role);
     }
 
+    public String getDisplayedName() {
+        return mFirstName + " " + mLastName;
+    }
+
     /**
      * Setter for the nickname of the member in this group
      *
