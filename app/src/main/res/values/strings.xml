@@ -373,5 +373,6 @@
     <string name="invite_contact">Invite a contact</string>
     <string name="cost_contact">Do you want to open the SMS application to invite %s? It may imply some additional costs.</string>
     <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
+    <string name="title_activity_create_new_conversation">CreateNewConversationActivity</string>
 
 </resources>
