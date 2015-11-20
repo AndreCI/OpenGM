@@ -59,6 +59,7 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent();
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+        intent.putExtra(Utils.EDIT_INTENT_MESSAGE, true);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

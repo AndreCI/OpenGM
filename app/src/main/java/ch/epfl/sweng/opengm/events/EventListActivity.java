@@ -44,14 +44,14 @@ public class EventListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        /*new Intent(Utils.GROUP_INTENT_MESSAGE);
+        Intent intent = //getIntent();
+        new Intent(Utils.GROUP_INTENT_MESSAGE);
 
         try {
-            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("AeLf1qc8u8"));
+            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
         } catch (PFException e) {
             e.printStackTrace();
-        }*/
+        }
         currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         eventMap = new ArrayMap<>();

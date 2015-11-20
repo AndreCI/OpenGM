@@ -101,7 +101,7 @@ public class Utils {
 
     public static Bitmap loadImageFromStorage(String path) throws FileNotFoundException
     {
-        File f=new File(path, "profile.jpg");
+        File f=new File(path, "image.jpg");
         return BitmapFactory.decodeStream(new FileInputStream(f));
     }
 }

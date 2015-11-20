@@ -128,7 +128,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 PFEvent event = createEditEvent();
                 intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-                intent.putExtra(Utils.EDIT_INTENT_MESSAGE, editing);
                 setResult(Activity.RESULT_OK, intent);
                 Log.v("event send in CreateEd", event.getId());
                 finish();
@@ -212,7 +211,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
         String path;
         try {
-            path= ch.epfl.sweng.opengm.utils.Utils.saveToInternalSorage(b,getApplicationContext(),event.getId()+"_event");
+            path= ch.epfl.sweng.opengm.utils.Utils.saveToInternalSorage(b,getApplicationContext(),
+                    String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event");
         } catch (IOException e) {
             path = PFUtils.pathNotSpecified;
         }

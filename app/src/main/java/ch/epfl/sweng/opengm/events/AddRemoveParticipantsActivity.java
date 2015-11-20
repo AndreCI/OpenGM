@@ -43,7 +43,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         PFGroup currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         PFEvent currentEvent = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
-        setTitle("Adding participants for Event :"+currentEvent.getName() + " for group : "+currentGroup.getName());
+        setTitle("Adding participants for Event"); //DONOT ADD currentEvent.name() or it will probably fail
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
             membersToAdd.putAll(currentEvent.getParticipants());
