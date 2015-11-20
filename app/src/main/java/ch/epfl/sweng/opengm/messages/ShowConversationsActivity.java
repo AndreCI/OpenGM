@@ -63,7 +63,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = (TextView) view.findViewById(R.id.conversation_title);
                 String title = ((ConversationAdapter) textView.getTag()).getTitle();
-                Intent intent; //.....
+                Intent intent = new Intent(ShowConversationsActivity.this, ShowMessagesActivity.class);
+                startActivity(intent);
                 //TODO : start activity of the conversation, use tag of textView and send path of txt file with Utils.FILE_PATH_INTENT_MESSAGE
             }
         });

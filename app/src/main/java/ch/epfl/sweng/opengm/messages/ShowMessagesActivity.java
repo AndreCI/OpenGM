@@ -15,10 +15,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+
+import static ch.epfl.sweng.opengm.messages.Utils.writeMessageLocal;
 
 /**
  * Created by virgile on 18/11/2015.
@@ -28,6 +33,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private CustomAdapter customAdapter;
     private List<MessageAdapter> messages;
     private EditText textBar;
+    private String path;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,12 +57,15 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 return handled;
             }
         });
-
+        path = new File(getFilesDir(), conversationInformation.getConversationName()).getAbsolutePath();
         ListView listView = (ListView) findViewById(R.id.message_list);
         listView.setAdapter(customAdapter);
     }
 
     private void sendMessage() {
+        String message = ((EditText) findViewById(R.id.message_text_bar)).getText().toString();
+        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getId(), message, new Date());
+        writeMessageLocal(path, messageAdapter, this);
         /* TODO: get back text from textBar + send it.
          * do it in back ground on the serv and localy while instantly adding it to the layout
          */
