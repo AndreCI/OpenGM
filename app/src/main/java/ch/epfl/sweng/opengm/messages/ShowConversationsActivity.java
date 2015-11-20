@@ -69,7 +69,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabNewConversation);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
