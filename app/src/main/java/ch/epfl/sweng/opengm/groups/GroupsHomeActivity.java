@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,12 +13,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
+import ch.epfl.sweng.opengm.identification.InputUtils;
+import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -35,6 +46,8 @@ public class GroupsHomeActivity extends AppCompatActivity
     private ListView mEventLists;
 
     private int groupPos;
+
+    private AlertDialog addMember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +75,28 @@ public class GroupsHomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // create the dialog that add members which then only need to be shown
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_member, null);
+        final EditText edit = (EditText) dialogLayout.findViewById(R.id.dialog_add_member_username);
+        builder.setView(dialogLayout)
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String usernameOrMail = String.valueOf(edit.getText());
+                        addUser(usernameOrMail);
+                        edit.getText().clear();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null);
+        addMember = builder.create();
 
+        // the floating button (+) that shows the dialog to add members
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                addMember.show();
             }
         });
 
@@ -133,5 +163,38 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             default:
         }
+    }
+
+    // almost same fucntion used in MembersActivity
+    // add a user to the group and to the list that is displayed in background according to a username
+    private void addUser(String usernameOrMail) {
+        // select between username or mail
+        String field;
+        if (InputUtils.isEmailValid(usernameOrMail)) {
+            field = PFConstants._USER_TABLE_EMAIL;
+        } else {
+            field = PFConstants._USER_TABLE_USERNAME;
+        }
+
+        // the actual query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PFConstants._USER_TABLE_NAME);
+        query.whereEqualTo(field, usernameOrMail);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if (parseObject != null) {
+                    String userId = parseObject.getObjectId();
+                    if (!currentGroup.containsMember(userId)) {
+                        // add the user to the group and to the list
+                        currentGroup.addUserWithId(userId);
+                        Toast.makeText(getBaseContext(), "User correctly added to this group.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getBaseContext(), "User already belongs to this group.", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(getBaseContext(), "Could not find this user", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

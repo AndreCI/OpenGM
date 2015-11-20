@@ -55,8 +55,7 @@
             android:name=".groups.MembersActivity"
             android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat" >
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".groups.CreateGroupActivity"
