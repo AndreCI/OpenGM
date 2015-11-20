@@ -44,7 +44,7 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
             holder = (PermissionHolder) row.getTag();
         }
 
-        holder.textView.setText(Integer.toString(permissions.get(position).getValue()));
+        holder.textView.setText(permissions.get(position).toString());
         holder.checkBox.setChecked(checks.get(position));
 
         return row;
