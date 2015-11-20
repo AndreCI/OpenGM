@@ -204,7 +204,7 @@ public class MembersActivity extends AppCompatActivity {
 
         if (!userIds.isEmpty()) {
             Intent intent = new Intent(this, ManageRolesActivity.class);
-            intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
+            intent.putExtra(ManageRolesActivity.GROUP, group);
             intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
             startActivityForResult(intent, 1);
         } else {

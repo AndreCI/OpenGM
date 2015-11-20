@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -39,58 +40,50 @@ public class ManageRolesActivity extends AppCompatActivity {
     private List<String> addedRoles = new ArrayList<>();
     private List<String> removedRoles = new ArrayList<>();
 
-    public final static String GROUP_ID = "ch.epfl.ch.opengm.groups.manageroles.groupid";
+    public final static String GROUP = "ch.epfl.ch.opengm.groups.manageroles.group";
     public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_roles);
+        roles = new ArrayList<>();
+        Intent intent = getIntent();
+        currentGroup = intent.getParcelableExtra(GROUP);
+        List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
+        HashMap<String, PFMember> idsMembers = currentGroup.getMembers();
+        groupMembers = new ArrayList<>();
+        for(String memberID : memberIDs){
+            groupMembers.add(idsMembers.get(memberID));
+        }
+        List<String> rolesFromServer = currentGroup.getRolesForUser(groupMembers.get(0).getId());
+        if (rolesFromServer != null) {
+            roles = new ArrayList<>(rolesFromServer);
+        } else {
+            Toast.makeText(getBaseContext(), "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.", Toast.LENGTH_LONG).show();
+        }
+        for (PFMember member : groupMembers) {
+            keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
+        }
 
-        if(NetworkUtils.haveInternet(getBaseContext())) {
-            roles = new ArrayList<>();
-            Intent intent = getIntent();
-            String groupId = intent.getStringExtra(GROUP_ID);
-            List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
-            PFMember member;
-            groupMembers = new ArrayList<>();
-            try {
-                currentGroup = PFGroup.fetchExistingGroup(groupId);
-                List<String> rolesFromServer = currentGroup.getRolesForUser(memberIDs.get(0));
-                if (rolesFromServer != null) {
-                    roles = new ArrayList<>(rolesFromServer);
-                } else {
-                    Toast.makeText(getBaseContext(), "Problem when loading roles for user " + memberIDs.get(0) + ": the user doesn't exist.", Toast.LENGTH_LONG).show();
-                }
-                for (String memberID : memberIDs) {
-                    member = PFMember.fetchExistingMember(memberID);
-                    keepIntersectionRoles(currentGroup.getRolesForUser(member.getId()));
-                    groupMembers.add(member);
-                }
-            } catch (PFException e) {
-                e.printStackTrace();
-            }
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_role, null);
 
-            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-            View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_role, null);
-
-
-            rolesListView = (ListView) findViewById(R.id.rolesListView);
-            adapter = new RolesAdapter(this, R.layout.item_role, roles);
-            rolesListView.setAdapter(adapter);
-            final EditText edit = (EditText)dialogLayout.findViewById(R.id.dialog_add_role_role);
-            alertBuilder.setView(dialogLayout).setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+        rolesListView = (ListView) findViewById(R.id.rolesListView);
+        adapter = new RolesAdapter(this, R.layout.item_role, roles);
+        rolesListView.setAdapter(adapter);
+        final EditText edit = (EditText)dialogLayout.findViewById(R.id.dialog_add_role_role);
+        alertBuilder.setView(dialogLayout).setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String role = edit.getText().toString();
-                    roles.add(role);
-                    addedRoles.add(role);
-                    adapter.notifyDataSetChanged();
-                    edit.getText().clear();
-                }
+                String role = edit.getText().toString();
+                roles.add(role);
+                addedRoles.add(role);
+                adapter.notifyDataSetChanged();
+                edit.getText().clear();
+            }
             }).setNegativeButton(R.string.cancel, null);
-            addRole = alertBuilder.create();
-        }
+        addRole = alertBuilder.create();
     }
 
     private void keepIntersectionRoles(List<String> otherRoles){
