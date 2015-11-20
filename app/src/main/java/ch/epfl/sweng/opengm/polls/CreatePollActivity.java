@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +36,7 @@ import ch.epfl.sweng.opengm.polls.participants.ListParticipantActivity;
 import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
+import static java.lang.Integer.parseInt;
 
 @SuppressWarnings("UnusedParameters")
 public final class CreatePollActivity extends AppCompatActivity {
@@ -107,7 +107,6 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     public void setDeadline(View view) {
         DialogFragment dialogFragment = new PollTimePickerFragment();
-        deadline = getDateFromText();
         dialogFragment.show(getFragmentManager(), deadline != null ? dateToString(deadline) : "");
     }
 
@@ -162,7 +161,7 @@ public final class CreatePollActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.action_validate:
-
+                deadline = getDateFromText();
                 if (TextUtils.isEmpty(mNameEdit.getText())) {
                     mNameEdit.setError(getString(R.string.empty_name_poll));
                     mNameEdit.requestFocus();
@@ -211,16 +210,13 @@ public final class CreatePollActivity extends AppCompatActivity {
     }
 
     private Date getDateFromText() {
-        Log.d("HERE", "HERE 0" + deadline);
         String[] dateString = mDeadlineButton.getText().toString().split("/");
         if (dateString.length != 3) {
-            Log.d("HERE", "HERE 1");
             return null;
         }
-        Log.d("HERE", "HERE 2");
-        int year = Integer.parseInt(dateString[2]);
-        int month = Integer.parseInt(dateString[1]) - 1;
-        int day = Integer.parseInt(dateString[0]);
+        int year = parseInt(dateString[2]);
+        int month = parseInt(dateString[1]) - 1;
+        int day = parseInt(dateString[0]);
         return new Date(year, month, day);
     }
 

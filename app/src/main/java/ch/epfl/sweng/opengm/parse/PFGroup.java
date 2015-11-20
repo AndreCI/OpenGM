@@ -41,9 +41,9 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFUtils.*;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
@@ -73,7 +73,7 @@ public final class PFGroup extends PFEntity {
     private final static String adminRole = "Administrator";
     private final static String userRole = "User";
 
-    public static enum Permission{
+    public enum Permission {
         ADD_MEMBER(0), REMOVE_MEMBER(1), MANAGE_ROLES(2), ADD_ROLES(3), ADD_EVENT(4), MANAGE_EVENT(5), MANAGE_GROUP(6);
 
         private int value;
@@ -107,6 +107,7 @@ public final class PFGroup extends PFEntity {
         List<String[]> roles = unzipRoles(rolesZip);
         fillMembersMap(users, nicknames, roles);
         mEvents = new HashMap<>();
+        mPolls = new HashMap<>();
         List<String> eventKeys = in.createStringArrayList();
         List<PFEvent> events = new ArrayList<>();
         in.readTypedList(events, PFEvent.CREATOR);

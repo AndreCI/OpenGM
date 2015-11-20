@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,10 +16,8 @@ import android.widget.SearchView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -34,8 +31,6 @@ public class ListParticipantActivity extends AppCompatActivity {
 
     private PFGroup group;
     private final List<Participant> participants = new ArrayList<>();
-
-    private final HashMap<Participant, Boolean> participantsChecked = new HashMap<>();
 
     private ParticipantAdapter mAdapter;
     private ListView list;
@@ -66,7 +61,6 @@ public class ListParticipantActivity extends AppCompatActivity {
                 boolean isChecked = box.isChecked();
                 box.setChecked(!isChecked);
                 Participant p = mAdapter.getItem(position);
-                participantsChecked.put(p, !isChecked);
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if (i != position) {
                         View row = list.getChildAt(i);
@@ -132,14 +126,12 @@ public class ListParticipantActivity extends AppCompatActivity {
         for (PFMember member : group.getMembers().values()) {
             Participant p = new Participant(member);
             participants.add(p);
-            participantsChecked.put(p, false);
         }
 
         for (String role : group.getRoles()) {
             List<PFMember> membersForRole = group.getMembersWithRole(role);
             Participant p = new Participant(role, membersForRole);
             participants.add(p);
-            participantsChecked.put(p, false);
         }
 
         Collections.sort(participants);
@@ -160,9 +152,12 @@ public class ListParticipantActivity extends AppCompatActivity {
             case R.id.action_validate:
 
                 HashSet<PFMember> members = new HashSet<>();
-                for (Map.Entry<Participant, Boolean> entry : participantsChecked.entrySet()) {
-                    if (entry.getValue()) {
-                        members.addAll(entry.getKey().getParticipants());
+
+                for (int i = 0; i < list.getChildCount(); i++) {
+                    View row = list.getChildAt(i);
+                    CheckBox box = (CheckBox) row.findViewById(R.id.participant_box_poll);
+                    if (box.isChecked()) {
+                        members.addAll(mAdapter.getItem(i).getParticipants());
                     }
                 }
                 Intent returnIntent = new Intent();

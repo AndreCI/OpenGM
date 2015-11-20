@@ -40,7 +40,6 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:text="Albert du Chateau de Versailles"
             android:textSize="15sp" />
 
         <TextView
@@ -53,7 +52,6 @@
             android:ellipsize="end"
             android:gravity="center_vertical|end"
             android:singleLine="true"
-            android:text="son username est très très long"
             android:textColor="@color/blue"
             android:textSize="15sp" />
 
@@ -64,7 +62,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="15"
-        android:background="@drawable/ic_action_group"
-        android:backgroundTint="@color/blue" />
+        android:background="@drawable/ic_action_group" />
 
 </LinearLayout>
