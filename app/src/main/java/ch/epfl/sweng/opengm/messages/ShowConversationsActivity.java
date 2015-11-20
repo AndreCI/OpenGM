@@ -27,7 +27,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
     private PFGroup currentGroup;
     private List<ConversationInformation> conversationInformations;
 
-    //TODO: model idea : group have a list of ids corresponding to text files in another parse table
+    //TODO: model idea : group have a list of ids corresponding to text files in another parse table, 1 file per conv + 1 with all conv names + last update and other things
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         List<ConversationAdapter> conversations = getConversations();
 
-        //TODO : check on serv which file is the most recent
+        //TODO : check on serv which file is the most recent in background, use local one and then update if necessary
 
         adapter = new CustomAdapter(this, R.layout.conversation_info, conversations);
 
@@ -55,7 +55,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 TextView textView = (TextView) view.findViewById(R.id.conversation_title);
                 String title = ((ConversationAdapter) textView.getTag()).getTitle();
                 Intent intent; //.....
-                //TODO : start activity of the conversation,0 use tag of textView and send path of txt file with Utils.FILE_PATH_INTENT_MESSAGE
+                //TODO : start activity of the conversation, use tag of textView and send path of txt file with Utils.FILE_PATH_INTENT_MESSAGE
             }
         });
     }

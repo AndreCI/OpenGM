@@ -10,20 +10,20 @@ public class ConversationInformation implements Parcelable {
     private String conversationId;
     private String conversationName;
     private String groupId;
-    private String textFilePath;
+    private String fileName;
 
     public ConversationInformation(Parcel in) {
         conversationId = in.readString();
         conversationName = in.readString();
         groupId = in.readString();
-        textFilePath = in.readString();
+        fileName = in.readString();
     }
 
-    public ConversationInformation(String conversationId, String conversationName, String groupId, String textFilePath) {
+    public ConversationInformation(String conversationId, String conversationName, String groupId, String fileName) {
         this.conversationId = conversationId;
         this.conversationName = conversationName;
         this.groupId = groupId;
-        this.textFilePath = textFilePath;
+        this.fileName = fileName;
     }
 
     public static final Creator<ConversationInformation> CREATOR = new Creator<ConversationInformation>() {
@@ -38,6 +38,21 @@ public class ConversationInformation implements Parcelable {
         }
     };
 
+    @Override
+    public String toString() {
+
+        return conversationId + '/' + conversationName + '/' + groupId + '/' + fileName;
+    }
+
+    public static ConversationInformation createFromStrinng(String string) {
+        String[] split = string.split("/");
+        if(split.length != 4) {
+            throw new IllegalArgumentException("Invalid string, format must be convId/convName/groupId/fileName");
+        } else {
+            return new ConversationInformation(split[0], split[1], split[2], split[3]);
+        }
+    }
+
     public String getConversationId() {
         return conversationId;
     }
@@ -50,8 +65,8 @@ public class ConversationInformation implements Parcelable {
         return groupId;
     }
 
-    public String getTextFilePath() {
-        return textFilePath;
+    public String getFileName() {
+        return fileName;
     }
 
     @Override
@@ -70,6 +85,6 @@ public class ConversationInformation implements Parcelable {
         dest.writeString(conversationId);
         dest.writeString(conversationName);
         dest.writeString(groupId);
-        dest.writeString(textFilePath);
+        dest.writeString(fileName);
     }
 }
