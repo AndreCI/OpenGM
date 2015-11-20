@@ -33,6 +33,8 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+
 public class MembersActivity extends AppCompatActivity {
 
     private AlertDialog addMember;
@@ -52,7 +54,7 @@ public class MembersActivity extends AppCompatActivity {
 
         // get the group in which we are
         groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
-        PFUser user = OpenGMApplication.getCurrentUser();
+        PFUser user = getCurrentUser();
         group = user.getGroups().get(groupIndex);
         members = new ArrayList<>();
         members.add(group.getMember(user.getId()));
@@ -88,8 +90,14 @@ public class MembersActivity extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                setSelectMode(true);
-                ((CheckBox) view.findViewById(R.id.member_checkbox)).setChecked(true);
+                boolean canRemove = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.REMOVE_MEMBER);
+                boolean canManageRoles = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.MANAGE_ROLES);
+
+                if (canRemove || canManageRoles) {
+                    setSelectMode(true);
+                    ((CheckBox) view.findViewById(R.id.member_checkbox)).setChecked(true);
+                }
+
                 return true;
             }
         });
@@ -132,10 +140,14 @@ public class MembersActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // display or not these option according to the select mode
-        menu.findItem(R.id.action_remove_person).setVisible(selectMode);
-        menu.findItem(R.id.action_change_roles).setVisible(selectMode);
-        menu.findItem(R.id.action_members_select).setVisible(!selectMode);
+        // display or not these option according to the select mode and the user permissions
+        boolean canRemove = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.REMOVE_MEMBER);
+        boolean canManageRoles = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.MANAGE_ROLES);
+
+        menu.findItem(R.id.action_add_person).setVisible(group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER));
+        menu.findItem(R.id.action_remove_person).setVisible(selectMode && canRemove);
+        menu.findItem(R.id.action_change_roles).setVisible(selectMode && canManageRoles);
+        menu.findItem(R.id.action_members_select).setVisible(!selectMode && (canRemove || canManageRoles));
         return super.onPrepareOptionsMenu(menu);
     }
 

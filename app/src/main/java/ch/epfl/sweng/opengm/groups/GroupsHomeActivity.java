@@ -100,6 +100,14 @@ public class GroupsHomeActivity extends AppCompatActivity
             }
         });
 
+        // show the floating button (+) only if user can add a member
+        if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER)) {
+            fab.setVisibility(View.VISIBLE);
+        } else {
+            fab.setVisibility(View.GONE);
+        }
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
