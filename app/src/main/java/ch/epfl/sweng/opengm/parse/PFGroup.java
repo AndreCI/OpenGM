@@ -69,9 +69,10 @@ public final class PFGroup extends PFEntity {
     private final static String userRole = "User";
 
     public static enum Permission{
-        ADD_MEMBER(0), REMOVE_MEMBER(1), MANAGE_ROLES(2), ADD_ROLES(3), ADD_EVENT(4), MANAGE_EVENT(5), MANAGE_GROUP(6);
+        ADD_MEMBER(0, "Add members"), REMOVE_MEMBER(1, "Remove members"), MANAGE_ROLES(2, "Manage roles"), ADD_ROLES(3, "Add roles"), ADD_EVENT(4, "Add events"), MANAGE_EVENT(5, "Manage events"), MANAGE_GROUP(6, "Manage groups");
 
         private int value;
+        private String name;
         private static Map<Integer, Permission> intToPermission = new HashMap<>();
 
         static{
@@ -84,12 +85,18 @@ public final class PFGroup extends PFEntity {
             return intToPermission.get(value);
         }
 
-        Permission(int value){
+        Permission(int value, String name){
             this.value = value;
+            this.name = name;
         }
 
         public int getValue(){
             return value;
+        }
+
+        @Override
+        public String toString(){
+            return name;
         }
     }
 
