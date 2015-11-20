@@ -11,6 +11,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/newConversationName"
         android:hint="Conversation name"
+        android:maxLines="1"
+        android:imeOptions="actionDone"
+        android:inputType="textAutoCorrect"
         android:layout_centerInParent="true"/>
 
     <Button
