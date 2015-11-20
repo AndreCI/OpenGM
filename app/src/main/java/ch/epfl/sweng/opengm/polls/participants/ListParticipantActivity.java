@@ -165,7 +165,6 @@ public class ListParticipantActivity extends AppCompatActivity {
                         members.addAll(entry.getKey().getParticipants());
                     }
                 }
-                Log.d("BEFORE", members.size() + "");
                 Intent returnIntent = new Intent();
                 returnIntent.putParcelableArrayListExtra(CreatePollActivity.PARTICIPANTS_KEY, new ArrayList<Parcelable>(members));
                 setResult(Activity.RESULT_OK, returnIntent);

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -163,19 +164,19 @@ public final class CreatePollActivity extends AppCompatActivity {
             case R.id.action_validate:
 
                 if (TextUtils.isEmpty(mNameEdit.getText())) {
-                    mNameEdit.setError("Name should not be empty");
+                    mNameEdit.setError(getString(R.string.empty_name_poll));
                     mNameEdit.requestFocus();
                 } else if (TextUtils.isEmpty(mDescriptionEdit.getText())) {
-                    mDescriptionEdit.setError("Description should not be empty");
+                    mDescriptionEdit.setError(getString(R.string.empty_description_poll));
                     mDescriptionEdit.requestFocus();
                 } else if (answers.size() < 2) {
-                    Toast.makeText(getBaseContext(), "User should be able to choose among at least 2 answers", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), getString(R.string.less_two_answers_poll), Toast.LENGTH_LONG).show();
                 } else if (deadline == null) {
-                    mDeadlineButton.setError("A deadline should be selected");
+                    mDeadlineButton.setError(getString(R.string.empty_date_poll));
                 } else if (participants.isEmpty()) {
-                    mParticipantsButton.setError("A participant should be enrolled in this survey");
+                    mParticipantsButton.setError(getString(R.string.no_participants_poll));
                 } else if (possibleAnswers == 0) {
-                    Toast.makeText(getBaseContext(), "User should be able to choose at least an answer", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), getString(R.string.no_answer_poll), Toast.LENGTH_LONG).show();
                 } else {
                     // Intent
                     String name = mNameEdit.getText().toString();
@@ -183,7 +184,7 @@ public final class CreatePollActivity extends AppCompatActivity {
                     try {
                         PFPoll.createNewPoll(currentGroup, name, description, possibleAnswers, answers, deadline, participants);
                     } catch (PFException e) {
-                        Toast.makeText(this, "Error while creating your poll", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.error_poll), Toast.LENGTH_LONG).show();
                     }
                     finish();
                 }
@@ -210,10 +211,13 @@ public final class CreatePollActivity extends AppCompatActivity {
     }
 
     private Date getDateFromText() {
+        Log.d("HERE", "HERE 0" + deadline);
         String[] dateString = mDeadlineButton.getText().toString().split("/");
         if (dateString.length != 3) {
+            Log.d("HERE", "HERE 1");
             return null;
         }
+        Log.d("HERE", "HERE 2");
         int year = Integer.parseInt(dateString[2]);
         int month = Integer.parseInt(dateString[1]) - 1;
         int day = Integer.parseInt(dateString[0]);

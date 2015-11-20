@@ -33,7 +33,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_NICKNAMES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_POLL;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_POLLS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ROLES_PERMISSIONS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_USERS;
@@ -41,6 +41,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFUtils.*;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
@@ -305,8 +306,11 @@ public final class PFGroup extends PFEntity {
                             }
                             object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
                             break;
+                        case GROUP_ENTRY_POLLS:
+                            object.put(GROUP_ENTRY_POLLS, collectionToArray(new ArrayList<PFEntity>(mPolls.values())));
+                            break;
                         case GROUP_ENTRY_EVENTS:
-                            object.put(GROUP_ENTRY_EVENTS, PFUtils.collectionToArray(new ArrayList<PFEntity>(mEvents.values())));
+                            object.put(GROUP_ENTRY_EVENTS, collectionToArray(new ArrayList<PFEntity>(mEvents.values())));
                             break;
                         case GROUP_ENTRY_DESCRIPTION:
                             object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
@@ -467,7 +471,7 @@ public final class PFGroup extends PFEntity {
         if (!mPolls.containsKey(poll.getId())) {
             try {
                 mPolls.put(poll.getId(), poll);
-                updateToServer(GROUP_ENTRY_POLL);
+                updateToServer(GROUP_ENTRY_POLLS);
             } catch (PFException e) {
                 mPolls.remove(poll.getId());
             }
@@ -478,7 +482,7 @@ public final class PFGroup extends PFEntity {
         if (mPolls.containsKey(poll.getId())) {
             try {
                 mPolls.remove(poll.getId());
-                updateToServer(GROUP_ENTRY_POLL);
+                updateToServer(GROUP_ENTRY_POLLS);
             } catch (PFException e) {
                 mPolls.put(poll.getId(), poll);
             }
