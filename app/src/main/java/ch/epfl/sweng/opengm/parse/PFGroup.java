@@ -131,7 +131,7 @@ public final class PFGroup extends PFEntity {
     }
 
 
-    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
+    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
         super(groupId, PARSE_TABLE_GROUP, date);
         if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
             throw new IllegalArgumentException("One of the array  is null");
@@ -141,6 +141,13 @@ public final class PFGroup extends PFEntity {
         }
         fillMembersMap(users, nicknames, roles);
         mPolls = new HashMap<>();
+        for (String pollId : polls) {
+            try {
+                mPolls.put(pollId, PFPoll.fetchExistingPoll(pollId));
+            } catch (PFException e) {
+                // Do not add the event but do nothing
+            }
+        }
         mEvents = new HashMap<>();
         for (String eventId : events) {
             try {
@@ -462,6 +469,10 @@ public final class PFGroup extends PFEntity {
 
     public List<PFEvent> getEvents() {
         return new ArrayList<>(mEvents.values());
+    }
+
+    public List<PFPoll> getPolls() {
+        return new ArrayList<>(mPolls.values());
     }
 
     public boolean hasMembers() {
@@ -848,11 +859,17 @@ public final class PFGroup extends PFEntity {
                 List<String> events = new ArrayList<>();
                 events.addAll(Arrays.asList(eventsArray));
 
+                String[] pollsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_POLLS));
+                List<String> polls = new ArrayList<>();
+                polls.addAll(Arrays.asList(pollsArray));
+
+                Log.d("FETCH", "" + polls.size());
+
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
-                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events, privacy, description, picture[0], rolesPermissions);
+                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events, polls, privacy, description, picture[0], rolesPermissions);
             } else {
                 throw new PFException("Query failed for id " + id);
             }
@@ -890,7 +907,7 @@ public final class PFGroup extends PFEntity {
         List<String[]> rolesList = new ArrayList<>();
         rolesList.add(new String[]{adminRole});
 
-
+        JSONArray polls = new JSONArray();
         JSONArray events = new JSONArray();
 
         JSONArray rolesPermissions = new JSONArray();
@@ -910,6 +927,7 @@ public final class PFGroup extends PFEntity {
         object.put(GROUP_ENTRY_NICKNAMES, nicknames);
         object.put(GROUP_ENTRY_ROLES, roles);
         object.put(GROUP_ENTRY_EVENTS, events);
+        object.put(GROUP_ENTRY_POLLS, polls);
         object.put(GROUP_ENTRY_NAME, name);
         object.put(GROUP_ENTRY_DESCRIPTION, about);
         object.put(GROUP_ENTRY_ISPRIVATE, false);
@@ -921,7 +939,7 @@ public final class PFGroup extends PFEntity {
         try {
             object.save();
             String id = object.getObjectId();
-            PFGroup newGroup = new PFGroup(id, object.getUpdatedAt(), name, usersList, nickNamesList, rolesList, new ArrayList<String>(), false, about, picture, rolesPermissionsMap);
+            PFGroup newGroup = new PFGroup(id, object.getUpdatedAt(), name, usersList, nickNamesList, rolesList, new ArrayList<String>(), new ArrayList<String>(), false, about, picture, rolesPermissionsMap);
             user.addToAGroup(newGroup);
             return newGroup;
         } catch (ParseException e) {
