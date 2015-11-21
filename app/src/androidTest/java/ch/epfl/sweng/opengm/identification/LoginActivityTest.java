@@ -28,7 +28,7 @@ public class LoginActivityTest extends ActivityInstrumentationTestCase2<LoginAct
     private final static String CURRENT_DATE = "" + Calendar.getInstance().getTimeInMillis();
 
     private final static String USERNAME_INCORRECT = "user" + CURRENT_DATE;
-    private final static String USERNAME_CORRECT = "aurel";
+    private final static String USERNAME_CORRECT = "root";
     private final static String PASSWORD_CORRECT = "Password1";
 
     public LoginActivityTest() {
