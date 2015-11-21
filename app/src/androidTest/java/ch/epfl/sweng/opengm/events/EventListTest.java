@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 
+import org.junit.After;
 import org.junit.Before;
 
 import ch.epfl.sweng.opengm.R;
@@ -59,6 +60,7 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
         onView(withId(R.id.eventListAddButton)).perform(click());
     }
 
+    @After
     public void tearDown() {
         if(group != null) {
             group.deleteGroup();

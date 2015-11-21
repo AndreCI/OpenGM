@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Participants:")));
     }
 
+    @After
     public void tearDown() {
         if (e != null) {
             try {

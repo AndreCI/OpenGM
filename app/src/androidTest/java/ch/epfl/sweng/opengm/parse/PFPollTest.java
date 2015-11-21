@@ -10,20 +10,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.UtilsTest;
+
 import static java.util.Collections.singletonList;
 import static junit.framework.Assert.assertEquals;
 
 public class PFPollTest {
 
+    private PFUser currentUser;
+    private PFGroup currentGroup;
     private PFPoll currentPoll;
 
     @Before
-    public void newIds() {
+    public void newIds() throws PFException {
+        currentUser = PFUser.createNewUser(UtilsTest.getRandomId(), "name", "0123456789", "email", "firstname", "lastname");
+        currentGroup = PFGroup.createNewGroup(currentUser, "name", "description", null);
         currentPoll = null;
     }
 
     @Test
     public void testGetters() {
+
         String name = "Poll test getters";
         String description = "Description for the getters test";
         Date deadline = new Date(1, 1, 1);
@@ -32,7 +39,7 @@ public class PFPollTest {
         List<PFMember> members = new ArrayList<>();
 
         try {
-            currentPoll = PFPoll.createNewPoll(null, name, description, nOfAnswers, answers, deadline, members);
+            currentPoll = PFPoll.createNewPoll(currentGroup, name, description, nOfAnswers, answers, deadline, members);
             assertEquals(name, currentPoll.getName());
             assertEquals(description, currentPoll.getDescription());
             assertEquals(deadline, currentPoll.getDeadline());
@@ -56,7 +63,7 @@ public class PFPollTest {
         List<PFMember> members = new ArrayList<>();
 
         try {
-            currentPoll = PFPoll.createNewPoll(null, name, description, nOfAnswers, answers, deadline, members);
+            currentPoll = PFPoll.createNewPoll(currentGroup, name, description, nOfAnswers, answers, deadline, members);
             PFPoll poll2 = PFPoll.fetchExistingPoll(currentPoll.getId());
             assertEquals(currentPoll.getName(), poll2.getName());
             assertEquals(currentPoll.getDescription(), poll2.getDescription());
@@ -71,6 +78,10 @@ public class PFPollTest {
 
     @After
     public void deleteAfterTesting() throws PFException {
+        if (currentGroup != null) {
+            currentGroup.deleteGroup();
+        }
+        UtilsTest.deleteUserWithId(currentUser.getId());
         if (currentPoll != null)
             currentPoll.delete();
     }
