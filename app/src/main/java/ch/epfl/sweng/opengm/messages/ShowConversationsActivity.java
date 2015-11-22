@@ -78,7 +78,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
                 intent.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, currentGroup);
                 startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
-                //TODO: add new Conversation
             }
         });
     }
