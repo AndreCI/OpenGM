@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,6 +52,8 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     private List<String> addedRoles = new ArrayList<>();
     private List<String> removedRoles = new ArrayList<>();
+
+    private int selected = 0;
 
     public final static String GROUP_INDEX = "ch.epfl.ch.opengm.groups.manageroles.groupIndex";
     public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
@@ -140,6 +143,15 @@ public class ManageRolesActivity extends AppCompatActivity {
         roles.removeAll(toRemove);
     }
 
+    protected void updateOptions(boolean isChecked){
+        if (isChecked) {
+            selected++;
+        } else {
+            selected--;
+        }
+        invalidateOptionsMenu();
+    }
+
     private void savePermissionChanges(ListView listView){
         List<PFGroup.Permission> addPermission = new ArrayList<>();
         List<PFGroup.Permission> removePermission = new ArrayList<>();
@@ -198,6 +210,13 @@ public class ManageRolesActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_manage_roles, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_modify_permissions).setVisible(selected != 0);
+        menu.findItem(R.id.action_remove_role).setVisible(selected != 0);
         return true;
     }
 

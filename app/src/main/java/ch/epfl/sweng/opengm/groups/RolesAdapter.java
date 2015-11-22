@@ -48,6 +48,12 @@ public class RolesAdapter extends ArrayAdapter<String>{
 
         String role = roles.get(position);
         holder.textView.setText(role);
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ManageRolesActivity) context).updateOptions(((CheckBox) v).isChecked());
+            }
+        });
 
         return row;
     }
