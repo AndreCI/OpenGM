@@ -96,14 +96,18 @@ public class ManageRolesActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String role = edit.getText().toString();
-                    if(!isAdministrator && role.equals("Administrator")){
-                        Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
+                    if(!role.isEmpty() && (role.charAt(0) != ' ')){
+                        if(!isAdministrator && role.equals("Administrator")){
+                            Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
+                        } else {
+                            roles.add(role);
+                            addedRoles.add(role);
+                            adapter.notifyDataSetChanged();
+                            edit.getText().clear();
+                            invalidateOptionsMenu();
+                        }
                     } else {
-                        roles.add(role);
-                        addedRoles.add(role);
-                        adapter.notifyDataSetChanged();
-                        edit.getText().clear();
-                        invalidateOptionsMenu();
+                        Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
                     }
                 }
             }).setNegativeButton(R.string.cancel, null);
@@ -325,7 +329,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         editText.requestFocus();
     }
 
-    protected List<String> getCheckedRoles(boolean uncheck){
+    private List<String> getCheckedRoles(boolean uncheck){
         List<String> roles = new ArrayList<>();
         for(int i = 0; i < rolesListView.getCount(); i++){
             View v = rolesListView.getChildAt(i);
