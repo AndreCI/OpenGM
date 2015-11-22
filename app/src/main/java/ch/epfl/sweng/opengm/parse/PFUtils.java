@@ -21,6 +21,7 @@ import java.util.Set;
 public final class PFUtils {
 
     public static final String pathNotSpecified = "error400badrequest";
+    public static final String nameNotSpecified = "error300wrongname";
 
     /**
      * Converts a JSONArray into an array of String

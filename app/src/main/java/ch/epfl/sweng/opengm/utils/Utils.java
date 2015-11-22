@@ -102,9 +102,9 @@ public class Utils {
         return directory.getAbsolutePath();
     }
 
-    public static Bitmap loadImageFromStorage(String path) throws FileNotFoundException
+    public static Bitmap loadImageFromStorage(String path, String name) throws FileNotFoundException
     {
-        File f=new File(path, "image.jpg");
+        File f=new File(path, name);
         return BitmapFactory.decodeStream(new FileInputStream(f));
     }
 }

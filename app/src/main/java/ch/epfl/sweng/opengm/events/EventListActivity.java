@@ -187,21 +187,23 @@ public class EventListActivity extends AppCompatActivity {
                         showEvent((PFEvent) b.getTag());
                     }
                 });
-
-
                 linearLayoutListEvents.addView(b);
             }
         }
     }
 
     private void showEvent(PFEvent currentEvent) {
-        if(currentEvent.getPicturePath()==PFUtils.pathNotSpecified)
-        try {
-            currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.
-                    saveToInternalSorage(currentEvent.getPicture(),getApplicationContext(), currentEvent.getId()+"_event.jpg"));
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Unable to write image or to retrieve image", Toast.LENGTH_SHORT).show();
-            currentEvent.setPicturePath(PFUtils.pathNotSpecified);
+        if(currentEvent.getPicturePath()==PFUtils.pathNotSpecified) {
+            try {
+                String imageName = currentEvent.getId() + "_event";
+                currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.
+                        saveToInternalSorage(currentEvent.getPicture(), getApplicationContext(),imageName));
+                currentEvent.setPictureName(imageName);
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "Unable to write image or to retrieve image", Toast.LENGTH_SHORT).show();
+                currentEvent.setPicturePath(PFUtils.pathNotSpecified);
+                currentEvent.setPictureName(PFUtils.nameNotSpecified);
+            }
         }
 
         Intent intent = new Intent(this, ShowEventActivity.class);

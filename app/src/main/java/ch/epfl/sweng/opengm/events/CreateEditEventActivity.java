@@ -198,10 +198,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         participantsList.setText(participantsStringList.substring(0, participantsStringList.length() - 2));
     }
 
-    private String writeImageInFileAndGetPath(){
+    private Bitmap getBitmap(){
         Bitmap b = null;
         if(selectedImageUri==null){
-                b= BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
+            b= BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
         }else{
             try {
                 b = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
@@ -209,10 +209,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        return b;
+    }
+    private String writeImageInFileAndGetPath(Bitmap b, String picName){
         String path;
         try {
-            path= ch.epfl.sweng.opengm.utils.Utils.saveToInternalSorage(b,getApplicationContext(),
-                    String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event");
+            path= ch.epfl.sweng.opengm.utils.Utils.saveToInternalSorage(b,getApplicationContext(),picName);
         } catch (IOException e) {
             path = PFUtils.pathNotSpecified;
         }
@@ -241,8 +243,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         try {
-            String imagePath=writeImageInFileAndGetPath();
-            return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, null);
+            Bitmap b = getBitmap();
+            String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
+            String imagePath=writeImageInFileAndGetPath(b, picName);
+            Toast.makeText(getApplicationContext(),picName + "  "+imagePath, Toast.LENGTH_LONG).show();
+            return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, null);
         } catch (PFException e) {
             // TODO toast ?
             return null;
@@ -264,7 +269,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
 
         event.setPlace(place);
-        event.setPicturePath(writeImageInFileAndGetPath());
+        Bitmap b = getBitmap();
+        event.setPicturePath(writeImageInFileAndGetPath(b, PFUtils.nameNotSpecified));
+        event.setPictureName(PFUtils.nameNotSpecified);
         return event;
     }
 

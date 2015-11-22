@@ -115,14 +115,15 @@ public class ShowEventActivity extends AppCompatActivity {
     }
     private void fillEventBitmap(){
         String imagePath = event.getPicturePath();
-        if(imagePath!= PFUtils.pathNotSpecified) {
+        String imageName = event.getPictureName();
+        if(imagePath!= PFUtils.pathNotSpecified && imageName!=PFUtils.nameNotSpecified) {
             Bitmap b;
             try {
-                b = ch.epfl.sweng.opengm.utils.Utils.loadImageFromStorage(imagePath);
+                b = ch.epfl.sweng.opengm.utils.Utils.loadImageFromStorage(imagePath, imageName+".jpg");
                 ImageView iv = (ImageView) findViewById(R.id.ShowEventBitmap);
                 iv.setImageBitmap(b);
             } catch (FileNotFoundException e) {
-                Toast.makeText(getApplicationContext(), "Couldn't retrieve the image : Error 400 Wrong Path", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Couldn't retrieve the image : Error 390 File not Found" + imagePath+ "  "+imageName, Toast.LENGTH_LONG).show();
             }
         }else{
             Toast.makeText(getApplicationContext(), "Couldn't retrieve the image : Error 400 No Path Specified", Toast.LENGTH_SHORT).show();

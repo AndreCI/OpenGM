@@ -46,6 +46,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     private Date mDate;
     private String mPlace;
     private String mPicturePath;
+    private String mPictureName;
     private Bitmap mPicture;
     private HashMap<String, PFMember> mParticipants;
 
@@ -56,6 +57,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         mDate = Utils.stringToDate(in.readString());
         mPlace = in.readString();
         mPicturePath = in.readString();
+        mPictureName = in.readString();
         mPicture=null;
         List<String> participantKeys = in.createStringArrayList();
         Parcelable[] array = in.readParcelableArray(getClass().getClassLoader());
@@ -82,7 +84,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
     };
 
-    private PFEvent(String id, Date updated, String name, String place, Date date, String description, List<PFMember> participants, String picturePath,Bitmap picture) {
+    private PFEvent(String id, Date updated, String name, String place, Date date, String description, List<PFMember> participants, String picturePath, String pictureName, Bitmap picture) {
         super(id, PARSE_TABLE_EVENT, updated);
         this.mTitle = name;
         this.mPlace = place;
@@ -94,6 +96,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             //TODO : participants is list of String or PFMemeber?
         }
         this.mPicturePath=picturePath;
+        this.mPictureName = pictureName;
         this.mPicture = picture;
     }
 
@@ -152,6 +155,10 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     public String getPicturePath() {return mPicturePath;}
 
     public void setPicturePath(String s){this.mPicturePath=s;}
+
+    public String getPictureName() {return mPictureName;}
+
+    public void setPictureName(String s){this.mPictureName=s;}
 
     public Bitmap getPicture() {
         return mPicture;
@@ -325,7 +332,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
     }
 
-    public static PFEvent createEvent(PFGroup group, String name, String place, Date date, List<PFMember> participants, String description, String picturePath, Bitmap picture) throws PFException {
+    public static PFEvent createEvent(PFGroup group, String name, String place, Date date, List<PFMember> participants, String description, String picturePath, String pictureName, Bitmap picture) throws PFException {
         ParseObject object = new ParseObject(EVENT_TABLE_NAME);
         object.put(EVENT_ENTRY_TITLE, name);
         object.put(EVENT_ENTRY_PLACE, place);
@@ -338,13 +345,13 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
         object.put(EVENT_ENTRY_PARTICIPANTS, participantsIds);
         if (picture != null) {
-            object.put(EVENT_ENTRY_PICTURE, picture);
+//            object.put(EVENT_ENTRY_PICTURE, picture);
         }
 
         try {
             object.save();
             String id = object.getObjectId();
-            PFEvent event = new PFEvent(id, object.getUpdatedAt(), name, place, date, description, participants, picturePath, picture);
+            PFEvent event = new PFEvent(id, object.getUpdatedAt(), name, place, date, description, participants, picturePath, pictureName, picture);
             group.addEvent(event);
             return event;
         } catch (ParseException e) {
@@ -353,7 +360,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
     }
 
-    public static PFEvent createEvent(PFGroup group, String name, String place, Date date, String description, List<String> participants, String picturePath, Bitmap picture) throws PFException {
+    public static PFEvent createEvent(PFGroup group, String name, String place, Date date, String description, List<String> participants, String picturePath, String pictureName, Bitmap picture) throws PFException {
         List<PFMember> members = new ArrayList<>();
 
         for (String participantID : participants) {
@@ -363,7 +370,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 // Just do not add this guy :)
             }
         }
-        return createEvent(group, name, place, date, members, description, picturePath, picture);
+        return createEvent(group, name, place, date, members, description, picturePath, pictureName, picture);
     }
 
     public static PFEvent fetchExistingEvent(String id) throws PFException {
@@ -394,7 +401,9 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                         // Just do not add this guy :)
                     }
                 }
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members, PFUtils.pathNotSpecified,picture[0]);
+                String imagePath = PFUtils.pathNotSpecified;
+                String imageName = PFUtils.nameNotSpecified;
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,picture[0]);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -418,6 +427,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         dest.writeString(dateToString(mDate));
         dest.writeString(mPlace);
         dest.writeString(mPicturePath);
+        dest.writeString(mPictureName);
         List<String> participantKeys = new ArrayList<>();
         List<PFMember> participants = new ArrayList<>();
         for(String s : mParticipants.keySet()) {
