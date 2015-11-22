@@ -1,14 +1,12 @@
 package ch.epfl.sweng.opengm.groups;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
@@ -27,20 +25,13 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRolesActivity>{
-    private LinearLayout rolesAndButtons;
     private ListView listView;
     private PFGroup testGroup;
     private List<PFUser> testUsers;
@@ -61,13 +52,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     private final static String TEST_ROLE_PREFIX = "testRole";
     private final static String NEW_TEST_ROLE_PREFIX = "Super new Role";
 
-    private final static String ROLE_BOX_PREFIX = "roleBox";
-    private final static String REMOVE_ROLE_PREFIX = "removeRole";
-    private final static String ROLE_NAME_PREFIX = "roleName";
-    private final static String OK_BUTTON = "okButton";
-    private final static String ADD_ROLE = "addRole";
-    private final static String NEW_ROLE_EDIT = "newRoleEdit";
-
     private final static String ROLE_FOR_PREFIX = "roleFor";
     private final static String ROLE_FOR_BOTH = "ForBoth";
 
@@ -85,13 +69,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     @After
     public void tearDown() throws Exception {
         cleanUpDBAfterTests();
+        OpenGMApplication.logOut();
         super.tearDown();
     }
 
     public void testIfFetchesUsersRoles() throws Exception {
         prepareIntentAndDatabase(1);
-        Thread.sleep(1000);
-        addTestRolesToUser(3, testUsers.get(0).getId());
         Thread.sleep(1000);
         getActivityAndLayout();
 
@@ -104,41 +87,46 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
         addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(isChecked()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(not(isEnabled())));
+        assertTrue(getDisplayedRoles().contains(NEW_TEST_ROLE_PREFIX + "1"));
         onView(withId(R.id.button)).perform(click());
-        Thread.sleep(1000);
         updateReferencesFromDatabase();
-        Thread.sleep(1000);
-
-        assertTrue(databaseRolesMatchesView());
+        assertTrue(getRolesOrFail(testUsers.get(0).getId()).contains(NEW_TEST_ROLE_PREFIX + "1"));
     }
 
-
-    public void testIfRemovingAddedRoleDoesntGoToDatabase() throws Exception {
-        prepareIntentAndDatabase(1);
-        getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "1")))).check(doesNotExist());
-
-        onView(withId(R.id.button)).perform(click());
-        Thread.sleep(1000);
-        updateReferencesFromDatabase();
-        Thread.sleep(1000);
-        boolean result = databaseRolesMatchesView();
-        assertTrue(result);
-    }
+//    public void testIfRemovingAddedRoleDoesntGoToDatabase() throws Exception {
+//        prepareIntentAndDatabase(1);
+//        getActivityAndLayout();
+//        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
+//
+//        createRolesActivity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                getCheckBoxForRole(NEW_TEST_ROLE_PREFIX + "1").performClick();
+//            }
+//        });
+//        onView(withId(R.id.action_remove_role)).perform(click());
+//
+//        assertFalse(getDisplayedRoles().contains(NEW_TEST_ROLE_PREFIX + "1"));
+//        onView(withId(R.id.button)).perform(click());
+//        updateReferencesFromDatabase();
+//        assertTrue(databaseRolesMatchesView());
+//    }
 
     public void testIfRemovesRoleFromDatabase() throws Exception {
         prepareIntentAndDatabase(1);
         testGroup.addRoleToUser(TEST_ROLE_PREFIX + "0", testUsers.get(0).getId());
         Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
         getActivityAndLayout();
 
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).perform(click());
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(TEST_ROLE_PREFIX + "0").performClick();
+            }
+        });
+        onView(withId(R.id.action_remove_role)).perform(click());
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
         updateReferencesFromDatabase();
@@ -154,18 +142,11 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testIfDeclinesBadRoleName() throws Exception{
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
-        onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
-        onView(withTagValue(is((Object) NEW_ROLE_EDIT))).perform(typeText(""));
-        onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "2")))).check(doesNotExist());
-    }
 
+        onView(withId(R.id.action_add_role)).perform(click());
+        onView(withText("Add")).perform(click());
 
-    public void testCantPressAddButtonWhenEditingNewRole() throws Exception{
-        prepareIntentAndDatabase(1);
-        getActivityAndLayout();
-        onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
-        onView(withTagValue(is((Object) ADD_ROLE))).check(doesNotExist());
+        assertFalse(getDisplayedRoles().contains(""));
     }
 
     public void testOnlyShowCommonRolesWhenMultipleUsers() throws Exception{
@@ -174,6 +155,8 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_BOTH + "1", testUsers.get(1).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
+        Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
         Thread.sleep(1000);
         getActivityAndLayout();
 
@@ -186,17 +169,17 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         prepareIntentAndDatabase(2);
         Thread.sleep(1000);
         getActivityAndLayout();
-        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "0");
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "0")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(isChecked()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).check(matches(not(isEnabled())));
+
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
+        assertTrue(getDisplayedRoles().contains(NEW_TEST_ROLE_PREFIX + "1"));
         onView(withId(R.id.button)).perform(click());
-        Thread.sleep(1000);
         updateReferencesFromDatabase();
+
         Thread.sleep(1000);
 
-        boolean result = databaseRolesMatchesView();
-        assertTrue(result);
+        for(PFUser user : testUsers){
+            assertTrue(getRolesOrFail(user.getId()).contains(NEW_TEST_ROLE_PREFIX + "1"));
+        }
 
     }
 
@@ -205,13 +188,24 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
         Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
         getActivityAndLayout();
 
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).perform(click());
+        assertTrue(getDisplayedRoles().contains(ROLE_FOR_BOTH));
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(ROLE_FOR_BOTH).performClick();
+            }
+        });
+        onView(withId(R.id.action_remove_role)).perform(click());
         onView(withId(R.id.button)).perform(click());
         Thread.sleep(1000);
         updateReferencesFromDatabase();
         Thread.sleep(1000);
+
         String userID1 = testUsers.get(0).getId();
         String userID2 = testUsers.get(1).getId();
         List<String> rolesFor1 = getRolesOrFail(userID1);
@@ -228,21 +222,27 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
         Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
         PFUser additionalUser = PFUser.createNewUser("additionalUser", "addi@tional.com", "0", "testDoesntAffectOtherUsers", "addi", "tional");
         testGroup.addUserWithId(additionalUser.getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, additionalUser.getId());
         Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
         getActivityAndLayout();
 
-        onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
-        onView(withTagValue(is((Object) NEW_ROLE_EDIT))).perform(typeText(NEW_TEST_ROLE_PREFIX));
-        onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + "1")))).check(matches(withText(NEW_TEST_ROLE_PREFIX)));
-        onView(withTagValue(is((Object) (REMOVE_ROLE_PREFIX + "1")))).check(matches(isEnabled()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(isChecked()));
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "1")))).check(matches(not(isEnabled())));
+        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "");
+        assertTrue(getDisplayedRoles().contains(NEW_TEST_ROLE_PREFIX));
 
-        onView(withTagValue(is((Object) (ROLE_BOX_PREFIX + "0")))).perform(click());
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(ROLE_FOR_BOTH).performClick();
+            }
+        });
+        onView(withId(R.id.action_remove_role)).perform(click());
+
         onView(withId(R.id.button)).perform(click());
 
         Thread.sleep(1000);
@@ -251,7 +251,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         Thread.sleep(1000);
 
         String userID0 = testUsers.get(0).getId();
-        String userID1 = testUsers.get(0).getId();
+        String userID1 = testUsers.get(1).getId();
         String additionalID = additionalUser.getId();
         List<String> rolesFor0 = getRolesOrFail(userID0);
         List<String> rolesFor1 = getRolesOrFail(userID1);
@@ -273,10 +273,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private void addNewRoleWithView(String newRole, String index){
-        onView(withTagValue(is((Object) ADD_ROLE))).perform(click());
-        onView(withTagValue(is((Object) NEW_ROLE_EDIT))).perform(typeText(newRole));
-        onView(withTagValue(is((Object) OK_BUTTON))).perform(click());
-        onView(withTagValue(is((Object) (ROLE_NAME_PREFIX + index)))).check(matches(withText(newRole)));
+        onView(withId(R.id.action_add_role)).perform(click());
+        onView(withId(R.id.dialog_add_role_role)).perform(typeText(newRole + index));
+        onView(withText("Add")).perform(click());
     }
 
     private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
@@ -315,7 +314,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
         testUsers.add(firstUser);
-        OpenGMApplication.setCurrentUser(firstUser.getId());
+
 
         testGroup = PFGroup.createNewGroup(firstUser, TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         for(int i = 1; i < numUser; i++){
@@ -323,6 +322,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
             testGroup.addUserWithId(TEST_USER_ID_PREFIX + i);
         }
         firstUser.reload();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        OpenGMApplication.setCurrentUser(firstUser.getId());
     }
 
     private void cleanUpDBAfterTests() throws com.parse.ParseException, InterruptedException {
@@ -336,12 +341,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         List<String> roles = getRolesIntersection();
         boolean allIn = true;
 
-        List<String> displayedRoles = new ArrayList<>();
-        for(int i = 0; i < listView.getCount(); i++){
-            View v = listView.getChildAt(i);
-            TextView roleText = (TextView) v.findViewById(R.id.role_name);
-            displayedRoles.add(roleText.getText().toString());
-        }
+        List<String> displayedRoles = getDisplayedRoles();
 
         for(String role : displayedRoles){
             if(roles.contains(role)){
@@ -354,11 +354,37 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         return roles.isEmpty() && allIn;
     }
 
-    private void updateReferencesFromDatabase() throws Exception{
-        testGroup = PFGroup.fetchExistingGroup(testGroup.getId());
-        for(int i = 0; i < testUsers.size(); i++){
-            testUsers.set(i, PFUser.fetchExistingUser(testUsers.get(i).getId()));
+    private List<String> getDisplayedRoles(){
+        List<String> displayedRoles = new ArrayList<>();
+        for(int i = 0; i < listView.getCount(); i++){
+            View v = listView.getChildAt(i);
+            TextView roleText = (TextView) v.findViewById(R.id.role_name);
+            displayedRoles.add(roleText.getText().toString());
         }
+        return displayedRoles;
+    }
+
+    private CheckBox getCheckBoxForRole(String role){
+        CheckBox toReturn = null;
+        for(int i = 0; i < listView.getCount(); i++){
+            View v = listView.getChildAt(i);
+            TextView roleText = (TextView) v.findViewById(R.id.role_name);
+            String current = roleText.getText().toString();
+            if(current.equals(role)){
+                toReturn = (CheckBox) v.findViewById(R.id.role_checkbox);
+            }
+        }
+
+        return toReturn;
+    }
+
+    private void updateReferencesFromDatabase() throws Exception{
+        OpenGMApplication.getCurrentUser().reload();
+        Thread.sleep(2000);
+        testGroup = OpenGMApplication.getCurrentUser().getGroups().get(0);
+//        for(int i = 0; i < testUsers.size(); i++){
+//            testUsers.set(i, PFUser.fetchExistingUser(testUsers.get(i).getId()));
+//        }
     }
 
     private List<String>getRolesIntersection(){
@@ -389,6 +415,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     private void getActivityAndLayout() {
         createRolesActivity = getActivity();
         listView = (ListView) createRolesActivity.findViewById(R.id.rolesListView);
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
     }
 
     private void addTestRolesToUser(int numRoles, String userID) throws Exception{
