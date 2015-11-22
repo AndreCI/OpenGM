@@ -1,9 +1,11 @@
 package ch.epfl.sweng.opengm.messages;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -50,7 +52,8 @@ public class CreateNewConversationActivity extends AppCompatActivity {
         String path = getFilesDir().getAbsolutePath()+conversationName+".txt";
         new CreateFileInBackground().execute(path);
         intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, new ConversationInformation(conversationName, currentGroup.getId(), path));
-        setResult(ShowConversationsActivity.NEW_CONVERSATION_REQUEST_CODE, intent);
+        setResult(Activity.RESULT_OK, intent);
+        Log.v("CreateNewConversation", conversationName + ", " + path);
         finish();
     }
 

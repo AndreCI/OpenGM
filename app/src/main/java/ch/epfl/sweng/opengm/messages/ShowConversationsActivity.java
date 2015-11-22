@@ -51,7 +51,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
         currentGroup = intent.getParcelableExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
         generateConversationList();
         //TODO: in background start fetching the file on the serv and then read it and compare the lists
-        List<ConversationAdapter> conversations = getConversations();
+        List<ConversationInformation> conversations = getConversations();
 
         //TODO : check on serv which file is the most recent in background, use local one and then update if necessary
 
@@ -64,10 +64,10 @@ public class ShowConversationsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = (TextView) view.findViewById(R.id.conversation_title);
-                String title = ((ConversationAdapter) textView.getTag()).getTitle();
+                ConversationInformation conversationInformation = (ConversationInformation) textView.getTag();
                 Intent intent = new Intent(ShowConversationsActivity.this, ShowMessagesActivity.class);
+                intent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversationInformation);
                 startActivity(intent);
-                //TODO : start activity of the conversation, use tag of textView and send path of txt file with Utils.FILE_PATH_INTENT_MESSAGE
             }
         });
 
@@ -88,8 +88,11 @@ public class ShowConversationsActivity extends AppCompatActivity {
         if (requestCode == NEW_CONVERSATION_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 conversationInformations.add((ConversationInformation) data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE));
+                ListView listView = (ListView) findViewById(R.id.conversation_list);
+                listView.setAdapter(new CustomAdapter(this, R.layout.conversation_info, conversationInformations));
+                Log.v("ShowConversations", "activity result good code");
             } else {
-
+                Log.v("ShowConversations", "activity result bad code");
             }
         }
     }
@@ -137,18 +140,18 @@ public class ShowConversationsActivity extends AppCompatActivity {
         serveurLastUpdate = stringToDate(line);
     }
 
-    private List<ConversationAdapter> getConversations() {
-        List<ConversationAdapter> result = new ArrayList<>();
+    private List<ConversationInformation> getConversations() {
+        List<ConversationInformation> result = new ArrayList<>();
         for (ConversationInformation inf : conversationInformations) {
-            result.add(new ConversationAdapter(inf));
+            result.add(inf);
         }
         return result;
     }
 
-    private class CustomAdapter extends ArrayAdapter<ConversationAdapter> {
-        private List<ConversationAdapter> conversations;
+    private class CustomAdapter extends ArrayAdapter<ConversationInformation> {
+        private List<ConversationInformation> conversations;
 
-        public CustomAdapter(Context context, int resource, List<ConversationAdapter> conversations) {
+        public CustomAdapter(Context context, int resource, List<ConversationInformation> conversations) {
             super(context, resource, conversations);
             this.conversations = new ArrayList<>();
             this.conversations.addAll(conversations);
@@ -173,10 +176,10 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            ConversationAdapter conversationAdapter = conversations.get(position);
-            holder.textView.setText(conversationAdapter.getTitle());
+            ConversationInformation conversationInformation = conversations.get(position);
+            holder.textView.setText(conversationInformation.getConversationName());
             holder.radioButton.setChecked(false);
-            holder.textView.setTag(conversationAdapter);
+            holder.textView.setTag(conversationInformation);
 
             return convertView;
         }
