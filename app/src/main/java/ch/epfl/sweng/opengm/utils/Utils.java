@@ -92,6 +92,9 @@ public class Utils {
         FileOutputStream fos = null;
         fos = new FileOutputStream(mypath);
         // Use the compress method on the BitMap object to write image to the OutputStream
+        if(bitmapImage == null){
+            bitmapImage = BitmapFactory.decodeResource(appContext.getResources(),R.drawable.default_event);
+        }
         bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
         if (fos != null) {
             fos.close();

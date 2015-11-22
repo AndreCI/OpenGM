@@ -90,13 +90,14 @@ public class EventListActivity extends AppCompatActivity {
                     try {
                         if(edited) {
                             currentGroup.updateEvent(event);
+                            Toast.makeText(getApplicationContext(), "Event sucessfully edited", Toast.LENGTH_SHORT).show();
                         }else{
                             currentGroup.addEvent(event);
+                            Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT).show();
                         }
                     } catch (PFException e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "Couldn't add the event. Refresh later.",Toast.LENGTH_SHORT).show();
                 }
@@ -162,15 +163,15 @@ public class EventListActivity extends AppCompatActivity {
      */
     public void displayEvents(){
         RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.ScrollViewParentLayout);
-        screenLayout.removeAllViews();
-        ScrollView scrollViewForEvents = new ScrollView(this);
-        ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
-        scrollViewForEvents.setLayoutParams(scrollViewLP);
-        LinearLayout linearLayoutListEvents = new LinearLayout(this);
-        linearLayoutListEvents.setOrientation(LinearLayout.VERTICAL);
+        ScrollView scrollViewForEvents = (ScrollView) findViewById(R.id.scrollView4);
+   //     ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
+     //   scrollViewForEvents.setLayoutParams(scrollViewLP);
+        LinearLayout linearLayoutListEvents = (LinearLayout) findViewById(R.id.line3);
+        linearLayoutListEvents.removeAllViews();
+       // linearLayoutListEvents.setOrientation(LinearLayout.VERTICAL);
 
-        LinearLayout.LayoutParams eventListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        linearLayoutListEvents.setLayoutParams(eventListLP);
+//        LinearLayout.LayoutParams eventListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+  //      linearLayoutListEvents.setLayoutParams(eventListLP);
 
         CheckBox checkboxForPastEvent = (CheckBox) findViewById(R.id.eventListCheckBoxForPastEvent);
         boolean displayPastEvents = checkboxForPastEvent.isChecked();
@@ -187,7 +188,7 @@ public class EventListActivity extends AppCompatActivity {
                 final Button b = new Button(this);
                 b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 b.setTag(event);
-                b.setLayoutParams(eventListLP);
+                b.setLayoutParams(linearLayoutListEvents.getLayoutParams());
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -199,8 +200,8 @@ public class EventListActivity extends AppCompatActivity {
                 linearLayoutListEvents.addView(b);
             }
         }
-        scrollViewForEvents.addView(linearLayoutListEvents);
-        screenLayout.addView(scrollViewForEvents);
+//        scrollViewForEvents.addView(linearLayoutListEvents);
+  //      screenLayout.addView(scrollViewForEvents);
     }
 
     private void showEvent(PFEvent currentEvent) {
