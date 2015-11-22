@@ -9,18 +9,18 @@ import android.os.Parcelable;
 public class ConversationInformation implements Parcelable {
     private String conversationName;
     private String groupId;
-    private String fileName;
+    private String filePath;
 
     public ConversationInformation(Parcel in) {
         conversationName = in.readString();
         groupId = in.readString();
-        fileName = in.readString();
+        filePath = in.readString();
     }
 
     public ConversationInformation(String conversationName, String groupId, String textFilePath) {
         this.conversationName = conversationName;
         this.groupId = groupId;
-        this.fileName = textFilePath;
+        this.filePath = textFilePath;
     }
 
     public static final Creator<ConversationInformation> CREATOR = new Creator<ConversationInformation>() {
@@ -38,13 +38,13 @@ public class ConversationInformation implements Parcelable {
     @Override
     public String toString() {
 
-        return conversationName + '/' + groupId + '/' + fileName;
+        return conversationName + '/' + groupId + '/' + filePath;
     }
 
     public static ConversationInformation createFromString(String string) {
         String[] split = string.split("/");
         if(split.length != 3) {
-            throw new IllegalArgumentException("Invalid string, format must be convName/groupId/fileName");
+            throw new IllegalArgumentException("Invalid string, format must be convName/groupId/filePath");
         } else {
             return new ConversationInformation(split[0], split[1], split[2]);
         }
@@ -58,8 +58,8 @@ public class ConversationInformation implements Parcelable {
         return groupId;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilePath() {
+        return filePath;
     }
 
     @Override
@@ -77,6 +77,6 @@ public class ConversationInformation implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(conversationName);
         dest.writeString(groupId);
-        dest.writeString(fileName);
+        dest.writeString(filePath);
     }
 }
