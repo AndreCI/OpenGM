@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.groups;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -416,12 +415,5 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         createRolesActivity = getActivity();
         listView = (ListView) createRolesActivity.findViewById(R.id.rolesListView);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-    }
-
-    private void addTestRolesToUser(int numRoles, String userID) throws Exception{
-        for(int i = 0; i < numRoles; i++){
-            testGroup.addRoleToUser(TEST_ROLE_PREFIX + i, userID);
-        }
-        Thread.sleep(1000);
     }
 }
