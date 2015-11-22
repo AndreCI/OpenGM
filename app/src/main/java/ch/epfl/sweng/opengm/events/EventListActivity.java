@@ -151,7 +151,7 @@ public class EventListActivity extends AppCompatActivity {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        int hour = c.get(Calendar.HOUR_OF_DAY) + 1;
+        int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
         Date currentDate = new Date(year, month, day, hour, min);
 
@@ -162,16 +162,8 @@ public class EventListActivity extends AppCompatActivity {
      * Call this method to refresh the calendar on the screen.
      */
     public void displayEvents(){
-        RelativeLayout screenLayout = (RelativeLayout) findViewById(R.id.ScrollViewParentLayout);
-        ScrollView scrollViewForEvents = (ScrollView) findViewById(R.id.scrollView4);
-   //     ScrollView.LayoutParams scrollViewLP = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT,ScrollView.LayoutParams.MATCH_PARENT);
-     //   scrollViewForEvents.setLayoutParams(scrollViewLP);
         LinearLayout linearLayoutListEvents = (LinearLayout) findViewById(R.id.line3);
         linearLayoutListEvents.removeAllViews();
-       // linearLayoutListEvents.setOrientation(LinearLayout.VERTICAL);
-
-//        LinearLayout.LayoutParams eventListLP = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-  //      linearLayoutListEvents.setLayoutParams(eventListLP);
 
         CheckBox checkboxForPastEvent = (CheckBox) findViewById(R.id.eventListCheckBoxForPastEvent);
         boolean displayPastEvents = checkboxForPastEvent.isChecked();
@@ -186,7 +178,7 @@ public class EventListActivity extends AppCompatActivity {
         for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
-                b.setText((displayPastEvents?" waw " : "nooon " )+(compareDate(event.getDate())? "yes " : "non ")+String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
+                b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 b.setTag(event);
                 b.setLayoutParams(linearLayoutListEvents.getLayoutParams());
                 b.setOnClickListener(new View.OnClickListener() {
@@ -200,8 +192,6 @@ public class EventListActivity extends AppCompatActivity {
                 linearLayoutListEvents.addView(b);
             }
         }
-//        scrollViewForEvents.addView(linearLayoutListEvents);
-  //      screenLayout.addView(scrollViewForEvents);
     }
 
     private void showEvent(PFEvent currentEvent) {
