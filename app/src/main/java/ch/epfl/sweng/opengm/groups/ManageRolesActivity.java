@@ -30,6 +30,7 @@ import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class ManageRolesActivity extends AppCompatActivity {
@@ -217,6 +218,13 @@ public class ManageRolesActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_modify_permissions).setVisible(selected != 0);
         menu.findItem(R.id.action_remove_role).setVisible(selected != 0);
+
+        PFUser currentUser = OpenGMApplication.getCurrentUser();
+        boolean havePermission = currentGroup.userHavePermission(currentUser.getId(), PFGroup.Permission.ADD_ROLES);
+        List<String> roles = currentGroup.getRolesForUser(currentUser.getId());
+        if(roles != null){
+            menu.findItem(R.id.action_add_role).setVisible(havePermission || roles.contains("Administrator"));
+        }
         return true;
     }
 
