@@ -155,7 +155,7 @@ public class EventListActivity extends AppCompatActivity {
         int min = c.get(Calendar.MINUTE);
         Date currentDate = new Date(year, month, day, hour, min);
 
-        return eventDate.before(currentDate);
+        return currentDate.before(eventDate);
     }
 
     /**
@@ -186,7 +186,7 @@ public class EventListActivity extends AppCompatActivity {
         for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
-                b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
+                b.setText((displayPastEvents?" waw " : "nooon " )+(compareDate(event.getDate())? "yes " : "non ")+String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 b.setTag(event);
                 b.setLayoutParams(linearLayoutListEvents.getLayoutParams());
                 b.setOnClickListener(new View.OnClickListener() {
