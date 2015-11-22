@@ -246,8 +246,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
             Bitmap b = getBitmap();
             String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
             String imagePath=writeImageInFileAndGetPath(b, picName);
-            Toast.makeText(getApplicationContext(),picName + "  "+imagePath, Toast.LENGTH_LONG).show();
-            return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, null);
+            return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, b);
         } catch (PFException e) {
             // TODO toast ?
             return null;
@@ -269,9 +268,13 @@ public class CreateEditEventActivity extends AppCompatActivity {
         }
 
         event.setPlace(place);
-        Bitmap b = getBitmap();
-        event.setPicturePath(writeImageInFileAndGetPath(b, PFUtils.nameNotSpecified));
-        event.setPictureName(PFUtils.nameNotSpecified);
+        if(outputFileUri!=null) {
+            Bitmap b = getBitmap();
+            String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
+            event.setPicturePath(writeImageInFileAndGetPath(b, picName));
+            event.setPictureName(picName);
+            event.setPicture(b);
+        }
         return event;
     }
 

@@ -345,7 +345,12 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
         object.put(EVENT_ENTRY_PARTICIPANTS, participantsIds);
         if (picture != null) {
-//            object.put(EVENT_ENTRY_PICTURE, picture);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] image = stream.toByteArray();
+            ParseFile file = new ParseFile("testing", image);
+            file.saveInBackground();
+            object.put(EVENT_ENTRY_PICTURE, file);
         }
 
         try {
