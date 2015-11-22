@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -39,6 +41,7 @@ import static org.hamcrest.Matchers.not;
 
 public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRolesActivity>{
     private LinearLayout rolesAndButtons;
+    private ListView listView;
     private PFGroup testGroup;
     private List<PFUser> testUsers;
     private ManageRolesActivity createRolesActivity;
@@ -87,24 +90,14 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     public void testIfFetchesUsersRoles() throws Exception {
         prepareIntentAndDatabase(1);
+        Thread.sleep(1000);
         addTestRolesToUser(3, testUsers.get(0).getId());
         Thread.sleep(1000);
         getActivityAndLayout();
 
         boolean viewMatches = databaseRolesMatchesView();
 
-        boolean allChecked = true;
-        for(int i = 0; i < rolesAndButtons.getChildCount(); i++){
-            TableRow currentRow = (TableRow) rolesAndButtons.getChildAt(i);
-            if(currentRow.getChildCount() > 1){
-                CheckBox box = (CheckBox) currentRow.getChildAt(0);
-                if(!box.isChecked()){
-                    allChecked = false;
-                }
-            }
-        }
-
-        assertTrue(viewMatches && allChecked);
+        assertTrue(viewMatches);
     }
 
     public void testIfAddsRoles() throws Exception {
@@ -329,6 +322,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
             testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
             testGroup.addUserWithId(TEST_USER_ID_PREFIX + i);
         }
+        firstUser.reload();
     }
 
     private void cleanUpDBAfterTests() throws com.parse.ParseException, InterruptedException {
@@ -342,7 +336,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         List<String> roles = getRolesIntersection();
         boolean allIn = true;
 
-        List<String> displayedRoles = createRolesActivity.getCheckedRoles(false);
+        List<String> displayedRoles = new ArrayList<>();
+        for(int i = 0; i < listView.getCount(); i++){
+            View v = listView.getChildAt(i);
+            TextView roleText = (TextView) v.findViewById(R.id.role_name);
+            displayedRoles.add(roleText.getText().toString());
+        }
 
         for(String role : displayedRoles){
             if(roles.contains(role)){
@@ -389,7 +388,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     private void getActivityAndLayout() {
         createRolesActivity = getActivity();
-        //rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+        listView = (ListView) createRolesActivity.findViewById(R.id.rolesListView);
     }
 
     private void addTestRolesToUser(int numRoles, String userID) throws Exception{
