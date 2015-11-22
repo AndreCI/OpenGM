@@ -298,6 +298,14 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         }
     }
 
+    public void updateAllFields() throws PFException {
+        updateToServer(EVENT_ENTRY_DATE);
+        updateToServer(EVENT_ENTRY_TITLE);
+        updateToServer(EVENT_ENTRY_DESCRIPTION);
+        updateToServer(EVENT_ENTRY_PARTICIPANTS);
+        updateToServer(EVENT_ENTRY_PLACE);
+    }
+
     public static void updateEvent(PFEvent updatedEvent) throws PFException {
         deleteWithId(updatedEvent.getId());
         ParseObject object = new ParseObject(EVENT_TABLE_NAME);

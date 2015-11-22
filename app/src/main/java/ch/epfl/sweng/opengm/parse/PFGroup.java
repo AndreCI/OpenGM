@@ -490,8 +490,7 @@ public final class PFGroup extends PFEntity {
      * @throws PFException if we cant remove it or add it back
      */
     public void updateEvent(PFEvent event) throws PFException{
-        removeEvent(event);
-        addEvent(event);
+        event.updateAllFields();
     }
 
     /**
