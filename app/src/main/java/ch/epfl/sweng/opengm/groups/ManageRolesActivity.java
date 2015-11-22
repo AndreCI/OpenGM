@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class ManageRolesActivity extends AppCompatActivity {
@@ -327,7 +325,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         editText.requestFocus();
     }
 
-    private List<String> getCheckedRoles(boolean uncheck){
+    protected List<String> getCheckedRoles(boolean uncheck){
         List<String> roles = new ArrayList<>();
         for(int i = 0; i < rolesListView.getCount(); i++){
             View v = rolesListView.getChildAt(i);

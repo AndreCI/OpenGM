@@ -17,6 +17,7 @@ import org.junit.After;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -40,6 +41,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     private LinearLayout rolesAndButtons;
     private PFGroup testGroup;
     private List<PFUser> testUsers;
+    private ManageRolesActivity createRolesActivity;
 
     private final static String TEST_USER_ID_PREFIX = "testUser";
     private final static String TEST_USER_MAIL_PREFIX = "testEmail";
@@ -310,7 +312,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         }
 
         intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, testUsersIds);
-        intent.putExtra(ManageRolesActivity.GROUP_ID, testGroup.getId());
+        intent.putExtra(ManageRolesActivity.GROUP_INDEX, 0);
 
         setActivityIntent(intent);
     }
@@ -320,6 +322,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
         testUsers.add(firstUser);
+        OpenGMApplication.setCurrentUser(firstUser.getId());
 
         testGroup = PFGroup.createNewGroup(firstUser, TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         for(int i = 1; i < numUser; i++){
@@ -339,17 +342,16 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         List<String> roles = getRolesIntersection();
         boolean allIn = true;
 
-        for(int i = 0; i < rolesAndButtons.getChildCount(); i++) {
-            TableRow currentRow = (TableRow) rolesAndButtons.getChildAt(i);
-            if (currentRow.getChildCount() > 1) {
-                TextView currentRole = (TextView) currentRow.getChildAt(1);
-                if (!roles.contains(currentRole.getText().toString())) {
-                    allIn = false;
-                } else {
-                    roles.remove(currentRole.getText().toString());
-                }
+        List<String> displayedRoles = createRolesActivity.getCheckedRoles(false);
+
+        for(String role : displayedRoles){
+            if(roles.contains(role)){
+                roles.remove(role);
+            } else {
+                allIn = false;
             }
         }
+
         return roles.isEmpty() && allIn;
     }
 
@@ -386,8 +388,8 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private void getActivityAndLayout() {
-        Activity createRolesActivity = getActivity();
-        rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
+        createRolesActivity = getActivity();
+        //rolesAndButtons = (LinearLayout)createRolesActivity.findViewById(R.id.rolesAndButtons);
     }
 
     private void addTestRolesToUser(int numRoles, String userID) throws Exception{
