@@ -13,8 +13,8 @@
         android:hint="Conversation name"
         android:maxLines="1"
         android:imeOptions="actionDone"
-        android:inputType="textAutoCorrect"
-        android:layout_centerInParent="true"/>
+        android:layout_centerHorizontal="true"
+        android:inputType="textAutoCorrect"/>
 
     <Button
         android:layout_width="wrap_content"

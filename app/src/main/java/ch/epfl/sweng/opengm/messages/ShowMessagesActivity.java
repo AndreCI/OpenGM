@@ -63,9 +63,11 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        String message = ((EditText) findViewById(R.id.message_text_bar)).getText().toString();
+        EditText editText = (EditText) findViewById(R.id.message_text_bar);
+        String message = editText.getText().toString();
         MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getId(), message, new Date());
-        writeMessageLocal(path, messageAdapter, this);
+        writeMessageLocal(conversationInformation.getConversationName()+".txt", messageAdapter, this);
+        editText.setText("");
         /* TODO: get back text from textBar + send it.
          * do it in back ground on the serv and localy while instantly adding it to the layout
          */

@@ -6,11 +6,16 @@
     <RadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/conversation_updated"
         android:clickable="false"
-        android:id="@+id/conversation_updated" />
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/conversation_title" />
+        android:id="@+id/conversation_title"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 </LinearLayout>

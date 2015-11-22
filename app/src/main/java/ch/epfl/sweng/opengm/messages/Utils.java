@@ -5,7 +5,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
@@ -18,6 +20,7 @@ public class Utils {
 
     public static void writeMessageLocal(String pathToFile, MessageAdapter messageAdapter, Context context) {
         try {
+            Log.v("Utils", pathToFile);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(pathToFile, Context.MODE_APPEND));
             outputStreamWriter.write(createNewMessage(messageAdapter));
             outputStreamWriter.close();
@@ -33,6 +36,12 @@ public class Utils {
 
     public static void writeMessageServeur(ConversationInformation conversationInformation) {
         //TODO: check if remote file is older than local, if true upload, else merge the two.
+    }
+
+    public static List<String> readTextFile(ConversationInformation inf) {
+        List<String> result = new ArrayList<>();
+
+        return result;
     }
 
 }

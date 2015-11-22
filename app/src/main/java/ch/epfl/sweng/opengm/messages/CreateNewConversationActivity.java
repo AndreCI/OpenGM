@@ -49,7 +49,7 @@ public class CreateNewConversationActivity extends AppCompatActivity {
     private void sendBackResult() {
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
-        String path = getFilesDir().getAbsolutePath()+conversationName+".txt";
+        String path = getFilesDir().getAbsolutePath()+'/'+conversationName+".txt";
         new CreateFileInBackground().execute(path);
         intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, new ConversationInformation(conversationName, currentGroup.getId(), path));
         setResult(Activity.RESULT_OK, intent);
