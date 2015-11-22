@@ -54,6 +54,8 @@ public class ManageRolesActivity extends AppCompatActivity {
     private List<String> addedRoles = new ArrayList<>();
     private List<String> removedRoles = new ArrayList<>();
 
+    private boolean isAdministrator = false;
+
     private int selected = 0;
 
     public final static String GROUP_INDEX = "ch.epfl.ch.opengm.groups.manageroles.groupIndex";
@@ -95,12 +97,17 @@ public class ManageRolesActivity extends AppCompatActivity {
         alertBuilder.setView(dialogLayout).setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                String role = edit.getText().toString();
-                roles.add(role);
-                addedRoles.add(role);
-                adapter.notifyDataSetChanged();
-                edit.getText().clear();
-            }
+                    String role = edit.getText().toString();
+                    if(!isAdministrator && role.equals("Administrator")){
+                        Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
+                    } else {
+                        roles.add(role);
+                        addedRoles.add(role);
+                        adapter.notifyDataSetChanged();
+                        edit.getText().clear();
+                        invalidateOptionsMenu();
+                    }
+                }
             }).setNegativeButton(R.string.cancel, null);
         addRole = alertBuilder.create();
 
@@ -132,6 +139,11 @@ public class ManageRolesActivity extends AppCompatActivity {
             }
         });
         modifyPermissions = permissionBuilder.create();
+
+        List<String> rolesForCurrent = currentGroup.getRolesForUser(OpenGMApplication.getCurrentUser().getId());
+        if(rolesForCurrent != null){
+            isAdministrator = rolesForCurrent.contains("Administrator");
+        }
     }
 
     private void keepIntersectionRoles(List<String> otherRoles){
@@ -218,6 +230,7 @@ public class ManageRolesActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_modify_permissions).setVisible(selected != 0);
         menu.findItem(R.id.action_remove_role).setVisible(selected != 0);
+        return true;
     }
 
     @Override
@@ -262,7 +275,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         }
         // To the ones that have been fetched, remove those that could have been removed before saving.
         for(List<String> roles : removePermissionsForRoles.keySet()){
-            if(roles.containsAll(checkedRoles)){
+            if(roles.containsAll(checkedRoles)) {
                 permissions.removeAll(removePermissionsForRoles.get(roles));
             }
         }
@@ -276,6 +289,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         Log.d("CHECKS", checks.toString());
         modifyPermissions.show();
         permissionsAdapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
     }
 
     private List<PFGroup.Permission> keepPermissionIntersection(List<PFGroup.Permission> base, List<PFGroup.Permission> other){
@@ -291,6 +305,10 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     private void removeRole() {
         List<String> rolesToRemove = getCheckedRoles(true);
+        if(rolesToRemove.contains("Administrator") && !isAdministrator){
+            Toast.makeText(this, "You cannot remove Administrator role without being an Administrator.", Toast.LENGTH_LONG).show();
+            return;
+        }
         for(String role : rolesToRemove){
             if(!addedRoles.contains(role)){
                 removedRoles.add(role);
@@ -298,6 +316,7 @@ public class ManageRolesActivity extends AppCompatActivity {
             roles.remove(role);
         }
         adapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
     }
 
     private void addRole(){
@@ -317,6 +336,8 @@ public class ManageRolesActivity extends AppCompatActivity {
                 TextView roleText = (TextView)v.findViewById(R.id.role_name);
                 roles.add(roleText.getText().toString());
                 checkBox.setChecked(!uncheck);
+                selected--;
+                invalidateOptionsMenu();
             }
         }
         return roles;
