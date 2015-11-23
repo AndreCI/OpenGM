@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.events;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.ArrayMap;
@@ -61,21 +62,47 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
         setTitle("Events for the group : " + currentGroup.getName());
         displayEvents();
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
-    private void updateWithServer() throws PFException{
-        currentGroup.reload();
-        for(PFEvent e : currentGroup.getEvents()){
-            if(!eventMap.containsKey(e.getId())){
-                currentGroup.removeEvent(e);
+    private void updateWithServer(){
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void[] params){
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    return false;
+                }
+                try {
+                    currentGroup.reload();
+                    for (PFEvent e : currentGroup.getEvents()) {
+                        if (!eventMap.containsKey(e.getId())) {
+                            currentGroup.removeEvent(e);
+                        }
+                    }
+                    for (PFEvent e : eventMap.values()) {
+                        if (currentGroup.getEvents().contains(e)) {
+                            currentGroup.updateEvent(e);
+                        } else {
+                            currentGroup.addEvent(e);
+                        }
+                    }
+                    return true;
+                }catch (PFException e){
+                    return false;
+                }
+
             }
-        }
-        for(PFEvent e : eventMap.values()){
-            if(currentGroup.getEvents().contains(e)){
-                currentGroup.updateEvent(e);
-            }else{
-                currentGroup.addEvent(e);
+            @Override
+            protected void onPostExecute(Boolean result){
+                Button re=(Button) findViewById(R.id.eventListRefreshButton);
+                re.setClickable(true);
+                re.setText("REFRESH");
+                if(!result) {
+                    Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
+                }
             }
-        }
+        }.execute();
     }
 
     @Override
@@ -139,11 +166,12 @@ public class EventListActivity extends AppCompatActivity {
         displayEvents();
     }//TODO : Fix it
     public void clickOnRefreshButton(View v){ //TODO : ameliorer le display et faire un petit rond qui tourne
-        try {
-            updateWithServer();
-        } catch (PFException e) {
-            Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
-        }
+        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+       Button re=(Button) findViewById(R.id.eventListRefreshButton);
+        re.setClickable(false);
+        re.setText("WAIT");
+        updateWithServer();
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
     private boolean compareDate(Date eventDate){

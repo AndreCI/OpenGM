@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -12,6 +13,9 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.net.sip.SipAudioCall;
+import android.net.sip.SipSession;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -22,6 +26,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +42,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
+import bolts.Task;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFEvent;
@@ -59,6 +69,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     private PFGroup currentGroup;
     private Uri outputFileUri;
     private Uri selectedImageUri;
+    private Bitmap b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +128,26 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     selectedImageUri = data == null ? null : data.getData();
                     nText.setText(selectedImageUri.toString());
                 }
-
+                Button button= (Button) findViewById(R.id.CreateEditOkButton);
+                button.setClickable(false);
+                button.setText("WAIT");
+                new AsyncTask<ContentResolver, Integer, Bitmap>() {
+                    @Override
+                    protected Bitmap doInBackground(ContentResolver... params) {
+                        try {
+                            return MediaStore.Images.Media.getBitmap(params[0], selectedImageUri);
+                        } catch (IOException e) {
+                            return BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
+                        }
+                    }
+                    @Override
+                    protected void onPostExecute(Bitmap result){
+                        Button button= (Button) findViewById(R.id.CreateEditOkButton);
+                        button.setClickable(true);
+                        button.setText("OK");
+                        b = result;
+                    }
+                }.execute(this.getContentResolver());
             }
         }
     }
@@ -135,7 +165,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     finish();
                 }else{
                     Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
-                }
+               }
              } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
@@ -241,14 +271,12 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         //TODO : get new id for creating event maybe asynchronously in onCreate
         ParseObject parseObject = new ParseObject(PFConstants.EVENT_TABLE_NAME);
-
         try {
             parseObject.save();
         } catch (ParseException e) {
             e.printStackTrace();
         }
         try {
-            Bitmap b = getBitmap();
             String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
             String imagePath=writeImageInFileAndGetPath(b, picName);
             return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, b);
@@ -299,7 +327,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         return new Date(year, month, day, hours, minutes);
     }
 
-    /**
+     /**
      * @return true if all arguments except the list of participants are legal for building an event
      * display a toast while it's not.
      */
@@ -362,4 +390,5 @@ public class CreateEditEventActivity extends AppCompatActivity {
             dialogFragment.show(getFragmentManager(), "");
         }
     }
+
 }

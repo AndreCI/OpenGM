@@ -6,6 +6,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.opengm.events.CreateEditEventActivity">
 
+
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -82,17 +83,17 @@
         android:textAlignment="gravity"
         android:gravity="top|left" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/CreateEditOkButton"
-            android:layout_weight="1"
-            android:textAlignment="center"
-            android:text="@string/OkEditButtonText"
-            android:clickable="true"
-            android:onClick="onOkButtonClick"
-            android:layout_alignParentBottom="true"
-            android:layout_alignEnd="@+id/CreateEditEventBitmapLayout" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/CreateEditOkButton"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        android:text="@string/OkEditButtonText"
+        android:clickable="true"
+        android:onClick="onOkButtonClick"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/CreateEditEventBitmapLayout" />
 
     <Button
         android:layout_width="fill_parent"
@@ -105,6 +106,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/CreateEditEventDescriptionText"
         android:layout_alignParentEnd="true" />
+
     <LinearLayout
         android:id="@+id/CreateEditEventBitmapLayout"
         android:layout_width="wrap_content"
