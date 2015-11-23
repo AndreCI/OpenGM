@@ -15,9 +15,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.opengm.events.Utils;
 
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_ANSWERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_DEADLINE;
@@ -107,7 +109,40 @@ public class PFPoll extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mId);
+        dest.writeString(dateToString(this.lastModified));
+        dest.writeString(mName);
+        dest.writeString(mDescription);
+        dest.writeString(dateToString(mDeadline));
+        dest.writeInt(nOfAnswers);
+        dest.writeByte((byte) (isOpen ? 1 : 0));
 
+        List<String> answersQuestions = new ArrayList<>();
+        int[] answersArray = new int[mAnswers.size()];
+
+        int i = 0;
+        for (Answer answer : mAnswers) {
+            answersQuestions.add(answer.getAnswer());
+            answersArray[i++] = answer.getVotes();
+        }
+
+        dest.writeStringList(answersQuestions);
+        dest.writeIntArray(answersArray);
+
+        List<String> participantKeys = new ArrayList<>();
+        List<PFMember> participants = new ArrayList<>();
+        boolean[] voters = new boolean[mVoters.size()];
+        i = 0;
+        for (Map.Entry<String, PFMember> entry : mParticipants.entrySet()) {
+            participantKeys.add(entry.getKey());
+            participants.add(entry.getValue());
+            voters[i++] = mVoters.get(entry.getKey());
+        }
+
+        dest.writeStringList(participantKeys);
+        Parcelable[] array = new Parcelable[participants.size()];
+        dest.writeParcelableArray(participants.toArray(array), 0);
+        dest.writeBooleanArray(voters);
     }
 
     public String getName() {
