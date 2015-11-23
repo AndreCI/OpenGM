@@ -44,32 +44,43 @@ public class EventListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent intent = //getIntent();
-        new Intent(Utils.GROUP_INTENT_MESSAGE);
-
-        try {
-            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
-        Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
-        eventMap = new ArrayMap<>();
-        for(PFEvent e : currentGroup.getEvents()){
-            eventMap.put(e.getId(), e);
-        }
         setContentView(R.layout.activity_event_list);
-        setTitle("Events for the group : " + currentGroup.getName());
-        displayEvents();
-        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        setTitle("List of your events");
+        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Intent intent = //getIntent();
+                        new Intent(Utils.GROUP_INTENT_MESSAGE);
+
+                try {
+                    intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
+                } catch (PFException e) {
+                    e.printStackTrace();
+                }
+                currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+                Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
+                eventMap = new ArrayMap<>();
+                for(PFEvent e : currentGroup.getEvents()){
+                    eventMap.put(e.getId(), e);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                displayEvents();
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            }
+        }.execute();
+
     }
     private void updateWithServer(){
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void[] params){
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     return false;
                 }
@@ -98,6 +109,7 @@ public class EventListActivity extends AppCompatActivity {
                 Button re=(Button) findViewById(R.id.eventListRefreshButton);
                 re.setClickable(true);
                 re.setText("REFRESH");
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 if(!result) {
                     Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
                 }
@@ -171,7 +183,6 @@ public class EventListActivity extends AppCompatActivity {
         re.setClickable(false);
         re.setText("WAIT");
         updateWithServer();
-        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
     private boolean compareDate(Date eventDate){
