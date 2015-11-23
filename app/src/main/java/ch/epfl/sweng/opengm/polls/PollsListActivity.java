@@ -15,7 +15,6 @@ import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFPoll;
 
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 
 public class PollsListActivity extends AppCompatActivity {

@@ -107,7 +107,7 @@ public final class PFGroup extends PFEntity {
         List<String[]> roles = unzipRoles(rolesZip);
         fillMembersMap(users, nicknames, roles);
         mEvents = new HashMap<>();
-        mPolls = new HashMap<>();
+
         List<String> eventKeys = in.createStringArrayList();
         List<PFEvent> events = new ArrayList<>();
         in.readTypedList(events, PFEvent.CREATOR);
@@ -117,6 +117,7 @@ public final class PFGroup extends PFEntity {
         mIsPrivate = in.readInt() == 0; //0 is true, everything else is false
         mDescription = in.readString();
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
+
         List<String> rolesR = in.createStringArrayList();
         List<List<Integer>> permissions = in.readArrayList(ArrayList.class.getClassLoader());
         mRolesPermissions = new HashMap<>();
@@ -128,10 +129,22 @@ public final class PFGroup extends PFEntity {
             }
             mRolesPermissions.put(currRole, actualPermissions);
         }
+
+        mPolls = new HashMap<>();
+        List<String> pollsKeys = in.createStringArrayList();
+        List<PFPoll> polls = new ArrayList<>();
+        in.readTypedList(polls, PFPoll.CREATOR);
+        for (int i = 0; i < polls.size(); ++i) {
+            mPolls.put(pollsKeys.get(i), polls.get(i));
+        }
+        Log.d("GROUP ", mPolls.size() + " (parameters =" + polls.size() + ")");
+
     }
 
 
-    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
+    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames,
+                    List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate,
+                    String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
         super(groupId, PARSE_TABLE_GROUP, date);
         if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
             throw new IllegalArgumentException("One of the array  is null");
@@ -1001,6 +1014,15 @@ public final class PFGroup extends PFEntity {
         }
         dest.writeStringList(rolesList);
         dest.writeList(permissions);
+
+        List<String> pollsKeys = new ArrayList<>();
+        List<PFPoll> polls = new ArrayList<>();
+        for (Map.Entry<String, PFPoll> entry : mPolls.entrySet()) {
+            pollsKeys.add(entry.getKey());
+            polls.add(entry.getValue());
+        }
+        dest.writeStringList(pollsKeys);
+        dest.writeTypedList(polls);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
