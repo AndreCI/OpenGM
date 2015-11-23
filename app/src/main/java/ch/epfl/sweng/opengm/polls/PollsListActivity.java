@@ -3,7 +3,7 @@ package ch.epfl.sweng.opengm.polls;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
@@ -34,6 +34,8 @@ public class PollsListActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        setTitle(R.string.title_list_poll);
+
         currentGroup = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
 
         polls.addAll(currentGroup.getPolls());
@@ -48,5 +50,16 @@ public class PollsListActivity extends AppCompatActivity {
         Intent intent1 = new Intent(this, CreatePollActivity.class);
         intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         startActivity(intent1);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return true;
+        }
     }
 }

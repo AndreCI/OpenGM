@@ -137,8 +137,6 @@ public final class PFGroup extends PFEntity {
         for (int i = 0; i < polls.size(); ++i) {
             mPolls.put(pollsKeys.get(i), polls.get(i));
         }
-        Log.d("GROUP ", mPolls.size() + " (parameters =" + polls.size() + ")");
-
     }
 
 

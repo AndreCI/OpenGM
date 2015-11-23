@@ -389,5 +389,5 @@
     <string name="no_participants_poll">A participant should be enrolled in this survey</string>
     <string name="no_answer_poll">User should be able to choose at least an answer</string>
     <string name="error_poll">Error while creating your poll</string>
-
+    <string name="title_list_poll">List of your polls</string>
 </resources>

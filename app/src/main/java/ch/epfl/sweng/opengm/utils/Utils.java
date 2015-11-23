@@ -77,6 +77,6 @@ public class Utils {
     }
 
     public static String dateToString(Date date) {
-        return new SimpleDateFormat("dd/MM/yyyy").format(date);
+        return new SimpleDateFormat("dd/MM/yy").format(date);
     }
 }
