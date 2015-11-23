@@ -65,7 +65,7 @@ public class EventListActivity extends AppCompatActivity {
     private void updateWithServer() throws PFException{
         currentGroup.reload();
         for(PFEvent e : currentGroup.getEvents()){
-            if(!eventMap.containsValue(e)){
+            if(!eventMap.containsKey(e.getId())){
                 currentGroup.removeEvent(e);
             }
         }
@@ -90,7 +90,7 @@ public class EventListActivity extends AppCompatActivity {
                     try {
                         if(edited) {
                             currentGroup.updateEvent(event);
-                            Toast.makeText(getApplicationContext(), "Event sucessfully edited", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Event updated", Toast.LENGTH_SHORT).show();
                         }else{
                             currentGroup.addEvent(event);
                             Toast.makeText(getApplicationContext(), getString(R.string.EventListSuccessfullAdd), Toast.LENGTH_SHORT).show();

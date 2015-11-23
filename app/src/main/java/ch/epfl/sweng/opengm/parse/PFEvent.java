@@ -1,10 +1,12 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -348,7 +350,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] image = stream.toByteArray();
-            ParseFile file = new ParseFile("testing", image);
+            ParseFile file = new ParseFile("testing.png", image);
             file.saveInBackground();
             object.put(EVENT_ENTRY_PICTURE, file);
         }
@@ -392,8 +394,26 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 String place = object.getString(EVENT_ENTRY_PLACE);
                 Date date = object.getDate(EVENT_ENTRY_DATE);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
+
+
+                ParseFile pf = object.getParseFile(EVENT_ENTRY_PICTURE);
+                final Bitmap[] b ={null};
+                pf.getDataInBackground(new GetDataCallback() {
+                    @Override
+                    public void done(byte[] bytes, ParseException e) {
+                        if(e==null){
+                            b[0] = BitmapFactory
+                                    .decodeByteArray(
+                                            bytes, 0,
+                                            bytes.length);
+                        }
+                    }
+                });
+                if(b[0]==null){
+
+                }
+                //Bitmap[] picture = {null};
+                //retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                 List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
 
@@ -408,7 +428,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 }
                 String imagePath = PFUtils.pathNotSpecified;
                 String imageName = PFUtils.nameNotSpecified;
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,picture[0]);
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,b[0]);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

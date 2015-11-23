@@ -25,6 +25,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
     private PFEvent event;
     private PFGroup currentGroup;
+    private boolean modified=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,8 @@ public class ShowEventActivity extends AppCompatActivity {
         if (requestCode == SHOW_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 event = data.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
-                Toast.makeText(this, "event updated", Toast.LENGTH_SHORT).show();
+                modified=true;
+                Toast.makeText(this, "event successfully edited", Toast.LENGTH_SHORT).show();
                 Log.v("event received in Show", event.getId());
                 displayEventInformation();
             } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -58,9 +60,13 @@ public class ShowEventActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-        intent.putExtra(Utils.EDIT_INTENT_MESSAGE, true);
-        setResult(Activity.RESULT_OK, intent);
+        if(modified) {
+            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+            intent.putExtra(Utils.EDIT_INTENT_MESSAGE, true);
+            setResult(Activity.RESULT_OK, intent);
+        }else{
+            setResult(Utils.SHOWING_EVENT, intent);
+        }
         finish();
     }
 

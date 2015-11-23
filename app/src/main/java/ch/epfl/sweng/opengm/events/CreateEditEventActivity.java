@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.events;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
