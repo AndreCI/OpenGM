@@ -113,6 +113,10 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         return 0;
     }
 
+    public HashMap<String, Boolean> getVoters() {
+        return new HashMap<>(mVoters);
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mId);
@@ -141,6 +145,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         i = 0;
         for (Map.Entry<String, PFMember> entry : mParticipants.entrySet()) {
             participantKeys.add(entry.getKey());
+
             participants.add(entry.getValue());
             voters[i++] = mVoters.get(entry.getKey());
         }
