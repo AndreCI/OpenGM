@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventNameText"
-        android:textSize="14sp"
+        android:textSize="20sp"
         android:singleLine="true" />
 
     <TextView
@@ -61,13 +61,15 @@
     <ImageView
         android:id="@+id/ShowEventBitmap"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ShowEventParticipants"/>
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/ShowEventParticipants"
+        android:layout_above="@+id/ShowEventDeleteEditLayout"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:id="@+id/ShowEventDeleteEditLayout"
         android:layout_alignParentBottom="true">
         <Button
             android:layout_width="wrap_content"

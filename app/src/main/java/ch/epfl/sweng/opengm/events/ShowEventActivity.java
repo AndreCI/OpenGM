@@ -88,15 +88,15 @@ public class ShowEventActivity extends AppCompatActivity {
         if (event.getPlace().isEmpty()) {
             textView.setHeight(0);
         } else {
-            textView.setText(event.getPlace());
+            textView.setText("      A lieu à : "+event.getPlace());
         }
     }
 
     private void fillEventDate() {
         String hourString = String.format("%d : %02d", event.getHours(), event.getMinutes());
-        ((TextView)findViewById(R.id.ShowEventHourText)).setText(hourString);
+        ((TextView)findViewById(R.id.ShowEventHourText)).setText("      A "+hourString);
         String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
-        ((TextView)findViewById(R.id.ShowEventDateText)).setText(dateString);
+        ((TextView)findViewById(R.id.ShowEventDateText)).setText("      Le : "+dateString);
     }
 
     private void fillEventDescription() {
@@ -104,14 +104,14 @@ public class ShowEventActivity extends AppCompatActivity {
         if (event.getDescription().isEmpty()) {
             textView.setHeight(0);
         } else {
-            String description = "Description:\n" + event.getDescription();
+            String description = "Description: de l'evenement\n" + event.getDescription();
             textView.setText(description);
         }
     }
 
     private void fillEventParticipants() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Participants:");
+        stringBuilder.append("Liste des participants:");
         for (PFMember participant : event.getParticipants().values()) {
             stringBuilder.append('\n');
 
