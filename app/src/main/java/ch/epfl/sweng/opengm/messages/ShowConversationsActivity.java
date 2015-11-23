@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.messages;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +27,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
@@ -39,6 +43,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
     private PFGroup currentGroup;
     private List<ConversationInformation> conversationInformations;
     private final String CONV_INDEX_FORMAT = "conversationIndex_%s.txt";
+    private String conversationIndexName;
     private Date serveurLastUpdate;
     public static final int NEW_CONVERSATION_REQUEST_CODE = 1;
     //TODO: model idea : group have a list of ids corresponding to text files in another parse table, 1 file per conv + 1 with all convInfo
@@ -49,13 +54,24 @@ public class ShowConversationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_conversations);
         Intent intent = getIntent();
         currentGroup = intent.getParcelableExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
+        conversationIndexName = String.format(CONV_INDEX_FORMAT, currentGroup.getId());
+        conversationInformations = new ArrayList<>();
         generateConversationList();
         //TODO: in background start fetching the file on the serv and then read it and compare the lists
-        List<ConversationInformation> conversations = getConversations();
 
         //TODO : check on serv which file is the most recent in background, use local one and then update if necessary
 
-        adapter = new CustomAdapter(this, R.layout.conversation_info, conversations);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabNewConversation);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
+                intent.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
+            }
+        });
+
+        adapter = new CustomAdapter(this, R.layout.conversation_info, conversationInformations);
 
         ListView listView = (ListView) findViewById(R.id.conversation_list);
         listView.setAdapter(adapter);
@@ -71,22 +87,15 @@ public class ShowConversationsActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabNewConversation);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
-                intent.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, currentGroup);
-                startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
-            }
-        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_CONVERSATION_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                conversationInformations.add((ConversationInformation) data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE));
+                ConversationInformation conversationInformation = (ConversationInformation) data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE);
+                conversationInformations.add(conversationInformation);
+                new UpdateIndexFile().execute(conversationIndexName, OpenGMApplication.getCurrentUser().getUsername(), conversationInformation.getConversationName());
                 ListView listView = (ListView) findViewById(R.id.conversation_list);
                 listView.setAdapter(new CustomAdapter(this, R.layout.conversation_info, conversationInformations));
                 Log.v("ShowConversations", "activity result good code");
@@ -97,32 +106,31 @@ public class ShowConversationsActivity extends AppCompatActivity {
     }
 
     private void generateConversationList() {
-        String indexName = String.format(CONV_INDEX_FORMAT, currentGroup.getId());
-        File file = new File(getFilesDir(), indexName);
-        conversationInformations = new ArrayList<>(readConversationInformationsFromFile(file));
-        //TODO: conversationInformations.addAll(currentGroup.getConversationsInformations()); or use file
+        File file = new File(getFilesDir(), conversationIndexName);
+        new ReadIndexFile().execute(file);
     }
 
     private List<ConversationInformation> readConversationInformationsFromFile(File file) {
         List<ConversationInformation> list = new ArrayList<>();
-        if(file.exists()) {
+        if (file.exists()) {
             try {
-                InputStream inputStream = openFileInput(file.getAbsolutePath());
-                if (inputStream != null) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                FileInputStream fileInputStream = openFileInput(file.getName());
+                if (fileInputStream != null) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                     String line = bufferedReader.readLine();
-                    getIndexInformations(line);
-                    //get info about file like last updated time
-                    line = bufferedReader.readLine();
                     while (line != null) {
                         try {
                             list.add(ConversationInformation.createFromString(line));
                         } catch (IllegalArgumentException e) {
-                            //don't add it
+                            Log.e("ShowConversation", "Illegal format line: " + line);
+                        } finally {
+                            line = bufferedReader.readLine();
                         }
                     }
-                    inputStream.close();
+                    bufferedReader.close();
+                    inputStreamReader.close();
+                    fileInputStream.close();
                 } else {
                     Log.v("show conv", "couldn't read file");
                 }
@@ -133,10 +141,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
             }
         }
         return list;
-    }
-
-    private void getIndexInformations(String line) {
-        serveurLastUpdate = stringToDate(line);
     }
 
     private List<ConversationInformation> getConversations() {
@@ -182,6 +186,41 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
             return convertView;
         }
+    }
+
+    class ReadIndexFile extends AsyncTask<File, Void, Void> {
+
+        @Override
+        protected Void doInBackground(File... params) {
+            try {
+                List<String> strings = Utils.readTextFile(params[0].getPath());
+                for (String s : strings) {
+                    conversationInformations.add(Utils.stringToConversationInformation(s));
+                }
+            } catch (IOException e) {
+                Log.e("ShowConv readIndF", "IOException with file: " + params[0].getPath());
+            }
+            return null;
+        }
+
+    }
+
+    class UpdateIndexFile extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            Utils.writeMessageLocal(params[0], new MessageAdapter(params[1], params[2]), ShowConversationsActivity.this);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            adapter = new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversationInformations);
+            ListView listView = (ListView) findViewById(R.id.conversation_list);
+            listView.setAdapter(adapter);
+        }
+
+
     }
 
 }

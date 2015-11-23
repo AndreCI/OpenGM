@@ -13,6 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -49,8 +52,8 @@ public class CreateNewConversationActivity extends AppCompatActivity {
     private void sendBackResult() {
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
-        String path = getFilesDir().getAbsolutePath()+'/'+conversationName+".txt";
-        new CreateFileInBackground().execute(path);
+        String path = getFilesDir().getAbsolutePath() + '/' + conversationName + ".txt";
+        new CreateFileInBackground().execute(conversationName, path);
         intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, new ConversationInformation(conversationName, currentGroup.getId(), path));
         setResult(Activity.RESULT_OK, intent);
         Log.v("CreateNewConversation", conversationName + ", " + path);
@@ -66,7 +69,14 @@ public class CreateNewConversationActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... params) {
-            new File(getFilesDir(), params[0]);
+            try {
+                FileOutputStream fOut = openFileOutput(params[0] + ".txt", MODE_APPEND);
+                OutputStreamWriter osw = new OutputStreamWriter(fOut);
+                osw.write(params[0] + "-*-" + currentGroup.getId() + "-*-" + params[1]);
+                osw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
