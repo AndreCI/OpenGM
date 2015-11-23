@@ -72,7 +72,6 @@ public class CreateNewConversationActivity extends AppCompatActivity {
             try {
                 FileOutputStream fOut = openFileOutput(params[0] + ".txt", MODE_APPEND);
                 OutputStreamWriter osw = new OutputStreamWriter(fOut);
-                osw.write(params[0] + "-*-" + currentGroup.getId() + "-*-" + params[1]);
                 osw.close();
             } catch (IOException e) {
                 e.printStackTrace();

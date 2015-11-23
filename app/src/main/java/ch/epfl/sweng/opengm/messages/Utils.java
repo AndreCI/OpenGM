@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,18 @@ public class Utils {
         }
     }
 
+    public static void writeConversationInformationLocal(String fileName, ConversationInformation conversationInformation, Context context) {
+        try {
+            Log.v("Utils writeConvInf", fileName+" : " + conversationInformation.toString());
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_APPEND));
+            outputStreamWriter.write(conversationInformation.toString());
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
     private static String createNewMessage(MessageAdapter messageAdapter) {
         return String.format("<<<|%s|%s|%s|>>>\n", messageAdapter.getSenderName(), dateToString(new Date()),messageAdapter.getMessage());
     }
@@ -50,6 +63,7 @@ public class Utils {
         String line = bufferedReader.readLine();
         StringBuilder stringBuilder = new StringBuilder();
         while (line != null) {
+            Log.v("Utils readTxtFile", line);
             if(line.startsWith("<<<|") && line.endsWith("|>>>")) {
                 result.add(line);
             } else if(line.startsWith("<<<|")) {
@@ -79,10 +93,17 @@ public class Utils {
     }
 
     public static ConversationInformation stringToConversationInformation(String s) {
-        String[] strings = s.split("-*-");
-        if(strings.length != 3) {
-            throw new IllegalArgumentException("Invalid string format, should be convName-*-groupId-*-path");
+        String[] strings = s.split("|");
+        if(strings.length != 5) {
+            throw new IllegalArgumentException("Invalid string format, should be <<<|convName|groupId|path>");
         }
-        return new ConversationInformation(strings[0], strings[1], strings[2]);
+        return new ConversationInformation(strings[1], strings[2], strings[3]);
     }
+
+
+    public static Date getNewDate() {
+        Calendar c = Calendar.getInstance();
+        return new Date(c.YEAR+1900, c.MONTH+1, c.DATE, c.HOUR_OF_DAY, c.MINUTE);
+    }
+
 }

@@ -1,6 +1,5 @@
 package ch.epfl.sweng.opengm.messages;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
@@ -21,7 +20,7 @@ public class MessageAdapter {
 
     public MessageAdapter(String sender, String body) {
         this(sender, null, body);
-        sendDate = getNewDate();
+        sendDate = Utils.getNewDate();
     }
 
     public String getSenderName() {
@@ -30,11 +29,6 @@ public class MessageAdapter {
 
     public String getMessage() {
         return body;
-    }
-
-    private Date getNewDate() {
-        Calendar c = Calendar.getInstance();
-        return new Date(c.YEAR, c.MONTH+1, c.DATE, c.HOUR_OF_DAY, c.MINUTE);
     }
 
     @Override

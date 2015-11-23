@@ -38,24 +38,11 @@ public class ConversationInformation implements Parcelable {
     @Override
     public String toString() {
 
-        return conversationName + '/' + groupId + '/' + filePath;
-    }
-
-    public static ConversationInformation createFromString(String string) {
-        String[] split = string.split("/");
-        if(split.length != 3) {
-            throw new IllegalArgumentException("Invalid string, format must be convName/groupId/filePath");
-        } else {
-            return new ConversationInformation(split[0], split[1], split[2]);
-        }
+        return conversationName + '|' + groupId + '|' + filePath;
     }
 
     public String getConversationName() {
         return conversationName;
-    }
-
-    public String getGroupId() {
-        return groupId;
     }
 
     public String getFilePath() {
@@ -65,11 +52,6 @@ public class ConversationInformation implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    public boolean upToDate() {
-        //TODO: implement
-        return false;
     }
 
 

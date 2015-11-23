@@ -44,7 +44,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
     private List<ConversationInformation> conversationInformations;
     private final String CONV_INDEX_FORMAT = "conversationIndex_%s.txt";
     private String conversationIndexName;
-    private Date serveurLastUpdate;
     public static final int NEW_CONVERSATION_REQUEST_CODE = 1;
     //TODO: model idea : group have a list of ids corresponding to text files in another parse table, 1 file per conv + 1 with all convInfo
 
@@ -72,7 +71,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
         });
 
         adapter = new CustomAdapter(this, R.layout.conversation_info, conversationInformations);
-
         ListView listView = (ListView) findViewById(R.id.conversation_list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -93,9 +91,9 @@ public class ShowConversationsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_CONVERSATION_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                ConversationInformation conversationInformation = (ConversationInformation) data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE);
+                ConversationInformation conversationInformation = data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE);
                 conversationInformations.add(conversationInformation);
-                new UpdateIndexFile().execute(conversationIndexName, OpenGMApplication.getCurrentUser().getUsername(), conversationInformation.getConversationName());
+                new UpdateIndexFile().execute(conversationIndexName, conversationInformation.getConversationName(), currentGroup.getId(), conversationInformation.getFilePath());
                 ListView listView = (ListView) findViewById(R.id.conversation_list);
                 listView.setAdapter(new CustomAdapter(this, R.layout.conversation_info, conversationInformations));
                 Log.v("ShowConversations", "activity result good code");
@@ -108,47 +106,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
     private void generateConversationList() {
         File file = new File(getFilesDir(), conversationIndexName);
         new ReadIndexFile().execute(file);
-    }
-
-    private List<ConversationInformation> readConversationInformationsFromFile(File file) {
-        List<ConversationInformation> list = new ArrayList<>();
-        if (file.exists()) {
-            try {
-                FileInputStream fileInputStream = openFileInput(file.getName());
-                if (fileInputStream != null) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    String line = bufferedReader.readLine();
-                    while (line != null) {
-                        try {
-                            list.add(ConversationInformation.createFromString(line));
-                        } catch (IllegalArgumentException e) {
-                            Log.e("ShowConversation", "Illegal format line: " + line);
-                        } finally {
-                            line = bufferedReader.readLine();
-                        }
-                    }
-                    bufferedReader.close();
-                    inputStreamReader.close();
-                    fileInputStream.close();
-                } else {
-                    Log.v("show conv", "couldn't read file");
-                }
-            } catch (FileNotFoundException e) {
-                Log.e("show conv", "File not found: " + e.toString());
-            } catch (IOException e) {
-                Log.e("show conv", "Can not read file: " + e.toString());
-            }
-        }
-        return list;
-    }
-
-    private List<ConversationInformation> getConversations() {
-        List<ConversationInformation> result = new ArrayList<>();
-        for (ConversationInformation inf : conversationInformations) {
-            result.add(inf);
-        }
-        return result;
     }
 
     private class CustomAdapter extends ArrayAdapter<ConversationInformation> {
@@ -193,12 +150,14 @@ public class ShowConversationsActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(File... params) {
             try {
-                List<String> strings = Utils.readTextFile(params[0].getPath());
+                List<String> strings = Utils.readTextFile(params[0].getAbsolutePath());
+                Log.v("showConv readFIndx", Integer.toString(strings.size()) + ", path : " + params[0].getAbsolutePath());
                 for (String s : strings) {
                     try {
                         conversationInformations.add(Utils.stringToConversationInformation(s));
+                        Log.v("ShowConv/ReadIndexFile", "read string: " + s);
                     } catch (IllegalArgumentException e) {
-                        Log.e("ShowConv", "coudln't read string: "+s);
+                        Log.e("ShowConv/ReadIndexFile", "couldn't read string: " + s);
                     }
                 }
             } catch (IOException e) {
@@ -207,13 +166,20 @@ public class ShowConversationsActivity extends AppCompatActivity {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void result) {
+            adapter = new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversationInformations);
+            ListView listView = (ListView) findViewById(R.id.conversation_list);
+            listView.setAdapter(adapter);
+        }
+
     }
 
     class UpdateIndexFile extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
-            Utils.writeMessageLocal(params[0], new MessageAdapter(params[1], params[2]), ShowConversationsActivity.this);
+            Utils.writeConversationInformationLocal(params[0], new ConversationInformation(params[1], params[2], params[3]), ShowConversationsActivity.this);
             return null;
         }
 

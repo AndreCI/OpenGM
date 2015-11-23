@@ -70,7 +70,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private void sendMessage() {
         EditText editText = (EditText) findViewById(R.id.message_text_bar);
         String message = editText.getText().toString();
-        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getId(), new Date(), message);
+        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getId(), Utils.getNewDate(), message);
         writeMessageLocal(conversationInformation.getConversationName()+".txt", messageAdapter, this);
         editText.setText("");
         /* TODO: get back text from textBar + send it.
@@ -117,6 +117,12 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 messages.add(new MessageAdapter(data[0], stringToDate(data[1]), data[2]));
             }
             return new CustomAdapter(ShowMessagesActivity.this, R.layout.message_info, messages);
+        }
+
+        @Override
+        protected void onPostExecute(CustomAdapter res) {
+            ListView listView = (ListView) findViewById(R.id.message_list);
+            listView.setAdapter(res);
         }
     }
 
