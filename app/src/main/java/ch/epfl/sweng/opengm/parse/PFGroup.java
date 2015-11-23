@@ -101,6 +101,8 @@ public final class PFGroup extends PFEntity {
             return value;
         }
 
+        public String getName(){ return name;}
+
         @Override
         public String toString(){
             return name;
@@ -242,7 +244,6 @@ public final class PFGroup extends PFEntity {
                 retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
                 mPicture = picture[0];
 
-                // TODO : Modularize this part
                 HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
                 for(int i = 0; i < permissionsForRoles.length(); i++){
@@ -250,12 +251,12 @@ public final class PFGroup extends PFEntity {
                         JSONArray current = (JSONArray)permissionsForRoles.get(i);
                         String role = (String)current.get(0);
                         List<Permission> permissions = new ArrayList<>();
-                        for(Permission value : Permission.values()){
-                            permissions.add(value);
+                        for(int j = 1; j < current.length(); j++){
+                            int permission = Integer.parseInt(current.getString(j));
+                            permissions.add(Permission.forInt(permission));
                         }
                         rolesPermissions.put(role, permissions);
                     } catch (JSONException e){
-                        // TODO : What to do?
                     }
 
                 }

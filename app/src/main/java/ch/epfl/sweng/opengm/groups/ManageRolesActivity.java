@@ -274,7 +274,17 @@ public class ManageRolesActivity extends AppCompatActivity {
             if(currentGroup.getRoles().contains(checkedRoles.get(i))){
                 permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
             } else {
-                permissions = keepPermissionIntersection(permissions, new ArrayList<PFGroup.Permission>());
+                boolean foundOne = false;
+                for(Map.Entry<List<String>, Set<PFGroup.Permission>> entry : addPermissionsForRoles.entrySet()){
+                    if(entry.getKey().contains(checkedRoles.get(i))){
+                        permissions = keepPermissionIntersection(permissions, new ArrayList<>(entry.getValue()));
+                        foundOne = true;
+                    }
+                }
+                if(!foundOne){
+                    permissions = keepPermissionIntersection(permissions, new ArrayList<PFGroup.Permission>());
+
+                }
             }
         }
         // To the ones that have been fetched, add those that could have been added before saving.
@@ -346,7 +356,9 @@ public class ManageRolesActivity extends AppCompatActivity {
                 TextView roleText = (TextView)v.findViewById(R.id.role_name);
                 roles.add(roleText.getText().toString());
                 checkBox.setChecked(!uncheck);
-                selected--;
+                if(uncheck){
+                    selected--;
+                }
                 invalidateOptionsMenu();
             }
         }
