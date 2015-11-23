@@ -108,6 +108,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:id="@+id/CreateEditOkButton"
         android:layout_weight="1"
         android:textAlignment="center"
@@ -116,6 +117,7 @@
         android:onClick="onOkButtonClick"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/CreateEditEventBitmapLayout" />
+
 
     <Button
         android:layout_width="fill_parent"

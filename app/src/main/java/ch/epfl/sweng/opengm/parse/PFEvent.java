@@ -64,7 +64,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         mPictureName = in.readString();
         mPicture=null;
         List<String> participantKeys = in.createStringArrayList();
-        Parcelable[] array = in.readParcelableArray(getClass().getClassLoader());
+        Parcelable[] array = in.readParcelableArray(PFMember.class.getClassLoader());
         List<PFMember> participants = new ArrayList<>();
         //in.readList(participants, getClass().getClassLoader());
         for(Parcelable parcelable : array) {

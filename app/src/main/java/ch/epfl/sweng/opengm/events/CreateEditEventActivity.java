@@ -231,7 +231,10 @@ public class CreateEditEventActivity extends AppCompatActivity {
         for(PFMember member : event.getParticipants().values()) {
             participantsStringList += member.getName() + "; ";
         }
-        participantsList.setText(participantsStringList.substring(0, participantsStringList.length() - 2));
+        if(participantsStringList.length() > 2) {
+            participantsStringList = participantsStringList.substring(0, participantsStringList.length() - 2);
+        }
+        participantsList.setText(participantsStringList);
     }
 
 
