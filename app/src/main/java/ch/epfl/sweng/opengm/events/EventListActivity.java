@@ -46,6 +46,7 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         setTitle("List of your events");
+        findViewById(R.id.Screen).setVisibility(View.GONE);
         findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -69,52 +70,12 @@ public class EventListActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Void result) {
+                findViewById(R.id.Screen).setVisibility(View.VISIBLE);
                 displayEvents();
                 findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             }
         }.execute();
 
-    }
-    private void updateWithServer(){
-        new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void[] params){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    return false;
-                }
-                try {
-                    currentGroup.reload();
-                    for (PFEvent e : currentGroup.getEvents()) {
-                        if (!eventMap.containsKey(e.getId())) {
-                            currentGroup.removeEvent(e);
-                        }
-                    }
-                    for (PFEvent e : eventMap.values()) {
-                        if (currentGroup.getEvents().contains(e)) {
-                            currentGroup.updateEvent(e);
-                        } else {
-                            currentGroup.addEvent(e);
-                        }
-                    }
-                    return true;
-                }catch (PFException e){
-                    return false;
-                }
-
-            }
-            @Override
-            protected void onPostExecute(Boolean result){
-                Button re=(Button) findViewById(R.id.eventListRefreshButton);
-                re.setClickable(true);
-                re.setText("REFRESH");
-                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                if(!result) {
-                    Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }.execute();
     }
 
     @Override
@@ -177,12 +138,51 @@ public class EventListActivity extends AppCompatActivity {
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
     }//TODO : Fix it
-    public void clickOnRefreshButton(View v){ //TODO : ameliorer le display et faire un petit rond qui tourne
+
+    public void clickOnRefreshButton(View v){
         findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-       Button re=(Button) findViewById(R.id.eventListRefreshButton);
+        Button re=(Button) findViewById(R.id.eventListRefreshButton);
         re.setClickable(false);
         re.setText("WAIT");
-        updateWithServer();
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void[] params){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    return false;
+                }
+                try {
+                    currentGroup.reload();
+                    for (PFEvent e : currentGroup.getEvents()) {
+                        if (!eventMap.containsKey(e.getId())) {
+                            currentGroup.removeEvent(e);
+                        }
+                    }
+                    for (PFEvent e : eventMap.values()) {
+                        if (currentGroup.getEvents().contains(e)) {
+                            currentGroup.updateEvent(e);
+                        } else {
+                            currentGroup.addEvent(e);
+                        }
+                    }
+                    return true;
+                }catch (PFException e){
+                    return false;
+                }
+
+            }
+            @Override
+            protected void onPostExecute(Boolean result){
+                Button re=(Button) findViewById(R.id.eventListRefreshButton);
+                re.setClickable(true);
+                re.setText("REFRESH");
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                if(!result) {
+                    Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute();
     }
 
     private boolean compareDate(Date eventDate){

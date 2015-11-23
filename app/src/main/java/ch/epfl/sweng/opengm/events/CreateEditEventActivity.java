@@ -156,16 +156,33 @@ public class CreateEditEventActivity extends AppCompatActivity {
     public void onOkButtonClick(View v) { //TODO : make is smooth
         if (legalArguments()) {
             if (participants != null) {
-                Intent intent = new Intent();
-                PFEvent event = createEditEvent();
-                if(event!=null) {
-                    intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-                    setResult(Activity.RESULT_OK, intent);
-                    Log.v("event send in CreateEd", event.getId());
-                    finish();
-                }else{
-                    Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
-               }
+                findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.VISIBLE);
+                Button eeee = (Button)findViewById(R.id.CreateEditOkButton);
+                eeee.setText("WAIT");
+                new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        Intent intent = new Intent();
+                        PFEvent event = createEditEvent();
+                        if(event!=null) {
+                            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+                            setResult(Activity.RESULT_OK, intent);
+                            Log.v("event send in CreateEd", event.getId());
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
+                    @Override
+                    protected void onPostExecute(Boolean result){
+                        findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.INVISIBLE);
+                        if(result) {
+                            finish();
+                        }else {
+                            Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }.execute();
              } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
