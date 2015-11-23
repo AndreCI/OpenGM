@@ -45,14 +45,14 @@ public class EventListActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Intent intent = //getIntent();
-                        new Intent(Utils.GROUP_INTENT_MESSAGE);
+                Intent intent = getIntent();
+                       /* new Intent(Utils.GROUP_INTENT_MESSAGE);
 
                 try {
                     intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
                 } catch (PFException e) {
                     e.printStackTrace();
-                }
+                }*/
                 currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
                 Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
@@ -191,7 +191,6 @@ public class EventListActivity extends AppCompatActivity {
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
         Date currentDate = new Date(year, month, day, hour, min);
-
         return currentDate.before(eventDate);
     }
 
@@ -212,6 +211,7 @@ public class EventListActivity extends AppCompatActivity {
                 return rhs.getDate().compareTo(lhs.getDate());
             }
         });
+
         for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
