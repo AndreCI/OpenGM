@@ -377,5 +377,24 @@
     <string name="dialog_add_role_role_hint">Enter role name</string>
     <string name="save">Save</string>
     <string name="dialog_modify_permissions_title">Modify Permissions</string>
+    <string name="title_activity_create_poll">CreatePollActivity</string>
+
+
+    <!-- poll -->
+
+    <string name="possible_answers_poll">Number of possible answers :</string>
+    <string name="answers_poll">answer</string>
+    <string name="title_activity_list_participant">Add participants</string>
+    <string name="member_poll">%d member</string>
+    <string name="participant_poll">%d participant</string>
+    <string name="minus_poll">-</string>
+    <string name="plus_poll">+</string>
+    <string name="empty_name_poll">Name should not be empty</string>
+    <string name="empty_description_poll">Description should not be empty</string>
+    <string name="empty_date_poll">A deadline should be selected</string>
+    <string name="less_two_answers_poll">User should be able to choose among at least 2 answers</string>
+    <string name="no_participants_poll">A participant should be enrolled in this survey</string>
+    <string name="no_answer_poll">User should be able to choose at least an answer</string>
+    <string name="error_poll">Error while creating your poll</string>
 
 </resources>

@@ -68,7 +68,6 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("CHANGED", s + "");
                 mEditCountry.setText(getCountryForCode(mEditCode.getText().toString()));
             }
 

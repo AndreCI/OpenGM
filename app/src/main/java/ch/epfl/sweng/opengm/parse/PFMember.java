@@ -127,23 +127,23 @@ public final class PFMember extends PFEntity implements Parcelable {
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
                 if (e == null && object != null) {
-                        JSONArray array = new JSONArray();
-                        for (String groupId : mGroups) {
-                            array.put(groupId);
-                        }
-                        object.put(USER_ENTRY_GROUPS, array);
-                        object.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    // throw new ParseException("No object for the selected id.");
-                                } else {
-                                }
-                            }
-                        });
-                    } else {
-                        // throw new ParseException("No object for the selected id.");
+                    JSONArray array = new JSONArray();
+                    for (String groupId : mGroups) {
+                        array.put(groupId);
                     }
+                    object.put(USER_ENTRY_GROUPS, array);
+                    object.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                // throw new ParseException("No object for the selected id.");
+                            } else {
+                            }
+                        }
+                    });
+                } else {
+                    // throw new ParseException("No object for the selected id.");
+                }
             }
         });
 
@@ -232,6 +232,14 @@ public final class PFMember extends PFEntity implements Parcelable {
      */
     public Bitmap getPicture() {
         return mPicture;
+    }
+
+    public boolean hasRole(String role) {
+        return mRoles.contains(role);
+    }
+
+    public String getDisplayedName() {
+        return mFirstName + " " + mLastName;
     }
 
     /**
@@ -399,4 +407,5 @@ public final class PFMember extends PFEntity implements Parcelable {
             return new PFMember[size];
         }
     };
+
 }
