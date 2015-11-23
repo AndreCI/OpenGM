@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -37,17 +35,13 @@ public class EventListActivity extends AppCompatActivity {
     private Map<String,PFEvent> eventMap;
     private PFGroup currentGroup;
 
-    public static final int RESULT_CODE_FOR_CREATE_EDIT_EVENT_ADDED = 42;
-    public static final int RESULT_CODE_FOR_CREATE_EDIT_EVENT_DELETE = 69;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         setTitle("List of your events");
         findViewById(R.id.Screen).setVisibility(View.GONE);
-        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -72,7 +66,7 @@ public class EventListActivity extends AppCompatActivity {
             protected void onPostExecute(Void result) {
                 findViewById(R.id.Screen).setVisibility(View.VISIBLE);
                 displayEvents();
-                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                findViewById(R.id.EventListLoadingPanel).setVisibility(View.GONE);
             }
         }.execute();
 
@@ -140,7 +134,9 @@ public class EventListActivity extends AppCompatActivity {
     }//TODO : Fix it
 
     public void clickOnRefreshButton(View v){
-        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
+        findViewById(R.id.scrollView4).setVisibility(View.GONE);
+        findViewById(R.id.eventListAddButton).setClickable(false);
         Button re=(Button) findViewById(R.id.eventListRefreshButton);
         re.setClickable(false);
         re.setText("WAIT");
@@ -177,7 +173,9 @@ public class EventListActivity extends AppCompatActivity {
                 Button re=(Button) findViewById(R.id.eventListRefreshButton);
                 re.setClickable(true);
                 re.setText("REFRESH");
-                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                findViewById(R.id.EventListLoadingPanel).setVisibility(View.GONE);
+                findViewById(R.id.scrollView4).setVisibility(View.VISIBLE);
+                findViewById(R.id.eventListAddButton).setClickable(true);
                 if(!result) {
                     Toast.makeText(getApplicationContext(), "Unable to refresh.", Toast.LENGTH_SHORT).show();
                 }

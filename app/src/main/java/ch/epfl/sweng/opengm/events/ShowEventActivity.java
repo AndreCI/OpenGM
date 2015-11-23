@@ -119,7 +119,7 @@ public class ShowEventActivity extends AppCompatActivity {
         }
         ((TextView) findViewById(R.id.ShowEventParticipants)).setText(stringBuilder.toString());
     }
-    private void fillEventBitmap(){
+    private void fillEventBitmap(){ //TODO : make the image the right size.
         String imagePath = event.getPicturePath();
         String imageName = event.getPictureName();
         if(imagePath!= PFUtils.pathNotSpecified && imageName!=PFUtils.nameNotSpecified) {
