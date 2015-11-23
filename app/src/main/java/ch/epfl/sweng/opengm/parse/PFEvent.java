@@ -11,6 +11,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import bolts.Task;
 import ch.epfl.sweng.opengm.events.Utils;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
@@ -287,7 +289,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
      *
      * @throws PFException if something bad happened while communicating with the serve
      */
-    public void delete() throws PFException { //TODO : delete la tof aussi
+    public void delete() throws PFException {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_EVENT);
         try {
             ParseObject object = query.get(getId());
@@ -346,6 +348,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             participantsIds.put(member.getId());
         }
         object.put(EVENT_ENTRY_PARTICIPANTS, participantsIds);
+        //TODO : here we write the bitmap through a ParseFile in the internet
         if (picture != null) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -395,25 +398,13 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 Date date = object.getDate(EVENT_ENTRY_DATE);
 
 
-
+                //TODO : here we should get the bitmap
                 ParseFile pf = object.getParseFile(EVENT_ENTRY_PICTURE);
-                final Bitmap[] b ={null};
-                pf.getDataInBackground(new GetDataCallback() {
-                    @Override
-                    public void done(byte[] bytes, ParseException e) {
-                        if(e==null){
-                            b[0] = BitmapFactory
-                                    .decodeByteArray(
-                                            bytes, 0,
-                                            bytes.length);
-                        }
-                    }
-                });
-                if(b[0]==null){
-
-                }
+                Task<byte[]> dataRetriever = pf.getDataInBackground();
                 //Bitmap[] picture = {null};
                 //retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
+                //This doesn't work.
+
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                 List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
 
@@ -428,7 +419,12 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 }
                 String imagePath = PFUtils.pathNotSpecified;
                 String imageName = PFUtils.nameNotSpecified;
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,b[0]);
+                while (!dataRetriever.isCompleted()){
+
+                }
+                byte[] bitmapData = dataRetriever.getResult();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,bitmap);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

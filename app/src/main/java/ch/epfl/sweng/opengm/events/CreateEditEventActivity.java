@@ -128,11 +128,15 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (participants != null) {
                 Intent intent = new Intent();
                 PFEvent event = createEditEvent();
-                intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-                setResult(Activity.RESULT_OK, intent);
-                Log.v("event send in CreateEd", event.getId());
-                finish();
-            } else {
+                if(event!=null) {
+                    intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+                    setResult(Activity.RESULT_OK, intent);
+                    Log.v("event send in CreateEd", event.getId());
+                    finish();
+                }else{
+                    Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
+                }
+             } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
         }
@@ -249,7 +253,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
             String imagePath=writeImageInFileAndGetPath(b, picName);
             return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, b);
         } catch (PFException e) {
-            // TODO toast ?
             return null;
         }
     }
