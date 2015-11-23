@@ -6,8 +6,8 @@ public class Utils {
 
     public static final String GROUP_INTENT_MESSAGE = "ch.epfl.opengm.group_intent_message";
     public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
-    public static final int DELETE_COMPLETED = 690;
-    public static final int DELETE_FAILED = 400;
+    public static final int DELETE_EVENT = 690;
+    public static final int SHOWING_EVENT = 490;
     public static final String EDIT_INTENT_MESSAGE = "ch.epfl.opengm.edit_intent_message";
 
     public static Date stringToDate(String s) {

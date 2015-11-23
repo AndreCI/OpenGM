@@ -212,7 +212,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         setActivityIntent(i);
         CreateEditEventActivity a = getActivity();
         Intent data = null;
-        a.onActivityResult(CreateEditEventActivity.CREATE_EDIT_EVENT_RESULT_CODE_BROWSEFORBITMAP,
+        a.onActivityResult(CreateEditEventActivity.CREATE_EDIT_EVENT_RESULT_CODE_BROWSE_FOR_BITMAP,
                 Activity.RESULT_OK, data);
     }
 
