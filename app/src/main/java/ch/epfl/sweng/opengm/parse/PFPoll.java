@@ -8,6 +8,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_NUMBER_ANSWERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_PARTICIPANTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_RESULTS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_VOTERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 
@@ -37,17 +39,21 @@ public class PFPoll extends PFEntity {
     private final String mDescription;
     private final int nOfAnswers;
     private final HashMap<String, PFMember> mParticipants;
+    private final HashMap<String, Boolean> mVoters;
     private final List<Answer> mAnswers;
     private final Date mDeadline;
     private final boolean isOpen;
 
-    private PFPoll(String id, Date updated, String name, Date deadline, String description, List<Answer> answers, int nOfAnswers, List<PFMember> participants) {
+    private PFPoll(String id, Date updated, String name, Date deadline, String description, List<Answer> answers, int nOfAnswers, List<PFMember> participants, List<Boolean> hasParticpantVoted) {
         super(id, PARSE_TABLE_POLL, updated);
         this.mName = name;
         this.mDescription = description;
         this.mParticipants = new HashMap<>();
+        this.mVoters = new HashMap<>();
+        int i = 0;
         for (PFMember member : participants) {
             mParticipants.put(member.getId(), member);
+            mVoters.put(member.getId(), hasParticpantVoted.get(i++));
         }
         this.mAnswers = new ArrayList<>(answers);
         this.nOfAnswers = nOfAnswers;
@@ -77,6 +83,7 @@ public class PFPoll extends PFEntity {
         for (Parcelable parcelable : array) {
             participants.add((PFMember) parcelable);
         }
+        mVoters = new HashMap<>();
         mParticipants = new HashMap<>();
         for (int i = 0; i < participants.size(); ++i) {
             mParticipants.put(participantKeys.get(i), participants.get(i));
@@ -160,6 +167,7 @@ public class PFPoll extends PFEntity {
                 String[] votesArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_RESULTS));
                 String[] answersArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_ANSWERS));
                 String[] membersArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_PARTICIPANTS));
+                JSONArray votersArray = object.getJSONArray(POLL_ENTRY_VOTERS);
 
                 List<Answer> answers = new ArrayList<>();
 
@@ -170,15 +178,18 @@ public class PFPoll extends PFEntity {
                 List<String> participants = new ArrayList<>(Arrays.asList(membersArray));
 
                 List<PFMember> members = new ArrayList<>();
-
+                List<Boolean> voters = new ArrayList<>();
+                int i = 0;
                 for (String participantID : participants) {
                     try {
                         members.add(PFMember.fetchExistingMember(participantID));
-                    } catch (PFException e) {
+                        voters.add(votersArray.getBoolean(i));
+                    } catch (PFException | JSONException e) {
                         // Just do not add this guy :)
                     }
+                    i++;
                 }
-                return new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nAnswers, members);
+                return new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nAnswers, members, voters);
             } else {
                 throw new PFException("No object found for this idu");
             }
@@ -204,19 +215,24 @@ public class PFPoll extends PFEntity {
             votes.put(0);
         }
 
+        JSONArray voters = new JSONArray();
+        ArrayList<Boolean> hasParticpantVoted = new ArrayList<>();
         JSONArray participants = new JSONArray();
         for (PFMember member : members) {
             participants.put(member.getId());
+            voters.put(false);
+            hasParticpantVoted.add(false);
         }
 
         object.put(POLL_ENTRY_ANSWERS, propositions);
         object.put(POLL_ENTRY_RESULTS, votes);
         object.put(POLL_ENTRY_PARTICIPANTS, participants);
+        object.put(POLL_ENTRY_VOTERS, voters);
 
         try {
             object.save();
             String id = object.getObjectId();
-            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members);
+            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members, hasParticpantVoted);
             group.addPoll(poll);
             return poll;
         } catch (ParseException e) {
@@ -274,4 +290,18 @@ public class PFPoll extends PFEntity {
             return result;
         }
     }
+
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+
+        @Override
+        public PFPoll createFromParcel(Parcel source) {
+            return new PFPoll(source);
+        }
+
+        @Override
+        public PFPoll[] newArray(int size) {
+            return new PFPoll[size];
+        }
+    };
 }

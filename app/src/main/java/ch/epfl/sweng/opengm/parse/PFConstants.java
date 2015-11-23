@@ -58,6 +58,7 @@ public final class PFConstants {
     public static final String POLL_ENTRY_DESCRIPTION = "description";
     public static final String POLL_ENTRY_DEADLINE = "deadline";
     public static final String POLL_ENTRY_PARTICIPANTS = "members";
+    public static final String POLL_ENTRY_VOTERS = "voters";
     public static final String POLL_ENTRY_NUMBER_ANSWERS = "nOfPossibleAnswers";
     public static final String POLL_ENTRY_ANSWERS = "answers";
     public static final String POLL_ENTRY_RESULTS = "results";
