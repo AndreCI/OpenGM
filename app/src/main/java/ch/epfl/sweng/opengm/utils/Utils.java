@@ -7,10 +7,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.text.Normalizer;
 
 import ch.epfl.sweng.opengm.R;
 
@@ -72,5 +74,9 @@ public class Utils {
         res = Normalizer.normalize(res, Normalizer.Form.NFD);
         res = res.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return res;
+    }
+
+    public static String dateToString(Date date) {
+        return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
 }

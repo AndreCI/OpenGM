@@ -11,6 +11,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFPoll;
+import ch.epfl.sweng.opengm.utils.Utils;
 
 public class PollListAdapter extends ArrayAdapter<PFPoll> {
 
@@ -47,7 +48,7 @@ public class PollListAdapter extends ArrayAdapter<PFPoll> {
 
         holder.name.setText(poll.getName());
         holder.info.setText(poll.getDescription());
-        holder.date.setText(poll.getDeadline().toString());
+        holder.date.setText(Utils.dateToString(poll.getDeadline()));
 
         return row;
     }

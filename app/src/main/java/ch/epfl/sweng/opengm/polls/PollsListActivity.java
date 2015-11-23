@@ -34,7 +34,6 @@ public class PollsListActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // TODO make polls use Parcelable
         currentGroup = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
 
         polls.addAll(currentGroup.getPolls());
