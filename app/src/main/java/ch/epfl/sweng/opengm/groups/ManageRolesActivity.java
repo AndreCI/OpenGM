@@ -167,6 +167,10 @@ public class ManageRolesActivity extends AppCompatActivity {
         invalidateOptionsMenu();
     }
 
+    protected AlertDialog getModifyPermissionsDialog(){
+        return modifyPermissions;
+    }
+
     private void savePermissionChanges(ListView listView){
         List<PFGroup.Permission> addPermission = new ArrayList<>();
         List<PFGroup.Permission> removePermission = new ArrayList<>();
@@ -267,7 +271,11 @@ public class ManageRolesActivity extends AppCompatActivity {
         }
 
         for(int i = 1; i < checkedRoles.size(); i++){
-            permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
+            if(currentGroup.getRoles().contains(checkedRoles.get(i))){
+                permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
+            } else {
+                permissions = keepPermissionIntersection(permissions, new ArrayList<PFGroup.Permission>());
+            }
         }
         // To the ones that have been fetched, add those that could have been added before saving.
         for(List<String> roles : addPermissionsForRoles.keySet()){
