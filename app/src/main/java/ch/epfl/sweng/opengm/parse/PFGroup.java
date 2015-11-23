@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
@@ -73,15 +74,18 @@ public final class PFGroup extends PFEntity {
     private final static String adminRole = "Administrator";
     private final static String userRole = "User";
 
-    public enum Permission {
-        ADD_MEMBER(0), REMOVE_MEMBER(1), MANAGE_ROLES(2), ADD_ROLES(3), ADD_EVENT(4), MANAGE_EVENT(5), MANAGE_GROUP(6);
+    public static enum Permission{
+        ADD_MEMBER(0, "Add members"), REMOVE_MEMBER(1, "Remove members"), MANAGE_ROLES(2, "Manage roles"), ADD_ROLES(3, "Add roles"), ADD_EVENT(4, "Add events"), MANAGE_EVENT(5, "Manage events"), MANAGE_GROUP(6, "Manage groups");
 
         private int value;
+        private String name;
         private static Map<Integer, Permission> intToPermission = new HashMap<>();
+        private static Map<String, Permission> nameToPermission = new HashMap<>();
 
         static{
             for(Permission p : Permission.values()){
                 intToPermission.put(p.getValue(), p);
+                nameToPermission.put(p.name, p);
             }
         }
 
@@ -89,12 +93,24 @@ public final class PFGroup extends PFEntity {
             return intToPermission.get(value);
         }
 
-        Permission(int value){
+        public static Permission forName(String name){
+            return nameToPermission.get(name);
+        }
+
+        Permission(int value, String name){
             this.value = value;
+            this.name = name;
         }
 
         public int getValue(){
             return value;
+        }
+
+        public String getName(){ return name;}
+
+        @Override
+        public String toString(){
+            return name;
         }
     }
 
@@ -242,7 +258,6 @@ public final class PFGroup extends PFEntity {
                 retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
                 mPicture = picture[0];
 
-                // TODO : Modularize this part
                 HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
                 for(int i = 0; i < permissionsForRoles.length(); i++){
@@ -250,12 +265,12 @@ public final class PFGroup extends PFEntity {
                         JSONArray current = (JSONArray)permissionsForRoles.get(i);
                         String role = (String)current.get(0);
                         List<Permission> permissions = new ArrayList<>();
-                        for(Permission value : Permission.values()){
-                            permissions.add(value);
+                        for(int j = 1; j < current.length(); j++){
+                            int permission = Integer.parseInt(current.getString(j));
+                            permissions.add(Permission.forInt(permission));
                         }
                         rolesPermissions.put(role, permissions);
                     } catch (JSONException e){
-                        // TODO : What to do?
                     }
 
                 }
@@ -677,6 +692,7 @@ public final class PFGroup extends PFEntity {
             if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.addRole(role);
+                mRolesPermissions.put(role, new ArrayList<Permission>());
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
@@ -698,6 +714,7 @@ public final class PFGroup extends PFEntity {
             if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.removeRole(role);
+                mRolesPermissions.remove(role);
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
