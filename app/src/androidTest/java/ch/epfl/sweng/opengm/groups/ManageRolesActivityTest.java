@@ -32,6 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRolesActivity>{
     private ListView listView;
+    private ListView permissionView;
     private PFGroup testGroup;
     private List<PFUser> testUsers;
     private ManageRolesActivity createRolesActivity;
@@ -50,9 +51,13 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     private final static String TEST_ROLE_PREFIX = "testRole";
     private final static String NEW_TEST_ROLE_PREFIX = "Super new Role";
+    private final static String ADMIN_ROLE = "Administrator";
 
     private final static String ROLE_FOR_PREFIX = "roleFor";
     private final static String ROLE_FOR_BOTH = "ForBoth";
+
+    private final static String SAVE_BUTTON = "Save";
+    private final static String ADD_BUTTON = "Add";
 
 
     public ManageRolesActivityTest() {
@@ -92,25 +97,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(getRolesOrFail(testUsers.get(0).getId()).contains(NEW_TEST_ROLE_PREFIX + "1"));
     }
 
-//    public void testIfRemovingAddedRoleDoesntGoToDatabase() throws Exception {
-//        prepareIntentAndDatabase(1);
-//        getActivityAndLayout();
-//        addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
-//
-//        createRolesActivity.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                getCheckBoxForRole(NEW_TEST_ROLE_PREFIX + "1").performClick();
-//            }
-//        });
-//        onView(withId(R.id.action_remove_role)).perform(click());
-//
-//        assertFalse(getDisplayedRoles().contains(NEW_TEST_ROLE_PREFIX + "1"));
-//        onView(withId(R.id.button)).perform(click());
-//        updateReferencesFromDatabase();
-//        assertTrue(databaseRolesMatchesView());
-//    }
-
     public void testIfRemovesRoleFromDatabase() throws Exception {
         prepareIntentAndDatabase(1);
         testGroup.addRoleToUser(TEST_ROLE_PREFIX + "0", testUsers.get(0).getId());
@@ -143,7 +129,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         getActivityAndLayout();
 
         onView(withId(R.id.action_add_role)).perform(click());
-        onView(withText("Add")).perform(click());
+        onView(withText(ADD_BUTTON)).perform(click());
 
         assertFalse(getDisplayedRoles().contains(""));
     }
@@ -271,10 +257,155 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(result3);
     }
 
+    public void testCorrectPermissions() throws PFException, InterruptedException {
+        prepareIntentAndDatabase(1);
+        getActivityAndLayout();
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(ADMIN_ROLE).performClick();
+            }
+        });
+
+        onView(withId(R.id.action_modify_permissions)).perform(click());
+
+        List<String> permissions = getAllPermissions();
+        permissionView = (ListView) createRolesActivity.getModifyPermissionsDialog().findViewById(R.id.dialog_modify_permissions_list);
+
+        assertTrue(matchPermissions(permissions));
+    }
+
+    public void testCorrectPermissionsForRoles() throws PFException, InterruptedException {
+        prepareIntentAndDatabase(1);
+        testGroup.addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
+        Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
+        getActivityAndLayout();
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(ADMIN_ROLE).performClick();
+                getCheckBoxForRole(NEW_TEST_ROLE_PREFIX).performClick();
+            }
+        });
+
+        onView(withId(R.id.action_modify_permissions)).perform(click());
+
+        List<String> permissions = new ArrayList<>();
+        permissionView = (ListView) createRolesActivity.getModifyPermissionsDialog().findViewById(R.id.dialog_modify_permissions_list);
+
+        assertTrue(matchPermissions(permissions));
+    }
+
+    public void testAddPermission() throws Exception {
+        prepareIntentAndDatabase(1);
+        testGroup.addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
+        Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
+        getActivityAndLayout();
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(NEW_TEST_ROLE_PREFIX).performClick();
+            }
+        });
+
+        onView(withId(R.id.action_modify_permissions)).perform(click());
+
+        permissionView = (ListView) createRolesActivity.getModifyPermissionsDialog().findViewById(R.id.dialog_modify_permissions_list);
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForPermission(PFGroup.Permission.ADD_MEMBER).performClick();
+            }
+        });
+
+        onView(withText(SAVE_BUTTON)).perform(click());
+        onView(withId(R.id.button)).perform(click());
+
+        updateReferencesFromDatabase();
+        assertTrue(testGroup.getPermissionsForRole(NEW_TEST_ROLE_PREFIX).contains(PFGroup.Permission.ADD_MEMBER));
+    }
+
+    public void testRemovePermission() throws Exception {
+        prepareIntentAndDatabase(1);
+        getActivityAndLayout();
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForRole(ADMIN_ROLE).performClick();
+            }
+        });
+
+        onView(withId(R.id.action_modify_permissions)).perform(click());
+
+        permissionView = (ListView) createRolesActivity.getModifyPermissionsDialog().findViewById(R.id.dialog_modify_permissions_list);
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getCheckBoxForPermission(PFGroup.Permission.ADD_MEMBER).performClick();
+            }
+        });
+
+        onView(withText(SAVE_BUTTON)).perform(click());
+        onView(withId(R.id.button)).perform(click());
+
+        updateReferencesFromDatabase();
+        assertTrue(!testGroup.userHavePermission(testUsers.get(0).getId(), PFGroup.Permission.ADD_MEMBER));
+    }
+
+    private CheckBox getCheckBoxForPermission(PFGroup.Permission permission){
+        CheckBox toReturn = null;
+        for(int i = 0; i < permissionView.getCount(); i++){
+            View v = permissionView.getChildAt(i);
+            CheckBox permissionBox = (CheckBox) v.findViewById(R.id.role_checkbox);
+            TextView permissionName = (TextView) v.findViewById(R.id.role_name);
+            if(permission.equals(PFGroup.Permission.forName(permissionName.getText().toString()))){
+                toReturn = permissionBox;
+            }
+        }
+        return toReturn;
+    }
+
+    private boolean matchPermissions(List<String> expected){
+        boolean correct = true;
+        List<String> visited = new ArrayList<>();
+        for(int i = 0; i < permissionView.getCount(); i++){
+            View v = permissionView.getChildAt(i);
+            CheckBox permissionBox = (CheckBox) v.findViewById(R.id.role_checkbox);
+            TextView permissionName = (TextView) v.findViewById(R.id.role_name);
+            if(permissionBox.isChecked()){
+                if(!expected.contains(permissionName.getText().toString())){
+                    correct = false;
+                }
+                visited.add(permissionName.getText().toString());
+            }
+        }
+        return correct && (visited.size() == expected.size());
+    }
+
+    private List<String> getAllPermissions(){
+        List<String> allPermissions = new ArrayList<>();
+
+        for(PFGroup.Permission permission : PFGroup.Permission.values()){
+            allPermissions.add(permission.getName());
+        }
+
+        return allPermissions;
+    }
+
     private void addNewRoleWithView(String newRole, String index){
         onView(withId(R.id.action_add_role)).perform(click());
         onView(withId(R.id.dialog_add_role_role)).perform(typeText(newRole + index));
-        onView(withText("Add")).perform(click());
+        onView(withText(ADD_BUTTON)).perform(click());
     }
 
     private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
