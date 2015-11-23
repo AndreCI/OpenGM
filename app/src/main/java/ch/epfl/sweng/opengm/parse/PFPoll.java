@@ -32,7 +32,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_ENTRY_VOTERS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.POLL_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 
-public class PFPoll extends PFEntity {
+public class PFPoll extends PFEntity implements Comparable<PFPoll> {
 
     private final static String PARSE_TABLE_POLL = POLL_TABLE_NAME;
 
@@ -279,6 +279,11 @@ public class PFPoll extends PFEntity {
         } catch (ParseException e) {
             throw new PFException();
         }
+    }
+
+    @Override
+    public int compareTo(PFPoll another) {
+        return mDeadline.compareTo(another.mDeadline);
     }
 
 
