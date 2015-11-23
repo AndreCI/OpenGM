@@ -26,7 +26,7 @@ public class Utils {
 
     public static void writeMessageLocal(String fileName, MessageAdapter messageAdapter, Context context) {
         try {
-            Log.v("Utils", fileName);
+            Log.v("Utils", fileName+" : " + messageAdapter.toString());
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_APPEND));
             outputStreamWriter.write(createNewMessage(messageAdapter));
             outputStreamWriter.close();
@@ -37,7 +37,7 @@ public class Utils {
     }
 
     private static String createNewMessage(MessageAdapter messageAdapter) {
-        return String.format("<<<|%s|%s|%s|>>>", messageAdapter.getSenderName(), dateToString(new Date()),messageAdapter.getMessage());
+        return String.format("<<<|%s|%s|%s|>>>\n", messageAdapter.getSenderName(), dateToString(new Date()),messageAdapter.getMessage());
     }
 
     public static void writeMessageServeur(ConversationInformation conversationInformation) {
@@ -61,6 +61,7 @@ public class Utils {
             } else {
                 stringBuilder.append(line);
             }
+            line = bufferedReader.readLine();
         }
         return result;
     }

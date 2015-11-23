@@ -195,7 +195,11 @@ public class ShowConversationsActivity extends AppCompatActivity {
             try {
                 List<String> strings = Utils.readTextFile(params[0].getPath());
                 for (String s : strings) {
-                    conversationInformations.add(Utils.stringToConversationInformation(s));
+                    try {
+                        conversationInformations.add(Utils.stringToConversationInformation(s));
+                    } catch (IllegalArgumentException e) {
+                        Log.e("ShowConv", "coudln't read string: "+s);
+                    }
                 }
             } catch (IOException e) {
                 Log.e("ShowConv readIndF", "IOException with file: " + params[0].getPath());
