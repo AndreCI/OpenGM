@@ -72,23 +72,29 @@ public class PFPoll extends PFEntity {
         this.nOfAnswers = in.readInt();
         this.isOpen = in.readByte() != 0;
 
-        List<String> answers = in.createStringArrayList();
-        List<String> values = in.createStringArrayList();
+        List<String> answersQuestions = in.createStringArrayList();
+        int[] answersVote = in.createIntArray();
 
-        // TODO handles this
+        List<String> participantIds = in.createStringArrayList();
+        boolean[] voters = in.createBooleanArray();
+        Parcelable[] array = in.readParcelableArray(PFMember.class.getClassLoader());
 
         mAnswers = new ArrayList<>();
 
-        List<String> participantKeys = in.createStringArrayList();
-        Parcelable[] array = in.readParcelableArray(PFMember.class.getClassLoader());
-        List<PFMember> participants = new ArrayList<>();
-        for (Parcelable parcelable : array) {
-            participants.add((PFMember) parcelable);
+        int i = 0;
+        for (String answer : answersQuestions) {
+            mAnswers.add(new Answer(answer, answersVote[i++]));
         }
+
         mVoters = new HashMap<>();
         mParticipants = new HashMap<>();
-        for (int i = 0; i < participants.size(); ++i) {
-            mParticipants.put(participantKeys.get(i), participants.get(i));
+        i = 0;
+        for (Parcelable parcelable : array) {
+            PFMember member = (PFMember) parcelable;
+            String id = participantIds.get(i);
+            boolean hasVoted = voters[i++];
+            mVoters.put(id, hasVoted);
+            mParticipants.put(id, member);
         }
     }
 
@@ -140,9 +146,9 @@ public class PFPoll extends PFEntity {
         }
 
         dest.writeStringList(participantKeys);
+        dest.writeBooleanArray(voters);
         Parcelable[] array = new Parcelable[participants.size()];
         dest.writeParcelableArray(participants.toArray(array), 0);
-        dest.writeBooleanArray(voters);
     }
 
     public String getName() {
