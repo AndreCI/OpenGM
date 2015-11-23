@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -13,7 +14,10 @@ import org.json.JSONException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import ch.epfl.sweng.opengm.events.Utils;
 
 /**
  * This class contains some static methods that may be called for conversion, saving or checking purposes
@@ -121,6 +125,5 @@ public final class PFUtils {
     public static boolean checkNullArguments(String arg) {
         return (arg != null);
     }
-
 
 }

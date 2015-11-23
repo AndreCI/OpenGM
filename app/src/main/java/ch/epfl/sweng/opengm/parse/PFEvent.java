@@ -400,9 +400,8 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
 
                 //TODO : here we should get the bitmap
                 ParseFile pf = object.getParseFile(EVENT_ENTRY_PICTURE);
-                Task<byte[]> dataRetriever = pf.getDataInBackground();
-                //Bitmap[] picture = {null};
-                //retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
+                Bitmap[] picture = {null};
+                retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
                 //This doesn't work.
 
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
@@ -419,12 +418,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 }
                 String imagePath = PFUtils.pathNotSpecified;
                 String imageName = PFUtils.nameNotSpecified;
-                while (!dataRetriever.isCompleted()){
-
-                }
-                byte[] bitmapData = dataRetriever.getResult();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,bitmap);
+                return new PFEvent(id, object.getUpdatedAt(), title, place, date, description, members,imagePath,imageName,picture[0]);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

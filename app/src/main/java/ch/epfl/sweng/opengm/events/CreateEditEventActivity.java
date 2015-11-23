@@ -123,7 +123,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     }
 
 
-    public void onOkButtonClick(View v) {
+    public void onOkButtonClick(View v) { //TODO : make is smooth
         if (legalArguments()) {
             if (participants != null) {
                 Intent intent = new Intent();

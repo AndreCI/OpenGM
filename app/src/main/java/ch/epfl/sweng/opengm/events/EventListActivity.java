@@ -137,8 +137,8 @@ public class EventListActivity extends AppCompatActivity {
     }
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
-    }
-    public void clickOnRefreshButton(View v){
+    }//TODO : Fix it
+    public void clickOnRefreshButton(View v){ //TODO : ameliorer le display et faire un petit rond qui tourne
         try {
             updateWithServer();
         } catch (PFException e) {
