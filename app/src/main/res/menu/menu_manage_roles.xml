@@ -1,6 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="ch.epfl.sweng.opengm.groups.ManageRolesActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_add_role"
+        android:icon="@drawable/ic_action_add_person"
+        android:title="@string/action_add_role"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_remove_role"
+        android:icon="@drawable/ic_action_remove"
+        android:title="@string/action_remove_role"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_modify_permissions"
+        android:icon="@drawable/ic_action_group"
+        android:title="@string/action_modify_permissions"
+        app:showAsAction="ifRoom"/>
+
 </menu>

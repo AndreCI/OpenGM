@@ -366,6 +366,13 @@
     <string name="invite_contact">Invite a contact</string>
     <string name="cost_contact">Do you want to open the SMS application to invite %s? It may imply some additional costs.</string>
     <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
+    <string name="action_add_role">Add role</string>
+    <string name="action_remove_role">Remove role</string>
+    <string name="action_modify_permissions">Modify Permissions</string>
+    <string name="dialog_add_role_title">Add Role</string>
+    <string name="dialog_add_role_role_hint">Enter role name</string>
+    <string name="save">Save</string>
+    <string name="dialog_modify_permissions_title">Modify Permissions</string>
     <string name="title_activity_create_poll">CreatePollActivity</string>
 
 

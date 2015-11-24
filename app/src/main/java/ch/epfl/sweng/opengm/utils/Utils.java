@@ -3,10 +3,18 @@ package ch.epfl.sweng.opengm.utils;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,5 +86,29 @@ public class Utils {
 
     public static String dateToString(Date date) {
         return new SimpleDateFormat("dd/MM/yy").format(date);
+    }
+
+    public static String saveToInternalSorage(Bitmap bitmapImage, Context appContext, String fileName) throws IOException {
+        ContextWrapper cw = new ContextWrapper(appContext);
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath = new File(directory, fileName + ".jpg");
+        FileOutputStream fos = null;
+        fos = new FileOutputStream(mypath);
+        // Use the compress method on the BitMap object to write image to the OutputStream
+        if (bitmapImage == null) {
+            bitmapImage = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.default_event);
+        }
+        bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        if (fos != null) {
+            fos.close();
+        }
+        return directory.getAbsolutePath();
+    }
+
+    public static Bitmap loadImageFromStorage(String path, String name) throws FileNotFoundException {
+        File f = new File(path, name);
+        return BitmapFactory.decodeStream(new FileInputStream(f));
     }
 }
