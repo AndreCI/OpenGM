@@ -2,9 +2,13 @@ package ch.epfl.sweng.opengm.events;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
@@ -45,14 +49,14 @@ public class EventListActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Intent intent = getIntent();
-                       /* new Intent(Utils.GROUP_INTENT_MESSAGE);
+                Intent intent = //getIntent();
+                        new Intent(Utils.GROUP_INTENT_MESSAGE);
 
                 try {
                     intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
                 } catch (PFException e) {
                     e.printStackTrace();
-                }*/
+                }
                 currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
                 Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
@@ -144,11 +148,6 @@ public class EventListActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(Void[] params){
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    return false;
-                }
-                try {
                     currentGroup.reload();
                     for (PFEvent e : currentGroup.getEvents()) {
                         if (!eventMap.containsKey(e.getId())) {
@@ -215,8 +214,14 @@ public class EventListActivity extends AppCompatActivity {
         for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
-                b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
-                b.setTag(event);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    b.setBackground(getDrawable(R.drawable.rounded_buttons));
+                }
+                b.setTextColor(Color.WHITE);
+                SpannableString name = new SpannableString(String.format("%s \n %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
+                name.setSpan(new RelativeSizeSpan(2f),0,event.getName().length(),0);
+                b.setText(name);
+                 b.setTag(event);
                 b.setLayoutParams(linearLayoutListEvents.getLayoutParams());
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override

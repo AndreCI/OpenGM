@@ -72,6 +72,8 @@
         android:id="@+id/ShowEventDeleteEditLayout"
         android:layout_alignParentBottom="true">
         <Button
+            android:background="@drawable/rounded_buttons"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -80,8 +82,14 @@
             android:clickable="true"
             android:onClick="onDeleteButtonClick"
             android:text="delete"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"/>
 
     <Button
+        android:background="@drawable/rounded_buttons"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventEditButton"

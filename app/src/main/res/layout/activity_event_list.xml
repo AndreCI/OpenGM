@@ -33,7 +33,8 @@
         android:id="@+id/ScrollViewParentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/eventListBottomLayout">
+        android:layout_above="@+id/eventListBottomLayout"
+        android:layout_below="@+id/eventListCheckboxLayout">
         <ScrollView
             android:id="@+id/scrollView4"
             android:layout_width="match_parent"
@@ -48,32 +49,49 @@
             </ScrollView>
     </RelativeLayout>
         <LinearLayout
-            android:id="@+id/eventListBottomLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
-
+            android:layout_centerHorizontal="true"
+            android:id="@+id/eventListCheckboxLayout">
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/eventListCheckBoxForPastEvent"
                 android:onClick="clickOnCheckBoxForPastEvent"
-               android:layout_weight="1"
-               android:text="Show past events"/>
+                android:text="Show past events" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/eventListBottomLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
             <Button
+                android:background="@drawable/rounded_buttons"
+                android:textColor="@color/white"
                 android:id="@+id/eventListAddButton"
                 android:text="@string/addButtonText"
                 android:onClick="clickOnAddButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"/>
             <Button
+                android:background="@drawable/rounded_buttons"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Refresh"
                 android:onClick="clickOnRefreshButton"
-                android:id="@+id/eventListRefreshButton"/>
+                android:id="@+id/eventListRefreshButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_weight="1"/>
         </LinearLayout>
 
     </RelativeLayout>
