@@ -9,7 +9,7 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 
 class Participant implements Comparable<Participant> {
 
-    private final List<PFMember> participants;
+    private final ArrayList<PFMember> participants;
     private final String prefix;
     private final boolean isGroup;
     private final String info;
@@ -32,7 +32,7 @@ class Participant implements Comparable<Participant> {
         this.info = members.size() + " member" + (members.size() > 1 ? "s" : "");
     }
 
-    public List<PFMember> getParticipants() {
+    public ArrayList<PFMember> getParticipants() {
         return participants;
     }
 
@@ -50,6 +50,25 @@ class Participant implements Comparable<Participant> {
 
     public String getInfo() {
         return info;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Participant that = (Participant) o;
+
+        if (info != null ? !info.equals(that.info) : that.info != null) return false;
+        return !(name != null ? !name.equals(that.name) : that.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = info != null ? info.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 
     @Override

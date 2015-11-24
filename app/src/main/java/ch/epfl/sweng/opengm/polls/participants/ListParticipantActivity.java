@@ -17,8 +17,9 @@ import android.widget.SearchView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -31,7 +32,10 @@ import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 public class ListParticipantActivity extends AppCompatActivity {
 
     private PFGroup group;
+
     private final List<Participant> participants = new ArrayList<>();
+
+    private final Map<String, Boolean> membersEnrolled = new HashMap<>();
 
     private ParticipantAdapter mAdapter;
     private ListView list;
@@ -49,7 +53,14 @@ public class ListParticipantActivity extends AppCompatActivity {
 
         group = OpenGMApplication.getCurrentGroup();
 
-        Log.d("GROUP", group.toString());
+        List<PFMember> enrolled = getIntent().getParcelableArrayListExtra(CreatePollActivity.ENROLLED_POLL_INTENT);
+
+        for (String memberId : group.getMembers().keySet()) {
+            membersEnrolled.put(memberId, false);
+        }
+        for (PFMember member : enrolled) {
+            membersEnrolled.put(member.getId(), true);
+        }
 
         fillList();
 
@@ -62,20 +73,9 @@ public class ListParticipantActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CheckBox box = ((CheckBox) view.findViewById(R.id.participant_box_poll));
-                boolean isChecked = box.isChecked();
-                box.setChecked(!isChecked);
-                Participant p = mAdapter.getItem(position);
-                for (int i = 0; i < list.getChildCount(); i++) {
-                    if (i != position) {
-                        View row = list.getChildAt(i);
-                        Participant child = mAdapter.getItem(i);
-                        if (child.getParticipants().containsAll(p.getParticipants())) {
-                            ((CheckBox) row.findViewById(R.id.participant_box_poll)).setChecked(!isChecked);
-                            Log.d("Participant", child.getName() + " contains all " + p.getName());
-                        }
-                    }
-                }
+                CheckBox box = (CheckBox) view.findViewById(R.id.participant_box_poll);
+                box.setChecked(!box.isChecked());
+                updateView(box);
             }
         });
 
@@ -93,6 +93,38 @@ public class ListParticipantActivity extends AppCompatActivity {
                 return showResult(newText);
             }
         });
+
+        checkCorrespondingBoxes();
+    }
+
+    public void updateView(View view) {
+        CheckBox box = (CheckBox) view;
+        boolean isChecked = box.isChecked();
+
+        Participant p = (Participant) box.getTag();
+
+        for (PFMember member : p.getParticipants()) {
+            membersEnrolled.put(member.getId(), isChecked);
+        }
+        checkCorrespondingBoxes();
+    }
+
+    private void checkCorrespondingBoxes() {
+        Log.d("ENROLLED", "LIST SIZE " + list.getChildCount());
+        for (int i = 0; i < list.getChildCount(); i++) {
+            View row = list.getChildAt(i);
+            Participant child = mAdapter.getItem(i);
+
+            boolean userAreAllChecks = true;
+
+            for (PFMember childMember : child.getParticipants()) {
+                if (!membersEnrolled.get(childMember.getId())) {
+                    userAreAllChecks = false;
+                    break;
+                }
+            }
+            ((CheckBox) row.findViewById(R.id.participant_box_poll)).setChecked(userAreAllChecks);
+        }
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -157,15 +189,14 @@ public class ListParticipantActivity extends AppCompatActivity {
                 return true;
             case R.id.action_validate:
 
-                HashSet<PFMember> members = new HashSet<>();
+                List<PFMember> members = new ArrayList<>();
 
-                for (int i = 0; i < list.getChildCount(); i++) {
-                    View row = list.getChildAt(i);
-                    CheckBox box = (CheckBox) row.findViewById(R.id.participant_box_poll);
-                    if (box.isChecked()) {
-                        members.addAll(mAdapter.getItem(i).getParticipants());
+                for (Map.Entry<String, Boolean> entry : membersEnrolled.entrySet()) {
+                    if (entry.getValue()) {
+                        members.add(group.getMember(entry.getKey()));
                     }
                 }
+
                 Intent returnIntent = new Intent();
                 returnIntent.putParcelableArrayListExtra(CreatePollActivity.PARTICIPANTS_KEY, new ArrayList<Parcelable>(members));
                 setResult(Activity.RESULT_OK, returnIntent);

@@ -1,9 +1,9 @@
 package ch.epfl.sweng.opengm.polls;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.Time;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -89,6 +88,24 @@ public class PollsListActivity extends AppCompatActivity {
                 return true;
             default:
                 return true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            currentGroup = OpenGMApplication.getCurrentGroup();
+
+            List<PFPoll> groupsPoll = currentGroup.getPolls();
+            List<PFPoll> userPoll = new ArrayList<>();
+
+            for (PFPoll poll : groupsPoll) {
+                if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
+                    userPoll.add(poll);
+            }
+
+            polls.addAll(userPoll);
+            mAdapter.notifyDataSetChanged();
         }
     }
 }
