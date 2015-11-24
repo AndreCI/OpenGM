@@ -19,11 +19,14 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.polls.CreatePollActivity;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+import static ch.epfl.sweng.opengm.events.Utils.*;
 import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
+import static ch.epfl.sweng.opengm.polls.CreatePollActivity.*;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,8 +36,6 @@ public class GroupsHomeActivity extends AppCompatActivity
     DrawerLayout drawer;
 
     private PFGroup currentGroup;
-
-    private ListView mEventLists;
 
     private int groupPos;
 
@@ -57,13 +58,8 @@ public class GroupsHomeActivity extends AppCompatActivity
         TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
         descriptionView.setText(currentGroup.getDescription());
 
-        NavigationView navView = (NavigationView) drawer.findViewById(R.id.nav_view);
-
-        mEventLists = (ListView) navView.findViewById(R.id.listViewEvents);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +105,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
-                intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                intent.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
@@ -118,7 +114,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_polls:
                 Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
-                intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                intent1.putExtra(GROUP_POLL_INTENT, currentGroup);
                 startActivity(intent1);
                 break;
             case R.id.nav_my_settings:

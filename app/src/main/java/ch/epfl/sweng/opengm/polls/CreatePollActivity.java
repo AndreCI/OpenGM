@@ -43,6 +43,10 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     public final static String PARTICIPANTS_KEY = "ch.epfl.sweng.opengm.polls.createpollactivity.participants";
 
+    public final static String GROUP_POLL_INTENT = "ch.epfl.sweng.opengm.polls.createpollactivity.groups";
+
+    public final static String POLL_INTENT = "ch.epfl.sweng.opengm.polls.createpollactivity.polls";
+
     private static final int PARTICIPANTS_ACT_KEY = 328;
 
     private EditText mNameEdit;
@@ -73,7 +77,7 @@ public final class CreatePollActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        currentGroup = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
+        currentGroup = getIntent().getParcelableExtra(GROUP_POLL_INTENT);
 
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
         mNameEdit = (EditText) findViewById(R.id.namePollEditText);

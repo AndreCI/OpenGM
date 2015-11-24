@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class PollsListActivity extends AppCompatActivity {
 
         setTitle(R.string.title_list_poll);
 
-        currentGroup = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
+        currentGroup = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
 
         polls.addAll(currentGroup.getPolls());
 
@@ -44,6 +45,16 @@ public class PollsListActivity extends AppCompatActivity {
 
         mAdapter = new PollListAdapter(this, polls);
         list.setAdapter(mAdapter);
+
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(PollsListActivity.this, PollVoteActivity.class);
+                i.putExtra(CreatePollActivity.POLL_INTENT, mAdapter.getItem(position));
+                startActivity(i);
+            }
+        });
     }
 
     public void addPoll(View view) {
