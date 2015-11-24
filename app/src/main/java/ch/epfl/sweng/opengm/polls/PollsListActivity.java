@@ -3,12 +3,14 @@ package ch.epfl.sweng.opengm.polls;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Time;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +62,7 @@ public class PollsListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PFPoll poll = mAdapter.getItem(position);
                 Intent i;
-                if (poll.isOpen() && poll.getDeadline().before(new Date())) {
+                if (poll.isOpen() && poll.getDeadline().before(Calendar.getInstance().getTime())) {
                     i = new Intent(PollsListActivity.this, PollVoteActivity.class);
                 } else {
                     i = new Intent(PollsListActivity.this, PollResultActivity.class);

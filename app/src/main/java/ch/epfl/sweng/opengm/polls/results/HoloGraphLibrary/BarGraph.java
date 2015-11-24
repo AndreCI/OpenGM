@@ -493,7 +493,7 @@ public class BarGraph extends View implements HoloGraphAnimate {
     @Override
     public void animateToGoalValues() {
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1){
-            Log.e("HoloGraphLibrary compatibility error", "Animation not supported on api level 11 and below. Returning without animating.");
+            Log.e("HoloGraphLibrary compatibility error", "Animation not supported on api level 11 and below.");
             return;
         }
         if (mValueAnimator != null)

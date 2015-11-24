@@ -33,7 +33,6 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFPoll;
 import ch.epfl.sweng.opengm.polls.participants.ListParticipantActivity;
 
-import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static java.lang.Integer.parseInt;
@@ -105,7 +104,7 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     public void addParticipants(View view) {
         Intent i = new Intent(this, ListParticipantActivity.class);
-        i.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
+        i.putExtra(CreatePollActivity.GROUP_POLL_INTENT, currentGroup);
         startActivityForResult(i, PARTICIPANTS_ACT_KEY);
     }
 

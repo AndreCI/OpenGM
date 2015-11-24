@@ -114,7 +114,7 @@ public class Bar {
         if (mValueString != null) {
             return mValueString;
         } else {
-            return String.valueOf(mValue);
+            return String.valueOf((int) mValue);
         }
     }
 

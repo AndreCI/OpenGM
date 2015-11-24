@@ -44,7 +44,7 @@ public class ListParticipantActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        group = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
+        group = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
 
         fillList();
 

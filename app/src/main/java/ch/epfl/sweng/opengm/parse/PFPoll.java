@@ -290,7 +290,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
                 Date deadline = object.getDate(POLL_ENTRY_DEADLINE);
                 int nAnswers = object.getInt(POLL_ENTRY_NUMBER_ANSWERS);
 
-                String[] votesArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_RESULTS));
+                JSONArray votesArray = object.getJSONArray(POLL_ENTRY_RESULTS);
                 String[] answersArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_ANSWERS));
                 String[] membersArray = convertFromJSONArray(object.getJSONArray(POLL_ENTRY_PARTICIPANTS));
                 JSONArray votersArray = object.getJSONArray(POLL_ENTRY_VOTERS);
@@ -298,7 +298,12 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
                 List<Answer> answers = new ArrayList<>();
 
                 for (int i = 0; i < answersArray.length; i++) {
-                    answers.add(new Answer(answersArray[i], votesArray[i]));
+                    try {
+                        answers.add(new Answer(answersArray[i], votesArray.getInt(i)));
+                    } catch (JSONException e) {
+                        // Just do not add it
+                        e.printStackTrace();
+                    }
                 }
 
                 List<String> participants = new ArrayList<>(Arrays.asList(membersArray));
@@ -342,12 +347,12 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         }
 
         JSONArray voters = new JSONArray();
-        ArrayList<Boolean> hasParticpantVoted = new ArrayList<>();
+        ArrayList<Boolean> hasParticipantVoted = new ArrayList<>();
         JSONArray participants = new JSONArray();
         for (PFMember member : members) {
             participants.put(member.getId());
             voters.put(false);
-            hasParticpantVoted.add(false);
+            hasParticipantVoted.add(false);
         }
 
         object.put(POLL_ENTRY_ANSWERS, propositions);
@@ -358,7 +363,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         try {
             object.save();
             String id = object.getObjectId();
-            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members, hasParticpantVoted);
+            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members, hasParticipantVoted);
             group.addPoll(poll);
             return poll;
         } catch (ParseException e) {
@@ -378,10 +383,6 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
 
         public Answer(String answer) {
             this(answer, 0);
-        }
-
-        public Answer(String answer, String vote) {
-            this(answer, vote == null ? 0 : Integer.parseInt(vote));
         }
 
         public Answer(String answer, int vote) {
