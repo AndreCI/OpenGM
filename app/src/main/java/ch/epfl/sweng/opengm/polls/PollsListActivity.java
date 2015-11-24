@@ -9,14 +9,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFPoll;
-
-import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 
 public class PollsListActivity extends AppCompatActivity {
 
@@ -39,7 +39,15 @@ public class PollsListActivity extends AppCompatActivity {
 
         currentGroup = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
 
-        polls.addAll(currentGroup.getPolls());
+        List<PFPoll> groupsPoll = currentGroup.getPolls();
+        List<PFPoll> userPoll = new ArrayList<>();
+
+        for (PFPoll poll : groupsPoll) {
+            if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
+                userPoll.add(poll);
+        }
+
+        polls.addAll(userPoll);
 
         list = (ListView) findViewById(R.id.pollsListView);
 
@@ -50,8 +58,14 @@ public class PollsListActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(PollsListActivity.this, PollVoteActivity.class);
-                i.putExtra(CreatePollActivity.POLL_INTENT, mAdapter.getItem(position));
+                PFPoll poll = mAdapter.getItem(position);
+                Intent i;
+                if (poll.isOpen() && poll.getDeadline().before(new Date())) {
+                    i = new Intent(PollsListActivity.this, PollVoteActivity.class);
+                } else {
+                    i = new Intent(PollsListActivity.this, PollResultActivity.class);
+                }
+                i.putExtra(CreatePollActivity.POLL_INTENT, poll);
                 startActivity(i);
             }
         });

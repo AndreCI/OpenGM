@@ -2,10 +2,13 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,8 +107,55 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
     }
 
     @Override
-    protected void updateToServer(String entry) throws PFException {
+    protected void updateToServer(final String entry) throws PFException {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_POLL);
+        query.whereEqualTo(OBJECT_ID, getId());
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
 
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    if (object != null) {
+                        switch (entry) {
+                            case POLL_ENTRY_ANSWERS:
+                                JSONArray votes = new JSONArray();
+                                JSONArray votersIds = new JSONArray();
+                                JSONArray voters = new JSONArray();
+                                for (Map.Entry<String, Boolean> voter : mVoters.entrySet()) {
+                                    votersIds.put(voter.getKey());
+                                    voters.put(voter.getValue());
+                                }
+                                for (Answer answer : mAnswers) {
+                                    votes.put(answer.getVotes());
+                                }
+                                object.put(POLL_ENTRY_RESULTS, votes);
+                                object.put(POLL_ENTRY_PARTICIPANTS, votersIds);
+                                object.put(POLL_ENTRY_VOTERS, voters);
+                                break;
+                            default:
+                                return;
+                        }
+                        object.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null) {
+                                    Log.d("ERROR 1", "ERROR 1");
+                                    e.printStackTrace();
+                                    // throw new ParseException("No object for the selected id.");
+                                }
+                            }
+                        });
+                    } else {
+                        Log.d("ERROR 2", "ERROR 2");
+                        // throw new ParseException(1,"");
+                    }
+                } else {
+                    Log.d("ERROR 3", "ERROR 3");
+                    e.printStackTrace();
+                    // throw new ParseException("Error while sending the request to the server");
+                }
+            }
+        });
     }
 
     @Override
@@ -182,6 +232,36 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
 
     public boolean isOpen() {
         return isOpen;
+    }
+
+    public void updateAnswers(String userId) throws PFException {
+        if (userId == null && !mVoters.containsKey(userId)) {
+            throw new PFException();
+        }
+        if (!mVoters.get(userId)) {
+            mVoters.put(userId, true);
+            try {
+                updateToServer(POLL_ENTRY_ANSWERS);
+                Log.d("SUCCESS", "UPDATE ANSWERS SUCCESS");
+            } catch (PFException e) {
+                mVoters.put(userId, false);
+                throw new PFException(e);
+            }
+        }
+    }
+
+    public void increaseVoteForAnswer(Answer answer) {
+        mAnswers.get(mAnswers.indexOf(answer)).increaseVote();
+    }
+
+    public boolean isUserEnrolled(String userId) {
+        return mVoters.containsKey(userId);
+    }
+
+    public boolean hasUserAlreadyVoted(String userId) {
+        if (!mVoters.containsKey(userId))
+            return false;
+        return mVoters.get(userId);
     }
 
     public void delete() throws PFException {
@@ -290,7 +370,6 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
     public int compareTo(PFPoll another) {
         return mDeadline.compareTo(another.mDeadline);
     }
-
 
     public static class Answer {
 

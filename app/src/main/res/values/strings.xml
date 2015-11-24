@@ -135,10 +135,6 @@
     <string name="hello_world">Hello world!</string>
 
 
-
-
-
-
     <!-- Phones numbers -->
 
     <string-array name="countryCodes">
