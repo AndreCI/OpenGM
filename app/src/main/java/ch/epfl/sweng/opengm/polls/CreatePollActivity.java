@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.DatePickerFragment;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -76,7 +77,9 @@ public final class CreatePollActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        currentGroup = getIntent().getParcelableExtra(GROUP_POLL_INTENT);
+        //currentGroup = getIntent().getParcelableExtra(GROUP_POLL_INTENT);
+
+        currentGroup = OpenGMApplication.getCurrentGroup();
 
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
         mNameEdit = (EditText) findViewById(R.id.namePollEditText);

@@ -72,7 +72,7 @@ public class PFPollTest {
 
         try {
             currentPoll = PFPoll.createNewPoll(currentGroup, name, description, nOfAnswers, answers, deadline, members);
-            PFPoll poll2 = PFPoll.fetchExistingPoll(currentPoll.getId());
+            PFPoll poll2 = PFPoll.fetchExistingPoll(currentPoll.getId(), currentGroup);
             assertEquals(currentPoll.getName(), poll2.getName());
             assertEquals(currentPoll.getDescription(), poll2.getDescription());
             assertEquals(currentPoll.getDeadline(), poll2.getDeadline());

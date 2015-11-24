@@ -39,7 +39,9 @@ public class PollsListActivity extends AppCompatActivity {
 
         setTitle(R.string.title_list_poll);
 
-        currentGroup = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
+        //currentGroup = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
+
+        currentGroup = OpenGMApplication.getCurrentGroup();
 
         List<PFPoll> groupsPoll = currentGroup.getPolls();
         List<PFPoll> userPoll = new ArrayList<>();

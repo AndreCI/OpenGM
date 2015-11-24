@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -53,7 +54,8 @@ public class EventListActivity extends AppCompatActivity {
                 } catch (PFException e) {
                     e.printStackTrace();
                 }*/
-                currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+                currentGroup = OpenGMApplication.getCurrentGroup();
+                //currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
                 Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
                 for(PFEvent e : currentGroup.getEvents()){

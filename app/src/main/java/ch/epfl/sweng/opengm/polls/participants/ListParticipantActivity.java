@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +20,12 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.polls.CreatePollActivity;
 
-import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class ListParticipantActivity extends AppCompatActivity {
@@ -44,7 +45,11 @@ public class ListParticipantActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        group = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
+        //group = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
+
+        group = OpenGMApplication.getCurrentGroup();
+
+        Log.d("GROUP", group.toString());
 
         fillList();
 
@@ -67,6 +72,7 @@ public class ListParticipantActivity extends AppCompatActivity {
                         Participant child = mAdapter.getItem(i);
                         if (child.getParticipants().containsAll(p.getParticipants())) {
                             ((CheckBox) row.findViewById(R.id.participant_box_poll)).setChecked(!isChecked);
+                            Log.d("Participant", child.getName() + " contains all " + p.getName());
                         }
                     }
                 }
