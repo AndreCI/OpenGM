@@ -170,7 +170,7 @@ public final class PFGroup extends PFEntity {
         mPolls = new HashMap<>();
         for (String pollId : polls) {
             try {
-                mPolls.put(pollId, PFPoll.fetchExistingPoll(pollId));
+                mPolls.put(pollId, PFPoll.fetchExistingPoll(pollId, this));
             } catch (PFException e) {
                 // Do not add the event but do nothing
             }
@@ -178,7 +178,7 @@ public final class PFGroup extends PFEntity {
         mEvents = new HashMap<>();
         for (String eventId : events) {
             try {
-                mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId));
+                mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId, this));
             } catch (PFException e) {
                 // Do not add the event but do nothing
             }
@@ -256,7 +256,7 @@ public final class PFGroup extends PFEntity {
                     for (int i = 0; i < eventsArray.length; i++) {
                         try {
                             String eventId = eventsArray[i];
-                            mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId));
+                            mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId, this));
                         } catch (PFException e) {
                             // Do not add the event but to nothing
                         }
@@ -547,21 +547,6 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
-     * Add an event to the list of events of this group
-     *
-     * @param eventId The if of the event we want to add
-     */
-    public void addEvent(String eventId) {
-        if (!mEvents.containsKey(eventId)) {
-            try {
-                addEvent(PFEvent.fetchExistingEvent(eventId));
-            } catch (PFException e) {
-                // TODO what ?
-            }
-        }
-    }
-
-    /**
      * Remove then add the event.
      * Also update the server
      * @param event the event to update.
@@ -588,21 +573,6 @@ public final class PFGroup extends PFEntity {
             } catch (PFException e) {
                 mEvents.put(event.getId(), event);
                 throw new PFException("Can't remove event");
-            }
-        }
-    }
-
-    /**
-     * Remove an event to the list of events of this group
-     *
-     * @param eventId The if of the event we want to remove
-     */
-    public void removeEvent(String eventId) {
-        if (mEvents.containsKey(eventId)) {
-            try {
-                removeEvent(PFEvent.fetchExistingEvent(eventId));
-            } catch (PFException e) {
-                // TODO what ?
             }
         }
     }

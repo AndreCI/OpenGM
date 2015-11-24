@@ -275,7 +275,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         }
     }
 
-    public static PFPoll fetchExistingPoll(String id) throws PFException {
+    public static PFPoll fetchExistingPoll(String id, PFGroup group) throws PFException {
         if (id == null) {
             throw new PFException("Id is null");
         }
@@ -313,10 +313,10 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
                 int i = 0;
                 for (String participantID : participants) {
                     try {
-                        members.add(PFMember.fetchExistingMember(participantID));
+                        members.add(group.getMember(participantID));
                         voters.add(votersArray.getBoolean(i));
-                    } catch (PFException | JSONException e) {
-                        // Just do not add this guy :)
+                    } catch (JSONException e) {
+                        throw new PFException("Error while reading datas from the server");
                     }
                     i++;
                 }

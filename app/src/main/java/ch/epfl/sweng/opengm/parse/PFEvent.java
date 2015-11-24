@@ -1,17 +1,14 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
@@ -23,21 +20,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-import bolts.Task;
 import ch.epfl.sweng.opengm.events.Utils;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DATE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PARTICIPANTS;
+import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_PLACE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_NAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_PICTURE;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
@@ -383,7 +378,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         return createEvent(group, name, place, date, members, description, picturePath, pictureName, picture);
     }
 
-    public static PFEvent fetchExistingEvent(String id) throws PFException {
+    public static PFEvent fetchExistingEvent(String id, PFGroup group) throws PFException {
         if (id == null) {
             throw new PFException();
         }
@@ -410,11 +405,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 List<PFMember> members = new ArrayList<>();
 
                 for (String participantID : participants) {
-                    try {
-                        members.add(PFMember.fetchExistingMember(participantID));
-                    } catch (PFException e) {
-                        // Just do not add this guy :)
-                    }
+                    members.add(group.getMember(participantID));
                 }
                 String imagePath = PFUtils.pathNotSpecified;
                 String imageName = PFUtils.nameNotSpecified;
