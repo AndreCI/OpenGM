@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -41,8 +42,6 @@ public class PollsListActivity extends AppCompatActivity {
         }
 
         setTitle(R.string.title_list_poll);
-
-        //currentGroup = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
 
         currentGroup = OpenGMApplication.getCurrentGroup();
 
@@ -111,6 +110,10 @@ public class PollsListActivity extends AppCompatActivity {
         startActivityForResult(intent1, CREATE_POLL_KEY);
     }
 
+    public void showPastPolls(View view) {
+        updateList();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -132,13 +135,22 @@ public class PollsListActivity extends AppCompatActivity {
     }
 
     private void updateList() {
+        CheckBox box = (CheckBox) findViewById(R.id.pastPollsBox);
+
         polls.clear();
         List<PFPoll> groupsPoll = currentGroup.getPolls();
         List<PFPoll> userPoll = new ArrayList<>();
 
-        for (PFPoll poll : groupsPoll) {
-            if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
-                userPoll.add(poll);
+        if (box.isChecked()) {
+            for (PFPoll poll : groupsPoll) {
+                if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()) && poll.isOpen())
+                    userPoll.add(poll);
+            }
+        } else {
+            for (PFPoll poll : groupsPoll) {
+                if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
+                    userPoll.add(poll);
+            }
         }
         polls.addAll(userPoll);
         Collections.sort(polls);

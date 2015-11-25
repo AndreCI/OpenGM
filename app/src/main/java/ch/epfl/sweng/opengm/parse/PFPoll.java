@@ -139,19 +139,15 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
                             @Override
                             public void done(ParseException e) {
                                 if (e != null) {
-                                    Log.d("ERROR 1", "ERROR 1");
                                     e.printStackTrace();
                                     // throw new ParseException("No object for the selected id.");
                                 }
                             }
                         });
                     } else {
-                        Log.d("ERROR 2", "ERROR 2");
                         // throw new ParseException(1,"");
                     }
                 } else {
-                    Log.d("ERROR 3", "ERROR 3");
-                    e.printStackTrace();
                     // throw new ParseException("Error while sending the request to the server");
                 }
             }

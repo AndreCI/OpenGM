@@ -4,11 +4,6 @@
     android:layout_height="match_parent"
     tools:context="ch.epfl.sweng.opengm.polls.PollsListActivity">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pollsListView" />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddPoll"
         android:layout_width="wrap_content"
@@ -23,5 +18,30 @@
         android:onClick="addPoll"
         android:src="@mipmap/ic_add_white_24dp">
     </android.support.design.widget.FloatingActionButton>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100">
+
+        <ListView
+            android:id="@+id/pollsListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="85" />
+
+        <CheckBox
+            android:id="@+id/pastPollsBox"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_weight="15"
+            android:checked="true"
+            android:gravity="center_vertical"
+            android:onClick="showPastPolls"
+            android:text="Show past polls" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -1,9 +1,13 @@
 package ch.epfl.sweng.opengm;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseUser;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
