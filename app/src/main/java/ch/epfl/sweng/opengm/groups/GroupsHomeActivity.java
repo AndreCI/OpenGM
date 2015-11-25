@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
@@ -89,6 +90,12 @@ public class GroupsHomeActivity extends AppCompatActivity
         }
     }
 
+    public void onManageGroup(View v){
+        Intent intent = new Intent(this, CreateGroupActivity.class);
+        intent.putExtra(CreateGroupActivity.GROUP_INDEX, groupPos);
+        startActivityForResult(intent, RESULT_FIRST_USER);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -135,7 +142,9 @@ public class GroupsHomeActivity extends AppCompatActivity
         switch (requestCode) {
             // stay in the correct group home, comming back from MembersActivity
             case 1:
-                groupPos = data.getIntExtra(GROUP_INDEX, -1);
+                setTitle(currentGroup.getName());
+                TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+                descriptionView.setText(currentGroup.getDescription());
                 break;
             default:
         }

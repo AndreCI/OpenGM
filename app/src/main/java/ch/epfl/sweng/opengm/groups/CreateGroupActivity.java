@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import java.lang.reflect.Member;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -54,14 +57,17 @@ public class CreateGroupActivity extends AppCompatActivity {
         if(groupIndex >= 0){
             currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex);
             mGroupName.setText(currentGroup.getName());
-            mGroupName.setText(currentGroup.getDescription());
+            mGroupDescription.setText(currentGroup.getDescription());
             initialName = currentGroup.getName();
             initialDescription = currentGroup.getDescription();
+            findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
         }
     }
 
     public void manageMembers(View view) {
-
+        Intent intent = new Intent(this, MembersActivity.class);
+        intent.putExtra(MembersActivity.GROUP_INDEX, groupIndex);
+        startActivity(intent);
     }
 
     public void createGroup(View view) {
@@ -80,6 +86,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                     if(!description.equals(initialDescription)){
                         currentGroup.setDescription(description);
                     }
+                    setResult(RESULT_OK);
                     finish();
                 } else {
                     try {
