@@ -232,7 +232,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         Thread.sleep(1000);
         updateReferencesFromDatabase();
-        additionalUser = PFUser.fetchExistingUser(additionalUser.getId());
+        additionalUser.reload();
         Thread.sleep(1000);
 
         String userID0 = testUsers.get(0).getId();
@@ -360,6 +360,31 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         updateReferencesFromDatabase();
         assertTrue(!testGroup.userHavePermission(testUsers.get(0).getId(), PFGroup.Permission.ADD_MEMBER));
+    }
+
+    public void testClickOnNameChecksAndUnChecks() throws PFException {
+        prepareIntentAndDatabase(1);
+        getActivityAndLayout();
+
+        createRolesActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                View v = listView.getChildAt(0);
+                TextView textView = (TextView) v.findViewById(R.id.role_name);
+                CheckBox checkBox = (CheckBox) v.findViewById(R.id.role_checkbox);
+
+                assertFalse(checkBox.isChecked());
+
+                textView.performClick();
+
+                assertTrue(checkBox.isChecked());
+
+                textView.performClick();
+
+                assertFalse(checkBox.isChecked());
+            }
+        });
+
     }
 
     private CheckBox getCheckBoxForPermission(PFGroup.Permission permission){
