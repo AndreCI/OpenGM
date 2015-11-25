@@ -10,9 +10,9 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 public class MessageAdapter {
     private String sender;
     private String body;
-    private Date sendDate;
+    private String sendDate;
 
-    public MessageAdapter(String sender, Date sendDate, String body) {
+    public MessageAdapter(String sender, String sendDate, String body) {
         this.sender = sender;
         this.body = body;
         this.sendDate = sendDate;
@@ -20,7 +20,7 @@ public class MessageAdapter {
 
     public MessageAdapter(String sender, String body) {
         this(sender, null, body);
-        sendDate = Utils.getNewDate();
+        sendDate = Utils.getNewStringDate();
     }
 
     public String getSenderName() {
@@ -33,6 +33,6 @@ public class MessageAdapter {
 
     @Override
     public String toString() {
-        return dateToString(sendDate) +" : "+sender+" - "+body;
+        return sendDate +" : "+sender+" - "+body;
     }
 }

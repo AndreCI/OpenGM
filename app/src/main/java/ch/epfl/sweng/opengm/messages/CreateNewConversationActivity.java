@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,6 +24,7 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class CreateNewConversationActivity extends AppCompatActivity {
     PFGroup currentGroup;
+    EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,28 @@ public class CreateNewConversationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         currentGroup = intent.getParcelableExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
 
-        EditText editText = (EditText) findViewById(R.id.newConversationName);
+        editText = (EditText) findViewById(R.id.newConversationName);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String string = s.toString();
+                for(int i = 0; i < string.length(); ++i) {
+                    if(string.charAt(i) == '|') {
+                        s.delete(i, i+1);
+                    }
+                }
+            }
+        });
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -53,8 +77,9 @@ public class CreateNewConversationActivity extends AppCompatActivity {
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
         String path = getFilesDir().getAbsolutePath() + '/' + conversationName + ".txt";
-        new CreateFileInBackground().execute(conversationName, path);
-        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, new ConversationInformation(conversationName, currentGroup.getId(), path));
+        ConversationInformation conversationInformation = new ConversationInformation(conversationName, currentGroup.getId(), path);
+        new CreateFileInBackground().execute(conversationInformation);
+        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversationInformation);
         setResult(Activity.RESULT_OK, intent);
         Log.v("CreateNewConversation", conversationName + ", " + path);
         finish();
@@ -62,16 +87,22 @@ public class CreateNewConversationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        sendBackResult();
+        if(!((TextView) findViewById(R.id.conversation_title)).getText().toString().isEmpty()) {
+            sendBackResult();
+        } else {
+            super.onBackPressed();
+        }
     }
 
-    class CreateFileInBackground extends AsyncTask<String, Void, Void> {
+    class CreateFileInBackground extends AsyncTask<ConversationInformation, Void, Void> {
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(ConversationInformation... params) {
+            ConversationInformation conversationInformation = params[0];
             try {
-                FileOutputStream fOut = openFileOutput(params[0] + ".txt", MODE_APPEND);
+                FileOutputStream fOut = openFileOutput(conversationInformation.getConversationName() + ".txt", MODE_APPEND);
                 OutputStreamWriter osw = new OutputStreamWriter(fOut);
+                osw.write(conversationInformation.toString()+'\n');
                 osw.close();
             } catch (IOException e) {
                 e.printStackTrace();

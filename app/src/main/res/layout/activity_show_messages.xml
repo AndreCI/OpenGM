@@ -9,6 +9,8 @@
         android:id="@+id/message_list"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"
         android:layout_above="@+id/message_text_bar"/>
 
     <EditText
@@ -22,7 +24,8 @@
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
         android:hint="tap message here ..."
         android:imeOptions="actionSend"
-        android:minLines="1"/>
+        android:minLines="1"
+        android:maxLines="1"/>
 
     <Button
         android:layout_width="wrap_content"

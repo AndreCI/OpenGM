@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,9 +22,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -35,7 +35,7 @@ import static ch.epfl.sweng.opengm.messages.Utils.writeMessageLocal;
  */
 public class ShowMessagesActivity extends AppCompatActivity {
     private ConversationInformation conversationInformation;
-    private CustomAdapter customAdapter;
+    private ListView messageList;
     private List<MessageAdapter> messages;
     private EditText textBar;
     private String path;
@@ -46,10 +46,31 @@ public class ShowMessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_messages);
         Intent intent = getIntent();
         conversationInformation = intent.getParcelableExtra(Utils.FILE_INFO_INTENT_MESSAGE);
-        messages = new ArrayList<>();
-        fillMessages();
-        customAdapter = new CustomAdapter(this, R.layout.message_info, messages);
+        messageList = (ListView) findViewById(R.id.message_list);
         textBar = (EditText) findViewById(R.id.message_text_bar);
+        textBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String string = s.toString();
+                for(int i = 0; i < string.length(); ++i) {
+                    if(string.charAt(i) == '|') {
+                        s.delete(i, i+1);
+                    }
+                }
+            }
+        });
+        path = new File(getFilesDir(), conversationInformation.getConversationName()).getAbsolutePath();
+        fillMessages();
 
         textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -62,30 +83,26 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 return handled;
             }
         });
-        path = new File(getFilesDir(), conversationInformation.getConversationName()).getAbsolutePath();
-        ListView listView = (ListView) findViewById(R.id.message_list);
-        listView.setAdapter(customAdapter);
     }
 
     private void sendMessage() {
         EditText editText = (EditText) findViewById(R.id.message_text_bar);
         String message = editText.getText().toString();
-        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getId(), Utils.getNewDate(), message);
-        writeMessageLocal(conversationInformation.getConversationName()+".txt", messageAdapter, this);
-        editText.setText("");
+        if(!message.isEmpty()) {
+            Log.v("ShowMessage sendMessage", message);
+            MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
+            writeMessageLocal(conversationInformation.getConversationName() + ".txt", messageAdapter, this);
+            editText.setText("");
+            messages.add(messageAdapter);
+            //messageList.setAdapter(new CustomAdapter(this, R.layout.message_info));
         /* TODO: get back text from textBar + send it.
          * do it in back ground on the serv and localy while instantly adding it to the layout
          */
-
+        }
     }
 
     private void fillMessages() {
-        ListView listView = (ListView) findViewById(R.id.message_list);
-        try {
-            listView.setAdapter((new DisplayMessages().execute(conversationInformation.getFilePath())).get());
-        } catch (InterruptedException|ExecutionException e) {
-            e.printStackTrace();
-        }
+        new readMessageFile().execute(conversationInformation.getFilePath());
         /* TODO: get File on serv or local device + read and parse it for messages and fill messages
          * idea : get serv file in background while displaying local one, then compare, then if modification, do them
          */
@@ -101,22 +118,27 @@ public class ShowMessagesActivity extends AppCompatActivity {
         sendMessage();
     }
 
-    class DisplayMessages extends AsyncTask<String, Void, CustomAdapter> {
+    class readMessageFile extends AsyncTask<String, Void, CustomAdapter> {
 
         @Override
         protected CustomAdapter doInBackground(String... params) {
             List<String> strings = null;
             try {
-                strings = Utils.readTextFile(params[0]);
+                strings = Utils.readMessagesFile(params[0]);
             } catch (IOException e) {
                 Log.v("ShowMessageActivity", "couldn't read file "+params[0]);
             }
-            messages.clear();
+            messages = new ArrayList<>();
+            String firstLine = strings.remove(0); //info of conv
+            Log.v("ShowMessages readFile", "first line :" + firstLine);
             for(String s : strings) {
+                Log.v("ShowMessages readFile", s);
                 String[] data = Utils.extractMessage(s);
-                messages.add(new MessageAdapter(data[0], stringToDate(data[1]), data[2]));
+                MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
+                messages.add(messageAdapter);
+                Log.v("ShowMessages readFile", messageAdapter.toString());
             }
-            return new CustomAdapter(ShowMessagesActivity.this, R.layout.message_info, messages);
+            return new CustomAdapter(ShowMessagesActivity.this, R.layout.message_info);
         }
 
         @Override
@@ -150,12 +172,10 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
 
     private class CustomAdapter extends ArrayAdapter<MessageAdapter> {
-        private List<MessageAdapter> messages;
 
-        public CustomAdapter(Context context, int resource, List<MessageAdapter> messages) {
+        public CustomAdapter(Context context, int resource) {
             super(context, resource, messages);
-            this.messages = new ArrayList<>();
-            this.messages.addAll(messages);
+
         }
 
         private class ViewHolder {
@@ -171,15 +191,14 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 convertView = vi.inflate(R.layout.message_info, null);
                 holder = new ViewHolder();
                 holder.sender = (TextView) convertView.findViewById(R.id.message_sender_name);
-                holder.sender = (TextView) convertView.findViewById(R.id.message_body);
+                holder.message = (TextView) convertView.findViewById(R.id.message_body);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-
             MessageAdapter messageAdapter = messages.get(position);
             holder.sender.setText(messageAdapter.getSenderName());
-            holder.message.setTag(messageAdapter.getMessage());
+            holder.message.setText(messageAdapter.getMessage());
 
             return convertView;
         }

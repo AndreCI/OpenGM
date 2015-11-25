@@ -17,29 +17,18 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
-
-import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 
 /**
  * Created by virgile on 18/11/2015.
  */
 public class ShowConversationsActivity extends AppCompatActivity {
-    private CustomAdapter adapter;
     private PFGroup currentGroup;
     private List<ConversationInformation> conversationInformations;
     private final String CONV_INDEX_FORMAT = "conversationIndex_%s.txt";
@@ -70,9 +59,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new CustomAdapter(this, R.layout.conversation_info, conversationInformations);
         ListView listView = (ListView) findViewById(R.id.conversation_list);
-        listView.setAdapter(adapter);
+        listView.setAdapter(new CustomAdapter(this, R.layout.conversation_info, conversationInformations));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -150,16 +138,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(File... params) {
             try {
-                List<String> strings = Utils.readTextFile(params[0].getAbsolutePath());
-                Log.v("showConv readFIndx", Integer.toString(strings.size()) + ", path : " + params[0].getAbsolutePath());
-                for (String s : strings) {
-                    try {
-                        conversationInformations.add(Utils.stringToConversationInformation(s));
-                        Log.v("ShowConv/ReadIndexFile", "read string: " + s);
-                    } catch (IllegalArgumentException e) {
-                        Log.e("ShowConv/ReadIndexFile", "couldn't read string: " + s);
-                    }
-                }
+                conversationInformations = Utils.readIndexFile(params[0].getAbsolutePath());
             } catch (IOException e) {
                 Log.e("ShowConv readIndF", "IOException with file: " + params[0].getPath());
             }
@@ -168,9 +147,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            adapter = new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversationInformations);
             ListView listView = (ListView) findViewById(R.id.conversation_list);
-            listView.setAdapter(adapter);
+            listView.setAdapter(new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversationInformations));
         }
 
     }
@@ -185,9 +163,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            adapter = new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversationInformations);
             ListView listView = (ListView) findViewById(R.id.conversation_list);
-            listView.setAdapter(adapter);
+            listView.setAdapter(new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversationInformations));
         }
 
 

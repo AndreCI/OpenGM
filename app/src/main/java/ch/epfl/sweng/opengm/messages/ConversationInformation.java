@@ -38,7 +38,7 @@ public class ConversationInformation implements Parcelable {
     @Override
     public String toString() {
 
-        return conversationName + '|' + groupId + '|' + filePath;
+        return "<|" + conversationName + '|' + groupId + '|' + filePath + "|>";
     }
 
     public String getConversationName() {
