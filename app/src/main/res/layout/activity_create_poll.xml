@@ -46,6 +46,7 @@
             android:layout_height="0dp"
             android:background="@drawable/rounded_buttons"
             android:layout_weight="10"
+            android:id="@+id/add_answer_poll"
             android:onClick="addAnswer"
             android:textColor="@color/white"
             android:text="Add an answer" />
