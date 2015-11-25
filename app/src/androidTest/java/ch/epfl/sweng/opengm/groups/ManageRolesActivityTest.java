@@ -302,7 +302,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     public void testAddPermission() throws Exception {
         prepareIntentAndDatabase(1);
-        Thread.sleep(1000)
+        Thread.sleep(1000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
         Thread.sleep(1000);
         getActivityAndLayout();

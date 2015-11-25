@@ -3,29 +3,35 @@
     android:layout_height="match_parent"
     tools:context="ch.epfl.sweng.opengm.groups.ManageRolesActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:onClick="saveChanges"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_buttons" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/rolesListView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/button" />
-
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/imageView4"
         android:background="@drawable/createbackground"
         android:scaleType="fitXY" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="25dp">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rolesListView"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:id="@+id/button"
+            android:layout_alignParentBottom="true"
+            android:onClick="saveChanges"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/rounded_buttons" />
+    </RelativeLayout>
 
 </RelativeLayout>
