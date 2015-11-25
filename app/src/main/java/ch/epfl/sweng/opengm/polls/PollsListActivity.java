@@ -1,6 +1,8 @@
 package ch.epfl.sweng.opengm.polls;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,16 +12,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.events.Utils;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFPoll;
 
 public class PollsListActivity extends AppCompatActivity {
+
+    private final static int CREATE_POLL_KEY = 32697;
 
     private PFGroup currentGroup;
     private List<PFPoll> polls = new ArrayList<>();
@@ -42,7 +46,7 @@ public class PollsListActivity extends AppCompatActivity {
 
         currentGroup = OpenGMApplication.getCurrentGroup();
 
-        List<PFPoll> groupsPoll = currentGroup.getPolls();
+        final List<PFPoll> groupsPoll = currentGroup.getPolls();
         List<PFPoll> userPoll = new ArrayList<>();
 
         for (PFPoll poll : groupsPoll) {
@@ -63,7 +67,7 @@ public class PollsListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PFPoll poll = mAdapter.getItem(position);
                 Intent i;
-                if (poll.isOpen() && poll.getDeadline().before(Calendar.getInstance().getTime())) {
+                if (poll.isOpen()) {
                     i = new Intent(PollsListActivity.this, PollVoteActivity.class);
                 } else {
                     i = new Intent(PollsListActivity.this, PollResultActivity.class);
@@ -72,12 +76,39 @@ public class PollsListActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final PFPoll poll = mAdapter.getItem(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
+                builder.setMessage("Are you sure you want to delete this poll?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // Delete the poll
+                                currentGroup.removePoll(poll);
+                                try {
+                                    poll.delete();
+                                } catch (PFException e) {
+                                    // Just do nothing, the poll is still on the server but can't be reach
+                                }
+                                updateList();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            }
+        });
     }
 
     public void addPoll(View view) {
         Intent intent1 = new Intent(this, CreatePollActivity.class);
-        intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
-        startActivity(intent1);
+        startActivityForResult(intent1, CREATE_POLL_KEY);
     }
 
     @Override
@@ -93,19 +124,25 @@ public class PollsListActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            currentGroup = OpenGMApplication.getCurrentGroup();
-
-            List<PFPoll> groupsPoll = currentGroup.getPolls();
-            List<PFPoll> userPoll = new ArrayList<>();
-
-            for (PFPoll poll : groupsPoll) {
-                if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
-                    userPoll.add(poll);
+        if (requestCode == CREATE_POLL_KEY) {
+            if (resultCode == Activity.RESULT_OK) {
+                updateList();
             }
-
-            polls.addAll(userPoll);
-            mAdapter.notifyDataSetChanged();
         }
     }
+
+    private void updateList() {
+        polls.clear();
+        List<PFPoll> groupsPoll = currentGroup.getPolls();
+        List<PFPoll> userPoll = new ArrayList<>();
+
+        for (PFPoll poll : groupsPoll) {
+            if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
+                userPoll.add(poll);
+        }
+        polls.addAll(userPoll);
+        Collections.sort(polls);
+        mAdapter.notifyDataSetChanged();
+    }
+
 }

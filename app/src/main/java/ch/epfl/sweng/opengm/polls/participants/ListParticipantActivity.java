@@ -49,8 +49,6 @@ public class ListParticipantActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        //group = getIntent().getParcelableExtra(CreatePollActivity.GROUP_POLL_INTENT);
-
         group = OpenGMApplication.getCurrentGroup();
 
         List<PFMember> enrolled = getIntent().getParcelableArrayListExtra(CreatePollActivity.ENROLLED_POLL_INTENT);

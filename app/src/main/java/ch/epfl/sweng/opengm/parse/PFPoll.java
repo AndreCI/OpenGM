@@ -335,6 +335,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         object.put(POLL_ENTRY_NAME, name);
         object.put(POLL_ENTRY_DESCRIPTION, description);
         object.put(POLL_ENTRY_NUMBER_ANSWERS, nOfAnswers);
+        deadline.setYear(deadline.getYear() - 1900);
         object.put(POLL_ENTRY_DEADLINE, deadline);
 
         List<Answer> answers = new ArrayList<>();

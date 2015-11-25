@@ -78,8 +78,6 @@ public final class CreatePollActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        //currentGroup = getIntent().getParcelableExtra(GROUP_POLL_INTENT);
-
         currentGroup = OpenGMApplication.getCurrentGroup();
 
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
@@ -108,7 +106,6 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     public void addParticipants(View view) {
         Intent i = new Intent(this, ListParticipantActivity.class);
-        //i.putExtra(CreatePollActivity.GROUP_POLL_INTENT, currentGroup);
         i.putParcelableArrayListExtra(ENROLLED_POLL_INTENT, new ArrayList<Parcelable>(participants));
         startActivityForResult(i, PARTICIPANTS_ACT_KEY);
     }
@@ -193,6 +190,7 @@ public final class CreatePollActivity extends AppCompatActivity {
                     } catch (PFException e) {
                         Toast.makeText(this, getString(R.string.error_poll), Toast.LENGTH_LONG).show();
                     }
+                    setResult(Activity.RESULT_OK, new Intent());
                     finish();
                 }
                 return true;
