@@ -238,7 +238,6 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
             mVoters.put(userId, true);
             try {
                 updateToServer(POLL_ENTRY_ANSWERS);
-                Log.d("SUCCESS", "UPDATE ANSWERS SUCCESS");
             } catch (PFException e) {
                 mVoters.put(userId, false);
                 throw new PFException(e);

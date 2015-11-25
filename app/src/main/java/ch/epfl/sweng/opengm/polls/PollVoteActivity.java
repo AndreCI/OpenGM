@@ -8,14 +8,12 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -38,7 +36,7 @@ public class PollVoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll_vote);
 
-        setTitle("Reply to this poll");
+        setTitle(getString(R.string.title_vote_poll));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -100,7 +98,7 @@ public class PollVoteActivity extends AppCompatActivity {
                 }
             }
             if (checkedAnswers.size() > mPoll.getNOfAnswers()) {
-                Toast.makeText(this, String.format("You can't choose more than %d answers!", mPoll.getNOfAnswers()),
+                Toast.makeText(this, String.format(getString(R.string.too_many_answers_poll), mPoll.getNOfAnswers()),
                         Toast.LENGTH_LONG).show();
             } else {
                 for (Answer answer : checkedAnswers) {
@@ -108,20 +106,17 @@ public class PollVoteActivity extends AppCompatActivity {
                 }
                 try {
                     mPoll.updateAnswers(getCurrentUser().getId());
-                    Toast.makeText(this, "Success! Your vote has been taken into account! Thanks for your participation",
+                    Toast.makeText(this, getString(R.string.vote_success_poll),
                             Toast.LENGTH_LONG).show();
                     finish();
                 } catch (PFException e) {
-                    Toast.makeText(this, "Error while updating your answer : your vote has not been taken into account",
+                    Toast.makeText(this, getString(R.string.vote_error_poll),
                             Toast.LENGTH_LONG).show();
                 }
             }
-        } else
-
-        {
-            Toast.makeText(this, "You have already vote, you can't vote twice!",
+        } else {
+            Toast.makeText(this, getString(R.string.already_vote_poll),
                     Toast.LENGTH_LONG).show();
-
         }
     }
 

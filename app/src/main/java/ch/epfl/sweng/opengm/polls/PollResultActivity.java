@@ -42,7 +42,7 @@ public class PollResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll_result);
 
-        setTitle("Result of the poll");
+        setTitle(getString(R.string.title_result_poll));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

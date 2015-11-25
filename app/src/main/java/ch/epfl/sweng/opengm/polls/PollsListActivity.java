@@ -80,8 +80,8 @@ public class PollsListActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final PFPoll poll = mAdapter.getItem(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
-                builder.setMessage("Are you sure you want to delete this poll?")
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                builder.setMessage(getString(R.string.confirm_deletion_poll))
+                        .setPositiveButton(getString(R.string.delete_poll), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // Delete the poll
                                 currentGroup.removePoll(poll);

@@ -393,4 +393,14 @@
     <string name="no_answer_poll">User should be able to choose at least an answer</string>
     <string name="error_poll">Error while creating your poll</string>
     <string name="title_list_poll">List of your polls</string>
+    <string name="title_vote_poll">Vote for this poll</string>
+    <string name="title_result_poll">Result of the poll</string>
+    <string name="too_many_answers_poll">You can't choose more than %d answers!</string>
+    <string name="vote_success_poll">Success! Your vote has been taken into account! Thanks for your participation</string>
+    <string name="vote_error_poll">Error while updating your answer : your vote has not been taken into account</string>
+    <string name="already_vote_poll">You have already vote, you can't vote twice!</string>
+    <string name="confirm_deletion_poll">Are you sure you want to delete this poll?</string>
+    <string name="delete_poll">Delete</string>
+
+
 </resources>

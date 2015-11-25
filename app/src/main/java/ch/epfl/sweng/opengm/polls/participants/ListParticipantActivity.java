@@ -108,7 +108,6 @@ public class ListParticipantActivity extends AppCompatActivity {
     }
 
     private void checkCorrespondingBoxes() {
-        Log.d("ENROLLED", "LIST SIZE " + list.getChildCount());
         for (int i = 0; i < list.getChildCount(); i++) {
             View row = list.getChildAt(i);
             Participant child = mAdapter.getItem(i);
