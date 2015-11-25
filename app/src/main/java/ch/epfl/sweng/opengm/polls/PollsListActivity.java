@@ -141,7 +141,7 @@ public class PollsListActivity extends AppCompatActivity {
         List<PFPoll> groupsPoll = currentGroup.getPolls();
         List<PFPoll> userPoll = new ArrayList<>();
 
-        if (box.isChecked()) {
+        if (!box.isChecked()) {
             for (PFPoll poll : groupsPoll) {
                 if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()) && poll.isOpen())
                     userPoll.add(poll);
