@@ -59,6 +59,19 @@
             android:textColor="@color/white" />
 
         <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_groups_members"
+            android:id="@+id/createGroupsMembersButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="10"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/rounded_buttons"
+            android:textColor="#ffffff"
+            android:visibility="gone"
+            android:onClick="manageMembers" />
+
+        <Button
             android:id="@+id/doneGroupCreate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
