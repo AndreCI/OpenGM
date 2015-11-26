@@ -467,10 +467,11 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testUsers = new ArrayList<>();
 
         PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
+        OpenGMApplication.setCurrentUser(firstUser.getId());
         testUsers.add(firstUser);
 
 
-        testGroup = PFGroup.createNewGroup(firstUser, TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
+        testGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         for(int i = 1; i < numUser; i++){
             testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
             testGroup.addUserWithId(TEST_USER_ID_PREFIX + i);
@@ -481,7 +482,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        OpenGMApplication.setCurrentUser(firstUser.getId());
     }
 
     private void cleanUpDBAfterTests() throws com.parse.ParseException, InterruptedException {
