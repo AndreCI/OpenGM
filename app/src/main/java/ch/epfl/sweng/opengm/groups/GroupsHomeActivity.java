@@ -19,10 +19,7 @@ import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
-import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
-import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
-import static ch.epfl.sweng.opengm.polls.CreatePollActivity.GROUP_POLL_INTENT;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,19 +30,11 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     private PFGroup currentGroup;
 
-    private int groupPos;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_groups_home);
-
-        //Intent comingIntent = getIntent();
-
-        //groupPos = comingIntent.getIntExtra(CHOSEN_GROUP_KEY, 0);
-
-        //currentGroup = getCurrentUser().getGroups().get(groupPos);
 
         currentGroup = OpenGMApplication.getCurrentGroup();
 
@@ -129,10 +118,6 @@ public class GroupsHomeActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             // stay in the correct group home, comming back from MembersActivity
-            case 1:
-                groupPos = data.getIntExtra(GROUP_INDEX, -1);
-                break;
-            default:
         }
     }
 }

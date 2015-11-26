@@ -8,13 +8,13 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.GroupsHomeActivity.CHOSEN_GROUP_KEY;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_BEGINS_WITH_SPACE;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
@@ -52,7 +52,8 @@ public class CreateGroupActivity extends AppCompatActivity {
                 try {
                     PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
                     getCurrentUser().addToAGroup(newGroup);
-                    startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
+                    OpenGMApplication.setCurrentGroup(getCurrentUser().getGroups().size() - 1);
+                    startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class));
                 } catch (PFException e) {
                     Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
                 }
