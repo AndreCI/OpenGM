@@ -150,7 +150,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     }
 
-    public void testAddsRoleForMultipleUsers() throws Exception{
+    public void jenkinstestAddsRoleForMultipleUsers() throws Exception{
         prepareIntentAndDatabase(2);
         Thread.sleep(1000);
         getActivityAndLayout();
