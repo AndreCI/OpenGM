@@ -474,15 +474,12 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         Thread.sleep(1000);
 
-        
-        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        testGroup = OpenGMApplication.getCurrentUser().getGroups().get(0);
 
-        for(int i = 1; i < numUser; i++){
+        for(int i = 1; i < numUser; i++) {
             testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
             testGroup.addUserWithId(TEST_USER_ID_PREFIX + i);
         }
-
-        testGroup = OpenGMApplication.getCurrentUser().getGroups().get(0);
     }
 
     private void cleanUpDBAfterTests() throws com.parse.ParseException, InterruptedException {
