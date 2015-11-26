@@ -68,6 +68,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void setUp() throws Exception{
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+        OpenGMApplication.logOut();
     }
 
     @After
