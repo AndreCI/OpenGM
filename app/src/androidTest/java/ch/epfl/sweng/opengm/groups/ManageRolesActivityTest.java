@@ -565,6 +565,11 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private void getActivityAndLayout() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         createRolesActivity = getActivity();
         listView = (ListView) createRolesActivity.findViewById(R.id.rolesListView);
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
