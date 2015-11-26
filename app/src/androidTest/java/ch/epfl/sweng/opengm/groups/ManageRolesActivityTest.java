@@ -474,8 +474,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
         Thread.sleep(1000);
 
-
-        OpenGMApplication.getCurrentUser().reload();
+        
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
 
         for(int i = 1; i < numUser; i++){
