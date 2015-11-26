@@ -300,7 +300,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(matchPermissions(permissions));
     }
 
-    public void testAddPermission() throws Exception {
+    /*public void testAddPermission() throws Exception {
         prepareIntentAndDatabase(1);
         Thread.sleep(1000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
@@ -330,7 +330,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         updateReferencesFromDatabase();
         assertTrue(testGroup.getPermissionsForRole(NEW_TEST_ROLE_PREFIX).contains(PFGroup.Permission.ADD_MEMBER));
-    }
+    }*/
 
     public void testRemovePermission() throws Exception {
         prepareIntentAndDatabase(1);
