@@ -155,7 +155,7 @@ public class PFEventTest {
         assertEquals(array.length, event.getParticipants().size());
         assertEquals(idEvent, event.getId());
 
-    }
+    }*/
 
     @After
     public void deleteAfterTesting() {
@@ -172,5 +172,5 @@ public class PFEventTest {
         if (user != null) {
             deleteUserWithId(id);
         }
-    }*/
+    }
 }
