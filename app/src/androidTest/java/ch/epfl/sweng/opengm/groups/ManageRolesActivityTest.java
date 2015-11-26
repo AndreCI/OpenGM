@@ -79,7 +79,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     public void testIfFetchesUsersRoles() throws Exception {
         prepareIntentAndDatabase(1);
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         boolean viewMatches = databaseRolesMatchesView();
@@ -100,9 +100,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testIfRemovesRoleFromDatabase() throws Exception {
         prepareIntentAndDatabase(1);
         testGroup.addRoleToUser(TEST_ROLE_PREFIX + "0", testUsers.get(0).getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         createRolesActivity.runOnUiThread(new Runnable() {
@@ -113,13 +113,13 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         });
         onView(withId(R.id.action_remove_role)).perform(click());
         onView(withId(R.id.button)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         updateReferencesFromDatabase();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         String userId = testUsers.get(0).getId();
         List<String> rolesForUser = getRolesOrFail(userId);
         boolean result = !rolesForUser.contains(TEST_ROLE_PREFIX + "0");
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         assertTrue(result);
     }
 
@@ -140,9 +140,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_BOTH + "1", testUsers.get(1).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         boolean result = databaseRolesMatchesView();
@@ -152,7 +152,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     public void testAddsRoleForMultipleUsers() throws Exception{
         prepareIntentAndDatabase(2);
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
@@ -160,7 +160,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withId(R.id.button)).perform(click());
         updateReferencesFromDatabase();
 
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         for(PFUser user : testUsers){
             assertTrue(getRolesOrFail(user.getId()).contains(NEW_TEST_ROLE_PREFIX + "1"));
@@ -172,9 +172,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         prepareIntentAndDatabase(2);
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         assertTrue(getDisplayedRoles().contains(ROLE_FOR_BOTH));
@@ -187,9 +187,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         });
         onView(withId(R.id.action_remove_role)).perform(click());
         onView(withId(R.id.button)).perform(click());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         updateReferencesFromDatabase();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         String userID1 = testUsers.get(0).getId();
         String userID2 = testUsers.get(1).getId();
@@ -206,15 +206,15 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testGroup.addRoleToUser(ROLE_FOR_PREFIX + "1", testUsers.get(1).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         PFUser additionalUser = PFUser.createNewUser("additionalUser", "addi@tional.com", "0", "testDoesntAffectOtherUsers", "addi", "tional");
         testGroup.addUserWithId(additionalUser.getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, additionalUser.getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "");
@@ -230,10 +230,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
         onView(withId(R.id.button)).perform(click());
 
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         updateReferencesFromDatabase();
         additionalUser.reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         String userID0 = testUsers.get(0).getId();
         String userID1 = testUsers.get(1).getId();
@@ -279,9 +279,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     public void testCorrectPermissionsForRoles() throws PFException, InterruptedException {
         prepareIntentAndDatabase(1);
         testGroup.addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         createRolesActivity.runOnUiThread(new Runnable() {
@@ -302,9 +302,9 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     /*public void testAddPermission() throws Exception {
         prepareIntentAndDatabase(1);
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         getActivityAndLayout();
 
         createRolesActivity.runOnUiThread(new Runnable() {
@@ -437,7 +437,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
         ParseObject user1 = query1.getFirst();
         user1.delete();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
     }
 
     private void deleteGroupFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
@@ -445,7 +445,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         query1.whereEqualTo(PFConstants.OBJECT_ID, id);
         ParseObject user1 = query1.getFirst();
         user1.delete();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
     }
 
     private void prepareIntentAndDatabase(int numUser) throws PFException {
