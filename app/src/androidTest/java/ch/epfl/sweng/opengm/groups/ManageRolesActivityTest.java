@@ -300,7 +300,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(matchPermissions(permissions));
     }
 
-    public void testAddPermission() throws Exception {
+    public void jenkinstestAddPermission() throws Exception {
         prepareIntentAndDatabase(1);
         Thread.sleep(1000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
