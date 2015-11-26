@@ -77,7 +77,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         super.tearDown();
     }
 
-    public void jenkinstestIfFetchesUsersRoles() throws Exception {
+    public void testIfFetchesUsersRoles() throws Exception {
         prepareIntentAndDatabase(1);
         Thread.sleep(1000);
         getActivityAndLayout();
@@ -87,7 +87,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(viewMatches);
     }
 
-    public void jenkinstestIfAddsRoles() throws Exception {
+    public void testIfAddsRoles() throws Exception {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
         addNewRoleWithView(NEW_TEST_ROLE_PREFIX, "1");
@@ -97,7 +97,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(getRolesOrFail(testUsers.get(0).getId()).contains(NEW_TEST_ROLE_PREFIX + "1"));
     }
 
-    public void jenkinstestIfRemovesRoleFromDatabase() throws Exception {
+    public void testIfRemovesRoleFromDatabase() throws Exception {
         prepareIntentAndDatabase(1);
         testGroup.addRoleToUser(TEST_ROLE_PREFIX + "0", testUsers.get(0).getId());
         Thread.sleep(1000);
@@ -124,7 +124,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
 
-    public void jenkinstestIfDeclinesBadRoleName() throws Exception{
+    public void testIfDeclinesBadRoleName() throws Exception{
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
 
@@ -134,7 +134,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertFalse(getDisplayedRoles().contains(""));
     }
 
-    public void jenkinstestOnlyShowCommonRolesWhenMultipleUsers() throws Exception{
+    public void testOnlyShowCommonRolesWhenMultipleUsers() throws Exception{
         prepareIntentAndDatabase(2);
         testGroup.addRoleToUser(ROLE_FOR_PREFIX + "0", testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH + "1", testUsers.get(1).getId());
@@ -150,7 +150,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     }
 
-    public void jenkinstestAddsRoleForMultipleUsers() throws Exception{
+    public void testAddsRoleForMultipleUsers() throws Exception{
         prepareIntentAndDatabase(2);
         Thread.sleep(1000);
         getActivityAndLayout();
@@ -168,7 +168,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     }
 
-    public void jenkinstestRemovesFromMultipleUsers() throws Exception{
+    public void testRemovesFromMultipleUsers() throws Exception{
         prepareIntentAndDatabase(2);
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_BOTH, testUsers.get(1).getId());
@@ -200,7 +200,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(result0 && result1);
     }
 
-    public void jenkinstestDoesntAffectOtherUsers () throws Exception {
+    public void testDoesntAffectOtherUsers () throws Exception {
         prepareIntentAndDatabase(2);
         testGroup.addRoleToUser(ROLE_FOR_PREFIX + "0", testUsers.get(0).getId());
         testGroup.addRoleToUser(ROLE_FOR_PREFIX + "1", testUsers.get(1).getId());
@@ -257,7 +257,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(result3);
     }
 
-    public void jenkinstestCorrectPermissions() throws PFException, InterruptedException {
+    public void testCorrectPermissions() throws PFException, InterruptedException {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
 
@@ -276,7 +276,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(matchPermissions(permissions));
     }
 
-    public void jenkinstestCorrectPermissionsForRoles() throws PFException, InterruptedException {
+    public void testCorrectPermissionsForRoles() throws PFException, InterruptedException {
         prepareIntentAndDatabase(1);
         testGroup.addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
         Thread.sleep(1000);
@@ -300,7 +300,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(matchPermissions(permissions));
     }
 
-    public void jenkinstestAddPermission() throws Exception {
+    public void testAddPermission() throws Exception {
         prepareIntentAndDatabase(1);
         Thread.sleep(1000);
         OpenGMApplication.getCurrentUser().getGroups().get(0).addRoleToUser(NEW_TEST_ROLE_PREFIX, testUsers.get(0).getId());
@@ -332,7 +332,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(testGroup.getPermissionsForRole(NEW_TEST_ROLE_PREFIX).contains(PFGroup.Permission.ADD_MEMBER));
     }
 
-    public void jenkinstestRemovePermission() throws Exception {
+    public void testRemovePermission() throws Exception {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
 
@@ -361,7 +361,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         assertTrue(!testGroup.userHavePermission(testUsers.get(0).getId(), PFGroup.Permission.ADD_MEMBER));
     }
 
-    public void jenkinstestClickOnNameChecksAndUnChecks() throws PFException, InterruptedException {
+    public void testClickOnNameChecksAndUnChecks() throws PFException, InterruptedException {
         prepareIntentAndDatabase(1);
         getActivityAndLayout();
 
