@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -25,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -46,18 +48,23 @@ public class EventListActivity extends AppCompatActivity {
         setTitle("List of your events");
         findViewById(R.id.Screen).setVisibility(View.GONE);
         findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Intent intent = //getIntent();
-                        new Intent(Utils.GROUP_INTENT_MESSAGE);
+                Intent intent = getIntent();
+                       /* new Intent(Utils.GROUP_INTENT_MESSAGE);
 
-                try {
-                    intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
-                } catch (PFException e) {
+
+                    intent.putExtra(Utils.GROUP_INTENT_MESSAGE, "TXxysfyRqV");
+               } catch (PFException e) {
                     e.printStackTrace();
-                }
-                currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+                }*/
+                int currentGroupLocation = intent.getIntExtra(Utils.GROUP_INTENT_MESSAGE, -1);
+                currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(currentGroupLocation);
+
                 Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
                 for(PFEvent e : currentGroup.getEvents()){
@@ -74,6 +81,17 @@ public class EventListActivity extends AppCompatActivity {
             }
         }.execute();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return true;
+        }
     }
 
     @Override
@@ -118,6 +136,9 @@ public class EventListActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Couldn't delete the event. Refresh later.",Toast.LENGTH_SHORT).show();
                 }
                 eventMap.remove(event.getId());
+            }
+            if(resultCode==Utils.SILENCE){
+                //DO NOTHING
             }
             displayEvents();
         }

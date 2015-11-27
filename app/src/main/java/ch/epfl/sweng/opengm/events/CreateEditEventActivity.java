@@ -17,6 +17,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,6 +66,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         PFEvent event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         if (event == null) {
             editing = false;
             participants = new HashMap<>();
@@ -75,6 +79,17 @@ public class CreateEditEventActivity extends AppCompatActivity {
             participants = this.event.getParticipants();
             setTitle("Editing Event : "+event.getName() + " for the group : "+currentGroup.getName());
             fillTexts(event);
+        }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                setResult(Activity.RESULT_CANCELED);
+                finish();
+                return true;
+            default:
+                return true;
         }
     }
 
