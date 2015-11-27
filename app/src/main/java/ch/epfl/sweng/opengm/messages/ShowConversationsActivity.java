@@ -81,7 +81,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 ConversationInformation conversationInformation = data.getParcelableExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE);
                 conversationInformations.add(conversationInformation);
-                new UpdateIndexFile().execute(conversationIndexName, conversationInformation.getConversationName(), currentGroup.getId(), conversationInformation.getFilePath());
+                new UpdateIndexFile().execute(conversationIndexName, conversationInformation.getConversationName(), currentGroup.getId());
                 ListView listView = (ListView) findViewById(R.id.conversation_list);
                 listView.setAdapter(new CustomAdapter(this, R.layout.conversation_info, conversationInformations));
                 Log.v("ShowConversations", "activity result good code");
@@ -157,7 +157,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... params) {
-            Utils.writeConversationInformationLocal(params[0], new ConversationInformation(params[1], params[2], params[3]), ShowConversationsActivity.this);
+            Utils.writeConversationInformationLocal(params[0], new ConversationInformation(params[1], params[2]), ShowConversationsActivity.this);
             return null;
         }
 

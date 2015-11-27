@@ -1,9 +1,5 @@
 package ch.epfl.sweng.opengm.messages;
 
-import java.util.Date;
-
-import static ch.epfl.sweng.opengm.events.Utils.dateToString;
-
 /**
  * Created by virgile on 20/11/2015.
  */

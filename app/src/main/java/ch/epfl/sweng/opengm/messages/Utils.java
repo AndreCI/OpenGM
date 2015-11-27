@@ -114,7 +114,7 @@ public class Utils {
         if(strings.length != 5) {
             throw new IllegalArgumentException(strings.length + " Invalid string format, should be <|convName|groupId|path|>, was " + s);
         }
-        return new ConversationInformation(strings[1], strings[2], strings[3]);
+        return new ConversationInformation(strings[1], strings[2]);
     }
 
 
@@ -123,5 +123,4 @@ public class Utils {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return dateFormat.format(Calendar.getInstance().getTime());
     }
-
 }

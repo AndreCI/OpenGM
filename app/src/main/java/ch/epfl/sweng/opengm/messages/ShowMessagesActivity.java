@@ -102,7 +102,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void fillMessages() {
-        new readMessageFile().execute(conversationInformation.getFilePath());
+        new readMessageFile().execute(getFilesDir().getAbsolutePath() + '/' + conversationInformation.getConversationName());
         /* TODO: get File on serv or local device + read and parse it for messages and fill messages
          * idea : get serv file in background while displaying local one, then compare, then if modification, do them
          */

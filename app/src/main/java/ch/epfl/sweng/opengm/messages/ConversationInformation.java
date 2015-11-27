@@ -3,24 +3,34 @@ package ch.epfl.sweng.opengm.messages;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by virgile on 20/11/2015.
  */
 public class ConversationInformation implements Parcelable {
     private String conversationName;
     private String groupId;
-    private String filePath;
+    private Calendar creationDate;
 
     public ConversationInformation(Parcel in) {
         conversationName = in.readString();
         groupId = in.readString();
-        filePath = in.readString();
     }
 
-    public ConversationInformation(String conversationName, String groupId, String textFilePath) {
+    public ConversationInformation(String conversationName, String groupId) {
         this.conversationName = conversationName;
         this.groupId = groupId;
-        this.filePath = textFilePath;
+        creationDate = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    }
+
+    public ConversationInformation(String conversationName, String groupId, Date creationDate) {
+        this.conversationName = conversationName;
+        this.groupId = groupId;
+        this.creationDate = Calendar.getInstance();
+        this.creationDate.setTime(creationDate);
     }
 
     public static final Creator<ConversationInformation> CREATOR = new Creator<ConversationInformation>() {
@@ -38,15 +48,15 @@ public class ConversationInformation implements Parcelable {
     @Override
     public String toString() {
 
-        return "<|" + conversationName + '|' + groupId + '|' + filePath + "|>";
+        return "<|" + conversationName + '|' + groupId + "|>";
     }
 
     public String getConversationName() {
         return conversationName;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public Calendar getCreationDate() {
+        return creationDate;
     }
 
     @Override
@@ -59,6 +69,5 @@ public class ConversationInformation implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(conversationName);
         dest.writeString(groupId);
-        dest.writeString(filePath);
     }
 }

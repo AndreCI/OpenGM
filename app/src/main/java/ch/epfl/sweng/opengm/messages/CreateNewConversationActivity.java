@@ -14,12 +14,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.parse.ParseException;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFConversation;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class CreateNewConversationActivity extends AppCompatActivity {
@@ -74,12 +78,19 @@ public class CreateNewConversationActivity extends AppCompatActivity {
     }
 
     private void sendBackResult() {
+        //Check that conv name doesn't already exist. Check in file !!!!!!!
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
         String path = getFilesDir().getAbsolutePath() + '/' + conversationName + ".txt";
-        ConversationInformation conversationInformation = new ConversationInformation(conversationName, currentGroup.getId(), path);
-        new CreateFileInBackground().execute(conversationInformation);
-        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversationInformation);
+        PFConversation conversation = null;
+        try {
+            conversation = PFConversation.createNewConversation(conversationName, currentGroup.getId(), this);
+        } catch (FileNotFoundException e) {
+            Log.e("CreateNewConv", "couldn't createFile", e);
+        } catch (ParseException e) {
+            Log.e("CreateNewConv", "error with parse");
+        }
+        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversation.toConversationInformation());
         setResult(Activity.RESULT_OK, intent);
         Log.v("CreateNewConversation", conversationName + ", " + path);
         finish();
@@ -93,22 +104,4 @@ public class CreateNewConversationActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
-    class CreateFileInBackground extends AsyncTask<ConversationInformation, Void, Void> {
-
-        @Override
-        protected Void doInBackground(ConversationInformation... params) {
-            ConversationInformation conversationInformation = params[0];
-            try {
-                FileOutputStream fOut = openFileOutput(conversationInformation.getConversationName() + ".txt", MODE_APPEND);
-                OutputStreamWriter osw = new OutputStreamWriter(fOut);
-                osw.write(conversationInformation.toString()+'\n');
-                osw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
 }
