@@ -43,16 +43,18 @@ public class CreateEditGroupActivity extends AppCompatActivity {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.create_group_outmostLayout);
         onTapOutsideBehaviour(layout, this);
 
-
         mGroupName = (EditText) findViewById(R.id.enterGroupName);
         mGroupDescription = (EditText) findViewById(R.id.enterGroupDescription);
 
         currentGroup = OpenGMApplication.getCurrentGroup();
-        mGroupName.setText(currentGroup.getName());
-        mGroupDescription.setText(currentGroup.getDescription());
-        initialName = currentGroup.getName();
-        initialDescription = currentGroup.getDescription();
-        findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+
+        if (currentGroup != null) {
+            mGroupName.setText(currentGroup.getName());
+            mGroupDescription.setText(currentGroup.getDescription());
+            initialName = currentGroup.getName();
+            initialDescription = currentGroup.getDescription();
+            findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+        }
     }
 
     public void manageMembers(View view) {

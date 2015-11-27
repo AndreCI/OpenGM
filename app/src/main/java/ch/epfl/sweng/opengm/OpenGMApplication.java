@@ -1,13 +1,9 @@
 package ch.epfl.sweng.opengm;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseUser;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -48,8 +44,13 @@ public class OpenGMApplication extends Application {
         return currentGroup;
     }
 
+    /**
+     * Set the current group to the value you want
+     *
+     * @param pos the position of the group in the user's groups list or -1 to put a null group
+     */
     public static void setCurrentGroup(int pos) {
-        OpenGMApplication.currentGroup = (pos == -1 ? null : currentUser.getGroups().get(pos));
+        currentGroup = (pos == -1 ? null : currentUser.getGroups().get(pos));
     }
 
     public static void logOut() {
