@@ -53,6 +53,10 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
+    public PFUser(Parcel in){
+        super(in, PARSE_TABLE_USER);
+    }
+
     private PFUser(String userId, Date date, String phoneNumber, String email, String username, String firstName, String lastName, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
         super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
@@ -523,6 +527,18 @@ public final class PFUser extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
     }
+
+    public static final Creator<PFUser> CREATOR = new Creator<PFUser>() {
+        @Override
+        public PFUser createFromParcel(Parcel in) {
+            return new PFUser(in);
+        }
+
+        @Override
+        public PFUser[] newArray(int size) {
+            return new PFUser[size];
+        }
+    };
+
 }
