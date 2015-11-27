@@ -4,12 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import java.lang.reflect.Member;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -27,7 +24,7 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITH_SYMBOL;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isGroupNameValid;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
-public class CreateGroupActivity extends AppCompatActivity {
+public class CreateEditGroupActivity extends AppCompatActivity {
 
     private EditText mGroupName;
     private EditText mGroupDescription;
@@ -92,7 +89,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                     try {
                         PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
                         getCurrentUser().addToAGroup(newGroup);
-                        startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
+                        startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
                     } catch (PFException e) {
                         Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
                     }

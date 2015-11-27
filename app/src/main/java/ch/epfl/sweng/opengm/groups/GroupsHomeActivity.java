@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
@@ -91,8 +90,8 @@ public class GroupsHomeActivity extends AppCompatActivity
     }
 
     public void onManageGroup(View v){
-        Intent intent = new Intent(this, CreateGroupActivity.class);
-        intent.putExtra(CreateGroupActivity.GROUP_INDEX, groupPos);
+        Intent intent = new Intent(this, CreateEditGroupActivity.class);
+        intent.putExtra(CreateEditGroupActivity.GROUP_INDEX, groupPos);
         startActivityForResult(intent, RESULT_FIRST_USER);
     }
 

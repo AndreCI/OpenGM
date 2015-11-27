@@ -3,16 +3,12 @@ package ch.epfl.sweng.opengm.groups;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.ViewAssertion;
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
 
 import junit.framework.Assert;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.mockito.internal.matchers.Not;
 
 import java.util.Calendar;
 import java.util.List;
@@ -28,16 +24,14 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTextStyleCorrect;
 
-public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<CreateGroupActivity> {
+public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase2<CreateEditGroupActivity> {
 
     private final static String CURRENT_DATE = "" + Calendar.getInstance().getTimeInMillis();
     private final static String USERNAME = CURRENT_DATE;
@@ -52,8 +46,8 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
     private PFUser currentUser;
     private PFGroup group;
 
-    public CreateGroupActivityTest() {
-        super(CreateGroupActivity.class);
+    public CreateEditGroupActivityTest() {
+        super(CreateEditGroupActivity.class);
     }
 
     @Before
@@ -161,7 +155,7 @@ public class CreateGroupActivityTest extends ActivityInstrumentationTestCase2<Cr
 
     private void getActivityWithIntent() throws PFException {
         Intent intent = new Intent();
-        intent.putExtra(CreateGroupActivity.GROUP_INDEX, 0);
+        intent.putExtra(CreateEditGroupActivity.GROUP_INDEX, 0);
         group = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), "Testing group for edit group", "Nice description bro", null);
         currentUser.reload();
         //OpenGMApplication.getCurrentUser().reload();
