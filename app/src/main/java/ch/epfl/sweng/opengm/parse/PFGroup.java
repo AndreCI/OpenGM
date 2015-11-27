@@ -74,8 +74,14 @@ public final class PFGroup extends PFEntity {
     private final static String adminRole = "Administrator";
     private final static String userRole = "User";
 
-    public static enum Permission{
-        ADD_MEMBER(0, "Add members"), REMOVE_MEMBER(1, "Remove members"), MANAGE_ROLES(2, "Manage roles"), ADD_ROLES(3, "Add roles"), ADD_EVENT(4, "Add events"), MANAGE_EVENT(5, "Manage events"), MANAGE_GROUP(6, "Manage groups");
+    public enum Permission{
+        ADD_MEMBER(0, "Add members"),
+        REMOVE_MEMBER(1, "Remove members"),
+        MANAGE_ROLES(2, "Manage roles"),
+        ADD_ROLES(3, "Add roles"),
+        ADD_EVENT(4, "Add events"),
+        MANAGE_EVENT(5, "Manage events"),
+        MANAGE_GROUP(6, "Manage groups");
 
         private int value;
         private String name;
@@ -147,13 +153,19 @@ public final class PFGroup extends PFEntity {
     }
 
 
-    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
+    private PFGroup(String groupId, Date date, String name, List<String> users,
+                    List<String> nicknames, List<String[]> roles, List<String> events,
+                    List<String> polls, boolean isPrivate, String description, Bitmap picture,
+                    Map<String, List<Permission>> rolesPermissions) {
+
         super(groupId, PARSE_TABLE_GROUP, date);
+
         if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
             throw new IllegalArgumentException("One of the array  is null");
         }
         if ((users.size() != nicknames.size()) || (users.size() != roles.size())) {
-            throw new IllegalArgumentException("Arrays' size don't match for group " + groupId + " " + users.size() + " " + nicknames.size() + " " + roles.size());
+            throw new IllegalArgumentException("Arrays' size don't match for group "
+                    + groupId + " " + users.size() + " " + nicknames.size() + " " + roles.size());
         }
         fillMembersMap(users, nicknames, roles);
         mPolls = new HashMap<>();
@@ -193,7 +205,8 @@ public final class PFGroup extends PFEntity {
                 }
             }
         } else {
-            throw new IllegalArgumentException("list size different: " + users.size() + '-' + nicknames.size() + '-' + roles.size());
+            throw new IllegalArgumentException("list size different: "
+                    + users.size() + '-' + nicknames.size() + '-' + roles.size());
         }
     }
 
@@ -330,10 +343,12 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
                             break;
                         case GROUP_ENTRY_POLLS:
-                            object.put(GROUP_ENTRY_POLLS, collectionToArray(new ArrayList<PFEntity>(mPolls.values())));
+                            object.put(GROUP_ENTRY_POLLS, collectionToArray(
+                                    new ArrayList<PFEntity>(mPolls.values())));
                             break;
                         case GROUP_ENTRY_EVENTS:
-                            object.put(GROUP_ENTRY_EVENTS, collectionToArray(new ArrayList<PFEntity>(mEvents.values())));
+                            object.put(GROUP_ENTRY_EVENTS, collectionToArray(
+                                    new ArrayList<PFEntity>(mEvents.values())));
                             break;
                         case GROUP_ENTRY_DESCRIPTION:
                             object.put(GROUP_ENTRY_DESCRIPTION, mDescription);
@@ -892,7 +907,8 @@ public final class PFGroup extends PFEntity {
 
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
-                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events, polls, privacy, description, picture[0], rolesPermissions);
+                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames,
+                        roles, events, polls, privacy, description, picture[0], rolesPermissions);
             } else {
                 throw new PFException("Query failed for id " + id);
             }
@@ -911,7 +927,8 @@ public final class PFGroup extends PFEntity {
      * @return The new group that contains all the given parameters
      * @throws PFException If something wrong happened with the server
      */
-    public static PFGroup createNewGroup(PFUser user, String name, String description, Bitmap picture) throws PFException {
+    public static PFGroup createNewGroup(PFUser user, String name, String description,
+                                         Bitmap picture) throws PFException {
 
         JSONArray users = new JSONArray();
         users.put(user.getId());
@@ -962,7 +979,11 @@ public final class PFGroup extends PFEntity {
         try {
             object.save();
             String id = object.getObjectId();
-            PFGroup newGroup = new PFGroup(id, object.getUpdatedAt(), name, usersList, nickNamesList, rolesList, new ArrayList<String>(), new ArrayList<String>(), false, about, picture, rolesPermissionsMap);
+
+            PFGroup newGroup = new PFGroup(id, object.getUpdatedAt(), name, usersList,
+                    nickNamesList, rolesList, new ArrayList<String>(), new ArrayList<String>(),
+                    false, about, picture, rolesPermissionsMap);
+
             user.addToAGroup(newGroup);
             return newGroup;
         } catch (ParseException e) {

@@ -79,10 +79,12 @@ abstract class PFEntity implements Parcelable {
     public abstract void reload() throws PFException;
 
     /**
-     * This method updates in background the data but only the information which have changed since the last time
+     * This method updates in background the data but only the information which have
+     * changed since the last time
      *
      * @param entry The entry to be updated in the current table
-     * @throws PFException If the server cannot be reach, if the object for this id is not found or if another parse exception happens
+     * @throws PFException If the server cannot be reach, if the object for this id is not
+     * found or if another parse exception happens
      */
     protected abstract void updateToServer(String entry) throws PFException;
 

@@ -41,7 +41,8 @@ public class PFPoll extends PFEntity {
     private final Date mDeadline;
     private final boolean isOpen;
 
-    private PFPoll(String id, Date updated, String name, Date deadline, String description, List<Answer> answers, int nOfAnswers, List<PFMember> participants) {
+    private PFPoll(String id, Date updated, String name, Date deadline, String description,
+                   List<Answer> answers, int nOfAnswers, List<PFMember> participants) {
         super(id, PARSE_TABLE_POLL, updated);
         this.mName = name;
         this.mDescription = description;
@@ -187,7 +188,9 @@ public class PFPoll extends PFEntity {
         }
     }
 
-    public static PFPoll createNewPoll(PFGroup group, String name, String description, int nOfAnswers, List<String> responses, Date deadline, List<PFMember> members) throws PFException {
+    public static PFPoll createNewPoll(PFGroup group, String name, String description,
+                                       int nOfAnswers, List<String> responses, Date deadline,
+                                       List<PFMember> members) throws PFException {
 
         ParseObject object = new ParseObject(PARSE_TABLE_POLL);
         object.put(POLL_ENTRY_NAME, name);
@@ -216,7 +219,8 @@ public class PFPoll extends PFEntity {
         try {
             object.save();
             String id = object.getObjectId();
-            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members);
+            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline,
+                    description, answers, nOfAnswers, members);
             group.addPoll(poll);
             return poll;
         } catch (ParseException e) {
