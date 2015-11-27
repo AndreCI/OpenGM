@@ -74,7 +74,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     }
 
     // TODO : fix this
-    public void notestNoName() throws PFException {
+/*    public void notestNoName() throws PFException {
         id = getRandomId();
         String name = "testEventInIntent";
         String description = "A group, much nicer than the previous one";
@@ -227,5 +227,5 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         if(user != null) {
             deleteUserWithId(id);
         }
-    }
+    }*/
 }
