@@ -123,8 +123,10 @@ public final class CreatePollActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         EditText input = (EditText) view.findViewById(R.id.answer_editText);
-                        answers.add(input.getText().toString());
-                        mAdapter.notifyDataSetChanged();
+                        if (!input.getText().toString().isEmpty()) {
+                            answers.add(input.getText().toString());
+                            mAdapter.notifyDataSetChanged();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel_dialog_password, new DialogInterface.OnClickListener() {
