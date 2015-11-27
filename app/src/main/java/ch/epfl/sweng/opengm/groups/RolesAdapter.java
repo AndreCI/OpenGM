@@ -32,7 +32,7 @@ public class RolesAdapter extends ArrayAdapter<String>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         View row = convertView;
-        RoleHolder holder;
+        final RoleHolder holder;
 
         if(row == null) {
             row = ((Activity) context).getLayoutInflater().inflate(ressource, parent, false);
@@ -48,6 +48,19 @@ public class RolesAdapter extends ArrayAdapter<String>{
 
         String role = roles.get(position);
         holder.textView.setText(role);
+        holder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.checkBox.setChecked(!holder.checkBox.isChecked());
+                ((ManageRolesActivity) context).updateOptions(!holder.checkBox.isChecked());
+            }
+        });
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ManageRolesActivity) context).updateOptions(((CheckBox) v).isChecked());
+            }
+        });
 
         return row;
     }

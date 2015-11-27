@@ -29,6 +29,7 @@ import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
@@ -151,6 +152,11 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_messages:
                 break;
             case R.id.nav_manage:
+                break;
+            case R.id.nav_polls:
+                Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
+                intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                startActivity(intent1);
                 break;
             case R.id.nav_my_settings:
                 break;

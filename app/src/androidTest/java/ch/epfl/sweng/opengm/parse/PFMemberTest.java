@@ -52,7 +52,7 @@ public class PFMemberTest {
     //TODO: test writeToParcel and createFromParcel
 
     @Test
-    public void writeToParcel() {
+    public void writeToParcel() throws InterruptedException {
         id1 = getRandomId();
         PFUser user = null;
         try {
@@ -61,6 +61,9 @@ public class PFMemberTest {
             e.printStackTrace();
             fail("create new user");
         }
+
+        Thread.sleep(2000);
+
         try {
             user.setPhoneNumber(PHONE_NUMBER);
             user.setAboutUser(ABOUT_USER);
@@ -68,6 +71,8 @@ public class PFMemberTest {
             e.printStackTrace();
             fail("setPhone/About user");
         }
+
+        Thread.sleep(2000);
 
         PFMember member = null;
         try {
@@ -88,8 +93,7 @@ public class PFMemberTest {
         assertEquals(FIRST_NAME, parcel.readString());
         assertEquals(LAST_NAME, parcel.readString());
         assertEquals(FIRST_NAME + LAST_NAME, parcel.readString());
-        parcel.readString(); //CANNOT TEST MAIL BECAUSE WE CAN'T RETRIEVE IT FROM THE SERVER BECAUSE REASON
-        //assertEquals(EMAIL, parcel.readString());
+        parcel.readString();
         assertEquals(PHONE_NUMBER, parcel.readString());
         assertEquals(ABOUT_USER, parcel.readString());
         assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));

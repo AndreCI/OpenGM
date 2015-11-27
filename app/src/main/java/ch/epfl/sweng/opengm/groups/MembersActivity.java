@@ -127,7 +127,6 @@ public class MembersActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == Activity.RESULT_OK) {
                     setSelectMode(false);
-                    group = data.getParcelableExtra(GROUP);
                 }
                 break;
             default:
@@ -218,7 +217,7 @@ public class MembersActivity extends AppCompatActivity {
 
         if (!userIds.isEmpty()) {
             Intent intent = new Intent(this, ManageRolesActivity.class);
-            intent.putExtra(ManageRolesActivity.GROUP, group);
+            intent.putExtra(ManageRolesActivity.GROUP_INDEX, groupIndex);
             intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
             startActivityForResult(intent, 1);
         } else {

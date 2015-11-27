@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +21,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
-import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
@@ -52,8 +51,15 @@ public class ManageRolesActivity extends AppCompatActivity {
     private List<String> addedRoles = new ArrayList<>();
     private List<String> removedRoles = new ArrayList<>();
 
-    public final static String GROUP = "ch.epfl.ch.opengm.groups.manageroles.group";
+    private boolean isAdministrator = false;
+
+    private int selected = 0;
+
+    public final static String GROUP_INDEX = "ch.epfl.ch.opengm.groups.manageroles.groupIndex";
     public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
+
+    private Map<String, Set<PFGroup.Permission>> addPermissionsForRoles = new HashMap<>();
+    private Map<String, Set<PFGroup.Permission>> removePermissionsForRoles = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_roles);
         roles = new ArrayList<>();
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(GROUP);
+        currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(intent.getIntExtra(GROUP_INDEX, 1));
         List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
         HashMap<String, PFMember> idsMembers = currentGroup.getMembers();
         groupMembers = new ArrayList<>();
@@ -88,12 +94,21 @@ public class ManageRolesActivity extends AppCompatActivity {
         alertBuilder.setView(dialogLayout).setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                String role = edit.getText().toString();
-                roles.add(role);
-                addedRoles.add(role);
-                adapter.notifyDataSetChanged();
-                edit.getText().clear();
-            }
+                    String role = edit.getText().toString();
+                    if(!role.isEmpty() && (role.charAt(0) != ' ')){
+                        if(!isAdministrator && role.equals("Administrator")){
+                            Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
+                        } else {
+                            roles.add(role);
+                            addedRoles.add(role);
+                            adapter.notifyDataSetChanged();
+                            edit.getText().clear();
+                            invalidateOptionsMenu();
+                        }
+                    } else {
+                        Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
+                    }
+                }
             }).setNegativeButton(R.string.cancel, null);
         addRole = alertBuilder.create();
 
@@ -113,8 +128,23 @@ public class ManageRolesActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 savePermissionChanges(permissionList);
             }
-        }).setNegativeButton(R.string.cancel, null);
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                modifyRoles.clear();
+                initialPermissions.clear();
+                for(int i = 0; i < checks.size(); i++){
+                    checks.set(i, false);
+                }
+                permissionsAdapter.notifyDataSetChanged();
+            }
+        });
         modifyPermissions = permissionBuilder.create();
+
+        List<String> rolesForCurrent = currentGroup.getRolesForUser(OpenGMApplication.getCurrentUser().getId());
+        if(rolesForCurrent != null){
+            isAdministrator = rolesForCurrent.contains("Administrator");
+        }
     }
 
     private void keepIntersectionRoles(List<String> otherRoles){
@@ -127,13 +157,26 @@ public class ManageRolesActivity extends AppCompatActivity {
         roles.removeAll(toRemove);
     }
 
+    protected void updateOptions(boolean isChecked){
+        if (isChecked) {
+            selected++;
+        } else {
+            selected--;
+        }
+        invalidateOptionsMenu();
+    }
+
+    protected AlertDialog getModifyPermissionsDialog(){
+        return modifyPermissions;
+    }
+
     private void savePermissionChanges(ListView listView){
         List<PFGroup.Permission> addPermission = new ArrayList<>();
         List<PFGroup.Permission> removePermission = new ArrayList<>();
         for(int i = 0; i < listView.getCount(); i++){
             View view = listView.getChildAt(i);
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.role_checkbox);
-            PFGroup.Permission current = PFGroup.Permission.forInt(Integer.parseInt(((TextView)view.findViewById(R.id.role_name)).getText().toString()));
+            PFGroup.Permission current = PFGroup.Permission.forName(((TextView) view.findViewById(R.id.role_name)).getText().toString());
             if(checkBox.isChecked()){
                 if(!initialPermissions.contains(current)){
                     addPermission.add(current);
@@ -146,22 +189,48 @@ public class ManageRolesActivity extends AppCompatActivity {
             checks.set(i, checkBox.isChecked());
             permissionsAdapter.notifyDataSetChanged();
         }
+        boolean found = false;
         for(String role : modifyRoles){
-            for(PFGroup.Permission permission : addPermission){
-                currentGroup.addPermissionToRole(role, permission);
+            if(addPermissionsForRoles.containsKey(role)){
+                addPermissionsForRoles.get(role).addAll(new HashSet<>(addPermission));
+                found = true;
             }
-            for(PFGroup.Permission permission : removePermission){
-                currentGroup.removePermissionFromRole(role, permission);
+        }
+        if(!found){
+            for(String role : modifyRoles){
+                addPermissionsForRoles.put(role, new HashSet<>(addPermission));
+            }
+            found = false;
+        }
+        for(String role : modifyRoles){
+            if(removePermissionsForRoles.containsKey(role)){
+                removePermissionsForRoles.get(role).addAll(new HashSet<>(removePermission));
+                found = true;
+            }
+        }
+        if(!found){
+            for(String role : modifyRoles){
+                removePermissionsForRoles.put(role, new HashSet<>(removePermission));
             }
         }
         modifyRoles.clear();
         initialPermissions.clear();
+        for(int i = 0; i < checks.size(); i++){
+            checks.set(i, false);
+        }
         permissionsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_manage_roles, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_modify_permissions).setVisible(selected != 0);
+        menu.findItem(R.id.action_remove_role).setVisible(selected != 0);
         return true;
     }
 
@@ -189,12 +258,42 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     private void modifyPermissions() {
         List<String> checkedRoles = getCheckedRoles(false);
-        List<PFGroup.Permission> permissions = new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(0)));
+        List<PFGroup.Permission> permissions;
+        if(currentGroup.getRoles().contains(checkedRoles.get(0))){
+            permissions = new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(0)));
+        } else {
+            permissions = new ArrayList<>();
+        }
 
         for(int i = 1; i < checkedRoles.size(); i++){
-            permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
+            if(currentGroup.getRoles().contains(checkedRoles.get(i))){
+                permissions = keepPermissionIntersection(permissions, new ArrayList<>(currentGroup.getPermissionsForRole(checkedRoles.get(i))));
+            } else {
+                boolean foundOne = false;
+                for(Map.Entry<String, Set<PFGroup.Permission>> entry : addPermissionsForRoles.entrySet()){
+                    if(entry.getKey().equals(checkedRoles.get(i))){
+                        permissions = keepPermissionIntersection(permissions, new ArrayList<>(entry.getValue()));
+                        foundOne = true;
+                    }
+                }
+                if(!foundOne){
+                    permissions = keepPermissionIntersection(permissions, new ArrayList<PFGroup.Permission>());
+
+                }
+            }
         }
-        Log.d("TESTING", permissions.toString());
+        // To the ones that have been fetched, add those that could have been added before saving.
+        for(String role : addPermissionsForRoles.keySet()){
+            if(checkedRoles.contains(role)){
+                permissions.addAll(addPermissionsForRoles.get(role));
+            }
+        }
+        // To the ones that have been fetched, remove those that could have been removed before saving.
+        for(String role : removePermissionsForRoles.keySet()){
+            if(checkedRoles.contains(role)) {
+                permissions.removeAll(removePermissionsForRoles.get(role));
+            }
+        }
         modifyRoles.addAll(checkedRoles);
         initialPermissions.addAll(permissions);
         for(int i = 0; i < checks.size(); i++){
@@ -204,6 +303,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         }
         modifyPermissions.show();
         permissionsAdapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
     }
 
     private List<PFGroup.Permission> keepPermissionIntersection(List<PFGroup.Permission> base, List<PFGroup.Permission> other){
@@ -219,6 +319,10 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     private void removeRole() {
         List<String> rolesToRemove = getCheckedRoles(true);
+        if(rolesToRemove.contains("Administrator") && !isAdministrator){
+            Toast.makeText(this, "You cannot remove Administrator role without being an Administrator.", Toast.LENGTH_LONG).show();
+            return;
+        }
         for(String role : rolesToRemove){
             if(!addedRoles.contains(role)){
                 removedRoles.add(role);
@@ -226,6 +330,7 @@ public class ManageRolesActivity extends AppCompatActivity {
             roles.remove(role);
         }
         adapter.notifyDataSetChanged();
+        invalidateOptionsMenu();
     }
 
     private void addRole(){
@@ -245,6 +350,10 @@ public class ManageRolesActivity extends AppCompatActivity {
                 TextView roleText = (TextView)v.findViewById(R.id.role_name);
                 roles.add(roleText.getText().toString());
                 checkBox.setChecked(!uncheck);
+                if(uncheck){
+                    selected--;
+                }
+                invalidateOptionsMenu();
             }
         }
         return roles;
@@ -260,17 +369,20 @@ public class ManageRolesActivity extends AppCompatActivity {
                     currentGroup.removeRoleToUser(role, member.getId());
                 }
             }
-            onBackPressed();
+            for(Map.Entry<String, Set<PFGroup.Permission>> entry : addPermissionsForRoles.entrySet()){
+                for(PFGroup.Permission permission : entry.getValue()) {
+                    currentGroup.addPermissionToRole(entry.getKey(), permission);
+                }
+            }
+            for(Map.Entry<String, Set<PFGroup.Permission>> entry : removePermissionsForRoles.entrySet()){
+                for(PFGroup.Permission permission : entry.getValue()){
+                    currentGroup.removePermissionFromRole(entry.getKey(), permission);
+                }
+            }
+            setResult(Activity.RESULT_OK);
+            finish();
         } else {
             Toast.makeText(getBaseContext(), "No internet connection, cannot save.", Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra(MembersActivity.GROUP, currentGroup);
-        setResult(Activity.RESULT_OK, intent);
-        finish();
     }
 }
