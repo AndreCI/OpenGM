@@ -20,6 +20,8 @@ import ch.epfl.sweng.opengm.polls.results.HoloGraphLibrary.PieSlice;
 import ch.epfl.sweng.opengm.polls.results.OnSwipeTouchListener;
 import ch.epfl.sweng.opengm.polls.results.PollResultAdapter;
 
+import static ch.epfl.sweng.opengm.polls.PollsListActivity.getCurrentPoll;
+import static ch.epfl.sweng.opengm.polls.PollsListActivity.setCurrentPoll;
 import static java.util.Arrays.asList;
 
 public class PollResultActivity extends AppCompatActivity {
@@ -48,7 +50,7 @@ public class PollResultActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mPoll = getIntent().getParcelableExtra(CreatePollActivity.POLL_INTENT);
+        mPoll = getCurrentPoll();
 
         colorList = (ListView) findViewById(R.id.results_colors_listView);
 
@@ -121,12 +123,14 @@ public class PollResultActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                setCurrentPoll(null);
                 finish();
                 return true;
             case R.id.action_poll_result_change:
                 changeGraph(null);
                 return true;
             case R.id.action_poll_result_validate:
+                setCurrentPoll(null);
                 finish();
                 return true;
             default:

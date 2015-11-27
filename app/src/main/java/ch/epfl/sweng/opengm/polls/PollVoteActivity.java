@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.polls;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import ch.epfl.sweng.opengm.parse.PFPoll;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.parse.PFPoll.Answer;
+import static ch.epfl.sweng.opengm.polls.PollsListActivity.getCurrentPoll;
+import static ch.epfl.sweng.opengm.polls.PollsListActivity.setCurrentPoll;
 
 public class PollVoteActivity extends AppCompatActivity {
 
@@ -42,7 +45,7 @@ public class PollVoteActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mPoll = getIntent().getParcelableExtra(CreatePollActivity.POLL_INTENT);
+        mPoll = getCurrentPoll();
 
         userCanVote = !mPoll.hasUserAlreadyVoted(getCurrentUser().getId());
 
@@ -124,6 +127,7 @@ public class PollVoteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                setCurrentPoll(null);
                 finish();
                 return true;
             default:

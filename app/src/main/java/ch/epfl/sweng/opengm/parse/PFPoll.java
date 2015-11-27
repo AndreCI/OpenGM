@@ -39,7 +39,6 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
 
     private final static String PARSE_TABLE_POLL = POLL_TABLE_NAME;
 
-
     private final String mName;
     private final String mDescription;
     private final int nOfAnswers;
@@ -65,7 +64,6 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         this.isOpen = deadline.after(new Date());
         this.mDeadline = deadline;
     }
-
 
     protected PFPoll(Parcel in) {
         super(in, PARSE_TABLE_POLL);

@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
-import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
@@ -506,6 +505,10 @@ public final class PFGroup extends PFEntity {
 
     public List<PFPoll> getPolls() {
         return new ArrayList<>(mPolls.values());
+    }
+
+    public HashMap<String, PFPoll> getPollsWithId() {
+        return new HashMap<>(mPolls);
     }
 
     public boolean hasMembers() {

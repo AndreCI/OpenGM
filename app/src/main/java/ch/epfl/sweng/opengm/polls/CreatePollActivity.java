@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,14 +39,11 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static java.lang.Integer.parseInt;
 
-@SuppressWarnings("UnusedParameters")
 public final class CreatePollActivity extends AppCompatActivity {
 
     public final static String PARTICIPANTS_KEY = "ch.epfl.sweng.opengm.polls.createpollactivity.participants";
 
-    public final static String GROUP_POLL_INTENT = "ch.epfl.sweng.opengm.polls.createpollactivity.groups";
     public final static String ENROLLED_POLL_INTENT = "ch.epfl.sweng.opengm.polls.createpollactivity.enrolled";
-    public final static String POLL_INTENT = "ch.epfl.sweng.opengm.polls.createpollactivity.polls";
 
     private static final int PARTICIPANTS_ACT_KEY = 328;
 

@@ -23,9 +23,12 @@ import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFPoll;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class PollsListActivity extends AppCompatActivity {
+
+    private static PFPoll mPoll = null;
 
     private final static int CREATE_POLL_KEY = 32697;
 
@@ -45,6 +48,8 @@ public class PollsListActivity extends AppCompatActivity {
         }
 
         setTitle(R.string.title_list_poll);
+
+        setCurrentPoll(null);
 
         currentGroup = OpenGMApplication.getCurrentGroup();
 
@@ -77,13 +82,13 @@ public class PollsListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PFPoll poll = mAdapter.getItem(position);
+                setCurrentPoll(poll.getId());
                 Intent i;
                 if (poll.isOpen()) {
                     i = new Intent(PollsListActivity.this, PollVoteActivity.class);
                 } else {
                     i = new Intent(PollsListActivity.this, PollResultActivity.class);
                 }
-                i.putExtra(CreatePollActivity.POLL_INTENT, poll);
                 startActivity(i);
             }
         });
@@ -130,6 +135,7 @@ public class PollsListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                setCurrentPoll(null);
                 finish();
                 return true;
             default:
@@ -141,6 +147,7 @@ public class PollsListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_POLL_KEY) {
             if (resultCode == Activity.RESULT_OK) {
+                setCurrentPoll(null);
                 updateList();
             }
         }
@@ -167,6 +174,14 @@ public class PollsListActivity extends AppCompatActivity {
         polls.addAll(userPoll);
         Collections.sort(polls);
         mAdapter.notifyDataSetChanged();
+    }
+
+    public static PFPoll getCurrentPoll() {
+        return mPoll;
+    }
+
+    public static void setCurrentPoll(String pollId) {
+        mPoll = pollId == null ? null : getCurrentGroup().getPollsWithId().get(pollId);
     }
 
 }
