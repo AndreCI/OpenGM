@@ -55,8 +55,8 @@ public class EventListActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }*/
                 currentGroup = OpenGMApplication.getCurrentGroup();
-                //currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
-                Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
+
+                // Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
                 for(PFEvent e : currentGroup.getEvents()){
                     eventMap.put(e.getId(), e);
