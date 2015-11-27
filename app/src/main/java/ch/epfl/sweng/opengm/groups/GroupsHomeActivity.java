@@ -73,6 +73,11 @@ public class GroupsHomeActivity extends AppCompatActivity
         }
     }
 
+    public void onManageGroup(View v){
+        Intent intent = new Intent(this, CreateEditGroupActivity.class);
+        startActivityForResult(intent, RESULT_FIRST_USER);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -118,6 +123,12 @@ public class GroupsHomeActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             // stay in the correct group home, comming back from MembersActivity
+            case 1:
+                setTitle(currentGroup.getName());
+                TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+                descriptionView.setText(currentGroup.getDescription());
+                break;
+            default:
         }
     }
 }

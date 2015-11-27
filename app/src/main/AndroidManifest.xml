@@ -53,7 +53,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat" />
         <activity
-            android:name=".groups.CreateGroupActivity"
+            android:name=".groups.CreateEditGroupActivity"
             android:label="@string/title_activity_create_group"
             android:screenOrientation="portrait" />
         <activity

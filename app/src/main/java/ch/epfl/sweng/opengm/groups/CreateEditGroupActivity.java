@@ -23,10 +23,17 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITH_SYMBOL;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isGroupNameValid;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
-public class CreateGroupActivity extends AppCompatActivity {
+public class CreateEditGroupActivity extends AppCompatActivity {
 
     private EditText mGroupName;
     private EditText mGroupDescription;
+
+    private PFGroup currentGroup = null;
+
+    private String initialName = null;
+    private String initialDescription = null;
+
+    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.createGroupActivity.groupIndex";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,26 +43,59 @@ public class CreateGroupActivity extends AppCompatActivity {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.create_group_outmostLayout);
         onTapOutsideBehaviour(layout, this);
 
+
         mGroupName = (EditText) findViewById(R.id.enterGroupName);
         mGroupDescription = (EditText) findViewById(R.id.enterGroupDescription);
+
+        currentGroup = OpenGMApplication.getCurrentGroup();
+        mGroupName.setText(currentGroup.getName());
+        mGroupDescription.setText(currentGroup.getDescription());
+        initialName = currentGroup.getName();
+        initialDescription = currentGroup.getDescription();
+        findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+    }
+
+    public void manageMembers(View view) {
+        Intent intent = new Intent(this, MembersActivity.class);
+        startActivity(intent);
     }
 
     public void createGroup(View view) {
-        if(NetworkUtils.haveInternet(getBaseContext())) {
+        if (NetworkUtils.haveInternet(getBaseContext())) {
             String name = mGroupName.getText().toString();
             String description = mGroupDescription.getText().toString();
             // TODO : retrieve image from button
             // If next activity is group page, also call function to put new group in the database
 
             int groupNameValid = isGroupNameValid(name);
+
             if (groupNameValid == INPUT_CORRECT) {
                 try {
                     PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
                     getCurrentUser().addToAGroup(newGroup);
                     OpenGMApplication.setCurrentGroup(getCurrentUser().getGroups().size() - 1);
-                    startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class));
+                    startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class));
                 } catch (PFException e) {
                     Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
+                }
+                if (currentGroup != null) {
+                    if (!name.equals(initialName)) {
+                        currentGroup.setName(name);
+                    }
+                    if (!description.equals(initialDescription)) {
+                        currentGroup.setDescription(description);
+                    }
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    try {
+                        PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
+                        getCurrentUser().addToAGroup(newGroup);
+                        OpenGMApplication.setCurrentGroup(OpenGMApplication.getCurrentUser().getGroups().size() - 1);
+                        startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class));
+                    } catch (PFException e) {
+                        Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
+                    }
                 }
             } else {
                 String errorMessage;

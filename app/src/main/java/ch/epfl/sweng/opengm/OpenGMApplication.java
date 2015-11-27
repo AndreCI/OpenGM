@@ -21,7 +21,6 @@ public class OpenGMApplication extends Application {
     private static PFUser currentUser = null;
     private static PFGroup currentGroup = null;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
