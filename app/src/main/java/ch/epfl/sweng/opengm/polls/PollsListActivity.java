@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,8 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFPoll;
+
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class PollsListActivity extends AppCompatActivity {
 
@@ -54,6 +57,15 @@ public class PollsListActivity extends AppCompatActivity {
         }
 
         polls.addAll(userPoll);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddPoll);
+
+        // show the floating button (+) only if user can create a poll
+        if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
+            fab.setVisibility(View.VISIBLE);
+        } else {
+            fab.setVisibility(View.GONE);
+        }
 
         list = (ListView) findViewById(R.id.pollsListView);
 
