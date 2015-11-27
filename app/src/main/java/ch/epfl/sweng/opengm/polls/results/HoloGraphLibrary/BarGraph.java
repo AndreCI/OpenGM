@@ -24,7 +24,6 @@
 package ch.epfl.sweng.opengm.polls.results.HoloGraphLibrary;
 
 import android.animation.Animator;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -40,14 +39,12 @@ import android.graphics.Region;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import ch.epfl.sweng.opengm.R;
@@ -58,14 +55,12 @@ public class BarGraph extends View implements HoloGraphAnimate {
     private static final int AXIS_LABEL_FONT_SIZE = 15;
     // How much space to leave between labels when shrunken. Increase for less space.
     private static final float LABEL_PADDING_MULTIPLIER = 1.6f;
-    private static final int ORIENTATION_HORIZONTAL = 0;
     private static final int ORIENTATION_VERTICAL = 1;
 
-    private final int mOrientation;
     private ArrayList<Bar> mBars = new ArrayList<Bar>();
-    private Paint mPaint = new Paint();
-    private Rect mBoundsRect = new Rect();
-    private Rect mTextRect = new Rect();
+    private final Paint mPaint = new Paint();
+    private final Rect mBoundsRect = new Rect();
+    private final Rect mTextRect = new Rect();
     private boolean mShowAxis;
     private boolean mShowAxisLabel;
     private boolean mShowBarText;
@@ -97,7 +92,6 @@ public class BarGraph extends View implements HoloGraphAnimate {
         super(context, attrs, defStyleAttr);
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BarGraph);
-        mOrientation = a.getInt(R.styleable.BarGraph_orientation, ORIENTATION_VERTICAL);
         mAxisColor = a.getColor(R.styleable.BarGraph_barAxisColor, Color.LTGRAY);
         mShowAxis = a.getBoolean(R.styleable.BarGraph_barShowAxis, true);
         mShowAxisLabel = a.getBoolean(R.styleable.BarGraph_barShowAxisLabel, true);
@@ -105,33 +99,9 @@ public class BarGraph extends View implements HoloGraphAnimate {
         mShowPopup = a.getBoolean(R.styleable.BarGraph_barShowPopup, true);
     }
 
-    public void setShowAxis(boolean show) {
-        mShowAxis = show;
-    }
-
-    public void setShowAxisLabel(boolean show) {
-        mShowAxisLabel = show;
-    }
-
-    public void setShowBarText(boolean show) {
-        mShowBarText = show;
-    }
-
-    public void setShowPopup(boolean show) {
-        mShowPopup = show;
-    }
-
     public void setBars(ArrayList<Bar> points) {
         mBars = points;
         postInvalidate();
-    }
-
-    public ArrayList<Bar> getBars() {
-        return mBars;
-    }
-
-    public void setAxisColor(int axisColor) {
-        mAxisColor = axisColor;
     }
 
     public void onDraw(Canvas canvas) {
@@ -234,7 +204,6 @@ public class BarGraph extends View implements HoloGraphAnimate {
         for (final Bar bar : mBars) {
             int left = (int) ((padding * 2) * count + padding + barWidth * count);
             int right = (int) ((padding * 2) * count + padding + barWidth * (count + 1));
-            int width = (int)(defaultBarWidth + (padding *2));
             float textWidth = mPaint.measureText(bar.getName());
             // Decrease text size to fit and not overlap with other labels.
             while (right -left + (padding * LABEL_PADDING_MULTIPLIER) < textWidth) {
@@ -252,7 +221,7 @@ public class BarGraph extends View implements HoloGraphAnimate {
         int oldright = (int) (padding *-1);
         int alpha = 255;//for bar color. Max values is bar.getColorAlpha
         int popupAlpha = 255;// for bar popup and text. Max value is 255;
-        SparseArray<Float> valueTextSizes = new SparseArray<Float>();
+        SparseArray<Float> valueTextSizes = new SparseArray<>();
         for (final Bar bar : mBars) {
             //Set alpha and width percentage if inserting or deleting
             if (isAnimating()){
@@ -421,13 +390,8 @@ public class BarGraph extends View implements HoloGraphAnimate {
         return true;
     }
 
-    public void setOnBarClickedListener(OnBarClickedListener listener) {
-        mListener = listener;
-    }
 
-
-    @Override
-    public int getDuration() {
+    private int getDuration() {
         return mDuration;
     }
 
@@ -442,29 +406,15 @@ public class BarGraph extends View implements HoloGraphAnimate {
     /**
      * Make sure your interpolator ends at exactly 1.0 (Bounce interpolator doesnt)
      * or else call makeValueString(int precision) on each bar in onAnimationEnd  so the value label will be the goal value.
-     * @param interpolator
+     * @param interpolator the interpolator
      */
     @Override
     public void setInterpolator(Interpolator interpolator) {mInterpolator = interpolator;}
 
-    public int getmValueStringPrecision() {
-        return mValueStringPrecision;
-    }
-
-    public void setValueStringPrecision(int valueStringPrecision) {mValueStringPrecision = valueStringPrecision;}
-
-    public long getValueStringUpdateInterval() {
-        return mValueStringUpdateInterval;
-    }
-
-    public void setValueStringUpdateInterval(long valueStringUpdateInterval) {mValueStringUpdateInterval = valueStringUpdateInterval;}
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
     public boolean isAnimating() {
-        if(mValueAnimator != null)
-            return mValueAnimator.isRunning();
-        return false;
+        return mValueAnimator != null && mValueAnimator.isRunning();
     }
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private float getAnimationFraction(){
@@ -548,6 +498,6 @@ public class BarGraph extends View implements HoloGraphAnimate {
     }
 
     public interface OnBarClickedListener {
-        abstract void onClick(int index);
+        void onClick(int index);
     }
 }

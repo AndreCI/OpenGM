@@ -6,12 +6,12 @@ import android.view.animation.Interpolator;
 /**
  * Created by DouglasW on 6/8/2014.
  */
-public interface HoloGraphAnimate {
+interface HoloGraphAnimate {
 
-    final int ANIMATE_NORMAL = 0;
-    final int ANIMATE_INSERT = 1;
-    final int ANIMATE_DELETE = 2;
-    int getDuration();
+    int ANIMATE_NORMAL = 0;
+    int ANIMATE_INSERT = 1;
+    int ANIMATE_DELETE = 2;
+
     void setDuration(int duration);
 
     Interpolator getInterpolator();

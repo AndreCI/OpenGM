@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -227,7 +228,7 @@ public final class CreatePollActivity extends AppCompatActivity {
 
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            String date = String.format("%d/%02d/%04d", day, month + 1, year);
+            String date = String.format(Locale.getDefault(),"%d/%02d/%04d", day, month + 1, year);
             ((Button) getActivity().findViewById(R.id.deadlineButton)).setText(date);
         }
     }

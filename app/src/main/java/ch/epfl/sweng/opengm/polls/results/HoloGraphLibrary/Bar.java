@@ -44,7 +44,7 @@ public class Bar {
     private String mValuePrefix = null;
     private String mValueSuffix = null;
 
-    public int mAnimateSpecial = HoloGraphAnimate.ANIMATE_NORMAL;//add getter setter
+    public final int mAnimateSpecial = HoloGraphAnimate.ANIMATE_NORMAL;//add getter setter
 
     public int getColor() {
         return mColor;
@@ -61,25 +61,13 @@ public class Bar {
         return mLabelColor == -1 ? mColor : mLabelColor;
     }
 
-    public void setLabelColor(int labelColor) {
-        mLabelColor = labelColor;
-    }
-
     public int getSelectedColor() {
         if (-1 == mSelectedColor) mSelectedColor = Utils.darkenColor(mColor);
         return mSelectedColor;
     }
 
-    public void setSelectedColor(int selectedColor) {
-        mSelectedColor = selectedColor;
-    }
-
     public int getValueColor() {
         return mValueColor;
-    }
-
-    public void setValueColor(int valueColor) {
-        mValueColor = valueColor;
     }
 
     public String getName() {
@@ -108,8 +96,6 @@ public class Bar {
         return mGoalValue;
     }
 
-    public void setGoalValue(float goalValue) { mGoalValue = goalValue; }
-
     public String getValueString() {
         if (mValueString != null) {
             return mValueString;
@@ -118,16 +104,12 @@ public class Bar {
         }
     }
 
-    public void setValueString(final String valueString) {
+    private void setValueString(final String valueString) {
         mValueString = valueString;
     }
-    public String getValuePrefix() {return mValuePrefix;}
+    private String getValuePrefix() {return mValuePrefix;}
 
-    public void setValuePrefix(String valuePrefix) { mValuePrefix = valuePrefix; }
-
-    public String getValueSuffix() {return mValueSuffix;}
-
-    public void setValueSuffix(String valueSuffix) { mValueSuffix = valueSuffix; }
+    private String getValueSuffix() {return mValueSuffix;}
 
     public void makeValueString(int decimalPrecision){
         String base = String.format("%." + String.valueOf(decimalPrecision)+"f",mValue);

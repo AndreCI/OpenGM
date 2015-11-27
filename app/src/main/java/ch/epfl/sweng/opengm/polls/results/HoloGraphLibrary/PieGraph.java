@@ -38,7 +38,6 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -53,13 +52,13 @@ public class PieGraph extends View implements  HoloGraphAnimate {
     private int mPadding;
     private int mInnerCircleRatio;
     private ArrayList<PieSlice> mSlices = new ArrayList<PieSlice>();
-    private Paint mPaint = new Paint();
+    private final Paint mPaint = new Paint();
     private int mSelectedIndex = -1;
     private OnSliceClickedListener mListener;
     private boolean mDrawCompleted = false;
-    private RectF mRectF = new RectF();
+    private final RectF mRectF = new RectF();
     private Bitmap mBackgroundImage = null;
-    private Point mBackgroundImageAnchor = new Point(0,0);
+    private final Point mBackgroundImageAnchor = new Point(0,0);
     private boolean mBackgroundImageCenter = false;
 
 
@@ -228,7 +227,7 @@ public class PieGraph extends View implements  HoloGraphAnimate {
 
     /**
      * sets padding
-     * @param padding
+     * @param padding the padding
      */
     public void setPadding(int padding) {
         mPadding = padding;
@@ -267,8 +266,7 @@ public class PieGraph extends View implements  HoloGraphAnimate {
         postInvalidate();
     }
 
-    @Override
-    public int getDuration() {
+    private int getDuration() {
         return mDuration;
     }
 
@@ -287,9 +285,7 @@ public class PieGraph extends View implements  HoloGraphAnimate {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
     public boolean isAnimating() {
-        if(mValueAnimator != null)
-            return mValueAnimator.isRunning();
-        return false;
+        return mValueAnimator != null && mValueAnimator.isRunning();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
@@ -344,6 +340,6 @@ public class PieGraph extends View implements  HoloGraphAnimate {
     public void setAnimationListener(Animator.AnimatorListener animationListener) { mAnimationListener = animationListener;}
 
     public interface OnSliceClickedListener {
-        public abstract void onClick(int index);
+        void onClick(int index);
     }
 }

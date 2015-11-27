@@ -13,7 +13,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFPoll;
 import ch.epfl.sweng.opengm.utils.Utils;
 
-public class PollListAdapter extends ArrayAdapter<PFPoll> {
+class PollListAdapter extends ArrayAdapter<PFPoll> {
 
     private final Context context;
     private final int resource;

@@ -30,9 +30,7 @@ public class PollResultActivity extends AppCompatActivity {
     private PieGraph pieGraph;
     private BarGraph barGraph;
 
-    private ListView colorList;
     private HashMap<PFPoll.Answer, Integer> colors;
-    private PollResultAdapter mAdapter;
 
     private final static ArrayList<Integer> COLORS = new ArrayList<>(asList(
             Color.parseColor("#FFE1AE"), Color.parseColor("#F9B32A"),
@@ -52,7 +50,7 @@ public class PollResultActivity extends AppCompatActivity {
 
         mPoll = getCurrentPoll();
 
-        colorList = (ListView) findViewById(R.id.results_colors_listView);
+        ListView colorList = (ListView) findViewById(R.id.results_colors_listView);
 
         colors = new HashMap<>();
 
@@ -62,7 +60,7 @@ public class PollResultActivity extends AppCompatActivity {
             colors.put(answer, color);
         }
 
-        mAdapter = new PollResultAdapter(this, mPoll.getAnswers(), colors);
+        PollResultAdapter mAdapter = new PollResultAdapter(this, mPoll.getAnswers(), colors);
         colorList.setAdapter(mAdapter);
         colorList.setClickable(true);
 

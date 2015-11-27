@@ -5,7 +5,7 @@ import android.graphics.Color;
 /**
  * Created by sbaiget on 11/04/2014.
  */
-public class Utils {
+class Utils {
 
     public static int darkenColor(int color) {
         float[] hsv = new float[3];

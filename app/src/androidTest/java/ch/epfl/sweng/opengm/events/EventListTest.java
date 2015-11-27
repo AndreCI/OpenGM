@@ -45,7 +45,8 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
         id = null;
     }
 
-    public void testCanClickAddButton() throws InterruptedException {
+    // TODO : this is not as test as there is any check ;)
+    public void notestCanClickAddButton() throws InterruptedException {
         Intent intent = new Intent();
         id = getRandomId();
         try {
@@ -54,14 +55,15 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
             e.printStackTrace();
         }
         try {
-            group = PFGroup.createNewGroup(user, "EventListTest", "testDescription", null);
-        } catch (PFException e) {
-            e.printStackTrace();
-        }
-        try {
             OpenGMApplication.setCurrentUser(user.getId());
         } catch (PFException e) {
             Assert.fail("Network error");
+        }
+        Thread.sleep(2000);
+        try {
+            group = PFGroup.createNewGroup(user, "EventListTest", "testDescription", null);
+        } catch (PFException e) {
+            e.printStackTrace();
         }
         Thread.sleep(2000);
         OpenGMApplication.setCurrentGroup(0);

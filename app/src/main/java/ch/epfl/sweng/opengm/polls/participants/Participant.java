@@ -59,8 +59,7 @@ class Participant implements Comparable<Participant> {
 
         Participant that = (Participant) o;
 
-        if (info != null ? !info.equals(that.info) : that.info != null) return false;
-        return !(name != null ? !name.equals(that.name) : that.name != null);
+        return !(info != null ? !info.equals(that.info) : that.info != null) && !(name != null ? !name.equals(that.name) : that.name != null);
 
     }
 

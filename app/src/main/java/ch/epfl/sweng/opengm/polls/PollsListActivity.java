@@ -33,10 +33,9 @@ public class PollsListActivity extends AppCompatActivity {
     private final static int CREATE_POLL_KEY = 32697;
 
     private PFGroup currentGroup;
-    private List<PFPoll> polls = new ArrayList<>();
+    private final List<PFPoll> polls = new ArrayList<>();
 
     private PollListAdapter mAdapter;
-    private ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +71,7 @@ public class PollsListActivity extends AppCompatActivity {
             fab.setVisibility(View.GONE);
         }
 
-        list = (ListView) findViewById(R.id.pollsListView);
+        ListView list = (ListView) findViewById(R.id.pollsListView);
 
         mAdapter = new PollListAdapter(this, polls);
         list.setAdapter(mAdapter);
