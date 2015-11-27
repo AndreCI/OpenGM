@@ -75,7 +75,14 @@ public final class PFGroup extends PFEntity {
     private final static String userRole = "User";
 
     public static enum Permission{
-        ADD_MEMBER(0, "Add members"), REMOVE_MEMBER(1, "Remove members"), MANAGE_ROLES(2, "Manage roles"), ADD_ROLES(3, "Add roles"), ADD_EVENT(4, "Add events"), MANAGE_EVENT(5, "Manage events"), MANAGE_GROUP(6, "Manage groups");
+        ADD_MEMBER(0, "Add members"),
+        REMOVE_MEMBER(1, "Remove members"),
+        MANAGE_ROLES(2, "Manage roles"),
+        ADD_ROLES(3, "Add roles"),
+        ADD_EVENT(4, "Add events"),
+        MANAGE_EVENT(5, "Manage events"),
+        MANAGE_GROUP(6, "Manage groups"),
+        CREATE_POLL(7, "Create Poll");
 
         private int value;
         private String name;
