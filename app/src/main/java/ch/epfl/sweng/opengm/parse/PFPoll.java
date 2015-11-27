@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -48,7 +47,9 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
     private final Date mDeadline;
     private final boolean isOpen;
 
-    private PFPoll(String id, Date updated, String name, Date deadline, String description, List<Answer> answers, int nOfAnswers, List<PFMember> participants, List<Boolean> hasParticpantVoted) {
+    private PFPoll(String id, Date updated, String name, Date deadline, String description,
+                   List<Answer> answers, int nOfAnswers, List<PFMember> participants,
+                   List<Boolean> hasParticipantVoted) {
         super(id, PARSE_TABLE_POLL, updated);
         this.mName = name;
         this.mDescription = description;
@@ -57,7 +58,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         int i = 0;
         for (PFMember member : participants) {
             mParticipants.put(member.getId(), member);
-            mVoters.put(member.getId(), hasParticpantVoted.get(i++));
+            mVoters.put(member.getId(), hasParticipantVoted.get(i++));
         }
         this.mAnswers = new ArrayList<>(answers);
         this.nOfAnswers = nOfAnswers;
@@ -322,7 +323,9 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         }
     }
 
-    public static PFPoll createNewPoll(PFGroup group, String name, String description, int nOfAnswers, List<String> responses, Date deadline, List<PFMember> members) throws PFException {
+    public static PFPoll createNewPoll(PFGroup group, String name, String description,
+                                       int nOfAnswers, List<String> responses, Date deadline,
+                                       List<PFMember> members) throws PFException {
 
         ParseObject object = new ParseObject(PARSE_TABLE_POLL);
         object.put(POLL_ENTRY_NAME, name);
@@ -357,7 +360,8 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
         try {
             object.save();
             String id = object.getObjectId();
-            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nOfAnswers, members, hasParticipantVoted);
+            PFPoll poll = new PFPoll(id, object.getUpdatedAt(), name, deadline,
+                    description, answers, nOfAnswers, members, hasParticipantVoted);
             group.addPoll(poll);
             return poll;
         } catch (ParseException e) {

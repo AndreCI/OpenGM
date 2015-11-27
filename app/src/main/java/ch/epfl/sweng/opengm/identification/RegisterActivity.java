@@ -39,17 +39,17 @@ import static com.parse.ParseException.USERNAME_MISSING;
 public class RegisterActivity extends AppCompatActivity {
 
 
-    public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registeractivity.username";
-    public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registeractivity.password";
-    public static final String PHONE_KEY = "ch.epfl.ch.opengm.identification.registeractivity.phone";
+    public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registerActivity.username";
+    public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registerActivity.password";
+    public static final String PHONE_KEY = "ch.epfl.ch.opengm.identification.registerActivity.phone";
     private static final int PHONE_ACT_KEY = 1061;
 
 
     private EditText mEditUsername;
     private EditText mEditPassword1;
     private EditText mEditPassword2;
-    private EditText mEditFirstname;
-    private EditText mEditLastname;
+    private EditText mEditFirstName;
+    private EditText mEditLastName;
     private EditText mEditEmail;
     private EditText mEditPhone;
     private PopupWindow popup;
@@ -65,8 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
         mEditUsername = (EditText) findViewById(R.id.register_username);
         mEditPassword1 = (EditText) findViewById(R.id.register_password1);
         mEditPassword2 = (EditText) findViewById(R.id.register_password2);
-        mEditFirstname = (EditText) findViewById(R.id.register_firstname);
-        mEditLastname = (EditText) findViewById(R.id.register_lastname);
+        mEditFirstName = (EditText) findViewById(R.id.register_firstname);
+        mEditLastName = (EditText) findViewById(R.id.register_lastname);
         mEditEmail = (EditText) findViewById(R.id.register_email);
         mEditPhone = (EditText) findViewById(R.id.register_phone);
 
@@ -87,11 +87,10 @@ public class RegisterActivity extends AppCompatActivity {
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setOutsideTouchable(true);
         popup.setFocusable(true);
-        popup.setBackgroundDrawable(new BitmapDrawable());
         popup.showAsDropDown(anchorView == null ? findViewById(R.id.pwd_info) : anchorView);
     }
 
-    public void dismisssPopUp() {
+    public void dismissPopUp() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -100,21 +99,21 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void onClickRegister(View v) {
+    public void onClickRegister(@SuppressWarnings("UnusedParameters") View v) {
         if(NetworkUtils.haveInternet(getBaseContext())) {
             final String username = mEditUsername.getText().toString();
             String password1 = mEditPassword1.getText().toString();
             String password2 = mEditPassword2.getText().toString();
-            final String lastname = mEditLastname.getText().toString();
-            final String firstname = mEditFirstname.getText().toString();
+            final String lastName = mEditLastName.getText().toString();
+            final String firstName = mEditFirstName.getText().toString();
             final String email = mEditEmail.getText().toString();
             final String number = mEditPhone.getText().toString();
 
             mEditUsername.setError(null);
             mEditPassword1.setError(null);
             mEditPassword2.setError(null);
-            mEditLastname.setError(null);
-            mEditFirstname.setError(null);
+            mEditLastName.setError(null);
+            mEditFirstName.setError(null);
             mEditEmail.setError(null);
             mEditPhone.setError(null);
 
@@ -136,13 +135,13 @@ public class RegisterActivity extends AppCompatActivity {
                 focusView = mEditPassword2;
                 cancel = true;
                 displayHowToPwd(null);
-            } else if (TextUtils.isEmpty(firstname)) {
-                mEditFirstname.setError(getString(R.string.empty_firstname_activity_register));
-                focusView = mEditFirstname;
+            } else if (TextUtils.isEmpty(firstName)) {
+                mEditFirstName.setError(getString(R.string.empty_firstname_activity_register));
+                focusView = mEditFirstName;
                 cancel = true;
-            } else if (TextUtils.isEmpty(lastname)) {
-                mEditLastname.setError(getString(R.string.empty_lastname_activity_register));
-                focusView = mEditLastname;
+            } else if (TextUtils.isEmpty(lastName)) {
+                mEditLastName.setError(getString(R.string.empty_lastname_activity_register));
+                focusView = mEditLastName;
                 cancel = true;
             } else if (TextUtils.isEmpty(email)) {
                 mEditEmail.setError(getString(R.string.empty_email_activity_register));
@@ -200,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 if (e == null) {
                                                     try {
-                                                        PFUser.createNewUser(user.getObjectId(), email, number, username, firstname, lastname);
+                                                        PFUser.createNewUser(user.getObjectId(), email, number, username, firstName, lastName);
                                                         dialog.hide();
                                                         Intent intent = new Intent(RegisterActivity.this, MyGroupsActivity.class);
                                                         intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, true);
@@ -234,19 +233,15 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (requestCode == PHONE_ACT_KEY) {
             if (resultCode == Activity.RESULT_OK) {
                 mEditPhone.setText(data.getStringExtra(PHONE_KEY));
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
             }
         }
     }
 
 
-    public void showPhoneChoice(View v) {
+    public void showPhoneChoice(@SuppressWarnings("UnusedParameters") View v) {
         Intent i = new Intent(this, PhoneAddingActivity.class);
         startActivityForResult(i, PHONE_ACT_KEY);
     }

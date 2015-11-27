@@ -50,7 +50,7 @@ public class AppContactsActivity extends AppCompatActivity {
 
         fillContacts();
 
-        mAdapter = new ContactAdapter(this, R.layout.item_contact, mContacts, true);
+        mAdapter = new ContactAdapter(this, mContacts, true);
         list.setAdapter(mAdapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -63,7 +63,7 @@ public class AppContactsActivity extends AppCompatActivity {
 
     }
 
-    public void showPhoneContact(View v) {
+    public void showPhoneContact(@SuppressWarnings("UnusedParameters") View v) {
         startActivity(new Intent(this, PhoneContactsActivity.class));
     }
 
@@ -97,6 +97,7 @@ public class AppContactsActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressWarnings("SameReturnValue")
     private boolean showResult(String query) {
         Collections.sort(mAdapter.getObjects(), sortList(query));
         List<Contact> displayedCc = new ArrayList<>();
@@ -105,7 +106,7 @@ public class AppContactsActivity extends AppCompatActivity {
                 displayedCc.add(cc);
             }
         }
-        list.setAdapter(new ContactAdapter(this, R.layout.item_contact, displayedCc, true));
+        list.setAdapter(new ContactAdapter(this, displayedCc, true));
         return true;
     }
 

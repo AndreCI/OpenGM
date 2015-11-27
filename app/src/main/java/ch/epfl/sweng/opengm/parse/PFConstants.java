@@ -11,7 +11,6 @@ public final class PFConstants {
 
     public static final String _USER_TABLE_NAME = "_User";
     public static final String _USER_TABLE_USERNAME = "username";
-    public static final String _USER_TABLE_PASSWORD = "password";
     public static final String _USER_TABLE_EMAIL = "email";
 
     // Entries for "User" table :
@@ -43,7 +42,6 @@ public final class PFConstants {
     // Entries for "Event" table :
 
     public static final String EVENT_TABLE_NAME = "Event";
-    public static final String EVENT_ENTRY_ID = "objectId";
     public static final String EVENT_ENTRY_TITLE = "title";
     public static final String EVENT_ENTRY_DESCRIPTION = "description";
     public static final String EVENT_ENTRY_DATE = "date";

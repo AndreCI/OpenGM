@@ -9,7 +9,6 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 
@@ -53,11 +52,17 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
+<<<<<<< HEAD
     public PFUser(Parcel in){
         super(in, PARSE_TABLE_USER);
     }
 
     private PFUser(String userId, Date date, String phoneNumber, String email, String username, String firstName, String lastName, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
+=======
+    private PFUser(String userId, Date date, String phoneNumber, String email, String username,
+                   String firstName, String lastName, String aboutUser, Bitmap picture,
+                   List<String> groups) throws PFException {
+>>>>>>> fixBugs
         super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
         this.mUsername = username;
@@ -70,7 +75,7 @@ public final class PFUser extends PFEntity {
             try {
                 mGroups.add(PFGroup.fetchExistingGroup(groupId));
             } catch (PFException e) {
-                throw new PFException("Error while retrieving the existing group with id " + groupId);
+                // Don't worry we don't add this group but you can continue to experience the app
             }
         }
         this.mPicture = picture;
@@ -168,22 +173,8 @@ public final class PFUser extends PFEntity {
                             default:
                                 return;
                         }
-                        object.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    // FIXME: done() method canno't throw exceptions, but we want THIS method
-                                    // FIXME: updateToServer() to throw a PFException --> That we can catch e.g in the setters.
-                                    // throw new ParseException("No object for the selected id.");
-                                }
-                            }
-                        });
-                    } else {
-                        //erreur server
-                        // throw new ParseException(1,"");
+                        object.saveInBackground();
                     }
-                } else {
-                    // throw new ParseException("Error while sending the request to the server");
                 }
             }
         });
@@ -482,13 +473,14 @@ public final class PFUser extends PFEntity {
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
-                List<String> groups = (groupsArray == null ? new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
-                return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username, firstName, lastName, description, picture[0], groups);
+                List<String> groups = (groupsArray == null ?
+                        new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
+                return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username,
+                        firstName, lastName, description, picture[0], groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
-            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }
@@ -503,7 +495,9 @@ public final class PFUser extends PFEntity {
      * @return The new user that contains all the given parameters
      * @throws PFException If something wrong happened with the server
      */
-    public static PFUser createNewUser(String id, String email, String phoneNumber, String username, String firstName, String lastName) throws PFException {
+    public static PFUser createNewUser(String id, String email, String phoneNumber,
+                                       String username, String firstName, String lastName)
+            throws PFException {
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);
         parseObject.put(USER_ENTRY_USERNAME, username);
@@ -514,7 +508,8 @@ public final class PFUser extends PFEntity {
         parseObject.put(USER_ENTRY_ABOUT, "");
         try {
             parseObject.save();
-            return new PFUser(id, parseObject.getUpdatedAt(), phoneNumber, email, username, firstName, lastName, "", null, new ArrayList<String>());
+            return new PFUser(id, parseObject.getUpdatedAt(), phoneNumber, email, username,
+                    firstName, lastName, "", null, new ArrayList<String>());
         } catch (ParseException e) {
             throw new PFException();
         }
