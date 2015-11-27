@@ -44,6 +44,7 @@ public class MembersActivity extends AppCompatActivity {
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
+    public static final String GROUP = "ch.epfl.sweng.opengm.groups.members.group";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,7 +205,7 @@ public class MembersActivity extends AppCompatActivity {
 
         if (!userIds.isEmpty()) {
             Intent intent = new Intent(this, ManageRolesActivity.class);
-            intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
+            intent.putExtra(ManageRolesActivity.GROUP_INDEX, groupIndex);
             intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
             startActivityForResult(intent, 1);
         } else {

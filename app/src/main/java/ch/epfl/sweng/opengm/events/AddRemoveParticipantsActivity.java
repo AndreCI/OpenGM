@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +41,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         PFGroup currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
         PFEvent currentEvent = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        setTitle("Adding participants for Event"); //DONOT ADD currentEvent.name() or it will probably fail
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
             membersToAdd.putAll(currentEvent.getParticipants());

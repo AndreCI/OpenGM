@@ -6,6 +6,29 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.opengm.events.CreateEditEventActivity">
 
+    <RelativeLayout
+        android:id="@+id/CreateEditLoadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/CreateEditLoadingCircle"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/CreateEditLoadingCircle"
+            android:layout_centerHorizontal="true"
+            android:text="Adding the event... Please wait."/>
+    </RelativeLayout>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/CreateEditScreen">
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -81,33 +104,20 @@
         android:layout_alignParentEnd="false"
         android:textAlignment="gravity"
         android:gravity="top|left" />
-    <LinearLayout
-        android:layout_width="fill_parent"
+
+    <Button
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/createEditEventOkayAndDeleteLayout"
-        android:layout_alignParentBottom="true">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/CreateEditEventDeleteButton"
-            android:textAlignment="center"
-            android:clickable="true"
-            android:onClick="onDeleteButtonClick"
-            android:text="delete"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/CreateEditOkButton"
-            android:layout_weight="1"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:text="@string/OkEditButtonText"
-            android:clickable="true"
-            android:onClick="onOkButtonClick" />
-    </LinearLayout>
+
+        android:id="@+id/CreateEditOkButton"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        android:text="@string/OkEditButtonText"
+        android:clickable="true"
+        android:onClick="onOkButtonClick"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/CreateEditEventBitmapLayout" />
+
 
     <Button
         android:layout_width="fill_parent"
@@ -120,6 +130,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/CreateEditEventDescriptionText"
         android:layout_alignParentEnd="true" />
+
     <LinearLayout
         android:id="@+id/CreateEditEventBitmapLayout"
         android:layout_width="wrap_content"
@@ -127,8 +138,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:orientation="horizontal"
-        android:layout_below="@+id/scrollView3"
-        android:layout_above="@+id/createEditEventOkayAndDeleteLayout">
+        android:layout_above="@+id/CreateEditOkButton">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,7 +152,6 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:id="@+id/CreateEditEventBitmapBrowseButton"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -158,6 +167,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/scrollView3"
         android:layout_below="@+id/CreateEditEventParticipantsButton"
+        android:layout_above="@+id/CreateEditEventBitmapLayout"
         android:isScrollContainer="false" >
 
         <TextView
@@ -165,5 +175,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/CreateEditEventParticipantsTextView" />
     </ScrollView>
+</RelativeLayout>
 
 </RelativeLayout>

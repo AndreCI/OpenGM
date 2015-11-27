@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -13,12 +14,18 @@ import org.json.JSONException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import ch.epfl.sweng.opengm.events.Utils;
 
 /**
  * This class contains some static methods that may be called for conversion, saving or checking purposes
  */
 public final class PFUtils {
+
+    public static final String pathNotSpecified = "error400badrequest";
+    public static final String nameNotSpecified = "error300wrongname";
 
     /**
      * Converts a JSONArray into an array of String
@@ -60,7 +67,7 @@ public final class PFUtils {
                 @Override
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
-                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length); //I once get a OOMError.
                     }
                 }
             });
@@ -118,6 +125,5 @@ public final class PFUtils {
     public static boolean checkNullArguments(String arg) {
         return (arg != null);
     }
-
 
 }

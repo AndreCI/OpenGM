@@ -7,9 +7,6 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/**
- * Created by virgile on 25/10/2015.
- */
 public class UtilsTest {
     @Test
     public void legitDateShouldBeParsedCorrectly() {

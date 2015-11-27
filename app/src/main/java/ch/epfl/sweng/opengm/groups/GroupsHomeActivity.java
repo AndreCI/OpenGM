@@ -19,6 +19,7 @@ import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.messages.ShowConversationsActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
@@ -89,6 +90,12 @@ public class GroupsHomeActivity extends AppCompatActivity
         }
     }
 
+    public void onManageGroup(View v){
+        Intent intent = new Intent(this, CreateEditGroupActivity.class);
+        intent.putExtra(CreateEditGroupActivity.GROUP_INDEX, groupPos);
+        startActivityForResult(intent, RESULT_FIRST_USER);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -118,6 +125,11 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_manage:
                 break;
+            case R.id.nav_polls:
+                Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
+                intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                startActivity(intent1);
+                break;
             case R.id.nav_my_settings:
                 break;
             default:
@@ -133,7 +145,9 @@ public class GroupsHomeActivity extends AppCompatActivity
         switch (requestCode) {
             // stay in the correct group home, comming back from MembersActivity
             case 1:
-                groupPos = data.getIntExtra(GROUP_INDEX, -1);
+                setTitle(currentGroup.getName());
+                TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+                descriptionView.setText(currentGroup.getDescription());
                 break;
             default:
         }
