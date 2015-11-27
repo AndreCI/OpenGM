@@ -154,7 +154,7 @@ public class MyGroupsActivity extends AppCompatActivity {
     }
 
     public void addGroup(View view) {
-        Intent intent = new Intent(MyGroupsActivity.this, CreateGroupActivity.class);
+        Intent intent = new Intent(MyGroupsActivity.this, CreateEditGroupActivity.class);
         startActivity(intent);
     }
 

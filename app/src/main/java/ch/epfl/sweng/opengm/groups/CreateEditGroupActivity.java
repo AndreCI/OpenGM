@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -23,10 +24,18 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITH_SYMBOL;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isGroupNameValid;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
-public class CreateGroupActivity extends AppCompatActivity {
+public class CreateEditGroupActivity extends AppCompatActivity {
 
     private EditText mGroupName;
     private EditText mGroupDescription;
+
+    private PFGroup currentGroup = null;
+    private int groupIndex;
+
+    private String initialName = null;
+    private String initialDescription = null;
+
+    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.createGroupActivity.groupIndex";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +45,26 @@ public class CreateGroupActivity extends AppCompatActivity {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.create_group_outmostLayout);
         onTapOutsideBehaviour(layout, this);
 
+        Intent intent = getIntent();
+        groupIndex = intent.getIntExtra(GROUP_INDEX, -1);
+
         mGroupName = (EditText) findViewById(R.id.enterGroupName);
         mGroupDescription = (EditText) findViewById(R.id.enterGroupDescription);
+
+        if(groupIndex >= 0){
+            currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex);
+            mGroupName.setText(currentGroup.getName());
+            mGroupDescription.setText(currentGroup.getDescription());
+            initialName = currentGroup.getName();
+            initialDescription = currentGroup.getDescription();
+            findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void manageMembers(View view) {
+        Intent intent = new Intent(this, MembersActivity.class);
+        intent.putExtra(MembersActivity.GROUP_INDEX, groupIndex);
+        startActivity(intent);
     }
 
     public void createGroup(View view) {
@@ -49,12 +76,23 @@ public class CreateGroupActivity extends AppCompatActivity {
 
             int groupNameValid = isGroupNameValid(name);
             if (groupNameValid == INPUT_CORRECT) {
-                try {
-                    PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
-                    getCurrentUser().addToAGroup(newGroup);
-                    startActivity(new Intent(CreateGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
-                } catch (PFException e) {
-                    Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
+                if(groupIndex >= 0){
+                    if(!name.equals(initialName)){
+                        currentGroup.setName(name);
+                    }
+                    if(!description.equals(initialDescription)){
+                        currentGroup.setDescription(description);
+                    }
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    try {
+                        PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
+                        getCurrentUser().addToAGroup(newGroup);
+                        startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class).putExtra(CHOSEN_GROUP_KEY, getCurrentUser().getGroups().size() - 1));
+                    } catch (PFException e) {
+                        Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
+                    }
                 }
             } else {
                 String errorMessage;
