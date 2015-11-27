@@ -7,17 +7,33 @@
     tools:context="ch.epfl.sweng.opengm.events.ShowEventActivity">
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventNameText"
-        android:textSize="20sp"
+        android:textSize="24sp"
+        android:background="@drawable/rounded_buttons"
+        android:textColor="@color/white"
         android:singleLine="true" />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="separator"
+        android:visibility="invisible"
+        android:clickable="false"
+        android:layout_below="@+id/ShowEventNameText"
+        android:id="@+id/ShowEventSeparator"/>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/ShowEventDateLayout"
+    android:background="@drawable/rounded_buttons"
+    android:textColor="@color/white"
+    android:layout_below="@+id/ShowEventSeparator"
+    android:orientation="vertical">
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventPlaceText"
-        android:layout_below="@+id/ShowEventNameText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textSize="14sp"
@@ -27,7 +43,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventHourText"
-        android:layout_below="@+id/ShowEventPlaceText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textSize="14sp"
@@ -37,17 +52,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventDateText"
-        android:layout_below="@+id/ShowEventHourText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textSize="14sp"
         android:singleLine="true" />
-
+</LinearLayout>
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ShowEventDescriptionText"
-        android:layout_below="@id/ShowEventDateText"
+        android:layout_below="@id/ShowEventDateLayout"
         android:textSize="14sp"
         android:maxLines="7" />
 

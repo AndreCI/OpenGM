@@ -80,7 +80,9 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventName() {
-        ((TextView) findViewById(R.id.ShowEventNameText)).setText(event.getName());
+        TextView tt =
+        ((TextView) findViewById(R.id.ShowEventNameText));
+        tt.setText(" " +event.getName()+ " ");
     }
 
     private void fillEventPlace() {
@@ -88,15 +90,15 @@ public class ShowEventActivity extends AppCompatActivity {
         if (event.getPlace().isEmpty()) {
             textView.setHeight(0);
         } else {
-            textView.setText("      A lieu à : "+event.getPlace());
+            textView.setText("      A lieu à : "+event.getPlace()+ "  ");
         }
     }
 
     private void fillEventDate() {
         String hourString = String.format("%d : %02d", event.getHours(), event.getMinutes());
-        ((TextView)findViewById(R.id.ShowEventHourText)).setText("      A "+hourString);
+        ((TextView)findViewById(R.id.ShowEventHourText)).setText("      A "+hourString+ "  ");
         String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
-        ((TextView)findViewById(R.id.ShowEventDateText)).setText("      Le : "+dateString);
+        ((TextView)findViewById(R.id.ShowEventDateText)).setText("      Le : "+dateString+ "  ");
     }
 
     private void fillEventDescription() {

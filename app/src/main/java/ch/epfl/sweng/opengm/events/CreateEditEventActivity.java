@@ -119,11 +119,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 new AsyncTask<ContentResolver, Integer, Bitmap>() {
                     @Override
                     protected Bitmap doInBackground(ContentResolver... params) {
+                        Bitmap result;
                         try {
-                            return MediaStore.Images.Media.getBitmap(params[0], selectedImageUri);
+                             result = MediaStore.Images.Media.getBitmap(params[0], selectedImageUri);
                         } catch (IOException e) {
-                            return BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
+                            result = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
                         }
+                        result = Bitmap.createScaledBitmap(result, 399, 299, true);
+                        return result;
                     }
                     @Override
                     protected void onPostExecute(Bitmap result){
@@ -143,35 +146,23 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (participants != null) {
                 findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.VISIBLE);
                 findViewById(R.id.CreateEditScreen).setVisibility(View.GONE);
-                new AsyncTask<Void, Void, Boolean>() {
-                    @Override
-                    protected Boolean doInBackground(Void... params) {
-                        Intent intent = new Intent();
-                        PFEvent event = createEditEvent();
-                        if(event!=null) {
-                            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-                            setResult(Activity.RESULT_OK, intent);
-                            Log.v("event send in CreateEd", event.getId());
-                            return true;
-                        }else{
-                            return false;
-                        }
-                    }
-                    @Override
-                    protected void onPostExecute(Boolean result){
-                        findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.INVISIBLE);
-                        if(result) {
-                            finish();
-                        }else {
-                            Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }.execute();
-             } else {
+                Intent intent = new Intent();
+                PFEvent event = createEditEvent();
+                if (event != null) {
+                    intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+                    setResult(Activity.RESULT_OK, intent);
+                    Log.v("event send in CreateEd", event.getId());
+                    finish();
+                } else{
+                    findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
                 Toast.makeText(this, "You must specify participants", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
     public void onParticipantsButtonClick(View v) {
         Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
