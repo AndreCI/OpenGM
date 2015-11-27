@@ -52,17 +52,14 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-<<<<<<< HEAD
     public PFUser(Parcel in){
         super(in, PARSE_TABLE_USER);
     }
 
-    private PFUser(String userId, Date date, String phoneNumber, String email, String username, String firstName, String lastName, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
-=======
     private PFUser(String userId, Date date, String phoneNumber, String email, String username,
                    String firstName, String lastName, String aboutUser, Bitmap picture,
                    List<String> groups) throws PFException {
->>>>>>> fixBugs
+
         super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
         this.mUsername = username;
