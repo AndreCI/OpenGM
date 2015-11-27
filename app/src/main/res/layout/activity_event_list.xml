@@ -62,25 +62,13 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/eventListBottomLayout"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginLeft="16dp"
             android:orientation="horizontal">
-            <Button
-                android:background="@drawable/rounded_buttons"
-                android:textColor="@color/white"
-                android:id="@+id/eventListAddButton"
-                android:text="@string/addButtonText"
-                android:onClick="clickOnAddButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_weight="1"/>
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"/>
             <Button
                 android:background="@drawable/rounded_buttons"
                 android:textColor="@color/white"
@@ -90,9 +78,22 @@
                 android:onClick="clickOnRefreshButton"
                 android:id="@+id/eventListRefreshButton"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_weight="1"/>
+                android:layout_alignParentStart="true"/>
         </LinearLayout>
 
     </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/eventListAddButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="16dp"
+        android:onClick="clickOnAddButton"
+        android:src="@mipmap/ic_add_white_24dp">
+    </android.support.design.widget.FloatingActionButton>
 </RelativeLayout>

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -153,16 +154,24 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     public void onEditButtonClick(View view) {
-        Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-        startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
+        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
+            Intent intent = new Intent(this, CreateEditEventActivity.class);
+            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+            startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
+        }else{
+            Toast.makeText(getApplicationContext(), "You don't have the permission to edit this event", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onDeleteButtonClick(View v){
+        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, ShowEventActivity.class);
             intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             setResult(Utils.DELETE_EVENT, intent);
             finish();
+        }else{
+            Toast.makeText(getApplicationContext(), "You don't have the permission to delete this event", Toast.LENGTH_SHORT).show();
+        }
     }
 }

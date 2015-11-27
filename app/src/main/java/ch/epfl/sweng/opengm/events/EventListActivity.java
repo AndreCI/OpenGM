@@ -150,9 +150,13 @@ public class EventListActivity extends AppCompatActivity {
      * @param v The View.
      */
     public void clickOnAddButton(View v){
-        Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
-        startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
+        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
+            Intent intent = new Intent(this, CreateEditEventActivity.class);
+            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+            startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
+        }else{
+            Toast.makeText(getApplicationContext(), "You don't have the permission to create a new event.", Toast.LENGTH_SHORT).show();
+        }
     }
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
@@ -237,8 +241,8 @@ public class EventListActivity extends AppCompatActivity {
                 final Button b = new Button(this);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     b.setBackground(getDrawable(R.drawable.rounded_buttons));
+                    b.setTextColor(Color.WHITE);
                 }
-                b.setTextColor(Color.WHITE);
                 SpannableString name = new SpannableString(String.format("%s \n %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 name.setSpan(new RelativeSizeSpan(2f),0,event.getName().length(),0);
                 b.setText(name);

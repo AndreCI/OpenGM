@@ -139,6 +139,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                              result = MediaStore.Images.Media.getBitmap(params[0], selectedImageUri);
                         } catch (IOException e) {
                             result = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
+                            Toast.makeText(getApplicationContext(), "Failed to add the image", Toast.LENGTH_SHORT).show();
                         }
                         result = Bitmap.createScaledBitmap(result, 399, 299, true);
                         return result;
