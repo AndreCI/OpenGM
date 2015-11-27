@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.events;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
         setTitle("List of your events");
         findViewById(R.id.Screen).setVisibility(View.GONE);
+        findViewById(R.id.eventListAddButton).setVisibility(View.GONE);
         findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -76,6 +78,7 @@ public class EventListActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void result) {
                 findViewById(R.id.Screen).setVisibility(View.VISIBLE);
+                findViewById(R.id.eventListAddButton).setVisibility(View.VISIBLE);
                 displayEvents();
                 findViewById(R.id.EventListLoadingPanel).setVisibility(View.GONE);
             }
@@ -239,10 +242,16 @@ public class EventListActivity extends AppCompatActivity {
         for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                GradientDrawable gd = new GradientDrawable();
+                gd.setStroke(2, Color.WHITE);
+                gd.setColor(getResources().getColor(R.color.bluegreen));
+                b.setBackground(gd);
+                b.setTextColor(Color.WHITE);
+
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     b.setBackground(getDrawable(R.drawable.rounded_buttons));
                     b.setTextColor(Color.WHITE);
-                }
+                }*/
                 SpannableString name = new SpannableString(String.format("%s \n %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 name.setSpan(new RelativeSizeSpan(2f),0,event.getName().length(),0);
                 b.setText(name);
