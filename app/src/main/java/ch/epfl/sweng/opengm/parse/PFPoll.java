@@ -231,7 +231,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
     }
 
     public void updateAnswers(String userId) throws PFException {
-        if (userId == null && !mVoters.containsKey(userId)) {
+        if (!mVoters.containsKey(userId)) {
             throw new PFException();
         }
         if (!mVoters.get(userId)) {

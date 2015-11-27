@@ -33,7 +33,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
     private String initialName = null;
     private String initialDescription = null;
 
-    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.createGroupActivity.groupIndex";
+    private boolean isCreatingAGroup = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,23 +63,15 @@ public class CreateEditGroupActivity extends AppCompatActivity {
     }
 
     public void createGroup(View view) {
-        if (NetworkUtils.haveInternet(getBaseContext())) {
+        if (NetworkUtils.haveInternet(getBaseContext()) && !isCreatingAGroup) {
+            isCreatingAGroup = true;
             String name = mGroupName.getText().toString();
             String description = mGroupDescription.getText().toString();
             // TODO : retrieve image from button
-            // If next activity is group page, also call function to put new group in the database
 
             int groupNameValid = isGroupNameValid(name);
 
             if (groupNameValid == INPUT_CORRECT) {
-                try {
-                    PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
-                    getCurrentUser().addToAGroup(newGroup);
-                    OpenGMApplication.setCurrentGroup(getCurrentUser().getGroups().size() - 1);
-                    startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class));
-                } catch (PFException e) {
-                    Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
-                }
                 if (currentGroup != null) {
                     if (!name.equals(initialName)) {
                         currentGroup.setName(name);
@@ -97,6 +89,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                         startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class));
                     } catch (PFException e) {
                         Toast.makeText(getBaseContext(), "Couldn't create the group: there where problems when contacting the server.", Toast.LENGTH_LONG).show();
+                        isCreatingAGroup = false;
                     }
                 }
             } else {
@@ -120,6 +113,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                 }
                 mGroupName.setError(errorMessage);
                 mGroupName.requestFocus();
+                isCreatingAGroup = false;
             }
         }
     }
