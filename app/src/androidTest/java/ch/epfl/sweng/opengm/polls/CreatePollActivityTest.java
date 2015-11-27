@@ -2,14 +2,8 @@ package ch.epfl.sweng.opengm.polls;
 
 import android.app.Activity;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.View;
-import android.widget.DatePicker;
-
-import org.hamcrest.Matcher;
 
 import java.util.Calendar;
 
@@ -20,7 +14,6 @@ import ch.epfl.sweng.opengm.parse.PFPoll;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -28,13 +21,9 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.identification.StyleIdentificationUtils.isTextStyleCorrect;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<CreatePollActivity> {
@@ -137,28 +126,6 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
         onView(withId(R.id.deadlineButton)).perform(click());
-        //onView(withClassName(containsString("Picker"))).perform(setDate(1, 1, 2015));
-        //onView(withText(act.getString(R.string.ok))).perform(click());
-        //onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
-        //onView(withId(R.id.deadlineButton)).check(matches(hasErrorText(act.getString(R.string.empty_date_poll))));
     }
 
-    public static ViewAction setDate(final int day, final int month, final int year) {
-        return new ViewAction() {
-            @Override
-            public void perform(UiController uiController, View view) {
-                ((DatePicker) view).updateDate(year, month, day);
-            }
-
-            @Override
-            public String getDescription() {
-                return "Set the date into the datepicker(day, month, year)";
-            }
-
-            @Override
-            public Matcher<View> getConstraints() {
-                return ViewMatchers.isAssignableFrom(DatePicker.class);
-            }
-        };
-    }
 }

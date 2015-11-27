@@ -53,6 +53,8 @@ public class ListParticipantActivity extends AppCompatActivity {
 
         List<PFMember> enrolled = getIntent().getParcelableArrayListExtra(CreatePollActivity.ENROLLED_POLL_INTENT);
 
+        Log.d("ENROLLED", "" + enrolled.size());
+
         for (String memberId : group.getMembers().keySet()) {
             membersEnrolled.put(memberId, false);
         }
@@ -92,7 +94,13 @@ public class ListParticipantActivity extends AppCompatActivity {
             }
         });
 
-        checkCorrespondingBoxes();
+        list.post(new Runnable() {
+            @Override
+            public void run() {
+                checkCorrespondingBoxes();
+            }
+        });
+
     }
 
     public void updateView(View view) {
@@ -108,6 +116,9 @@ public class ListParticipantActivity extends AppCompatActivity {
     }
 
     private void checkCorrespondingBoxes() {
+
+        Log.d("CHILD COUNT", "" + list.getChildCount());
+
         for (int i = 0; i < list.getChildCount(); i++) {
             View row = list.getChildAt(i);
             Participant child = mAdapter.getItem(i);
