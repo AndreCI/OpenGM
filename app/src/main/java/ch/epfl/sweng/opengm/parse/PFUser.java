@@ -44,6 +44,8 @@ public final class PFUser extends PFEntity {
 
     private List<PFGroup> mGroups;
 
+    private List<String> mGroupsId;
+
     private String mEmail;
     private String mUsername;
     private String mFirstName;
@@ -68,14 +70,20 @@ public final class PFUser extends PFEntity {
         this.mPhoneNumber = phoneNumber;
         this.mAboutUser = aboutUser;
         this.mGroups = new ArrayList<>();
-        for (String groupId : groups) {
-            try {
-                mGroups.add(PFGroup.fetchExistingGroup(groupId));
-            } catch (PFException e) {
-                // Don't worry we don't add this group but you can continue to experience the app
-            }
-        }
+        this.mGroupsId = new ArrayList<>(groups);
+
         this.mPicture = picture;
+    }
+
+
+    public List<String> getGroupsIds() {
+        return mGroupsId;
+    }
+
+    public PFGroup fetchGroupWithId(String groupId) throws PFException {
+        PFGroup newGroup = PFGroup.fetchExistingGroup(groupId);
+        mGroups.add(newGroup);
+        return newGroup;
     }
 
     @Override
@@ -92,12 +100,10 @@ public final class PFUser extends PFEntity {
                 mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 mAboutUser = object.getString(USER_ENTRY_ABOUT);
 
-                ParseObject mailObject = null;
-
                 ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
                 try {
-                    mailObject = mailQuery.get(getId());
+                    ParseObject mailObject = mailQuery.get(getId());
                     mEmail = mailObject.getString(_USER_TABLE_EMAIL);
                 } catch (ParseException pe) {
                     // Do nothing
@@ -165,7 +171,11 @@ public final class PFUser extends PFEntity {
                                 object.put(USER_ENTRY_PICTURE, mPicture);
                                 break;
                             case USER_ENTRY_GROUPS:
-                                object.put(USER_ENTRY_GROUPS, PFUtils.collectionToArray(mGroups));
+                                JSONArray array = new JSONArray();
+                                for(String groupId :mGroupsId){
+                                    array.put(groupId);
+                                }
+                                object.put(USER_ENTRY_GROUPS, array);
                                 break;
                             default:
                                 return;
@@ -259,10 +269,12 @@ public final class PFUser extends PFEntity {
     public void addToAGroup(PFGroup group) throws PFException {
         if (!belongToGroup(group.getId())) {
             mGroups.add(group);
+            mGroupsId.add(group.getId());
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
                 mGroups.remove(group);
+                mGroupsId.remove(group.getId());
                 throw new PFException();
             }
         }
@@ -279,11 +291,13 @@ public final class PFUser extends PFEntity {
             PFGroup group = mGroups.get(getGroupIdx(groupId));
             group.removeUser(getId());
             mGroups.remove(group);
+            mGroupsId.remove(group.getId());
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
                 group.addUserWithId(getId());
                 mGroups.add(group);
+                mGroupsId.add(group.getId());
                 throw new PFException();
             }
         }
@@ -425,12 +439,7 @@ public final class PFUser extends PFEntity {
      * @return True if the user belongs to this group, false otherwise
      */
     private boolean belongToGroup(String groupId) {
-        for (PFGroup g : mGroups) {
-            if (g.getId().equals(groupId)) {
-                return true;
-            }
-        }
-        return false;
+        return mGroupsId.contains(groupId);
     }
 
     /**

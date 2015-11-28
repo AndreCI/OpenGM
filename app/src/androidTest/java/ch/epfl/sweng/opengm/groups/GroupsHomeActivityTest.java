@@ -1,6 +1,5 @@
 package ch.epfl.sweng.opengm.groups;
 
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -57,6 +56,8 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
         } catch (PFException e) {
             Assert.fail("Network error");
         }
+        Thread.sleep(1000);
+        OpenGMApplication.setCurrentUser(user.getId());
 
         try {
             group = PFGroup.createNewGroup(user, USERNAME, EMAIL, null);
@@ -66,7 +67,6 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
 
         Thread.sleep(2000);
 
-        OpenGMApplication.setCurrentUser(user.getId());
         OpenGMApplication.setCurrentGroup(user.getGroups().size()-1);
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
