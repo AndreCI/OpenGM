@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,24 +52,24 @@ public class MyGroupsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        final List<PFGroup> groups = new ArrayList<>();
+
+        final RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        groupsRecyclerView.setLayoutManager(gridLayoutManager);
+        groupsRecyclerView.setHasFixedSize(true);
+
+        // Get the screen size
+        final DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        final GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups, metrics);
+        groupsRecyclerView.setAdapter(groupCardViewAdapter);
+
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final TextView progressText = (TextView) findViewById(R.id.progressText);
+
         if (NetworkUtils.haveInternet(getBaseContext()) && getCurrentUser() == null) {
-
-            final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            final TextView progressText = (TextView) findViewById(R.id.progressText);
-
-            final List<PFGroup> groups = new ArrayList<>();
-
-            final RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-            groupsRecyclerView.setLayoutManager(gridLayoutManager);
-            groupsRecyclerView.setHasFixedSize(true);
-
-            // Get the screen size
-            final DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-            final GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups, metrics);
-            groupsRecyclerView.setAdapter(groupCardViewAdapter);
 
             new AsyncTask<Void, Integer, Void>() {
 
@@ -140,6 +139,11 @@ public class MyGroupsActivity extends AppCompatActivity {
                     swipeToRefreshLayout.setRefreshing(false);
                 }
             });
+        } else if (getCurrentUser() != null) {
+            groups.addAll(getCurrentUser().getGroups());
+            groupCardViewAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+            progressText.setVisibility(View.GONE);
         }
     }
 
