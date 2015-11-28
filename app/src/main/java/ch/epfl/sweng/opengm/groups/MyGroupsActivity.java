@@ -213,7 +213,8 @@ public class MyGroupsActivity extends AppCompatActivity {
                     publishProgress(++current);
                 }
             } else {
-                for (String groupId : getCurrentUser().getGroupsIds()) {
+                List<String> groupsIds = new ArrayList<>(getCurrentUser().getGroupsIds());
+                for (String groupId : groupsIds) {
                     try {
                         groups.add(getCurrentUser().fetchGroupWithId(groupId));
                         runOnUiThread(new Runnable() {
@@ -247,5 +248,4 @@ public class MyGroupsActivity extends AppCompatActivity {
             progressText.setVisibility(View.GONE);
         }
     }
-
 }
