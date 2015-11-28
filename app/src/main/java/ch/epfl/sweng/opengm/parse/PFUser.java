@@ -114,23 +114,18 @@ public final class PFUser extends PFEntity {
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
 
-                HashSet<String> oldGroups = new HashSet<>();
-                for (PFGroup group : mGroups) {
-                    oldGroups.add(group.getId());
-                }
-
-                if (!oldGroups.equals(new HashSet<>(groups))) {
-                    for (String groupId : groups) {
+                for (String groupId : groups) {
+                    if (!mGroupsId.contains(groupId)){
                         try {
                             mGroups.add(PFGroup.fetchExistingGroup(groupId));
+                            mGroupsId.add(groupId);
                         } catch (PFException e) {
                             throw new PFException("Error while retrieving the existing group with id " + groupId);
                         }
                     }
+
                 }
             }
-            for (PFGroup group : mGroups)
-                group.reload();
         } catch (ParseException e) {
             throw new PFException(e);
         }

@@ -69,59 +69,11 @@ public class MyGroupsActivity extends AppCompatActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView progressText = (TextView) findViewById(R.id.progressText);
 
+        progressText.setText("Retrieving your user's information");
+
         if (NetworkUtils.haveInternet(getBaseContext()) && getCurrentUser() == null) {
 
-            new AsyncTask<Void, Integer, Void>() {
-
-                @Override
-                protected Void doInBackground(Void... params) {
-                    try {
-                        OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
-                    } catch (PFException e) {
-                        Toast.makeText(getBaseContext(), "Error while retrieving the your user information", Toast.LENGTH_LONG).show();
-                    }
-                    final int max = getCurrentUser().getGroupsIds().size();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setMax(max);
-                            progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : 0 of %d ...", max));
-                        }
-                    });
-                    int current = 0;
-                    for (String groupId : getCurrentUser().getGroupsIds()) {
-                        try {
-                            groups.add(getCurrentUser().fetchGroupWithId(groupId));
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    groupCardViewAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        } catch (PFException e) {
-                            Toast.makeText(getBaseContext(), "Error while retrieving one of your group", Toast.LENGTH_LONG).show();
-                        }
-                        publishProgress(++current);
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onProgressUpdate(Integer... values) {
-                    progressBar.setProgress(values[0]);
-                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : %d of %d ...", values[0], progressBar.getMax()));
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    if (groups.isEmpty()) {
-                        DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
-                        noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
-                    }
-                    progressBar.setVisibility(View.GONE);
-                    progressText.setVisibility(View.GONE);
-                }
-            }.execute();
+            new RetrievingTask(progressBar, progressText, groups, groupCardViewAdapter).execute(false);
 
             final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
             swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -131,7 +83,8 @@ public class MyGroupsActivity extends AppCompatActivity {
                     try {
                         getCurrentUser().reload();
                         groups.clear();
-                        groups.addAll(getCurrentUser().getGroups());
+                        groupCardViewAdapter.notifyDataSetChanged();
+                        new RetrievingTask(progressBar, progressText, groups, groupCardViewAdapter).execute(true);
                         findViewById(R.id.myGroupsMainLayout).invalidate();
                     } catch (PFException e) {
                         e.printStackTrace();
@@ -209,4 +162,90 @@ public class MyGroupsActivity extends AppCompatActivity {
         }
 
     }
+
+    private final class RetrievingTask extends AsyncTask<Boolean, Integer, Void> {
+
+        private final ProgressBar progressBar;
+        private final TextView progressText;
+        private final GroupCardViewAdapter adapter;
+        private final List<PFGroup> groups;
+
+        private RetrievingTask(ProgressBar progressBar, TextView progressText, List<PFGroup> groups, GroupCardViewAdapter adapter) {
+            this.progressBar = progressBar;
+            this.progressText = progressText;
+            this.groups = groups;
+            this.adapter = adapter;
+            this.progressBar.setVisibility(View.VISIBLE);
+            this.progressText.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected java.lang.Void doInBackground(Boolean... params) {
+            boolean reloadGroups = params[0];
+            try {
+                OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+            } catch (PFException e) {
+                Toast.makeText(getBaseContext(), "Error while retrieving the your user information", Toast.LENGTH_LONG).show();
+            }
+            final int max = getCurrentUser().getGroupsIds().size();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setMax(max);
+                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : 0 of %d ...", max));
+                }
+            });
+            int current = 0;
+            if (reloadGroups) {
+                for (PFGroup group : getCurrentUser().getGroups()) {
+                    try {
+                        group.reload();
+                        groups.add(group);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    } catch (PFException e) {
+                        Toast.makeText(getBaseContext(), "Error while reloading one of your group", Toast.LENGTH_LONG).show();
+                    }
+                    publishProgress(++current);
+                }
+            } else {
+                for (String groupId : getCurrentUser().getGroupsIds()) {
+                    try {
+                        groups.add(getCurrentUser().fetchGroupWithId(groupId));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    } catch (PFException e) {
+                        Toast.makeText(getBaseContext(), "Error while retrieving one of your group", Toast.LENGTH_LONG).show();
+                    }
+                    publishProgress(++current);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(java.lang.Integer... values) {
+            progressBar.setProgress(values[0]);
+            progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : %d of %d ...", values[0], progressBar.getMax()));
+        }
+
+        @Override
+        protected void onPostExecute(java.lang.Void aVoid) {
+            if (groups.isEmpty()) {
+                DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
+                noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
+            }
+            progressBar.setVisibility(View.GONE);
+            progressText.setVisibility(View.GONE);
+        }
+    }
+
 }
