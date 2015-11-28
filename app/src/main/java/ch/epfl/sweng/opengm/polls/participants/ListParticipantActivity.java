@@ -53,8 +53,6 @@ public class ListParticipantActivity extends AppCompatActivity {
 
         List<PFMember> enrolled = getIntent().getParcelableArrayListExtra(CreatePollActivity.ENROLLED_POLL_INTENT);
 
-        Log.d("ENROLLED", "" + enrolled.size());
-
         for (String memberId : group.getMembers().keySet()) {
             membersEnrolled.put(memberId, false);
         }

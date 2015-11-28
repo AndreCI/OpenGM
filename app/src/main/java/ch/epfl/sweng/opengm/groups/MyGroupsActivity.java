@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +43,9 @@ public class MyGroupsActivity extends AppCompatActivity {
     public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
     public static final String RELOAD_USER_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.reloadUser";
 
+    private GroupCardViewAdapter adapter;
+    private final List<PFGroup> groups = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +57,6 @@ public class MyGroupsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        final List<PFGroup> groups = new ArrayList<>();
-
         final RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         groupsRecyclerView.setLayoutManager(gridLayoutManager);
@@ -63,8 +66,8 @@ public class MyGroupsActivity extends AppCompatActivity {
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        final GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups, metrics);
-        groupsRecyclerView.setAdapter(groupCardViewAdapter);
+        adapter = new GroupCardViewAdapter(groups, metrics);
+        groupsRecyclerView.setAdapter(adapter);
 
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final TextView progressText = (TextView) findViewById(R.id.progressText);
@@ -73,7 +76,7 @@ public class MyGroupsActivity extends AppCompatActivity {
 
         if (NetworkUtils.haveInternet(getBaseContext()) && getCurrentUser() == null) {
 
-            new RetrievingTask(progressBar, progressText, groups, groupCardViewAdapter).execute(false);
+            new RetrievingTask(progressBar, progressText, groups, adapter).execute(false);
 
             final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
             swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -83,8 +86,8 @@ public class MyGroupsActivity extends AppCompatActivity {
                     try {
                         getCurrentUser().reload();
                         groups.clear();
-                        groupCardViewAdapter.notifyDataSetChanged();
-                        new RetrievingTask(progressBar, progressText, groups, groupCardViewAdapter).execute(true);
+                        adapter.notifyDataSetChanged();
+                        new RetrievingTask(progressBar, progressText, groups, adapter).execute(true);
                         findViewById(R.id.myGroupsMainLayout).invalidate();
                     } catch (PFException e) {
                         e.printStackTrace();
@@ -93,10 +96,9 @@ public class MyGroupsActivity extends AppCompatActivity {
                 }
             });
         } else if (getCurrentUser() != null) {
+            groups.clear();
             groups.addAll(getCurrentUser().getGroups());
-            groupCardViewAdapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.GONE);
-            progressText.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -123,19 +125,19 @@ public class MyGroupsActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void gotoGroup(View view) {
-//         FIXME: change color --> Add behaviour of clicked card
-//        view.setBackgroundColor(0xBA1027);
+        Drawable d = view.getBackground();
+
+        view.setBackgroundColor(0xBA1027);
 
         int groupPosition = (int) view.getTag();
 
         OpenGMApplication.setCurrentGroup(groupPosition);
 
         Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
-        //intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, groupPosition);
         startActivity(intent);
+
+        view.setBackground(d);
     }
 
     public void addGroup(View view) {

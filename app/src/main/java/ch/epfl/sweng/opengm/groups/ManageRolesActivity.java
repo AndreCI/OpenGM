@@ -3,9 +3,8 @@ package ch.epfl.sweng.opengm.groups;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,9 +25,11 @@ import java.util.Set;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
+
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 
 public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
@@ -66,9 +67,8 @@ public class ManageRolesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_roles);
         roles = new ArrayList<>();
-        Intent intent = getIntent();
-        currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(intent.getIntExtra(GROUP_INDEX, 1));
-        List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
+        currentGroup = getCurrentGroup();
+        List<String> memberIDs = getIntent().getStringArrayListExtra(USER_IDS);
         HashMap<String, PFMember> idsMembers = currentGroup.getMembers();
         groupMembers = new ArrayList<>();
         for(String memberID : memberIDs){
