@@ -1,11 +1,13 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -886,10 +888,13 @@ public final class PFGroup extends PFEntity {
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
+                // retrieve image from server (FREEZE THE APP)
+                ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
+                byte[] imageData = imageFile.getData();
+                Bitmap picture = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
                 return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames,
-                        roles, events, polls, privacy, description, picture[0], rolesPermissions);
+                        roles, events, polls, privacy, description, picture, rolesPermissions);
             } else {
                 throw new PFException("Query failed for id " + id);
             }
@@ -954,7 +959,7 @@ public final class PFGroup extends PFEntity {
         object.put(GROUP_ENTRY_ISPRIVATE, false);
         object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
         if (picture != null) {
-            // convert bitmap to a bytes array to send it on the server
+            // convert bitmap to a bytes array to send it on the server (FREEZE THE APP)
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] imageData = stream.toByteArray();
