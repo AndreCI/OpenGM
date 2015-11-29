@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -185,7 +184,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         protected java.lang.Void doInBackground(Boolean... params) {
             boolean reloadGroups = params[0];
             try {
-                OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
+                OpenGMApplication.setCurrentUserWithId(ParseUser.getCurrentUser().getObjectId());
             } catch (PFException e) {
                 Toast.makeText(getBaseContext(), "Error while retrieving the your user information", Toast.LENGTH_LONG).show();
             }

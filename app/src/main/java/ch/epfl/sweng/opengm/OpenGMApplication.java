@@ -29,7 +29,14 @@ public class OpenGMApplication extends Application {
         return currentUser;
     }
 
-    public static PFUser setCurrentUser(String id) throws PFException {
+    public static PFUser setCurrentUser(PFUser user) {
+        if (currentUser == null) {
+            currentUser = user;
+        }
+        return currentUser;
+    }
+
+    public static PFUser setCurrentUserWithId(String id) throws PFException {
         if (currentUser == null && id != null) {
             try {
                 currentUser = PFUser.fetchExistingUser(id);
@@ -42,6 +49,15 @@ public class OpenGMApplication extends Application {
 
     public static PFGroup getCurrentGroup() {
         return currentGroup;
+    }
+
+    public static void setCurrentGroup(PFGroup group) {
+        boolean found = false;
+        for (PFGroup pfGroup : currentUser.getGroups()) {
+            if (pfGroup.getId().equals(group.getId()))
+                found = true;
+        }
+        currentGroup = found ? group : null;
     }
 
     /**
