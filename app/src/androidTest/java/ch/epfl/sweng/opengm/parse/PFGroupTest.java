@@ -19,10 +19,8 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -473,6 +471,9 @@ public class PFGroupTest {
 
         try {
             PFUser user3 = fetchExistingUser(user2.getId());
+            for (String groupId : user3.getGroupsIds()) {
+                user3.fetchGroupWithId(groupId);
+            }
             assertEquals(user3.getId(), user2.getId());
             assertEquals(user3.getUsername(), user2.getUsername());
             assertEquals(user3.getFirstName(), user2.getFirstName());

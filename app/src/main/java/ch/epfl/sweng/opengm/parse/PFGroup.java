@@ -477,7 +477,8 @@ public final class PFGroup extends PFEntity {
 
 
     public void deleteGroup() {
-        for (Map.Entry<String, PFMember> member : mMembers.entrySet()) {
+        HashMap<String, PFMember> members = new HashMap<>(mMembers);
+        for (Map.Entry<String, PFMember> member : members.entrySet()) {
             removeUser(member.getKey());
         }
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_GROUP);
@@ -486,8 +487,7 @@ public final class PFGroup extends PFEntity {
             ParseObject object = query.getFirst();
             object.delete();
         } catch (ParseException e) {
-            // TODO what to do if deleting failed?
-            Log.v("INFO", "group does not exist. Deletion aborted.");
+            // Do nothing, that's fine
         }
     }
 
@@ -881,8 +881,6 @@ public final class PFGroup extends PFEntity {
                 String[] pollsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_POLLS));
                 List<String> polls = new ArrayList<>();
                 polls.addAll(Arrays.asList(pollsArray));
-
-                Log.d("FETCH", "" + polls.size());
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 

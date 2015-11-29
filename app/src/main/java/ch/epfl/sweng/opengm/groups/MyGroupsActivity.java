@@ -5,22 +5,26 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -38,6 +42,9 @@ public class MyGroupsActivity extends AppCompatActivity {
     public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
     public static final String RELOAD_USER_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.reloadUser";
 
+    private GroupCardViewAdapter adapter;
+    private final List<PFGroup> groups = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,74 +56,52 @@ public class MyGroupsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        if(NetworkUtils.haveInternet(getBaseContext())) {
+        final RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        groupsRecyclerView.setLayoutManager(gridLayoutManager);
+        groupsRecyclerView.setHasFixedSize(true);
 
-            final List<PFGroup> groups = new ArrayList<>();
+        // Get the screen size
+        final DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        try {
-            OpenGMApplication.setCurrentUser(ParseUser.getCurrentUser().getObjectId());
-            groups.addAll(getCurrentUser().getGroups());
-        } catch (PFException e) {
-            Toast.makeText(getBaseContext(), "Error while retrieving your groups" + e.getMessage(), Toast.LENGTH_LONG).show();
-            finish();
-        }
+        adapter = new GroupCardViewAdapter(groups, metrics);
+        groupsRecyclerView.setAdapter(adapter);
 
-            Log.d("EMAIL", getCurrentUser().getEmail());
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final TextView progressText = (TextView) findViewById(R.id.progressText);
 
-        RecyclerView groupsRecyclerView = (RecyclerView) findViewById(R.id.groups_recycler_view);
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-//        groupsRecyclerView.setLayoutManager(linearLayoutManager);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-            groupsRecyclerView.setLayoutManager(gridLayoutManager);
-            groupsRecyclerView.setHasFixedSize(true);
+        progressText.setText("Retrieving your user's information");
 
-            // Get the screen size
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if (NetworkUtils.haveInternet(getBaseContext()) && getCurrentUser() == null) {
 
-            // Pass to the adapter the group list, and the screen dimensions
-            GroupCardViewAdapter groupCardViewAdapter = new GroupCardViewAdapter(groups, metrics);
-            groupsRecyclerView.setAdapter(groupCardViewAdapter);
-
-            if (groups.size() == 0) {
-                DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
-                noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
-            }
+            new RetrievingTask(progressBar, progressText, groups, adapter).execute(false);
 
             final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
             swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     swipeToRefreshLayout.setRefreshing(true);
-                    
-                try {
-                    // Thread.sleep(1000);
-
-                    getCurrentUser().reload();  // TODO: make reload returns a boolean ???
-
+                    try {
+                        getCurrentUser().reload();
                         groups.clear();
-                        groups.addAll(getCurrentUser().getGroups());
-
-                        // FIXME: at this point, getGroups() has all the previous groups, but has not added the new group to the list !
-                        Log.v("INFO", "User Groups reloaded");
-                        for (PFGroup group : groups) {
-                            Log.v("INFO", group.getName());
-                        }
-
-                        // ((RecyclerView) findViewById(R.id.groups_recycler_view)).invalidateItemDecorations();
-                        // findViewById(R.id.groups_recycler_view).invalidate();
-
+                        adapter.notifyDataSetChanged();
+                        new RetrievingTask(progressBar, progressText, groups, adapter).execute(true);
                         findViewById(R.id.myGroupsMainLayout).invalidate();
-
-                        Log.v("INFO", "Main View reloaded");
-
                     } catch (PFException e) {
                         e.printStackTrace();
                     }
-
                     swipeToRefreshLayout.setRefreshing(false);
                 }
             });
+        } else if (getCurrentUser() != null) {
+            groups.clear();
+            groups.addAll(getCurrentUser().getGroups());
+            adapter.notifyDataSetChanged();
+            if (groups.isEmpty()) {
+                DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
+                noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
+            }
         }
     }
 
@@ -143,19 +128,19 @@ public class MyGroupsActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void gotoGroup(View view) {
-//         FIXME: change color --> Add behaviour of clicked card
-//        view.setBackgroundColor(0xBA1027);
+        Drawable d = view.getBackground();
+
+        view.setBackgroundColor(0xBA1027);
 
         int groupPosition = (int) view.getTag();
 
         OpenGMApplication.setCurrentGroup(groupPosition);
 
         Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
-        //intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, groupPosition);
         startActivity(intent);
+
+        view.setBackground(d);
     }
 
     public void addGroup(View view) {
@@ -181,5 +166,91 @@ public class MyGroupsActivity extends AppCompatActivity {
             return builder.create();
         }
 
+    }
+
+    private final class RetrievingTask extends AsyncTask<Boolean, Integer, Void> {
+
+        private final ProgressBar progressBar;
+        private final TextView progressText;
+        private final GroupCardViewAdapter adapter;
+        private final List<PFGroup> groups;
+
+        private RetrievingTask(ProgressBar progressBar, TextView progressText, List<PFGroup> groups, GroupCardViewAdapter adapter) {
+            this.progressBar = progressBar;
+            this.progressText = progressText;
+            this.groups = groups;
+            this.adapter = adapter;
+            this.progressBar.setVisibility(View.VISIBLE);
+            this.progressText.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected java.lang.Void doInBackground(Boolean... params) {
+            boolean reloadGroups = params[0];
+            try {
+                OpenGMApplication.setCurrentUserWithId(ParseUser.getCurrentUser().getObjectId());
+            } catch (PFException e) {
+                Toast.makeText(getBaseContext(), "Error while retrieving the your user information", Toast.LENGTH_LONG).show();
+            }
+            final int max = getCurrentUser().getGroupsIds().size();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setMax(max);
+                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : 0 of %d ...", max));
+                }
+            });
+            int current = 0;
+            if (reloadGroups) {
+                for (PFGroup group : getCurrentUser().getGroups()) {
+                    try {
+                        group.reload();
+                        groups.add(group);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    } catch (PFException e) {
+                        Toast.makeText(getBaseContext(), "Error while reloading one of your group", Toast.LENGTH_LONG).show();
+                    }
+                    publishProgress(++current);
+                }
+            } else {
+                List<String> groupsIds = new ArrayList<>(getCurrentUser().getGroupsIds());
+                for (String groupId : groupsIds) {
+                    try {
+                        groups.add(getCurrentUser().fetchGroupWithId(groupId));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    } catch (PFException e) {
+                        Toast.makeText(getBaseContext(), "Error while retrieving one of your group", Toast.LENGTH_LONG).show();
+                    }
+                    publishProgress(++current);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(java.lang.Integer... values) {
+            progressBar.setProgress(values[0]);
+            progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : %d of %d ...", values[0], progressBar.getMax()));
+        }
+
+        @Override
+        protected void onPostExecute(java.lang.Void aVoid) {
+            if (groups.isEmpty()) {
+                DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
+                noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
+            }
+            progressBar.setVisibility(View.GONE);
+            progressText.setVisibility(View.GONE);
+        }
     }
 }

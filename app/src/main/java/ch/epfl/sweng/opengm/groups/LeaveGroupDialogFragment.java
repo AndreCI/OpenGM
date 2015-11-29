@@ -13,7 +13,6 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class LeaveGroupDialogFragment extends DialogFragment {
 
@@ -50,7 +49,6 @@ public class LeaveGroupDialogFragment extends DialogFragment {
                             }
                             // Go back to MyGroupsActivity
                             Intent intent = new Intent(getActivity(), MyGroupsActivity.class);
-                            intent.putExtra(RELOAD_USER_KEY, false);
                             startActivity(intent);
                         }
                     }

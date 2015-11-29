@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import ch.epfl.sweng.opengm.parse.PFMember;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
+
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -21,7 +23,6 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView mDescriptionTextView;
 
     public static final String USER_ID = "ch.epfl.sweng.opengm.userprofileactivity.userid";
-    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.userprofileactivity.groupindex";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +31,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         String userId = i.getStringExtra(USER_ID);
-        int groupIndex = i.getIntExtra(GROUP_INDEX, -1);
-        PFMember currentUser = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex).getMember(userId);
+        PFMember currentUser = getCurrentGroup().getMember(userId);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
