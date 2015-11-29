@@ -70,6 +70,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     @After
     public void tearDown() throws Exception {
+        OpenGMApplication.setCurrentGroup(-1);
         cleanUpDBAfterTests();
         OpenGMApplication.logOut();
         super.tearDown();
@@ -463,10 +464,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private void cleanUpDBAfterTests() throws com.parse.ParseException, InterruptedException {
+        testGroup.deleteGroup();
         for(PFUser testUser : testUsers){
             deleteUserWithId(testUser.getId());
         }
-        testGroup.deleteGroup();
     }
 
     private boolean databaseRolesMatchesView() throws PFException {
