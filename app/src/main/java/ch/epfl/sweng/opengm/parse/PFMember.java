@@ -338,7 +338,6 @@ public final class PFMember extends PFEntity implements Parcelable {
                 try {
                     mailObject = mailQuery.get(id);
                 } catch (ParseException pe) {
-                    Log.v("Parse exception", "mail not set");
                     // Do nothing
                 }
 

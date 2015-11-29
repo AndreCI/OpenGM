@@ -55,7 +55,7 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
             e.printStackTrace();
         }
         try {
-            OpenGMApplication.setCurrentUser(user.getId());
+            OpenGMApplication.setCurrentUserWithId(user.getId());
         } catch (PFException e) {
             Assert.fail("Network error");
         }

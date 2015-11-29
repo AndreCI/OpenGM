@@ -45,17 +45,13 @@ public class MembersActivity extends AppCompatActivity {
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
-    public static final String GROUP = "ch.epfl.sweng.opengm.groups.members.group";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members);
 
-        // get the group in which we are
-        //groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
         PFUser user = OpenGMApplication.getCurrentUser();
-        //group = user.getGroups().get(groupIndex);
         group = OpenGMApplication.getCurrentGroup();
         members = new ArrayList<>();
         members.add(group.getMember(user.getId()));
