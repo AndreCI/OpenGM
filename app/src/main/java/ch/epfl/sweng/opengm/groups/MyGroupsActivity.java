@@ -98,6 +98,10 @@ public class MyGroupsActivity extends AppCompatActivity {
             groups.clear();
             groups.addAll(getCurrentUser().getGroups());
             adapter.notifyDataSetChanged();
+            if (groups.isEmpty()) {
+                DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
+                noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
+            }
         }
     }
 
