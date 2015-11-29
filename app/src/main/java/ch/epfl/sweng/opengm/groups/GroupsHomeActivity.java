@@ -68,6 +68,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            OpenGMApplication.setCurrentGroup(-1);
         }
     }
 
@@ -79,13 +80,13 @@ public class GroupsHomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
         switch (item.getItemId()) {
             case R.id.nav_leave:
                 LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment().setGroupToLeave(currentGroup);
                 leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
                 break;
             case R.id.nav_home:
+                OpenGMApplication.setCurrentGroup(-1);
                 startActivity(new Intent(GroupsHomeActivity.this, MyGroupsActivity.class).putExtra(RELOAD_USER_KEY, false));
                 break;
             case R.id.nav_group_overview:
@@ -95,7 +96,6 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
-                //intent.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
@@ -104,7 +104,6 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_polls:
                 Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
-                //intent1.putExtra(GROUP_POLL_INTENT, currentGroup);
                 startActivity(intent1);
                 break;
             case R.id.nav_my_settings:
