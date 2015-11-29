@@ -954,7 +954,12 @@ public final class PFGroup extends PFEntity {
         object.put(GROUP_ENTRY_ISPRIVATE, false);
         object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
         if (picture != null) {
-            object.put(GROUP_ENTRY_PICTURE, picture);
+            // convert bitmap to a bytes array to send it on the server
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] imageData = stream.toByteArray();
+            ParseFile image = new ParseFile(name + ".png", imageData);
+            object.put(GROUP_ENTRY_PICTURE, image);
         }
 
         try {

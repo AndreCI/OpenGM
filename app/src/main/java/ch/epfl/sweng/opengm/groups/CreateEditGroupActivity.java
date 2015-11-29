@@ -1,7 +1,10 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -36,8 +41,11 @@ public class CreateEditGroupActivity extends AppCompatActivity {
 
     private String initialName = null;
     private String initialDescription = null;
+    private Bitmap image = null;
 
     private boolean isCreatingAGroup = false;
+
+    private final int RESULT_LOAD_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +62,8 @@ public class CreateEditGroupActivity extends AppCompatActivity {
         mAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, RESULT_LOAD_IMAGE);
             }
         });
 
@@ -65,6 +74,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             mGroupDescription.setText(currentGroup.getDescription());
             initialName = currentGroup.getName();
             initialDescription = currentGroup.getDescription();
+            image = currentGroup.getPicture();
             findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
         }
         if (getSupportActionBar() != null) {
@@ -82,7 +92,6 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             isCreatingAGroup = true;
             String name = mGroupName.getText().toString();
             String description = mGroupDescription.getText().toString();
-            // TODO : retrieve image from button
 
             int groupNameValid = isGroupNameValid(name);
 
@@ -98,7 +107,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                     finish();
                 } else {
                     try {
-                        PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
+                        PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, image);
                         getCurrentUser().addToAGroup(newGroup);
                         OpenGMApplication.setCurrentGroup(OpenGMApplication.getCurrentUser().getGroups().size() - 1);
                         startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class));
@@ -147,6 +156,23 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RESULT_LOAD_IMAGE:
+                if (resultCode == RESULT_OK) {
+                    Uri imageUri = data.getData();
+                    try {
+                        image = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        Toast.makeText(getBaseContext(), "Could not retrieve image", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            default:
         }
     }
 }
