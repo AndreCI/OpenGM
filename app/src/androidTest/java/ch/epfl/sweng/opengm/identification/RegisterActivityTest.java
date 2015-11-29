@@ -163,7 +163,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_password_activity_register), true)));
+        onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.non_matching_passwords_activity_register), true)));
 
         onView(withId(R.id.register_password2)).perform(clearText());
         onView(withId(R.id.button_signup)).perform(click());

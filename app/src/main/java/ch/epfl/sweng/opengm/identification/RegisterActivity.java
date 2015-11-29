@@ -181,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
                 cancel = true;
                 displayHowToPwd(null);
             } else if (!password1.equals(password2)) {
-                mEditPassword1.setError(getString(R.string.incorrect_password_activity_register));
+                mEditPassword1.setError(getString(R.string.non_matching_passwords_activity_register));
                 focusView = mEditPassword1;
                 cancel = true;
             }
@@ -248,6 +248,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void showPhoneChoice(View v) {
         Intent i = new Intent(this, PhoneAddingActivity.class);
+        i.putExtra(PhoneAddingActivity.INCOMING_ACTIVITY_KEY, 1);
         startActivityForResult(i, PHONE_ACT_KEY);
     }
 }
