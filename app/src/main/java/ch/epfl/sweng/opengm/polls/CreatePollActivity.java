@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,7 +25,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.DatePickerFragment;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -33,15 +36,15 @@ import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFPoll;
 import ch.epfl.sweng.opengm.polls.participants.ListParticipantActivity;
 
-import static ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 import static java.lang.Integer.parseInt;
 
-@SuppressWarnings("UnusedParameters")
 public final class CreatePollActivity extends AppCompatActivity {
 
     public final static String PARTICIPANTS_KEY = "ch.epfl.sweng.opengm.polls.createpollactivity.participants";
+
+    public final static String ENROLLED_POLL_INTENT = "ch.epfl.sweng.opengm.polls.createpollactivity.enrolled";
 
     private static final int PARTICIPANTS_ACT_KEY = 328;
 
@@ -73,7 +76,7 @@ public final class CreatePollActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        currentGroup = getIntent().getParcelableExtra(GROUP_INTENT_MESSAGE);
+        currentGroup = OpenGMApplication.getCurrentGroup();
 
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
         mNameEdit = (EditText) findViewById(R.id.namePollEditText);
@@ -101,7 +104,7 @@ public final class CreatePollActivity extends AppCompatActivity {
 
     public void addParticipants(View view) {
         Intent i = new Intent(this, ListParticipantActivity.class);
-        i.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
+        i.putParcelableArrayListExtra(ENROLLED_POLL_INTENT, new ArrayList<Parcelable>(participants));
         startActivityForResult(i, PARTICIPANTS_ACT_KEY);
     }
 
@@ -120,8 +123,10 @@ public final class CreatePollActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         EditText input = (EditText) view.findViewById(R.id.answer_editText);
-                        answers.add(input.getText().toString());
-                        mAdapter.notifyDataSetChanged();
+                        if (!input.getText().toString().isEmpty()) {
+                            answers.add(input.getText().toString());
+                            mAdapter.notifyDataSetChanged();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel_dialog_password, new DialogInterface.OnClickListener() {
@@ -185,6 +190,7 @@ public final class CreatePollActivity extends AppCompatActivity {
                     } catch (PFException e) {
                         Toast.makeText(this, getString(R.string.error_poll), Toast.LENGTH_LONG).show();
                     }
+                    setResult(Activity.RESULT_OK, new Intent());
                     finish();
                 }
                 return true;
@@ -224,7 +230,7 @@ public final class CreatePollActivity extends AppCompatActivity {
 
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            String date = String.format("%d/%02d/%04d", day, month + 1, year);
+            String date = String.format(Locale.getDefault(),"%d/%02d/%04d", day, month + 1, year);
             ((Button) getActivity().findViewById(R.id.deadlineButton)).setText(date);
         }
     }

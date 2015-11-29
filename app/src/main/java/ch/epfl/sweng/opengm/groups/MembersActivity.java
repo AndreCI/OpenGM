@@ -42,7 +42,6 @@ public class MembersActivity extends AppCompatActivity {
     private PFGroup group;
     private MembersAdapter adapter;
     private List<PFMember> members;
-    private int groupIndex;
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
@@ -54,9 +53,10 @@ public class MembersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_members);
 
         // get the group in which we are
-        groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
-        PFUser user = getCurrentUser();
-        group = user.getGroups().get(groupIndex);
+        //groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
+        PFUser user = OpenGMApplication.getCurrentUser();
+        //group = user.getGroups().get(groupIndex);
+        group = OpenGMApplication.getCurrentGroup();
         members = new ArrayList<>();
         members.add(group.getMember(user.getId()));
         members.addAll(group.getMembersWithoutUser(user.getId()));

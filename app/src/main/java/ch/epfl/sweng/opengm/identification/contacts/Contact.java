@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.identification.contacts;
 
+import android.support.annotation.NonNull;
+
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -9,12 +11,12 @@ import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
-public class Contact implements Comparable<Contact> {
+class Contact implements Comparable<Contact> {
 
     private final String mName;
     private final String mPhoneNumber;
     private boolean mIsUsingTheApp;
-    private boolean mIsInOneOfMyGroup;
+    private final boolean mIsInOneOfMyGroup;
     private PFMember mMember;
 
     public Contact(PFMember member) {
@@ -71,7 +73,7 @@ public class Contact implements Comparable<Contact> {
     }
 
     @Override
-    public int compareTo(Contact another) {
+    public int compareTo(@NonNull Contact another) {
         return mName.compareTo(another.mName);
     }
 

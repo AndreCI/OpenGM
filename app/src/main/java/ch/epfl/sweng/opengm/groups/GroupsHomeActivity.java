@@ -23,6 +23,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
@@ -31,8 +32,6 @@ import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
@@ -56,11 +55,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_groups_home);
 
-        Intent comingIntent = getIntent();
-
-        groupPos = comingIntent.getIntExtra(CHOSEN_GROUP_KEY, 0);
-
-        currentGroup = getCurrentUser().getGroups().get(groupPos);
+        currentGroup = OpenGMApplication.getCurrentGroup();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -68,10 +63,6 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
         descriptionView.setText(currentGroup.getDescription());
-
-        NavigationView navView = (NavigationView) drawer.findViewById(R.id.nav_view);
-
-        mEventLists = (ListView) navView.findViewById(R.id.listViewEvents);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,7 +120,6 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     public void onManageGroup(View v){
         Intent intent = new Intent(this, CreateEditGroupActivity.class);
-        intent.putExtra(CreateEditGroupActivity.GROUP_INDEX, groupPos);
         startActivityForResult(intent, RESULT_FIRST_USER);
     }
 
@@ -148,11 +138,11 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class).putExtra(GROUP_INDEX, groupPos), 1);
+                startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class), 1);
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
-                intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                //intent.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
@@ -161,7 +151,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_polls:
                 Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
-                intent1.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                //intent1.putExtra(GROUP_POLL_INTENT, currentGroup);
                 startActivity(intent1);
                 break;
             case R.id.nav_my_settings:
