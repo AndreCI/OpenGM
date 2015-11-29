@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,12 @@ public class GroupsHomeActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         setTitle(currentGroup.getName());
+
+        // set image of the group on the layout
+        ImageView groupImage = (ImageView)findViewById(R.id.group_image);
+        if (currentGroup.getPicture() != null) {
+            groupImage.setImageBitmap(currentGroup.getPicture());
+        }
 
         TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
         descriptionView.setText(currentGroup.getDescription());

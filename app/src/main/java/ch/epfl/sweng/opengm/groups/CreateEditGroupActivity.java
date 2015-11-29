@@ -62,6 +62,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
         mAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // trigger image gallery intent
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
             }
@@ -162,6 +163,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            // get back the image from the gallery
             case RESULT_LOAD_IMAGE:
                 if (resultCode == RESULT_OK) {
                     Uri imageUri = data.getData();
