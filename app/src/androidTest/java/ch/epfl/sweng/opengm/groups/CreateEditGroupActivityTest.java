@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.groups;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 
 import junit.framework.Assert;
 
@@ -101,12 +102,12 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
 
     public void testGoodGroupAddedToDatabase() throws InterruptedException, PFException {
         getActivity();
-        onView(withId(sNameEdit)).perform(clearText()).perform(typeText("coucou"));
+        onView(withId(sNameEdit)).perform(clearText()).perform(typeText(GROUPNAME));
         onView(withId(sDescriptionEdit)).perform(typeText("Nice Description HELLO"));
         closeSoftKeyboard();
-        Thread.sleep(2000);
-        onView(withId(sDoneButton)).perform(click());
         Thread.sleep(1000);
+        onView(withId(sDoneButton)).perform(click());
+        Thread.sleep(2000);
         PFUser user2 = null;
 
         try {
@@ -115,7 +116,11 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
             Assert.fail("Network fail");
         }
 
-        Thread.sleep(1000);
+        for (String groupId : user2.getGroupsIds()) {
+            user2.fetchGroupWithId(groupId);
+        }
+
+        Thread.sleep(2000);
 
         List<PFGroup> groups = user2.getGroups();
 
