@@ -67,11 +67,7 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
         Thread.sleep(2000);
 
         OpenGMApplication.setCurrentUser(user.getId());
-
-        Intent intent = new Intent();
-
-        intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, 0);
-        setActivityIntent(intent);
+        OpenGMApplication.setCurrentGroup(user.getGroups().size()-1);
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 

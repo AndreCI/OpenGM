@@ -1,11 +1,9 @@
 package ch.epfl.sweng.opengm.identification;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -52,9 +50,9 @@ public class LoginActivity extends AppCompatActivity {
         onTapOutsideBehaviour(layout, this);
     }
 
-    public void onClickLogin(View v) {
+    public void onClickLogin(@SuppressWarnings("UnusedParameters") View v) {
         if(NetworkUtils.haveInternet(getBaseContext())) {
-            String username = mEditUsername.getText().toString();
+            String username = mEditUsername.getText().toString().trim();
             String password = mEditPassword.getText().toString();
 
             mEditUsername.setError(null);
@@ -108,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickForgotPassword(View v) {
+    public void onClickForgotPassword(@SuppressWarnings("UnusedParameters") View v) {
         if(NetworkUtils.haveInternet(getBaseContext())) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             final LayoutInflater inflater = getLayoutInflater();
@@ -161,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickRegister(View v) {
+    public void onClickRegister(@SuppressWarnings("UnusedParameters") View v) {
         if(NetworkUtils.haveInternet(getBaseContext())) {
             Intent registerIntent = new Intent(this, RegisterActivity.class);
             registerIntent.putExtra(RegisterActivity.USERNAME_KEY, mEditUsername.getText().toString());

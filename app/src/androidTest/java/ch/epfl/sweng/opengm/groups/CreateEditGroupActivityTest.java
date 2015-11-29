@@ -1,7 +1,5 @@
 package ch.epfl.sweng.opengm.groups;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
@@ -42,7 +40,6 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
     private final static int sNameEdit = R.id.enterGroupName;
     private final static int sDescriptionEdit = R.id.enterGroupDescription;
     private final static int sDoneButton = R.id.doneGroupCreate;
-    private Activity createGroupActivity;
     private PFUser currentUser;
     private PFGroup group;
 
@@ -56,13 +53,13 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
         currentUser = PFUser.createNewUser(CURRENT_DATE, EMAIL,"0", USERNAME, FIRSTNAME, LASTRNAME);
-
         OpenGMApplication.setCurrentUser(currentUser.getId());
+        OpenGMApplication.setCurrentGroup(-1);
     }
 
 
     public void testDeclinesTooShortName() throws InterruptedException {
-        createGroupActivity = getActivity();
+        getActivity();
         onView(ViewMatchers.withId(sNameEdit)).perform(typeText("sh"));
         closeSoftKeyboard();
         Thread.sleep(1000);
@@ -71,7 +68,7 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
     }
 
     public void testDeclinesTooLongName() throws InterruptedException {
-        createGroupActivity = getActivity();
+        getActivity();
         onView(withId(sNameEdit)).perform(clearText()).perform(typeText("thisisasuperlonggroupnameitsimpossiblesomeonewouldwanttowritesuchalonginfactverylonggroupname"));
         closeSoftKeyboard();
         Thread.sleep(1000);
@@ -80,7 +77,7 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
     }
 
     public void testDeclinesNameWithBadChars() throws InterruptedException {
-        createGroupActivity = getActivity();
+        getActivity();
         onView(withId(sNameEdit)).perform(clearText()).perform(typeText("This//is//bad"));
         closeSoftKeyboard();
         Thread.sleep(1000);
@@ -89,7 +86,7 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
     }
 
     public void testDeclinesNameStartingWithSpace() throws InterruptedException {
-        createGroupActivity = getActivity();
+        getActivity();
         onView(withId(sNameEdit)).perform(clearText()).perform(typeText(" Why would you start with  ?"));
         closeSoftKeyboard();
         Thread.sleep(1000);
@@ -98,7 +95,7 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
     }
 
     public void testGoodGroupAddedToDatabase() throws InterruptedException, PFException {
-        createGroupActivity = getActivity();
+        getActivity();
         onView(withId(sNameEdit)).perform(clearText()).perform(typeText(GROUPNAME));
         onView(withId(sDescriptionEdit)).perform(typeText("Nice Description HELLO"));
         closeSoftKeyboard();
@@ -135,7 +132,7 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
         onView(withId(R.id.createGroupsMembersButton)).check(matches(isDisplayed()));
     }
 
-    public void testModifiesFiels() throws PFException, InterruptedException {
+    public void testModifiesFields() throws PFException, InterruptedException {
         getActivityWithIntent();
 
         onView(withId(sNameEdit)).perform(clearText());
@@ -147,20 +144,17 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
         Thread.sleep(1000);
         onView(withId(sDoneButton)).perform(click());
 
-        currentUser = OpenGMApplication.getCurrentUser();
+        group = OpenGMApplication.getCurrentGroup();
 
-        assertEquals("Better group name", currentUser.getGroups().get(0).getName());
-        assertEquals("Better group description", currentUser.getGroups().get(0).getDescription());
+        assertEquals("Better group name", group.getName());
+        assertEquals("Better group description", group.getDescription());
     }
 
     private void getActivityWithIntent() throws PFException {
-        Intent intent = new Intent();
-        intent.putExtra(CreateEditGroupActivity.GROUP_INDEX, 0);
         group = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), "Testing group for edit group", "Nice description bro", null);
+        OpenGMApplication.setCurrentGroup(OpenGMApplication.getCurrentUser().getGroups().size() - 1);
         currentUser.reload();
-        //OpenGMApplication.getCurrentUser().reload();
-        setActivityIntent(intent);
-        createGroupActivity = getActivity();
+        getActivity();
     }
 
     @Override
@@ -168,7 +162,6 @@ public class CreateEditGroupActivityTest extends ActivityInstrumentationTestCase
         if (group != null)
             group.deleteGroup();
         deleteUserWithId(currentUser.getId());
-        currentUser = null;
         OpenGMApplication.logOut();
         super.tearDown();
     }

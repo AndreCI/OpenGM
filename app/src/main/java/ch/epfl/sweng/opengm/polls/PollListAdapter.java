@@ -11,8 +11,9 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFPoll;
+import ch.epfl.sweng.opengm.utils.Utils;
 
-public class PollListAdapter extends ArrayAdapter<PFPoll> {
+class PollListAdapter extends ArrayAdapter<PFPoll> {
 
     private final Context context;
     private final int resource;
@@ -24,10 +25,6 @@ public class PollListAdapter extends ArrayAdapter<PFPoll> {
         this.context = context;
         this.resource = R.layout.item_poll;
         this.objects = objects;
-    }
-
-    public List<PFPoll> getObjects() {
-        return objects;
     }
 
     @Override
@@ -47,7 +44,7 @@ public class PollListAdapter extends ArrayAdapter<PFPoll> {
 
         holder.name.setText(poll.getName());
         holder.info.setText(poll.getDescription());
-        holder.date.setText(poll.getDeadline().toString());
+        holder.date.setText(Utils.dateToString(poll.getDeadline()));
 
         return row;
     }

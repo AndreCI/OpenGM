@@ -43,7 +43,6 @@ class PollAnswerAdapter extends ArrayAdapter<String> {
         return row;
     }
 
-
     private static class AnswerHolder {
         private final TextView answer;
 
