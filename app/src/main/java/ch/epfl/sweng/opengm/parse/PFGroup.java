@@ -366,12 +366,12 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
                             break;
                         case GROUP_ENTRY_PICTURE:
+                            // convert bitmap to a bytes array to send it on the server (FREEZE THE APP)
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] image = stream.toByteArray();
-                            ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
-                            file.saveInBackground();
-                            object.put(GROUP_ENTRY_PICTURE, mPicture);
+                            byte[] imageData = stream.toByteArray();
+                            ParseFile image = new ParseFile(mName + ".png", imageData);
+                            object.put(GROUP_ENTRY_PICTURE, image);
                             break;
                         default:
                             return;
@@ -809,7 +809,7 @@ public final class PFGroup extends PFEntity {
      * @param picture The new picture of the group
      */
     public void setPicture(Bitmap picture) {
-        if (!mPicture.equals(picture)) {
+        if (mPicture == null || !mPicture.equals(picture)) {
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
             try {
@@ -888,13 +888,20 @@ public final class PFGroup extends PFEntity {
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                // retrieve image from server (FREEZE THE APP)
-                ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
-                byte[] imageData = imageFile.getData();
-                Bitmap picture = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                final PFGroup group = new PFGroup(id, object.getUpdatedAt(), name, users, nickNames,
+                        roles, events, polls, privacy, description, null, rolesPermissions);
 
-                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames,
-                        roles, events, polls, privacy, description, picture, rolesPermissions);
+                // retrieve image from server
+                ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
+                imageFile.getDataInBackground(new GetDataCallback() {
+                    @Override
+                    public void done(byte[] data, ParseException e) {
+                        Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        group.setPicture(picture);
+                    }
+                });
+
+                return group;
             } else {
                 throw new PFException("Query failed for id " + id);
             }
