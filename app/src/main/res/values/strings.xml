@@ -5,6 +5,7 @@
 
     <string name="title_activity_login">LoginActivity</string>
     <string name="incorrect_activity_login">Invalid username or password</string>
+    <string name="incorrect_password">Invalid password</string>
     <string name="invalid_password_activity_login">Password has not a correct format</string>
     <string name="login_now_activity_login">Login</string>
     <string name="forgotten_password_activity_login"><u>Forgot your password?</u></string>
@@ -42,7 +43,7 @@
     <string name="empty_firstname_activity_register">First name should not be empty</string>
     <string name="empty_lastname_activity_register">Last name should not be empty</string>
     <string name="incorrect_email_activity_register">Email has not a correct format</string>
-    <string name="incorrect_password_activity_register">Passwords don\'t match</string>
+    <string name="non_matching_passwords_activity_register">Passwords don\'t match</string>
     <string name="incorrect_phone_number_activity_register">A valid phone number should be entered</string>
     <string name="short_password_activity_register">Password is too short</string>
     <string name="long_password_activity_register">Password is too long</string>
@@ -128,9 +129,7 @@
     <string name="groupNameIllegalCharacters">Group name contains illegal characters, only letters, numbers and spaces allowed.</string>
     <string name="groupNameInvalid">Group name is invalid</string>
 
-    <string name="title_activity_user_profile">UserProfileActivity</string>
-
-    <string name="title_activity_edit_user_profile">EditUserProfileActivity</string>
+    <string name="title_activity_edit_user_profile">Edit Profile</string>
 
     <string name="hello_world">Hello world!</string>
 
@@ -370,5 +369,6 @@
     <string name="invite_contact">Invite a contact</string>
     <string name="cost_contact">Do you want to open the SMS application to invite %s? It may imply some additional costs.</string>
     <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
+    <string name="title_activity_my_profile">My Profile</string>
 
 </resources>

@@ -13,21 +13,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name=".UserProfileActivity"
-            android:label="@string/title_activity_user_profile"
-            android:screenOrientation="portrait" >
-        </activity>
+
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name=".identification.RegisterActivity"
@@ -101,8 +92,7 @@
         </activity>
         <activity
             android:name=".identification.contacts.AppContactsActivity"
-            android:screenOrientation="portrait">
-
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -110,10 +100,19 @@
         <activity
             android:name=".identification.contacts.PhoneContactsActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".MyProfileActivity"
+            android:label="@string/title_activity_my_profile" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".EditUserProfileActivity"
