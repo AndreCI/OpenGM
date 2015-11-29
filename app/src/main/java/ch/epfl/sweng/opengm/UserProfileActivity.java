@@ -30,8 +30,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         String userId = i.getStringExtra(USER_ID);
-        int groupIndex = i.getIntExtra(GROUP_INDEX, -1);
-        PFMember currentUser = OpenGMApplication.getCurrentUser().getGroups().get(groupIndex).getMember(userId);
+        PFMember currentUser = OpenGMApplication.getCurrentGroup().getMember(userId);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

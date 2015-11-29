@@ -112,7 +112,6 @@ public class MembersActivity extends AppCompatActivity {
                 } else {
                     Intent i = new Intent(MembersActivity.this, UserProfileActivity.class);
                     i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
-                    i.putExtra(UserProfileActivity.GROUP_INDEX, groupIndex);
                     startActivity(i);
                 }
             }
@@ -183,7 +182,6 @@ public class MembersActivity extends AppCompatActivity {
             setSelectMode(false);
         } else {
             Intent i = new Intent();
-            i.putExtra(GROUP_INDEX, groupIndex);
             setResult(RESULT_OK, i);
             finish();
         }
@@ -217,7 +215,6 @@ public class MembersActivity extends AppCompatActivity {
 
         if (!userIds.isEmpty()) {
             Intent intent = new Intent(this, ManageRolesActivity.class);
-            intent.putExtra(ManageRolesActivity.GROUP_INDEX, groupIndex);
             intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
             startActivityForResult(intent, 1);
         } else {

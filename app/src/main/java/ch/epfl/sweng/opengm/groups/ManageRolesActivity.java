@@ -67,7 +67,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_roles);
         roles = new ArrayList<>();
         Intent intent = getIntent();
-        currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(intent.getIntExtra(GROUP_INDEX, 1));
+        currentGroup = OpenGMApplication.getCurrentGroup();
         List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
         HashMap<String, PFMember> idsMembers = currentGroup.getMembers();
         groupMembers = new ArrayList<>();
