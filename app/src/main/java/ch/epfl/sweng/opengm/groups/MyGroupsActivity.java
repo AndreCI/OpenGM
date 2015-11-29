@@ -22,9 +22,9 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.MyProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.UserProfileActivity;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.identification.contacts.AppContactsActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -131,10 +131,10 @@ public class MyGroupsActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.action_show_contacts:
-                startActivity(new Intent(this, AppContactsActivity.class));
+                startActivity(new Intent(MyGroupsActivity.this, AppContactsActivity.class));
                 return true;
-            case R.id.action_show_settings:
-                startActivity(new Intent(this, UserProfileActivity.class));
+            case R.id.action_show_user_profile:
+                startActivity(new Intent(MyGroupsActivity.this, MyProfileActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
