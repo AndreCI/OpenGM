@@ -297,6 +297,20 @@ public final class PFUser extends PFEntity {
         }
     }
 
+
+    /**
+     * Setter for the email of the current user
+     *
+     * @param email The new email of the current user
+     * @throws PFException If something went wrong while updating on the server
+     */
+    public void setEmail(String email) throws PFException {
+        if (checkArguments(email) && !email.equals(mEmail)) {
+            ParseUser.getCurrentUser().setEmail(email);
+            this.mEmail = email;
+        }
+    }
+
     /**
      * Setter for the username of the current user
      *
