@@ -261,7 +261,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                                 byte[] image = stream.toByteArray();
                                 ParseFile file = new ParseFile(String.format("event%s.png", getId()), image);
                                 file.saveInBackground();
-                                object.put(EVENT_ENTRY_PICTURE, mPicture);
+                                object.put(EVENT_ENTRY_PICTURE, file); //TODO : whaaaat?
                                 break;
                             default:
                                 return;

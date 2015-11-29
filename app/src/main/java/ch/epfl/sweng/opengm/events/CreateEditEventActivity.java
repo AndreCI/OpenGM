@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -126,7 +127,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     nText.setText("File From Camera");
                 } else {
                     selectedImageUri = data == null ? null : data.getData();
-                    nText.setText(selectedImageUri.toString());
+                    nText.setText("File From Directory");//selectedImageUri.toString());
                 }
                 Button button= (Button) findViewById(R.id.CreateEditOkButton);
                 button.setClickable(false);
@@ -268,13 +269,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
-        //TODO : get new id for creating event maybe asynchronously in onCreate
-        ParseObject parseObject = new ParseObject(PFConstants.EVENT_TABLE_NAME);
-        try {
-            parseObject.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         try {
             String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
             String imagePath=writeImageInFileAndGetPath(b, picName);

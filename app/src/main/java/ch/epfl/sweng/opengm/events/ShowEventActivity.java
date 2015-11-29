@@ -121,7 +121,7 @@ public class ShowEventActivity extends AppCompatActivity {
         if (event.getDescription().isEmpty()) {
             textView.setHeight(0);
         } else {
-            String description = "Description: de l'evenement\n" + event.getDescription();
+            String description = "Description de l'evenement :\n" + event.getDescription();
             textView.setText(description);
         }
     }

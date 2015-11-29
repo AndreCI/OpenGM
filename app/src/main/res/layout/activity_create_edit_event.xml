@@ -64,6 +64,7 @@
         <Button
             android:background="@drawable/rounded_buttons"
             android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -81,6 +82,7 @@
         <Button
             android:background="@drawable/rounded_buttons"
             android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -162,13 +164,13 @@
 
         <Button
             android:background="@drawable/rounded_buttons"
-            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/CreateEditEventBitmapBrowseButton"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:hint="Browse..."
+            android:text="Browse..."
             android:textAlignment="center"
             android:onClick="onBrowseButtonClick" />
 
