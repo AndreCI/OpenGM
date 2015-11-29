@@ -402,6 +402,7 @@
     <string name="confirm_deletion_poll">Are you sure you want to delete this poll?</string>
     <string name="delete_poll">Delete</string>
     <string name="create_groups_members">Manage Group Members</string>
+    <string name="past_poll">Show past polls</string>
 
 
 </resources>
