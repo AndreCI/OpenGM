@@ -366,7 +366,7 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
                             break;
                         case GROUP_ENTRY_PICTURE:
-                            // convert bitmap to a bytes array to send it on the server (FREEZE THE APP)
+                            // convert bitmap to a bytes array to send it on the server
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
                             byte[] imageData = stream.toByteArray();
@@ -893,13 +893,15 @@ public final class PFGroup extends PFEntity {
 
                 // retrieve image from server
                 ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
-                imageFile.getDataInBackground(new GetDataCallback() {
-                    @Override
-                    public void done(byte[] data, ParseException e) {
-                        Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        group.setPicture(picture);
-                    }
-                });
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            group.setPicture(picture);
+                        }
+                    });
+                }
 
                 return group;
             } else {

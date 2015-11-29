@@ -123,7 +123,6 @@ public class GroupsHomeActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             finish();
-            //super.onBackPressed();
         }
     }
 
