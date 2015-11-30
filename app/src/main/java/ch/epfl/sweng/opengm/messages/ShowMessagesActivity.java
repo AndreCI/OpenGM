@@ -19,6 +19,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.ParseException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,15 +28,15 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFConversation;
 
-import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 import static ch.epfl.sweng.opengm.messages.Utils.writeMessageLocal;
 
 /**
  * Created by virgile on 18/11/2015.
  */
 public class ShowMessagesActivity extends AppCompatActivity {
-    private ConversationInformation conversationInformation;
+    private PFConversation conversation;
     private ListView messageList;
     private List<MessageAdapter> messages;
     private EditText textBar;
@@ -45,7 +47,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_messages);
         Intent intent = getIntent();
-        conversationInformation = intent.getParcelableExtra(Utils.FILE_INFO_INTENT_MESSAGE);
+        conversation = intent.getParcelableExtra(Utils.FILE_INFO_INTENT_MESSAGE);
         messageList = (ListView) findViewById(R.id.message_list);
         textBar = (EditText) findViewById(R.id.message_text_bar);
         textBar.addTextChangedListener(new TextWatcher() {
@@ -69,7 +71,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 }
             }
         });
-        path = new File(getFilesDir(), conversationInformation.getConversationName()).getAbsolutePath();
+        path = new File(getFilesDir(), conversation.getConversationName()).getAbsolutePath();
         fillMessages();
 
         textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -91,7 +93,11 @@ public class ShowMessagesActivity extends AppCompatActivity {
         if(!message.isEmpty()) {
             Log.v("ShowMessage sendMessage", message);
             MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
-            writeMessageLocal(conversationInformation.getConversationName() + ".txt", messageAdapter, this);
+            try {
+                conversation.writeMessage(OpenGMApplication.getCurrentUser().getFirstName(), message);
+            } catch (IOException|ParseException e) {
+                Log.e("show message activity", "couldn't write message to conversation");
+            }
             editText.setText("");
             messages.add(messageAdapter);
             //messageList.setAdapter(new CustomAdapter(this, R.layout.message_info));
@@ -102,7 +108,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void fillMessages() {
-        new readMessageFile().execute(getFilesDir().getAbsolutePath() + '/' + conversationInformation.getConversationName());
+        new readMessageFile().execute(String.format("%s/%s_%s.txt", getFilesDir().getAbsolutePath(), conversation.getConversationName(), conversation.getGroupId()));
         /* TODO: get File on serv or local device + read and parse it for messages and fill messages
          * idea : get serv file in background while displaying local one, then compare, then if modification, do them
          */
@@ -159,10 +165,10 @@ public class ShowMessagesActivity extends AppCompatActivity {
         }
     }
 
-    class FetchMessages extends AsyncTask<ConversationInformation, Void, Boolean> {
+    class FetchMessages extends AsyncTask<PFConversation, Void, Boolean> {
 
         @Override
-        protected Boolean doInBackground(ConversationInformation... params) {
+        protected Boolean doInBackground(PFConversation... params) {
            /* TODO: get File on serv or local device + read and parse it for messages and fill messages
             * idea : get serv file in background while displaying local one, then compare, then if modification, do them
             */

@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.content.Context;
 import android.os.Parcel;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -13,6 +14,7 @@ import com.parse.SaveCallback;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -20,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.messages.ConversationInformation;
 import ch.epfl.sweng.opengm.messages.Utils;
+
+import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.messages.Utils.getNewStringDate;
 
 /**
  * Created by virgile on 27/11/2015.
@@ -35,6 +39,14 @@ public class PFConversation extends PFEntity {
     String groupId;
     ParseFile file;
 
+    public PFConversation(Parcel in) {
+        super(in, TABLE_NAME);
+        conversationName = in.readString();
+        groupId = in.readString();
+        File file = new File(in.readString(), in.readString());
+        this.file = new ParseFile(file);
+    }
+
     private PFConversation(String id, Date modifiedDate, String conversationName, String groupId, ParseFile file) {
         super(id, TABLE_NAME, modifiedDate);
         this.conversationName = conversationName;
@@ -42,16 +54,28 @@ public class PFConversation extends PFEntity {
         this.file = file;
     }
 
+    public void writeMessage(String sender, String body) throws IOException, ParseException {
+        File file = this.file.getFile();
+        PrintWriter out = new PrintWriter(new FileWriter(file, true));
+        out.println(String.format("<|%s|%s|%s|>", sender, getNewStringDate(), body));
+    }
+
+    public void writeConversationInformation() throws IOException, ParseException {
+        File file = this.file.getFile();
+        PrintWriter out = new PrintWriter(new FileWriter(file, true));
+        out.println(String.format("<|%s|%s|%s|>", getId(), conversationName, groupId));
+    }
 
 
     public static PFConversation createNewConversation(String conversationName, String groupId, Context context) throws FileNotFoundException, ParseException {
         ParseObject object = new ParseObject(TABLE_NAME);
         File newFile = new File(context.getFilesDir(), conversationName + "_" + groupId + ".txt");
         PrintWriter writer = new PrintWriter(newFile);
-        writer.print("");
+        writer.print(String.format("<|%s|%s|%s|>", object.getObjectId(), conversationName, groupId));
         writer.close();
         ParseFile file = new ParseFile(newFile);
         file.saveInBackground();
+        object.put(TABLE_ENTRY_NAME, conversationName);
         object.put(TABLE_ENTRY_FILE, file);
         object.save();
         return new PFConversation(object.getObjectId(), object.getUpdatedAt(), conversationName, groupId, file);
@@ -102,13 +126,15 @@ public class PFConversation extends PFEntity {
         String localLine = localReader.readLine();
         String remoteLine = remoteReader.readLine();
         while(localLine != null && remoteLine != null) {
-            ConversationInformation localInformation = Utils.stringToConversationInformation(localLine);
-            ConversationInformation remoteInformation = Utils.stringToConversationInformation(remoteLine);
-            if(localInformation.getConversationName().equals(remoteInformation.getConversationName())) {
+            String localName = Utils.extractConversationName(localLine);
+            String remoteName = Utils.extractConversationName(remoteLine);
+            Date localDate = Utils.extractConversationDate(localLine);
+            Date remoteDate = Utils.extractConversationDate(remoteLine);
+            if(localName.equals(remoteName)) {
                 strings.add(localLine);
                 localLine = localReader.readLine();
                 remoteLine = remoteReader.readLine();
-            } else if(localInformation.getCreationDate().before(remoteInformation.getCreationDate())) {
+            } else if(localDate.before(remoteDate)) {
                 strings.add(localLine);
                 localLine = localReader.readLine();
             } else {
@@ -129,6 +155,10 @@ public class PFConversation extends PFEntity {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.format("<|%s|%s|%s|%s|>", getId(), dateToString(lastModified),conversationName, groupId);
+    }
 
     public void updateToServer() throws PFException {
         updateToServer(TABLE_ENTRY_FILE);
@@ -162,8 +192,8 @@ public class PFConversation extends PFEntity {
         });
     }
 
-    public ConversationInformation toConversationInformation() {
-        return new ConversationInformation(conversationName, groupId, lastModified);
+    public String getConversationName() {
+        return conversationName;
     }
 
     @Override
@@ -173,6 +203,31 @@ public class PFConversation extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(getId());
+        dest.writeString(dateToString(lastModified));
+        dest.writeString(conversationName);
+        dest.writeString(groupId);
+        try {
+            dest.writeString(file.getFile().getPath());
+            dest.writeString(file.getFile().getName());
+        } catch (ParseException e) {
+            Log.e("PFConversation", "couldn't write to parcel the file");
+        }
+    }
 
+    public static final Creator<PFConversation> CREATOR = new Creator<PFConversation>() {
+        @Override
+        public PFConversation createFromParcel(Parcel in) {
+            return new PFConversation(in);
+        }
+
+        @Override
+        public PFConversation[] newArray(int size) {
+            return new PFConversation[size];
+        }
+    };
+
+    public String getGroupId() {
+        return groupId;
     }
 }

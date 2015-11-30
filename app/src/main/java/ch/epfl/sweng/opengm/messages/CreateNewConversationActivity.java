@@ -27,7 +27,7 @@ import ch.epfl.sweng.opengm.parse.PFConversation;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class CreateNewConversationActivity extends AppCompatActivity {
-    PFGroup currentGroup;
+    String groupId;
     EditText editText;
 
     @Override
@@ -35,7 +35,7 @@ public class CreateNewConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_conversation);
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
+        groupId = intent.getStringExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
 
         editText = (EditText) findViewById(R.id.newConversationName);
         editText.addTextChangedListener(new TextWatcher() {
@@ -81,18 +81,8 @@ public class CreateNewConversationActivity extends AppCompatActivity {
         //Check that conv name doesn't already exist. Check in file !!!!!!!
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
-        String path = getFilesDir().getAbsolutePath() + '/' + conversationName + ".txt";
-        PFConversation conversation = null;
-        try {
-            conversation = PFConversation.createNewConversation(conversationName, currentGroup.getId(), this);
-        } catch (FileNotFoundException e) {
-            Log.e("CreateNewConv", "couldn't createFile", e);
-        } catch (ParseException e) {
-            Log.e("CreateNewConv", "error with parse");
-        }
-        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversation.toConversationInformation());
+        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversationName);
         setResult(Activity.RESULT_OK, intent);
-        Log.v("CreateNewConversation", conversationName + ", " + path);
         finish();
     }
 

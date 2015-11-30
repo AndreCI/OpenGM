@@ -120,7 +120,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_messages:
                 Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
-                intent2.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, currentGroup);
+                intent2.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, getCurrentUser().getGroups().indexOf(currentGroup));
                 startActivity(intent2);
                 break;
             case R.id.nav_manage:

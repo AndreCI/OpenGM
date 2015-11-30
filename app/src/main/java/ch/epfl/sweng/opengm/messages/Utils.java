@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.events.Utils.stringToDate;
 
 /**
  * Created by virgile on 18/11/2015.
@@ -40,24 +41,8 @@ public class Utils {
         }
     }
 
-    public static void writeConversationInformationLocal(String fileName, ConversationInformation conversationInformation, Context context) {
-        try {
-            Log.v("Utils writeConvInf", fileName+" : " + conversationInformation.toString());
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_APPEND));
-            outputStreamWriter.write(conversationInformation.toString()+'\n');
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
     private static String createNewMessage(MessageAdapter messageAdapter) {
         return String.format("<|%s|%s|%s|>\n", messageAdapter.getSenderName(), dateToString(new Date()),messageAdapter.getMessage());
-    }
-
-    public static void writeMessageServeur(ConversationInformation conversationInformation) {
-        //TODO: check if remote file is older than local, if true upload, else merge the two.
     }
 
     public static List<String> readMessagesFile(String filePath) throws IOException {
@@ -85,18 +70,6 @@ public class Utils {
         return result;
     }
 
-    public static List<ConversationInformation> readIndexFile(String filePath) throws IOException {
-        List<ConversationInformation> result = new ArrayList<>();
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
-        String line = bufferedReader.readLine();
-        while (line != null) {
-            Log.v("Utils readIndexFile", line);
-            result.add(stringToConversationInformation(line));
-            line = bufferedReader.readLine();
-        }
-        return result;
-    }
-
     public static String[] extractMessage(String s) {
         String[] split = s.split("\\|");
         if(split.length != 5) {
@@ -109,18 +82,29 @@ public class Utils {
         return result;
     }
 
-    public static ConversationInformation stringToConversationInformation(String s) {
-        String[] strings = s.split("\\|");
-        if(strings.length != 5) {
-            throw new IllegalArgumentException(strings.length + " Invalid string format, should be <|convName|groupId|path|>, was " + s);
-        }
-        return new ConversationInformation(strings[1], strings[2]);
+    public static String calendarToString(Calendar calendar) {
+        return Integer.toString(calendar.YEAR) + '|' + Integer.toString(calendar.MONTH +1) + '|' + Integer.toString(calendar.DATE) + '|' + Integer.toString(calendar.HOUR_OF_DAY) + '|' + Integer.toString(calendar.MINUTE) + '|' +Integer.toString(calendar.SECOND);
     }
-
 
     public static String getNewStringDate() {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return dateFormat.format(Calendar.getInstance().getTime());
+    }
+
+    public static String extractConversationName(String s) {
+        String[] strings = s.split("|");
+        if(strings.length != 6) {
+            throw new IllegalArgumentException("Invalid string format: " + s);
+        }
+        return strings[3];
+    }
+
+    public static Date extractConversationDate(String s) {
+        String[] strings = s.split("|");
+        if(strings.length != 6) {
+            throw new IllegalArgumentException("Invalid string format: " + s);
+        }
+        return stringToDate(strings[2]);
     }
 }
