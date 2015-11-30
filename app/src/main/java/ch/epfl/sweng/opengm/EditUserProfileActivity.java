@@ -54,10 +54,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_edit_layout);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
         if (currentUser != null) {
 
             // Display profile picture of user :
@@ -98,9 +94,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+
             case R.id.action_save_profile:
                 mFirstNameEditText = (EditText) findViewById(R.id.firstNameEditText);
                 mLastNameEditText = (EditText) findViewById(R.id.lastNameEditText);

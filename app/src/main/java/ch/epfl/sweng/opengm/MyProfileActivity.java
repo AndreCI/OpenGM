@@ -3,11 +3,13 @@ package ch.epfl.sweng.opengm;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class MyProfileActivity extends AppCompatActivity {
@@ -30,6 +32,11 @@ public class MyProfileActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(MyProfileActivity.this, MyGroupsActivity.class));
     }
 
     @Override

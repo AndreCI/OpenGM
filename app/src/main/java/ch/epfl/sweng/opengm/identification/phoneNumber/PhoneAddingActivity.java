@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.EditUserProfileActivity;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.identification.RegisterActivity;
