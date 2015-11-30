@@ -26,9 +26,6 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.ParseException;
-import com.parse.ParseObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,14 +33,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUtils;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
@@ -63,8 +62,9 @@ public class CreateEditEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_edit_event);
         findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.GONE);
+
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        currentGroup = getCurrentGroup();
         PFEvent event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         if (getSupportActionBar() != null) {
@@ -270,7 +270,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
         String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         try {
-            String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
+          //  String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
+            String picName = String.format(Locale.getDefault(), "%1$10s", Calendar.getInstance().getTimeInMillis()) + "_event";
             String imagePath=writeImageInFileAndGetPath(b, picName);
             return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, b);
         } catch (PFException e) {

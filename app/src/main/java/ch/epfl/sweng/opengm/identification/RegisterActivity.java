@@ -26,6 +26,7 @@ import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 import ch.epfl.sweng.opengm.utils.Utils;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.setCurrentUser;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_NOT_CASE_SENSITIVE;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
@@ -199,11 +200,9 @@ public class RegisterActivity extends AppCompatActivity {
                                             public void done(ParseException e) {
                                                 if (e == null) {
                                                     try {
-                                                        PFUser.createNewUser(user.getObjectId(), email, number, username, firstName, lastName);
+                                                        setCurrentUser(PFUser.createNewUser(user.getObjectId(), email, number, username, firstName, lastName));
                                                         dialog.hide();
-                                                        Intent intent = new Intent(RegisterActivity.this, MyGroupsActivity.class);
-                                                        intent.putExtra(MyGroupsActivity.COMING_FROM_KEY, true);
-                                                        startActivity(intent);
+                                                        startActivity(new Intent(RegisterActivity.this, MyGroupsActivity.class));
                                                     } catch (PFException e1) {
                                                         dialog.hide();
                                                         Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_SHORT).show();

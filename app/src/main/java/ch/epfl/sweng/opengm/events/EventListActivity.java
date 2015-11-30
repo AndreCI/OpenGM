@@ -56,7 +56,7 @@ public class EventListActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Intent intent = getIntent();
+               // Intent intent = getIntent();
                        /* new Intent(Utils.GROUP_INTENT_MESSAGE);
 
 
@@ -69,7 +69,6 @@ public class EventListActivity extends AppCompatActivity {
 
                 currentGroup = OpenGMApplication.getCurrentGroup();
 
-                // Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
                 for(PFEvent e : currentGroup.getEvents()){
                     eventMap.put(e.getId(), e);
@@ -105,9 +104,8 @@ public class EventListActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 boolean edited = eventIntent.getBooleanExtra(Utils.EDIT_INTENT_MESSAGE, false);
-                Log.v("event from parcel", event.getId());
+
                 if(NetworkUtils.haveInternet(getBaseContext())) {
-                    Log.v("event id", event.getId());
                     try {
                         if(edited) {
                             currentGroup.updateEvent(event);
@@ -129,14 +127,14 @@ public class EventListActivity extends AppCompatActivity {
             }
             if(resultCode == Utils.DELETE_EVENT){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+
                 if(NetworkUtils.haveInternet(getBaseContext())) {
-                    Log.v("event id", event.getId());
                     try {
                        currentGroup.removeEvent(event);
                     } catch (PFException e) {
                         e.printStackTrace();
                     }
-                    (Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT)).show();
+                    Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "Couldn't delete the event. Refresh later.",Toast.LENGTH_SHORT).show();
                 }
@@ -286,7 +284,6 @@ public class EventListActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ShowEventActivity.class);
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 }

@@ -1,8 +1,8 @@
 package ch.epfl.sweng.opengm.groups;
 
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 
 import junit.framework.Assert;
 
@@ -21,6 +21,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 
 public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<GroupsHomeActivity> {
@@ -54,9 +55,11 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
 
         try {
             user = PFUser.createNewUser(CURRENT_DATE, EMAIL, "0", USERNAME, FIRSTNAME, LASTRNAME);
+            OpenGMApplication.setCurrentUser(user);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
+        Thread.sleep(1000);
 
         try {
             group = PFGroup.createNewGroup(user, USERNAME, EMAIL, null);
@@ -66,8 +69,7 @@ public class GroupsHomeActivityTest extends ActivityInstrumentationTestCase2<Gro
 
         Thread.sleep(2000);
 
-        OpenGMApplication.setCurrentUser(user.getId());
-        OpenGMApplication.setCurrentGroup(user.getGroups().size()-1);
+        OpenGMApplication.setCurrentGroup(group);
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
