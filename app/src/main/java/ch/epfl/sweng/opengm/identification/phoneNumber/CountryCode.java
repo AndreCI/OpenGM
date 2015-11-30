@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.identification.phoneNumber;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class CountryCode implements Comparable<CountryCode> {
     }
 
     @Override
-    public int compareTo(CountryCode another) {
+    public int compareTo(@NonNull CountryCode another) {
         return mCountry.compareTo(another.mCountry);
     }
 
@@ -44,9 +46,7 @@ public class CountryCode implements Comparable<CountryCode> {
 
         CountryCode that = (CountryCode) o;
 
-        if (mCountry != null ? !mCountry.equals(that.mCountry) : that.mCountry != null)
-            return false;
-        return mCode.equals(that.mCode);
+        return !(mCountry != null ? !mCountry.equals(that.mCountry) : that.mCountry != null) && mCode.equals(that.mCode);
 
     }
 

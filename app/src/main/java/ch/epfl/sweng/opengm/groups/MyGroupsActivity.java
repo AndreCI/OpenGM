@@ -43,6 +43,8 @@ public class MyGroupsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
 
+        OpenGMApplication.setCurrentGroup(-1);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -148,13 +150,16 @@ public class MyGroupsActivity extends AppCompatActivity {
 //        view.setBackgroundColor(0xBA1027);
 
         int groupPosition = (int) view.getTag();
+
+        OpenGMApplication.setCurrentGroup(groupPosition);
+
         Intent intent = new Intent(MyGroupsActivity.this, GroupsHomeActivity.class);
-        intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, groupPosition);
+        //intent.putExtra(GroupsHomeActivity.CHOSEN_GROUP_KEY, groupPosition);
         startActivity(intent);
     }
 
     public void addGroup(View view) {
-        Intent intent = new Intent(MyGroupsActivity.this, CreateGroupActivity.class);
+        Intent intent = new Intent(MyGroupsActivity.this, CreateEditGroupActivity.class);
         startActivity(intent);
     }
 

@@ -64,10 +64,12 @@ public class EventListActivity extends AppCompatActivity {
                } catch (PFException e) {
                     e.printStackTrace();
                 }*/
-                int currentGroupLocation = intent.getIntExtra(Utils.GROUP_INTENT_MESSAGE, -1);
-                currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(currentGroupLocation);
+               // int currentGroupLocation = intent.getIntExtra(Utils.GROUP_INTENT_MESSAGE, -1);
+                //currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(currentGroupLocation);
 
-                Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
+                currentGroup = OpenGMApplication.getCurrentGroup();
+
+                // Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
                 for(PFEvent e : currentGroup.getEvents()){
                     eventMap.put(e.getId(), e);

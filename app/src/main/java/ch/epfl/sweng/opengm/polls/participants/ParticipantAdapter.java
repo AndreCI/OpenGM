@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,7 +45,7 @@ class ParticipantAdapter extends ArrayAdapter<Participant> {
         }
 
         Participant participant = objects.get(position);
-
+        holder.box.setTag(participant);
         holder.prefix.setText(participant.getPrefix());
         holder.name.setText(participant.getName());
         holder.info.setText(participant.getInfo());
@@ -55,12 +56,14 @@ class ParticipantAdapter extends ArrayAdapter<Participant> {
 
 
     private static class ParticipantHolder {
+        private final CheckBox box;
         private final TextView prefix;
         private final TextView name;
         private final TextView info;
         private final ImageView image;
 
         private ParticipantHolder(View row) {
+            box = (CheckBox) row.findViewById(R.id.participant_box_poll);
             prefix = (TextView) row.findViewById(R.id.participant_prefix_poll);
             name = (TextView) row.findViewById(R.id.participant_name_poll);
             info = (TextView) row.findViewById(R.id.participant_info_poll);

@@ -52,9 +52,10 @@ public class MembersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_members);
 
         // get the group in which we are
-        groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
+        //groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
         PFUser user = OpenGMApplication.getCurrentUser();
-        group = user.getGroups().get(groupIndex);
+        //group = user.getGroups().get(groupIndex);
+        group = OpenGMApplication.getCurrentGroup();
         members = new ArrayList<>();
         members.add(group.getMember(user.getId()));
         members.addAll(group.getMembersWithoutUser(user.getId()));

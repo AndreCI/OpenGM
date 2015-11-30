@@ -6,6 +6,7 @@ import com.parse.Parse;
 import com.parse.ParseUser;
 
 import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class OpenGMApplication extends Application {
@@ -14,6 +15,7 @@ public class OpenGMApplication extends Application {
     private final static String PARSE_KEY = "tQSqozHYj1d9hVhMAwKnEslDVXuzyATAQcOstEor";
 
     private static PFUser currentUser = null;
+    private static PFGroup currentGroup = null;
 
     @Override
     public void onCreate() {
@@ -36,6 +38,19 @@ public class OpenGMApplication extends Application {
             }
         }
         return currentUser;
+    }
+
+    public static PFGroup getCurrentGroup() {
+        return currentGroup;
+    }
+
+    /**
+     * Set the current group to the value you want
+     *
+     * @param pos the position of the group in the user's groups list or -1 to put a null group
+     */
+    public static void setCurrentGroup(int pos) {
+        currentGroup = (pos == -1 ? null : currentUser.getGroups().get(pos));
     }
 
     public static void logOut() {

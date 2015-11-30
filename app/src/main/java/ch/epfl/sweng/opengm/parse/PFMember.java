@@ -60,8 +60,12 @@ public final class PFMember extends PFEntity implements Parcelable {
 
     private String mNickname;
 
-    private PFMember(String id, Date date, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
+    private PFMember(String id, Date date, String username, String firstName, String lastName,
+                     String nickname, String email, String phoneNumber, String about,
+                     Bitmap bitmap, List<String> roles, List<String> groups) {
+
         super(id, PARSE_TABLE_USER, date);
+
         this.mUsername = username;
         this.mFirstName = firstName;
         this.mLastName = lastName;
@@ -344,7 +348,9 @@ public final class PFMember extends PFEntity implements Parcelable {
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
+                return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
+                        nickName == null ? username : nickName, email, phoneNumber, description,
+                        picture[0], Arrays.asList(roles), groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

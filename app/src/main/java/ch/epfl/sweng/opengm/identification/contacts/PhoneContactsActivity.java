@@ -50,7 +50,7 @@ public class PhoneContactsActivity extends AppCompatActivity {
 
         fillContacts();
 
-        mAdapter = new ContactAdapter(this, R.layout.item_contact, mContacts, false);
+        mAdapter = new ContactAdapter(this, mContacts, false);
         list.setAdapter(mAdapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,6 +117,7 @@ public class PhoneContactsActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressWarnings("SameReturnValue")
     private boolean showResult(String query) {
         Collections.sort(mAdapter.getObjects(), sortList(query));
         List<Contact> displayedCc = new ArrayList<>();
@@ -125,7 +126,7 @@ public class PhoneContactsActivity extends AppCompatActivity {
                 displayedCc.add(cc);
             }
         }
-        list.setAdapter(new ContactAdapter(this, R.layout.item_contact, displayedCc, false));
+        list.setAdapter(new ContactAdapter(this, displayedCc, false));
         return true;
     }
 
@@ -154,7 +155,7 @@ public class PhoneContactsActivity extends AppCompatActivity {
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
-        if (cur.getCount() > 0) {
+        if ((cur != null ? cur.getCount() : 0) > 0) {
             while (cur.moveToNext()) {
                 String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
@@ -173,6 +174,7 @@ public class PhoneContactsActivity extends AppCompatActivity {
                 }
             }
         }
+        cur.close();
         Collections.sort(mContacts);
     }
 
