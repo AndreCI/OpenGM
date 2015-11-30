@@ -18,6 +18,8 @@
 
     <string name="how_to_password">A password should contain between 8 and 30 characters, with at least a cap, a lowercase letter and a number.</string>
 
+    <string name="successful_password_change_toast">Password updated successfully !</string>
+    <string name="error_password_change_toast">Error while updating your password</string>
 
     <string name="title_activity_register">RegisterActivity</string>
 
