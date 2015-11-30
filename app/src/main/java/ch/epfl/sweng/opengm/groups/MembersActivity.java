@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,9 +22,11 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.MemberProfileActivity;
 import ch.epfl.sweng.opengm.MyProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -99,9 +102,10 @@ public class MembersActivity extends AppCompatActivity {
                     view.findViewById(R.id.member_checkbox).performClick();
                 } else {
                     // TODO: link towards MemberProfileActivity instead of MyProfileActivity
-                    Intent i = new Intent(MembersActivity.this, MyProfileActivity.class);
+                    Intent i = new Intent(MembersActivity.this, MemberProfileActivity.class);
 //                    i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
 //                    i.putExtra(UserProfileActivity.GROUP_INDEX, groupIndex);
+                    i.putExtra(MemberProfileActivity.MEMBER_KEY, members.get(position));
                     startActivity(i);
                 }
             }

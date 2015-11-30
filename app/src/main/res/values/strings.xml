@@ -373,6 +373,7 @@
     <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
 
     <string name="title_activity_my_profile">My Profile</string>
+    <string name="title_activity_member_profile">Member Profile</string>
 
     <string name="action_add_role">Add role</string>
     <string name="action_remove_role">Remove role</string>

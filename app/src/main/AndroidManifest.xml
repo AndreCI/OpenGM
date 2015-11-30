@@ -106,6 +106,9 @@
             android:label="@string/title_activity_edit_user_profile"
             android:windowSoftInputMode="adjustPan" />
         <activity
+            android:name=".MemberProfileActivity"
+            android:label="@string/title_activity_member_profile" />
+        <activity
             android:name=".polls.CreatePollActivity"
             android:label="@string/title_activity_create_poll"
             android:screenOrientation="portrait"
