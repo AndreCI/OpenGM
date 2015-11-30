@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;

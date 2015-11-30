@@ -21,6 +21,9 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.action_edit_user_profile:
                 startActivity(new Intent(MyProfileActivity.this, EditUserProfileActivity.class));
                 return true;
@@ -33,6 +36,10 @@ public class MyProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_layout);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // FIXME: Do we really need to specify if (user != null) ??? Where to put it ?
         PFUser currentUser = OpenGMApplication.getCurrentUser();

@@ -3,8 +3,8 @@ package ch.epfl.sweng.opengm;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,9 +41,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private EditText mPhoneNumberEditText;
     private EditText mDescriptionEditText;
 
-
     private final PFUser currentUser = OpenGMApplication.getCurrentUser();
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,6 +53,10 @@ public class EditUserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile_edit_layout);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (currentUser != null) {
 
@@ -93,13 +95,13 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.action_save_profile:
-
                 mFirstNameEditText = (EditText) findViewById(R.id.firstNameEditText);
                 mLastNameEditText = (EditText) findViewById(R.id.lastNameEditText);
                 mEmailEditText = (EditText) findViewById(R.id.emailEditText);
