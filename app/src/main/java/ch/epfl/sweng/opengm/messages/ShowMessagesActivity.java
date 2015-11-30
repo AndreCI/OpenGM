@@ -58,14 +58,14 @@ public class ShowMessagesActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String string = s.toString();
                 for(int i = 0; i < string.length(); ++i) {
-                    if(string.charAt(i) == '|') {
+                    if(string.charAt(i) == '|' || System.lineSeparator().contains(string.charAt(i)+"")) {
                         s.delete(i, i+1);
                     }
                 }
             }
         });
         fillMessages();
-
+        Log.v("ShowMessagesAct", "just after on create, conv is: " + conversation + "groupid is: " + conversation.getGroupId());
         textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -116,8 +116,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
             try {
                 strings = Utils.readMessagesFile(params[0]);
                 messages = new ArrayList<>();
-                String firstLine = strings.remove(0); //info of conv
-                Log.v("ShowMessages readFile", "first line :" + firstLine);
                 for(String s : strings) {
                     Log.v("ShowMessages readFile", s);
                     String[] data = Utils.extractMessage(s);
@@ -143,7 +141,8 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                conversation.writeMessage(OpenGMApplication.getCurrentUser().getFirstName(), params[0]);
+                conversation.writeMessage(OpenGMApplication.getCurrentUser().getUsername(), params[0]);
+                Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(), conversation.getGroupId(), ShowMessagesActivity.this);
             } catch (IOException|ParseException e) {
                 Log.e("show message activity", "couldn't write message to conversation");
             }

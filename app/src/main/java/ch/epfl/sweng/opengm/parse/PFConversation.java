@@ -57,13 +57,13 @@ public class PFConversation extends PFEntity {
     public void writeMessage(String sender, String body) throws IOException, ParseException {
         File file = this.file.getFile();
         PrintWriter out = new PrintWriter(new FileWriter(file, true));
-        out.println(String.format("<|%s|%s|%s|>", sender, getNewStringDate(), body));
+        out.println(String.format("<|%s|%s|%s|>\n", sender, getNewStringDate(), body));
     }
 
     public void writeConversationInformation() throws IOException, ParseException {
         File file = this.file.getFile();
         PrintWriter out = new PrintWriter(new FileWriter(file, true));
-        out.println(String.format("<|%s|%s|%s|>", getId(), conversationName, groupId));
+        out.println(String.format("<|%s|%s|%s|>\n", getId(), conversationName, groupId));
     }
 
 
@@ -71,12 +71,13 @@ public class PFConversation extends PFEntity {
         ParseObject object = new ParseObject(TABLE_NAME);
         File newFile = new File(context.getFilesDir(), conversationName + "_" + groupId + ".txt");
         PrintWriter writer = new PrintWriter(newFile);
-        writer.print(String.format("<|%s|%s|%s|>", object.getObjectId(), conversationName, groupId));
+        writer.print(String.format("<|%s|%s|%s|>\n", object.getObjectId(), conversationName, groupId));
         writer.close();
         ParseFile file = new ParseFile(newFile);
         file.saveInBackground();
         object.put(TABLE_ENTRY_NAME, conversationName);
         object.put(TABLE_ENTRY_FILE, file);
+        object.put(TABLE_ENTRY_GROUPID, groupId);
         object.save();
         return new PFConversation(object.getObjectId(), object.getUpdatedAt(), conversationName, groupId, file);
     }
