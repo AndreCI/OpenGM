@@ -5,6 +5,7 @@
 
     <string name="title_activity_login">LoginActivity</string>
     <string name="incorrect_activity_login">Invalid username or password</string>
+    <string name="incorrect_password">Invalid password</string>
     <string name="invalid_password_activity_login">Password has not a correct format</string>
     <string name="login_now_activity_login">Login</string>
     <string name="forgotten_password_activity_login"><u>Forgot your password?</u></string>
@@ -16,6 +17,12 @@
     <string name="error_dialog_password">Error while sending a new password by mail &#8230;</string>
 
     <string name="how_to_password">A password should contain between 8 and 30 characters, with at least a cap, a lowercase letter and a number.</string>
+
+    <string name="success_password_change_toast">Password updated successfully !</string>
+    <string name="error_password_change_toast">Error while updating your password</string>
+
+    <string name="success_edit_profile">Informations updated successfully !</string>
+    <string name="error_edit_profile">Error while updating your informations</string>
 
 
     <string name="title_activity_register">RegisterActivity</string>
@@ -42,7 +49,7 @@
     <string name="empty_firstname_activity_register">First name should not be empty</string>
     <string name="empty_lastname_activity_register">Last name should not be empty</string>
     <string name="incorrect_email_activity_register">Email has not a correct format</string>
-    <string name="incorrect_password_activity_register">Passwords don\'t match</string>
+    <string name="non_matching_passwords_activity_register">Passwords don\'t match</string>
     <string name="incorrect_phone_number_activity_register">A valid phone number should be entered</string>
     <string name="short_password_activity_register">Password is too short</string>
     <string name="long_password_activity_register">Password is too long</string>
@@ -128,9 +135,7 @@
     <string name="groupNameIllegalCharacters">Group name contains illegal characters, only letters, numbers and spaces allowed.</string>
     <string name="groupNameInvalid">Group name is invalid</string>
 
-    <string name="title_activity_user_profile">UserProfileActivity</string>
-
-    <string name="title_activity_edit_user_profile">EditUserProfileActivity</string>
+    <string name="title_activity_edit_user_profile">Edit Profile</string>
 
     <string name="hello_world">Hello world!</string>
 
@@ -366,6 +371,10 @@
     <string name="invite_contact">Invite a contact</string>
     <string name="cost_contact">Do you want to open the SMS application to invite %s? It may imply some additional costs.</string>
     <string name="body_contact">Hi,\nI am using the Open GM app. It is so useful to manage groups. Tell me when you have your account!</string>
+
+    <string name="title_activity_my_profile">My Profile</string>
+    <string name="title_activity_member_profile">Member Profile</string>
+
     <string name="action_add_role">Add role</string>
     <string name="action_remove_role">Remove role</string>
     <string name="action_modify_permissions">Modify Permissions</string>
@@ -403,6 +412,5 @@
     <string name="delete_poll">Delete</string>
     <string name="create_groups_members">Manage Group Members</string>
     <string name="past_poll">Show past polls</string>
-
 
 </resources>

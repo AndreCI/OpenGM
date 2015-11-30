@@ -125,8 +125,8 @@ public class PFMemberTest {
         assertEquals(id, member.getId());
         assertEquals(dateToString(date), dateToString(member.lastModified));
         assertEquals(USERNAME, member.getUsername());
-        assertEquals(FIRST_NAME, member.getFirstname());
-        assertEquals(LAST_NAME, member.getLastname());
+        assertEquals(FIRST_NAME, member.getFirstName());
+        assertEquals(LAST_NAME, member.getLastName());
         assertEquals(FIRST_NAME + LAST_NAME, member.getNickname());
         assertEquals(EMAIL, member.getEmail());
         assertEquals(PHONE_NUMBER, member.getPhoneNumber());
@@ -169,8 +169,8 @@ public class PFMemberTest {
         PFMember member = PFMember.fetchExistingMember(id1);
         assertEquals(id1, member.getId());
         assertEquals(USERNAME, member.getUsername());
-        assertEquals(FIRST_NAME, member.getFirstname());
-        assertEquals(LAST_NAME, member.getLastname());
+        assertEquals(FIRST_NAME, member.getFirstName());
+        assertEquals(LAST_NAME, member.getLastName());
         assertEquals("", member.getAbout());
         assertEquals("0", member.getPhoneNumber());
         assertNull(member.getPicture());
