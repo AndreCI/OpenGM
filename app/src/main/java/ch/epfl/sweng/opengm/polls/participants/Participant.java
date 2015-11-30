@@ -19,7 +19,7 @@ class Participant implements Comparable<Participant> {
         this.participants = new ArrayList<>();
         this.participants.add(member);
         this.isGroup = false;
-        this.prefix = member.getFirstname().substring(0, 1).concat(member.getLastname().substring(0, 1)).toUpperCase();
+        this.prefix = member.getFirstName().substring(0, 1).concat(member.getLastName().substring(0, 1)).toUpperCase();
         this.info = member.getUsername();
         this.name = member.getDisplayedName();
     }
