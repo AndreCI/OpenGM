@@ -40,7 +40,6 @@ public class MembersActivity extends AppCompatActivity {
     private PFGroup group;
     private MembersAdapter adapter;
     private List<PFMember> members;
-    private int groupIndex;
     private boolean selectMode;
 
     public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
@@ -50,10 +49,8 @@ public class MembersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_members);
 
-        // get the group in which we are
-        groupIndex = getIntent().getIntExtra(GROUP_INDEX, -1);
         PFUser user = OpenGMApplication.getCurrentUser();
-        group = user.getGroups().get(groupIndex);
+        group = OpenGMApplication.getCurrentGroup();
         members = new ArrayList<>();
         members.add(group.getMember(user.getId()));
         members.addAll(group.getMembersWithoutUser(user.getId()));
@@ -171,7 +168,6 @@ public class MembersActivity extends AppCompatActivity {
             setSelectMode(false);
         } else {
             Intent i = new Intent();
-            i.putExtra(GROUP_INDEX, groupIndex);
             setResult(RESULT_OK, i);
             finish();
         }
@@ -205,7 +201,6 @@ public class MembersActivity extends AppCompatActivity {
 
         if (!userIds.isEmpty()) {
             Intent intent = new Intent(this, ManageRolesActivity.class);
-            intent.putExtra(ManageRolesActivity.GROUP_ID, group.getId());
             intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, userIds);
             startActivityForResult(intent, 1);
         } else {

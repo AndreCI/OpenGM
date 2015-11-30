@@ -23,6 +23,10 @@
             android:icon="@android:drawable/ic_menu_more"
             android:title="Messages" />
         <item
+            android:id="@+id/nav_polls"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="Polls" />
+        <item
             android:id="@+id/nav_manage"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="Manage group" />

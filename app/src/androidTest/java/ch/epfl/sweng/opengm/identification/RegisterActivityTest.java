@@ -74,14 +74,14 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
 
         //empty password2
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
 
         //empty firstname
@@ -121,42 +121,42 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
         //short password1
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.short_password_activity_register), true)));
 
         //long password1
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.long_password_activity_register), true)));
 
         //all caps password1
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("1AAAAAAAAAAAAA"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.case_password_activity_register), true)));
 
         //without caps password1
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("1aaaaaaaaaaaa"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.case_password_activity_register), true)));
 
         //without numbers password1
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("Aaaaaaaaaaaa"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.no_number_password_activity_register), true)));
 
         //without letters password1
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("123456789"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.no_letter_password_activity_register), true)));
 
         //password not correct
@@ -167,7 +167,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
         onView(withId(R.id.register_password2)).perform(clearText());
         onView(withId(R.id.button_signup)).perform(click());
-        activity.dismisssPopUp();
+        activity.dismissPopUp();
         onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
         onView(withId(R.id.register_password2)).perform(typeText(PASSWORD_CORRECT));
         closeSoftKeyboard();

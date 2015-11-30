@@ -11,30 +11,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
-import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
-import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.MembersActivity.GROUP_INDEX;
 import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String CHOSEN_GROUP_KEY = "ch.epfl.ch.opengm.groups.groupshomeactivity.groupidx";
-
     DrawerLayout drawer;
 
     private PFGroup currentGroup;
-
-    private ListView mEventLists;
-
-    private int groupPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +34,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_groups_home);
 
-        Intent comingIntent = getIntent();
-
-        groupPos = comingIntent.getIntExtra(CHOSEN_GROUP_KEY, 0);
-
-        currentGroup = getCurrentUser().getGroups().get(groupPos);
+        currentGroup = OpenGMApplication.getCurrentGroup();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -55,13 +43,8 @@ public class GroupsHomeActivity extends AppCompatActivity
         TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
         descriptionView.setText(currentGroup.getDescription());
 
-        NavigationView navView = (NavigationView) drawer.findViewById(R.id.nav_view);
-
-        mEventLists = (ListView) navView.findViewById(R.id.listViewEvents);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddMember);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,34 +68,43 @@ public class GroupsHomeActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            OpenGMApplication.setCurrentGroup(-1);
         }
+    }
+
+    public void onManageGroup(View v){
+        Intent intent = new Intent(this, CreateEditGroupActivity.class);
+        startActivityForResult(intent, RESULT_FIRST_USER);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
         switch (item.getItemId()) {
             case R.id.nav_leave:
                 LeaveGroupDialogFragment leaveGroupDialog = new LeaveGroupDialogFragment().setGroupToLeave(currentGroup);
                 leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
                 break;
             case R.id.nav_home:
+                OpenGMApplication.setCurrentGroup(-1);
                 startActivity(new Intent(GroupsHomeActivity.this, MyGroupsActivity.class).putExtra(RELOAD_USER_KEY, false));
                 break;
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class).putExtra(GROUP_INDEX, groupPos), 1);
+                startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class), 1);
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
-                intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
                 break;
             case R.id.nav_manage:
+                break;
+            case R.id.nav_polls:
+                Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
+                startActivity(intent1);
                 break;
             case R.id.nav_my_settings:
                 break;
@@ -129,7 +121,9 @@ public class GroupsHomeActivity extends AppCompatActivity
         switch (requestCode) {
             // stay in the correct group home, comming back from MembersActivity
             case 1:
-                groupPos = data.getIntExtra(GROUP_INDEX, -1);
+                setTitle(currentGroup.getName());
+                TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+                descriptionView.setText(currentGroup.getDescription());
                 break;
             default:
         }

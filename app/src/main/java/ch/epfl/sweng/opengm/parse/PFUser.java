@@ -9,7 +9,6 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 
@@ -45,6 +44,8 @@ public final class PFUser extends PFEntity {
 
     private List<PFGroup> mGroups;
 
+    private List<String> mGroupsId;
+
     private String mEmail;
     private String mUsername;
     private String mFirstName;
@@ -53,7 +54,14 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    private PFUser(String userId, Date date, String phoneNumber, String email, String username, String firstName, String lastName, String aboutUser, Bitmap picture, List<String> groups) throws PFException {
+    public PFUser(Parcel in){
+        super(in, PARSE_TABLE_USER);
+    }
+
+    private PFUser(String userId, Date date, String phoneNumber, String email, String username,
+                   String firstName, String lastName, String aboutUser, Bitmap picture,
+                   List<String> groups) throws PFException {
+
         super(userId, PARSE_TABLE_USER, date);
         this.mEmail = email;
         this.mUsername = username;
@@ -62,14 +70,20 @@ public final class PFUser extends PFEntity {
         this.mPhoneNumber = phoneNumber;
         this.mAboutUser = aboutUser;
         this.mGroups = new ArrayList<>();
-        for (String groupId : groups) {
-            try {
-                mGroups.add(PFGroup.fetchExistingGroup(groupId));
-            } catch (PFException e) {
-                throw new PFException("Error while retrieving the existing group with id " + groupId);
-            }
-        }
+        this.mGroupsId = new ArrayList<>(groups);
+
         this.mPicture = picture;
+    }
+
+
+    public List<String> getGroupsIds() {
+        return mGroupsId;
+    }
+
+    public PFGroup fetchGroupWithId(String groupId) throws PFException {
+        PFGroup newGroup = PFGroup.fetchExistingGroup(groupId);
+        mGroups.add(newGroup);
+        return newGroup;
     }
 
     @Override
@@ -86,12 +100,10 @@ public final class PFUser extends PFEntity {
                 mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 mAboutUser = object.getString(USER_ENTRY_ABOUT);
 
-                ParseObject mailObject = null;
-
                 ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
 
                 try {
-                    mailObject = mailQuery.get(getId());
+                    ParseObject mailObject = mailQuery.get(getId());
                     mEmail = mailObject.getString(_USER_TABLE_EMAIL);
                 } catch (ParseException pe) {
                     // Do nothing
@@ -102,23 +114,18 @@ public final class PFUser extends PFEntity {
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
 
-                HashSet<String> oldGroups = new HashSet<>();
-                for (PFGroup group : mGroups) {
-                    oldGroups.add(group.getId());
-                }
-
-                if (!oldGroups.equals(new HashSet<>(groups))) {
-                    for (String groupId : groups) {
+                for (String groupId : groups) {
+                    if (!mGroupsId.contains(groupId)){
                         try {
                             mGroups.add(PFGroup.fetchExistingGroup(groupId));
+                            mGroupsId.add(groupId);
                         } catch (PFException e) {
                             throw new PFException("Error while retrieving the existing group with id " + groupId);
                         }
                     }
+
                 }
             }
-            for (PFGroup group : mGroups)
-                group.reload();
         } catch (ParseException e) {
             throw new PFException(e);
         }
@@ -159,27 +166,17 @@ public final class PFUser extends PFEntity {
                                 object.put(USER_ENTRY_PICTURE, mPicture);
                                 break;
                             case USER_ENTRY_GROUPS:
-                                object.put(USER_ENTRY_GROUPS, PFUtils.collectionToArray(mGroups));
+                                JSONArray array = new JSONArray();
+                                for(String groupId :mGroupsId){
+                                    array.put(groupId);
+                                }
+                                object.put(USER_ENTRY_GROUPS, array);
                                 break;
                             default:
                                 return;
                         }
-                        object.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    // FIXME: done() method canno't throw exceptions, but we want THIS method
-                                    // FIXME: updateToServer() to throw a PFException --> That we can catch e.g in the setters.
-                                    // throw new ParseException("No object for the selected id.");
-                                }
-                            }
-                        });
-                    } else {
-                        //erreur server
-                        // throw new ParseException(1,"");
+                        object.saveInBackground();
                     }
-                } else {
-                    // throw new ParseException("Error while sending the request to the server");
                 }
             }
         });
@@ -267,10 +264,12 @@ public final class PFUser extends PFEntity {
     public void addToAGroup(PFGroup group) throws PFException {
         if (!belongToGroup(group.getId())) {
             mGroups.add(group);
+            mGroupsId.add(group.getId());
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
                 mGroups.remove(group);
+                mGroupsId.remove(group.getId());
                 throw new PFException();
             }
         }
@@ -287,11 +286,13 @@ public final class PFUser extends PFEntity {
             PFGroup group = mGroups.get(getGroupIdx(groupId));
             group.removeUser(getId());
             mGroups.remove(group);
+            mGroupsId.remove(group.getId());
             try {
                 updateToServer(USER_ENTRY_GROUPS);
             } catch (PFException e) {
                 group.addUserWithId(getId());
                 mGroups.add(group);
+                mGroupsId.add(group.getId());
                 throw new PFException();
             }
         }
@@ -452,12 +453,7 @@ public final class PFUser extends PFEntity {
      * @return True if the user belongs to this group, false otherwise
      */
     private boolean belongToGroup(String groupId) {
-        for (PFGroup g : mGroups) {
-            if (g.getId().equals(groupId)) {
-                return true;
-            }
-        }
-        return false;
+        return mGroupsId.contains(groupId);
     }
 
     /**
@@ -497,13 +493,14 @@ public final class PFUser extends PFEntity {
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
-                List<String> groups = (groupsArray == null ? new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
-                return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username, firstName, lastName, description, picture[0], groups);
+                List<String> groups = (groupsArray == null ?
+                        new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
+                return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username,
+                        firstName, lastName, description, picture[0], groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
-            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }
@@ -518,7 +515,9 @@ public final class PFUser extends PFEntity {
      * @return The new user that contains all the given parameters
      * @throws PFException If something wrong happened with the server
      */
-    public static PFUser createNewUser(String id, String email, String phoneNumber, String username, String firstName, String lastName) throws PFException {
+    public static PFUser createNewUser(String id, String email, String phoneNumber,
+                                       String username, String firstName, String lastName)
+            throws PFException {
         ParseObject parseObject = new ParseObject(USER_TABLE_NAME);
         parseObject.put(USER_ENTRY_USERID, id);
         parseObject.put(USER_ENTRY_USERNAME, username);
@@ -529,7 +528,8 @@ public final class PFUser extends PFEntity {
         parseObject.put(USER_ENTRY_ABOUT, "");
         try {
             parseObject.save();
-            return new PFUser(id, parseObject.getUpdatedAt(), phoneNumber, email, username, firstName, lastName, "", null, new ArrayList<String>());
+            return new PFUser(id, parseObject.getUpdatedAt(), phoneNumber, email, username,
+                    firstName, lastName, "", null, new ArrayList<String>());
         } catch (ParseException e) {
             throw new PFException();
         }
@@ -542,6 +542,18 @@ public final class PFUser extends PFEntity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
     }
+
+    public static final Creator<PFUser> CREATOR = new Creator<PFUser>() {
+        @Override
+        public PFUser createFromParcel(Parcel in) {
+            return new PFUser(in);
+        }
+
+        @Override
+        public PFUser[] newArray(int size) {
+            return new PFUser[size];
+        }
+    };
+
 }

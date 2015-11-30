@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:id="@+id/createPoll_outmostLayout"
+    tools:context="ch.epfl.sweng.opengm.polls.CreatePollActivity">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="100">
+
+        <EditText
+            android:id="@+id/namePollEditText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:hint="@string/EventNameTextHint"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/descriptionPollEditText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:hint="@string/EventDescriptionTextHint"
+            android:maxLines="3"
+            android:minLines="3"
+            android:textAlignment="gravity" />
+
+        <ListView
+            android:id="@+id/answersPollListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="40" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/rounded_buttons"
+            android:layout_weight="10"
+            android:id="@+id/add_answer_poll"
+            android:onClick="addAnswer"
+            android:textColor="@color/white"
+            android:text="Add an answer" />
+
+        <LinearLayout
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="50"
+                android:background="@drawable/rounded_buttons"
+                android:id="@+id/deadlineButton"
+                android:textColor="@color/white"
+                android:onClick="setDeadline"
+                android:text="Deadline" />
+
+            <Button
+                android:id="@+id/participantsButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="50"
+                android:background="@drawable/rounded_buttons"
+                android:textColor="@color/white"
+                android:onClick="addParticipants"
+                android:text="Participants" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="50"
+                android:gravity="center"
+                android:text="@string/possible_answers_poll"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/nOfAnswers_textView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="20"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="15"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/rounded_buttons"
+                android:text="@string/minus_poll"
+                android:textColor="@color/white"
+                android:onClick="decreasePossibleAnswers"
+                android:textSize="40sp" />
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="0dp"
+                android:background="@drawable/rounded_buttons"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:text="@string/plus_poll"
+                android:textColor="@color/white"
+                android:layout_weight="15"
+                android:onClick="increasePossibleAnswers"
+                android:textSize="40sp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

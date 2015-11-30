@@ -60,8 +60,12 @@ public final class PFMember extends PFEntity implements Parcelable {
 
     private String mNickname;
 
-    private PFMember(String id, Date date, String username, String firstName, String lastName, String nickname, String email, String phoneNumber, String about, Bitmap bitmap, List<String> roles, List<String> groups) {
+    private PFMember(String id, Date date, String username, String firstName, String lastName,
+                     String nickname, String email, String phoneNumber, String about,
+                     Bitmap bitmap, List<String> roles, List<String> groups) {
+
         super(id, PARSE_TABLE_USER, date);
+
         this.mUsername = username;
         this.mFirstName = firstName;
         this.mLastName = lastName;
@@ -127,23 +131,23 @@ public final class PFMember extends PFEntity implements Parcelable {
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
                 if (e == null && object != null) {
-                        JSONArray array = new JSONArray();
-                        for (String groupId : mGroups) {
-                            array.put(groupId);
-                        }
-                        object.put(USER_ENTRY_GROUPS, array);
-                        object.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    // throw new ParseException("No object for the selected id.");
-                                } else {
-                                }
-                            }
-                        });
-                    } else {
-                        // throw new ParseException("No object for the selected id.");
+                    JSONArray array = new JSONArray();
+                    for (String groupId : mGroups) {
+                        array.put(groupId);
                     }
+                    object.put(USER_ENTRY_GROUPS, array);
+                    object.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                // throw new ParseException("No object for the selected id.");
+                            } else {
+                            }
+                        }
+                    });
+                } else {
+                    // throw new ParseException("No object for the selected id.");
+                }
             }
         });
 
@@ -232,6 +236,14 @@ public final class PFMember extends PFEntity implements Parcelable {
      */
     public Bitmap getPicture() {
         return mPicture;
+    }
+
+    public boolean hasRole(String role) {
+        return mRoles.contains(role);
+    }
+
+    public String getDisplayedName() {
+        return mFirstName + " " + mLastName;
     }
 
     /**
@@ -326,7 +338,6 @@ public final class PFMember extends PFEntity implements Parcelable {
                 try {
                     mailObject = mailQuery.get(id);
                 } catch (ParseException pe) {
-                    Log.v("Parse exception", "mail not set");
                     // Do nothing
                 }
 
@@ -336,7 +347,9 @@ public final class PFMember extends PFEntity implements Parcelable {
                 retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName, nickName == null ? username : nickName, email, phoneNumber, description, picture[0], Arrays.asList(roles), groups);
+                return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
+                        nickName == null ? username : nickName, email, phoneNumber, description,
+                        picture[0], Arrays.asList(roles), groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -399,4 +412,5 @@ public final class PFMember extends PFEntity implements Parcelable {
             return new PFMember[size];
         }
     };
+
 }

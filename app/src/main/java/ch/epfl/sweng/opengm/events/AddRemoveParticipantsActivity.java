@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +27,7 @@ import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class AddRemoveParticipantsActivity extends AppCompatActivity {
@@ -41,8 +40,10 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_remove_participants);
         Intent intent = getIntent();
-        PFGroup currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        PFGroup currentGroup = getCurrentGroup();
         PFEvent currentEvent = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        setTitle("Adding participants for Event"); //DONOT ADD currentEvent.name() or it will probably fail
+
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
         if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
             membersToAdd.putAll(currentEvent.getParticipants());
@@ -51,9 +52,6 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         if (currentGroup != null && currentGroup.hasMembers()) {
             allMembers.putAll(currentGroup.getMembers());
         }
-
-        Log.v("group member size", Integer.toString(currentGroup.getMembers().size()));
-        Log.v("currentEvent members", Integer.toString(membersToAdd.size()));
 
         List<CheckParticipant> checkParticipants = new ArrayList<>(allMembers.size());
 

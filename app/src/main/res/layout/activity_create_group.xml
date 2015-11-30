@@ -3,7 +3,7 @@
     android:id="@+id/create_group_outmostLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ch.epfl.sweng.opengm.groups.CreateGroupActivity">
+    tools:context=".groups.CreateEditGroupActivity">
 
     <ImageView
         android:layout_width="match_parent"
@@ -57,6 +57,21 @@
             android:paddingRight="50dp"
             android:text="@string/chooseGroupPhoto"
             android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/createGroupsMembersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="10"
+            android:background="@drawable/rounded_buttons"
+            android:onClick="manageMembers"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/create_groups_members"
+            android:textColor="#ffffff"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/doneGroupCreate"

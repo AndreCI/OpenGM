@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -86,7 +85,6 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("CHANGED", s + "");
                 mEditCountry.setText(getCountryForCode(mEditCode.getText().toString()));
             }
 
@@ -132,7 +130,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
         return cc == null ? getString(R.string.invalid_phone_number) : cc.getCountry();
     }
 
-    public void showCodeList(View v) {
+    public void showCodeList(@SuppressWarnings("UnusedParameters") View v) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(R.string.title_phone_number);
@@ -142,7 +140,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
         list = (ListView) view.findViewById(R.id.listView_coutrycodes);
 
-        mAdapter = new CountryCodeAdapter(view.getContext(), R.layout.item_countrycode, countryCodes);
+        mAdapter = new CountryCodeAdapter(view.getContext(), countryCodes);
         list.setAdapter(mAdapter);
 
 
@@ -178,6 +176,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("SameReturnValue")
     private boolean showResult(View view, String query) {
         Collections.sort(mAdapter.getObjects(), sortList(query));
         List<CountryCode> displayedCc = new ArrayList<>();
@@ -186,7 +185,7 @@ public class PhoneAddingActivity extends AppCompatActivity {
                 displayedCc.add(cc);
             }
         }
-        list.setAdapter(new CountryCodeAdapter(view.getContext(), R.layout.item_countrycode, displayedCc));
+        list.setAdapter(new CountryCodeAdapter(view.getContext(), displayedCc));
         return true;
     }
 

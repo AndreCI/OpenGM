@@ -7,6 +7,25 @@
     tools:context="ch.epfl.sweng.opengm.events.EventListActivity">
 
     <RelativeLayout
+        android:id="@+id/EventListLoadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/EventListLoadingCircle"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/EventListLoadingCircle"
+            android:layout_centerHorizontal="true"
+            android:text="Loading... Please wait."/>
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/Screen">
@@ -15,6 +34,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/eventListBottomLayout">
+        <ScrollView
+            android:id="@+id/scrollView4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/line3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            </LinearLayout>
+
+            </ScrollView>
     </RelativeLayout>
         <LinearLayout
             android:id="@+id/eventListBottomLayout"
@@ -36,10 +67,14 @@
                 android:onClick="clickOnAddButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_centerHorizontal="true" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Refresh"
+                android:onClick="clickOnRefreshButton"
+                android:id="@+id/eventListRefreshButton"/>
         </LinearLayout>
+
     </RelativeLayout>
-
-
 </RelativeLayout>

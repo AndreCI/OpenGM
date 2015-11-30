@@ -23,7 +23,7 @@
         android:text="@string/invite_contact"
         android:id="@+id/textView"
         android:layout_weight="10"
-        android:allowUndo="false"
+        android:gravity="center"
         android:layout_gravity="center"
         android:textAlignment="center"
         android:onClick="showPhoneContact" />

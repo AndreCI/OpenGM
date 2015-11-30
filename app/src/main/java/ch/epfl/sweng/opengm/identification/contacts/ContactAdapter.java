@@ -12,18 +12,18 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 
-public class ContactAdapter extends ArrayAdapter<Contact> {
+class ContactAdapter extends ArrayAdapter<Contact> {
 
     private final Context context;
-    private final int ressource;
+    private final int resource;
     private final List<Contact> objects;
     private final boolean appContact;
 
 
-    public ContactAdapter(Context context, int resource, List<Contact> objects, boolean appContact) {
-        super(context, resource, objects);
+    public ContactAdapter(Context context, List<Contact> objects, boolean appContact) {
+        super(context, R.layout.item_contact, objects);
         this.context = context;
-        this.ressource = resource;
+        this.resource = R.layout.item_contact;
         this.objects = objects;
         this.appContact = appContact;
     }
@@ -38,7 +38,7 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         ContactHolder holder;
 
         if (row == null) {
-            row = ((Activity) context).getLayoutInflater().inflate(ressource, parent, false);
+            row = ((Activity) context).getLayoutInflater().inflate(resource, parent, false);
             holder = new ContactHolder(row);
             row.setTag(holder);
         } else {

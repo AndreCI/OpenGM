@@ -3,9 +3,11 @@ package ch.epfl.sweng.opengm.groups;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,23 +19,11 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdapter.GroupViewHolder>{
 
-    public static class GroupViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
-        TextView groupName;
-        ImageView groupPhoto;
-
-        GroupViewHolder(View itemView) {
-            super(itemView);
-            cardView = (CardView) itemView.findViewById(R.id.group_card_view);
-            groupName = (TextView) itemView.findViewById(R.id.group_name);
-            groupPhoto = (ImageView) itemView.findViewById(R.id.group_photo);
-        }
-    }
 
     List<PFGroup> groups;
     DisplayMetrics screenMetrics;
 
-    GroupCardViewAdapter(List<PFGroup> groups, DisplayMetrics metrics){
+    GroupCardViewAdapter(List<PFGroup> groups, DisplayMetrics metrics) {
         this.groups = groups;
         this.screenMetrics = metrics;
     }
@@ -60,12 +50,29 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
 
         holder.cardView.setTag(position);
         holder.groupName.setText(groups.get(position).getName());
+
 //        holder.groupPhoto.setImageResource(groups.get(position).getPhoto);
+        holder.itemView.setLongClickable(true);
+
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    public class GroupViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
+        TextView groupName;
+        ImageView groupPhoto;
+
+        GroupViewHolder(View itemView) {
+            super(itemView);
+            cardView = (CardView) itemView.findViewById(R.id.group_card_view);
+            groupName = (TextView) itemView.findViewById(R.id.group_name);
+            groupPhoto = (ImageView) itemView.findViewById(R.id.group_photo);
+        }
+
     }
 
 }

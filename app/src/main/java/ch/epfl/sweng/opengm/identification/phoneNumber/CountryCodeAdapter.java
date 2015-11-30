@@ -2,7 +2,6 @@ package ch.epfl.sweng.opengm.identification.phoneNumber;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -12,17 +11,17 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 
-public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
+class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
 
-    private Context context;
-    private int ressource;
-    private List<CountryCode> objects;
+    private final Context context;
+    private final int resource;
+    private final List<CountryCode> objects;
 
 
-    public CountryCodeAdapter(Context context, int resource, List<CountryCode> objects) {
-        super(context, resource, objects);
+    public CountryCodeAdapter(Context context, List<CountryCode> objects) {
+        super(context, R.layout.item_countrycode, objects);
         this.context = context;
-        this.ressource = resource;
+        this.resource = R.layout.item_countrycode;
         this.objects = objects;
     }
 
@@ -36,7 +35,7 @@ public class CountryCodeAdapter extends ArrayAdapter<CountryCode> {
         CountryCodeHolder holder;
 
         if (row == null) {
-            row = ((Activity) context).getLayoutInflater().inflate(ressource, parent, false);
+            row = ((Activity) context).getLayoutInflater().inflate(resource, parent, false);
             holder = new CountryCodeHolder(row);
             row.setTag(holder);
         } else {
