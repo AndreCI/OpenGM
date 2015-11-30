@@ -8,9 +8,6 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
 import org.junit.After;
 
 import java.util.ArrayList;
@@ -18,7 +15,6 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
@@ -29,6 +25,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 
 public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRolesActivity>{
     private ListView listView;
@@ -73,6 +70,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
 
     @After
     public void tearDown() throws Exception {
+        OpenGMApplication.setCurrentGroup(-1);
         cleanUpDBAfterTests();
         OpenGMApplication.logOut();
         super.tearDown();
@@ -250,7 +248,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         boolean result2 = rolesForAdditional.contains(ROLE_FOR_BOTH);
         boolean result3 = !rolesForAdditional.contains(NEW_TEST_ROLE_PREFIX);
 
-        deleteUserFromDatabase(additionalUser.getId());
+        deleteUserWithId(additionalUser.getId());
         assertTrue(result);
         assertTrue(result0);
         assertTrue(result1);
@@ -433,22 +431,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withText(ADD_BUTTON)).perform(click());
     }
 
-    private void deleteUserFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
-        ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.USER_TABLE_NAME);
-        query1.whereEqualTo(PFConstants.USER_ENTRY_USERID, id);
-        ParseObject user1 = query1.getFirst();
-        user1.delete();
-        Thread.sleep(1000);
-    }
-
-    private void deleteGroupFromDatabase(String id) throws com.parse.ParseException, InterruptedException {
-        ParseQuery<ParseObject> query1 = ParseQuery.getQuery(PFConstants.GROUP_TABLE_NAME);
-        query1.whereEqualTo(PFConstants.OBJECT_ID, id);
-        ParseObject user1 = query1.getFirst();
-        user1.delete();
-        Thread.sleep(1000);
-    }
-
     private void prepareIntentAndDatabase(int numUser) throws PFException, InterruptedException {
         Intent intent = new Intent();
         setUpTestingEnvironment(numUser);
@@ -459,7 +441,6 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         }
 
         intent.putStringArrayListExtra(ManageRolesActivity.USER_IDS, testUsersIds);
-        intent.putExtra(ManageRolesActivity.GROUP_INDEX, 0);
 
         setActivityIntent(intent);
     }
@@ -468,14 +449,13 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testUsers = new ArrayList<>();
 
         PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
-        OpenGMApplication.setCurrentUser(firstUser.getId());
+        OpenGMApplication.setCurrentUserWithId(firstUser.getId());
         testUsers.add(firstUser);
 
 
         testGroup = PFGroup.createNewGroup(OpenGMApplication.getCurrentUser(), TEST_GROUP_NAME_PREFIX, TEST_GROUP_DESC_PREFIX, null);
+        OpenGMApplication.setCurrentGroup(testGroup);
         Thread.sleep(1000);
-
-        testGroup = OpenGMApplication.getCurrentUser().getGroups().get(0);
 
         for(int i = 1; i < numUser; i++) {
             testUsers.add(PFUser.createNewUser(TEST_USER_ID_PREFIX + i, TEST_USER_MAIL_PREFIX + i + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + i, TEST_USER_FIRST_PREFIX + i, TEST_USER_LAST_PREFIX + i));
@@ -484,10 +464,10 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
     }
 
     private void cleanUpDBAfterTests() throws com.parse.ParseException, InterruptedException {
+        testGroup.deleteGroup();
         for(PFUser testUser : testUsers){
-            deleteUserFromDatabase(testUser.getId());
+            deleteUserWithId(testUser.getId());
         }
-        deleteGroupFromDatabase(testGroup.getId());
     }
 
     private boolean databaseRolesMatchesView() throws PFException {

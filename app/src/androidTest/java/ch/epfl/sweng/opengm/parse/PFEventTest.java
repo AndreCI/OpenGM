@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +76,7 @@ public class PFEventTest {
         participants = new ArrayList<>();
         participants.add(member);
         try {
-            event = PFEvent.createEvent(group, NAME, PLACE, DATE, participants, DESCRIPTION, PICTURE);
+            event = PFEvent.createEvent(group, NAME, PLACE, DATE, participants, "", "", DESCRIPTION, PICTURE);
         } catch (PFException e) {
             e.printStackTrace();
         }

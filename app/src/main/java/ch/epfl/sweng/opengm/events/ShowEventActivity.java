@@ -19,6 +19,8 @@ import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUtils;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
+
 public class ShowEventActivity extends AppCompatActivity {
 
     public final static int SHOW_EVENT_RESULT_CODE = 1000;
@@ -33,7 +35,7 @@ public class ShowEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_event);
 
         Intent intent = getIntent();
-        currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
+        currentGroup = getCurrentGroup();
         event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         setTitle("Event : "+event.getName() + " for the group : "+currentGroup.getName());

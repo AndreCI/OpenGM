@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/graphLayout"
+    android:orientation="vertical"
+    android:weightSum="100"
+    android:background="@drawable/createbackground"
+    tools:context="ch.epfl.sweng.opengm.polls.PollResultActivity">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="60">
+
+        <ch.epfl.sweng.opengm.polls.results.HoloGraphLibrary.BarGraph
+            android:id="@+id/barGraph"
+            android:layout_width="match_parent"
+            android:onClick="changeGraph"
+            android:layout_height="match_parent" />
+
+        <ch.epfl.sweng.opengm.polls.results.HoloGraphLibrary.PieGraph
+            android:id="@+id/pieGraph"
+            android:onClick="changeGraph"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/results_colors_listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="40" />
+
+</LinearLayout>

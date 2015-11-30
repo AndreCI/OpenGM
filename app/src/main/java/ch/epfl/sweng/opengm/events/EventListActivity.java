@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -21,6 +20,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -42,19 +42,12 @@ public class EventListActivity extends AppCompatActivity {
         setTitle("List of your events");
         findViewById(R.id.Screen).setVisibility(View.GONE);
         findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Intent intent = getIntent();
-                       /* new Intent(Utils.GROUP_INTENT_MESSAGE);
+                currentGroup = OpenGMApplication.getCurrentGroup();
 
-                try {
-                    intent.putExtra(Utils.GROUP_INTENT_MESSAGE, PFGroup.fetchExistingGroup("TXxysfyRqV"));
-                } catch (PFException e) {
-                    e.printStackTrace();
-                }*/
-                currentGroup = intent.getParcelableExtra(Utils.GROUP_INTENT_MESSAGE);
-                Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
                 eventMap = new ArrayMap<>();
                 for(PFEvent e : currentGroup.getEvents()){
                     eventMap.put(e.getId(), e);
@@ -78,9 +71,8 @@ public class EventListActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 boolean edited = eventIntent.getBooleanExtra(Utils.EDIT_INTENT_MESSAGE, false);
-                Log.v("event from parcel", event.getId());
+
                 if(NetworkUtils.haveInternet(getBaseContext())) {
-                    Log.v("event id", event.getId());
                     try {
                         if(edited) {
                             currentGroup.updateEvent(event);
@@ -102,14 +94,14 @@ public class EventListActivity extends AppCompatActivity {
             }
             if(resultCode == Utils.DELETE_EVENT){
                 PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+
                 if(NetworkUtils.haveInternet(getBaseContext())) {
-                    Log.v("event id", event.getId());
                     try {
                        currentGroup.removeEvent(event);
                     } catch (PFException e) {
                         e.printStackTrace();
                     }
-                    (Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT)).show();
+                    Toast.makeText(getApplicationContext(), "Event deleted sucessfully", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "Couldn't delete the event. Refresh later.",Toast.LENGTH_SHORT).show();
                 }
@@ -245,7 +237,6 @@ public class EventListActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ShowEventActivity.class);
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 }

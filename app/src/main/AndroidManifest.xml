@@ -135,6 +135,8 @@
             android:name=".messages.CreateNewConversationActivity"
             android:label="@string/title_activity_create_new_conversation">
         </activity>
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".polls.PollResultActivity"></activity>
     </application>
 
 </manifest>
