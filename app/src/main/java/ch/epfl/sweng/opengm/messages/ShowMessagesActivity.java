@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.parse.ParseException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +28,6 @@ import java.util.List;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConversation;
-
-import static ch.epfl.sweng.opengm.messages.Utils.writeMessageLocal;
 
 /**
  * Created by virgile on 18/11/2015.
@@ -40,26 +37,22 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private ListView messageList;
     private List<MessageAdapter> messages;
     private EditText textBar;
-    private String path;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_messages);
+        messages = new ArrayList<>();
         Intent intent = getIntent();
         conversation = intent.getParcelableExtra(Utils.FILE_INFO_INTENT_MESSAGE);
         messageList = (ListView) findViewById(R.id.message_list);
         textBar = (EditText) findViewById(R.id.message_text_bar);
         textBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -71,7 +64,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 }
             }
         });
-        path = new File(getFilesDir(), conversation.getConversationName()).getAbsolutePath();
         fillMessages();
 
         textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -93,17 +85,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
         if(!message.isEmpty()) {
             Log.v("ShowMessage sendMessage", message);
             MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
-            try {
-                conversation.writeMessage(OpenGMApplication.getCurrentUser().getFirstName(), message);
-            } catch (IOException|ParseException e) {
-                Log.e("show message activity", "couldn't write message to conversation");
-            }
+            new SendMessage().execute(message);
             editText.setText("");
             messages.add(messageAdapter);
-            //messageList.setAdapter(new CustomAdapter(this, R.layout.message_info));
-        /* TODO: get back text from textBar + send it.
-         * do it in back ground on the serv and localy while instantly adding it to the layout
-         */
         }
     }
 
@@ -131,18 +115,18 @@ public class ShowMessagesActivity extends AppCompatActivity {
             List<String> strings = null;
             try {
                 strings = Utils.readMessagesFile(params[0]);
+                messages = new ArrayList<>();
+                String firstLine = strings.remove(0); //info of conv
+                Log.v("ShowMessages readFile", "first line :" + firstLine);
+                for(String s : strings) {
+                    Log.v("ShowMessages readFile", s);
+                    String[] data = Utils.extractMessage(s);
+                    MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
+                    messages.add(messageAdapter);
+                    Log.v("ShowMessages readFile", messageAdapter.toString());
+                }
             } catch (IOException e) {
                 Log.v("ShowMessageActivity", "couldn't read file "+params[0]);
-            }
-            messages = new ArrayList<>();
-            String firstLine = strings.remove(0); //info of conv
-            Log.v("ShowMessages readFile", "first line :" + firstLine);
-            for(String s : strings) {
-                Log.v("ShowMessages readFile", s);
-                String[] data = Utils.extractMessage(s);
-                MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
-                messages.add(messageAdapter);
-                Log.v("ShowMessages readFile", messageAdapter.toString());
             }
             return new CustomAdapter(ShowMessagesActivity.this, R.layout.message_info);
         }
@@ -154,13 +138,15 @@ public class ShowMessagesActivity extends AppCompatActivity {
         }
     }
 
-    class UploadMessage extends AsyncTask<String, Void, Void> {
+    class SendMessage extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
-           /* TODO: get back text from textBar + send it.
-            * do it in back ground on the serv and localy while instantly adding it to the layout
-            */
+            try {
+                conversation.writeMessage(OpenGMApplication.getCurrentUser().getFirstName(), params[0]);
+            } catch (IOException|ParseException e) {
+                Log.e("show message activity", "couldn't write message to conversation");
+            }
             return null;
         }
     }
