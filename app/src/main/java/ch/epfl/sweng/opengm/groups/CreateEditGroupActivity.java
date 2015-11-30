@@ -104,6 +104,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                     if (!description.equals(initialDescription)) {
                         currentGroup.setDescription(description);
                     }
+                    currentGroup.setPicture(image);
                     setResult(RESULT_OK);
                     finish();
                 } else {

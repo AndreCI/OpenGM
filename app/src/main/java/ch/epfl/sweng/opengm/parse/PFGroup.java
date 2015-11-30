@@ -315,7 +315,7 @@ public final class PFGroup extends PFEntity {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(GROUP_TABLE_NAME);
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
-                if (e == null && object != null) {
+                if (e == null) {
                     switch (entry) {
                         case GROUP_ENTRY_NAME:
                             object.put(GROUP_ENTRY_NAME, mName);
@@ -376,14 +376,7 @@ public final class PFGroup extends PFEntity {
                         default:
                             return;
                     }
-                    object.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null) {
-                                // throw new ParseException("No object for the selected id.");
-                            }
-                        }
-                    });
+                    object.saveInBackground();
                 } else {
                     // throw new ParseException("No object for the selected id.");
                 }
@@ -811,11 +804,11 @@ public final class PFGroup extends PFEntity {
     public void setPicture(Bitmap picture) {
         if (mPicture == null || !mPicture.equals(picture)) {
             Bitmap oldPicture = mPicture;
-            this.mPicture = picture;
+            mPicture = picture;
             try {
                 updateToServer(GROUP_ENTRY_PICTURE);
             } catch (PFException e) {
-                this.mPicture = oldPicture;
+                mPicture = oldPicture;
             }
         }
     }

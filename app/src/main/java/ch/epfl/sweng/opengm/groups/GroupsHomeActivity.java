@@ -49,6 +49,8 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     private AlertDialog addMember;
 
+    private final int RESULT_EDIT = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,7 +129,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     public void onManageGroup(View v){
         Intent intent = new Intent(this, CreateEditGroupActivity.class);
-        startActivityForResult(intent, RESULT_FIRST_USER);
+        startActivityForResult(intent, RESULT_EDIT);
     }
 
     @Override
@@ -145,7 +147,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             case R.id.nav_group_overview:
                 break;
             case R.id.nav_members:
-                startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class), 1);
+                startActivity(new Intent(GroupsHomeActivity.this, MembersActivity.class));
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
@@ -172,11 +174,13 @@ public class GroupsHomeActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            // stay in the correct group home, comming back from MembersActivity
-            case 1:
+            // handle back from edit
+            case RESULT_EDIT:
                 setTitle(currentGroup.getName());
                 TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
                 descriptionView.setText(currentGroup.getDescription());
+                ImageView groupImage = (ImageView)findViewById(R.id.group_image);
+                groupImage.setImageBitmap(currentGroup.getPicture());
                 break;
             default:
         }
