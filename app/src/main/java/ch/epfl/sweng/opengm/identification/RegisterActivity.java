@@ -42,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
     public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registeractivity.username";
     public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registeractivity.password";
     public static final String PHONE_KEY = "ch.epfl.ch.opengm.identification.registeractivity.phone";
-    private static final int PHONE_ACT_KEY = 1061;
+    public static final int PHONE_ACT_KEY = 1061;
 
 
     private EditText mEditUsername;
@@ -240,7 +240,7 @@ public class RegisterActivity extends AppCompatActivity {
                 mEditPhone.setText(data.getStringExtra(PHONE_KEY));
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+                // Write your code if there's no result
             }
         }
     }
@@ -248,7 +248,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void showPhoneChoice(View v) {
         Intent i = new Intent(this, PhoneAddingActivity.class);
-        i.putExtra(PhoneAddingActivity.INCOMING_ACTIVITY_KEY, 1);
         startActivityForResult(i, PHONE_ACT_KEY);
     }
 }

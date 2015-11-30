@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import ch.epfl.sweng.opengm.identification.InputUtils;
+import ch.epfl.sweng.opengm.identification.RegisterActivity;
 import ch.epfl.sweng.opengm.identification.phoneNumber.PhoneAddingActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFUser;
@@ -41,9 +43,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
 
     private final PFUser currentUser = OpenGMApplication.getCurrentUser();
-
-
-    private static final int PHONE_KEY = 3945;
 
 
     @Override
@@ -78,16 +77,13 @@ public class EditUserProfileActivity extends AppCompatActivity {
             // Display phone number of user :
             mPhoneNumberEditText = (EditText) findViewById(R.id.phoneEditText);
             mPhoneNumberEditText.setText(currentUser.getPhoneNumber());
-            // TODO: link l'activité d'aurélien pour changer le numéro de téléphone.
             mPhoneNumberEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(EditUserProfileActivity.this, PhoneAddingActivity.class);
-                    i.putExtra(PhoneAddingActivity.INCOMING_ACTIVITY_KEY, 2);
-                    startActivityForResult(i, PHONE_KEY);
+                    startActivityForResult(i, RegisterActivity.PHONE_ACT_KEY);
                 }
             });
-
 
             // Display description of user :
             mDescriptionEditText = (EditText) findViewById(R.id.descriptionEditText);
@@ -136,8 +132,14 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // TODO: regarder RegisterActivity aurélien !
+        if (requestCode == RegisterActivity.PHONE_ACT_KEY) {
+            if (resultCode == Activity.RESULT_OK) {
+                mPhoneNumberEditText.setText(data.getStringExtra(RegisterActivity.PHONE_KEY));
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
+        }
     }
 
 
