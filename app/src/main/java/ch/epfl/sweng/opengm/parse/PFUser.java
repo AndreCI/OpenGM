@@ -306,8 +306,13 @@ public final class PFUser extends PFEntity {
      */
     public void setEmail(String email) throws PFException {
         if (checkArguments(email) && !email.equals(mEmail)) {
-            ParseUser.getCurrentUser().setEmail(email);
-            this.mEmail = email;
+            try {
+                ParseUser.getCurrentUser().setEmail(email);
+                ParseUser.getCurrentUser().save();
+                this.mEmail = email;
+            } catch (ParseException e) {
+                throw new PFException();
+            }
         }
     }
 
