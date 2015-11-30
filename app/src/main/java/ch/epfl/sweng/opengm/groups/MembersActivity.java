@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,12 +21,10 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.MemberProfileActivity;
-import ch.epfl.sweng.opengm.MyProfileActivity;
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.InputUtils;

@@ -1,4 +1,4 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.userProfile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +19,8 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
+import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.identification.RegisterActivity;
 import ch.epfl.sweng.opengm.identification.phoneNumber.PhoneAddingActivity;

@@ -1,24 +1,18 @@
-package ch.epfl.sweng.opengm;
+package ch.epfl.sweng.opengm.userProfile;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
-import ch.epfl.sweng.opengm.parse.PFUser;
+import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.parse.PFMember;
 
-public class MyProfileActivity extends AppCompatActivity {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_my_profile, menu);
-        return true;
-    }
+public class MemberProfileActivity extends AppCompatActivity {
+
+    public static final String MEMBER_KEY = "ch.epfl.sweng.opengm.memberprofileactivity.key";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -26,18 +20,11 @@ public class MyProfileActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            case R.id.action_edit_user_profile:
-                startActivity(new Intent(MyProfileActivity.this, EditUserProfileActivity.class));
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(MyProfileActivity.this, MyGroupsActivity.class));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +35,11 @@ public class MyProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // FIXME: Do we really need to specify if (user != null) ??? Where to put it ?
-        PFUser currentUser = OpenGMApplication.getCurrentUser();
-        if (currentUser != null) {
+        PFMember currentMember = getIntent().getParcelableExtra(MEMBER_KEY);
+
+        if (currentMember != null) {
+
+            setTitle(currentMember.getUsername() + " Profile");
 
             // Display profile picture of user :
             ImageView photoImageView = (ImageView) findViewById(R.id.userPhoto);
@@ -58,29 +47,30 @@ public class MyProfileActivity extends AppCompatActivity {
 
             // Display first name of user :
             TextView firstNameTextView = (TextView) findViewById(R.id.firstNameTV);
-            firstNameTextView.setText(currentUser.getFirstName());
+            firstNameTextView.setText(currentMember.getFirstName());
 
             // Display last name of user :
             TextView lastNameTextView = (TextView) findViewById(R.id.lastNameTV);
-            lastNameTextView.setText(currentUser.getLastName());
+            lastNameTextView.setText(currentMember.getLastName());
 
             // Display username of user :
             TextView usernameTextView = (TextView) findViewById(R.id.usernameTV);
-            usernameTextView.setText(currentUser.getUsername());
+            usernameTextView.setText(currentMember.getUsername());
 
             // Display e-mail address of user :
             TextView emailTextView = (TextView) findViewById(R.id.emailTV);
-            emailTextView.setText(currentUser.getEmail());
+            emailTextView.setText(currentMember.getEmail());
 
             // Display phone number of user :
             TextView phoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
-            phoneNumberTextView.setText(currentUser.getPhoneNumber());
+            phoneNumberTextView.setText(currentMember.getPhoneNumber());
 
             // Display description of user :
             TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTV);
-            descriptionTextView.setText(currentUser.getAboutUser());
+            descriptionTextView.setText(currentMember.getAbout());
 
         }
     }
+
 
 }

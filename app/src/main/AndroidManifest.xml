@@ -99,14 +99,14 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".MyProfileActivity"
+            android:name=".userProfile.MyProfileActivity"
             android:label="@string/title_activity_my_profile" />
         <activity
-            android:name=".EditUserProfileActivity"
+            android:name=".userProfile.EditUserProfileActivity"
             android:label="@string/title_activity_edit_user_profile"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".MemberProfileActivity"
+            android:name=".userProfile.MemberProfileActivity"
             android:label="@string/title_activity_member_profile" />
         <activity
             android:name=".polls.CreatePollActivity"

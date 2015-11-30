@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.epfl.sweng.opengm.MemberProfileActivity;
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;

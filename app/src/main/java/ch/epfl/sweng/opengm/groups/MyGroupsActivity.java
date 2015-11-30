@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ch.epfl.sweng.opengm.MyProfileActivity;
+import ch.epfl.sweng.opengm.userProfile.MyProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;

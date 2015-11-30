@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.MemberProfileActivity;
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 import ch.epfl.sweng.opengm.R;
 
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
