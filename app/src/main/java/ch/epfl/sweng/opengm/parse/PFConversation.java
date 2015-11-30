@@ -16,7 +16,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import ch.epfl.sweng.opengm.messages.ConversationInformation;
 import ch.epfl.sweng.opengm.messages.Utils;
@@ -92,9 +94,9 @@ public class PFConversation extends PFEntity {
     }
 
     private void mergeConflicts(ParseFile file, ParseFile serverFile) throws ParseException, IOException {
-        //TODO : won't work, create 2 lists and sort/merge them, then override file
-        File newFile = new File(file.getFile().getAbsolutePath().replace(".txt", "_new.txt"));
+        File newFile = new File(file.getFile().getAbsolutePath());
         PrintWriter printWriter = new PrintWriter(newFile);
+        List<String> strings = new ArrayList<>();
         BufferedReader localReader = new BufferedReader(new InputStreamReader(file.getDataStream()));
         BufferedReader remoteReader = new BufferedReader(new InputStreamReader(serverFile.getDataStream()));
         String localLine = localReader.readLine();
@@ -103,24 +105,27 @@ public class PFConversation extends PFEntity {
             ConversationInformation localInformation = Utils.stringToConversationInformation(localLine);
             ConversationInformation remoteInformation = Utils.stringToConversationInformation(remoteLine);
             if(localInformation.getConversationName().equals(remoteInformation.getConversationName())) {
-                printWriter.println(localLine);
+                strings.add(localLine);
                 localLine = localReader.readLine();
                 remoteLine = remoteReader.readLine();
             } else if(localInformation.getCreationDate().before(remoteInformation.getCreationDate())) {
-                printWriter.println(localLine);
+                strings.add(localLine);
                 localLine = localReader.readLine();
             } else {
-                printWriter.println(remoteLine);
+                strings.add(remoteLine);
                 remoteLine = remoteReader.readLine();
             }
         }
         while(localLine != null) {
-            printWriter.println(localLine);
+            strings.add(localLine);
             localLine = localReader.readLine();
         }
         while(remoteLine != null) {
-            printWriter.println(remoteLine);
+            strings.add(remoteLine);
             remoteLine = remoteReader.readLine();
+        }
+        for(String s : strings) {
+            printWriter.println(s);
         }
     }
 
