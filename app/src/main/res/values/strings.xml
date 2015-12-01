@@ -142,6 +142,15 @@
     <string name="title_activity_show_conversation_activity">ShowConversationActivity</string>
     <string name="title_activity_show_messages_activity">ShowMessagesActivity</string>
 
+    <string name="group_menu_home">Home</string>
+    <string name="group_menu_members">Members</string>
+    <string name="group_menu_events">Events</string>
+    <string name="group_menu_messages">Messages</string>
+    <string name="group_menu_polls">Polls</string>
+    <string name="group_menu_manage">Manage group</string>
+    <string name="group_menu_leave">Leave group</string>
+    <string name="group_menu_settings">My settings</string>
+
     <!-- Phones numbers -->
 
     <string-array name="countryCodes">

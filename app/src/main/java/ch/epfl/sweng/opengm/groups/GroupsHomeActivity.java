@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -88,9 +89,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_home:
                 OpenGMApplication.setCurrentGroup(-1);
-                startActivity(new Intent(GroupsHomeActivity.this, MyGroupsActivity.class).putExtra(RELOAD_USER_KEY, false));
-                break;
-            case R.id.nav_group_overview:
+                NavUtils.navigateUpFromSameTask(this);
                 break;
             case R.id.nav_members:
                 startActivityForResult(new Intent(GroupsHomeActivity.this, MembersActivity.class), 1);

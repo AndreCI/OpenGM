@@ -72,6 +72,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".groups.GroupsHomeActivity"
+            android:parentActivityName=".groups.MyGroupsActivity"
             android:label="@string/title_activity_groups_home"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
