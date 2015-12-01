@@ -383,11 +383,16 @@ public final class PFGroup extends PFEntity {
                             break;
                         case GROUP_ENTRY_PICTURE:
                             // convert bitmap to a bytes array to send it on the server
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] imageData = stream.toByteArray();
-                            ParseFile image = new ParseFile(mName + ".png", imageData);
-                            object.put(GROUP_ENTRY_PICTURE, image);
+                            if (mPicture != null) {
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] imageData = stream.toByteArray();
+                                ParseFile image = new ParseFile(mName + ".png", imageData);
+                                object.put(GROUP_ENTRY_PICTURE, image);
+                            } else {
+                                object.remove(GROUP_ENTRY_PICTURE);
+                            }
+
                             break;
                         case GROUP_ENTRY_CONVERSATIONS:
                             object.put(GROUP_ENTRY_CONVERSATIONS, mConversationInformations);
