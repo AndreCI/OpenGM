@@ -276,9 +276,16 @@ public final class PFGroup extends PFEntity {
 
                 mDescription = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
-                mPicture = picture[0];
+                // retrieve image
+                ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            mPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        }
+                    });
+                }
 
                 HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);

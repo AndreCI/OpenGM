@@ -51,7 +51,7 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
         holder.cardView.setTag(position);
         holder.groupName.setText(groups.get(position).getName());
 
-//        holder.groupPhoto.setImageResource(groups.get(position).getPhoto);
+        holder.groupPhoto.setImageBitmap(groups.get(position).getPicture());
         holder.itemView.setLongClickable(true);
 
     }
