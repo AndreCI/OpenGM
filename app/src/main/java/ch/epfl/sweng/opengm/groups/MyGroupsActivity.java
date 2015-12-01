@@ -251,6 +251,7 @@ public class MyGroupsActivity extends AppCompatActivity {
             }
             progressBar.setVisibility(View.GONE);
             progressText.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
         }
     }
 }
