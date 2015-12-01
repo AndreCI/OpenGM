@@ -30,6 +30,7 @@ import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFConstants;
+import ch.epfl.sweng.opengm.messages.ShowConversationsActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
@@ -69,7 +70,8 @@ public class GroupsHomeActivity extends AppCompatActivity
             groupImage.setImageBitmap(currentGroup.getPicture());
         }
 
-        TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+        TextView descriptionView = (TextView)findViewById(R.id.textView_description);
+
         descriptionView.setText(currentGroup.getDescription());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -127,7 +129,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         }
     }
 
-    public void onManageGroup(View v){
+    public void onManageGroup(View v) {
         Intent intent = new Intent(this, CreateEditGroupActivity.class);
         startActivityForResult(intent, RESULT_EDIT);
     }
@@ -154,6 +156,9 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
+                Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
+                intent2.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, OpenGMApplication.getCurrentUser().getGroups().indexOf(currentGroup));
+                startActivity(intent2);
                 break;
             case R.id.nav_manage:
                 break;
@@ -177,7 +182,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             // handle back from edit
             case RESULT_EDIT:
                 setTitle(currentGroup.getName());
-                TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+                TextView descriptionView = (TextView) findViewById(R.id.textView_description);
                 descriptionView.setText(currentGroup.getDescription());
                 ImageView groupImage = (ImageView)findViewById(R.id.group_image);
                 groupImage.setImageBitmap(currentGroup.getPicture());

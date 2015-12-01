@@ -3,10 +3,10 @@ package ch.epfl.sweng.opengm.identification;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -43,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
     public static final String USERNAME_KEY = "ch.epfl.ch.opengm.identification.registerActivity.username";
     public static final String PASSWORD_KEY = "ch.epfl.ch.opengm.identification.registerActivity.password";
     public static final String PHONE_KEY = "ch.epfl.ch.opengm.identification.registerActivity.phone";
-    private static final int PHONE_ACT_KEY = 1061;
+    public static final int PHONE_ACT_KEY = 1061;
 
 
     private EditText mEditUsername;
@@ -60,6 +60,10 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         Intent registerIntent = getIntent();
 
@@ -79,6 +83,17 @@ public class RegisterActivity extends AppCompatActivity {
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.register_outmostLayout);
         onTapOutsideBehaviour(layout, this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return true;
+        }
     }
 
     public void displayHowToPwd(View anchorView) {
@@ -181,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
                 cancel = true;
                 displayHowToPwd(null);
             } else if (!password1.equals(password2)) {
-                mEditPassword1.setError(getString(R.string.incorrect_password_activity_register));
+                mEditPassword1.setError(getString(R.string.non_matching_passwords_activity_register));
                 focusView = mEditPassword1;
                 cancel = true;
             }
@@ -235,6 +250,9 @@ public class RegisterActivity extends AppCompatActivity {
         if (requestCode == PHONE_ACT_KEY) {
             if (resultCode == Activity.RESULT_OK) {
                 mEditPhone.setText(data.getStringExtra(PHONE_KEY));
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
             }
         }
     }
