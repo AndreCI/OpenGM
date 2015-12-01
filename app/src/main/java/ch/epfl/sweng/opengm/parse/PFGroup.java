@@ -41,6 +41,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_USERNAME;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_CONVERSATIONS;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
@@ -63,6 +64,8 @@ public final class PFGroup extends PFEntity {
 
     private HashMap<String, PFPoll> mPolls;
 
+    private ArrayList<String> mConversationInformations;
+
     private String mName;
     private String mDescription;
     private boolean mIsPrivate;
@@ -72,6 +75,11 @@ public final class PFGroup extends PFEntity {
 
     private final static String adminRole = "Administrator";
     private final static String userRole = "User";
+    private String[] conversationsInformations;
+
+    public List<String> getConversationInformations() {
+        return new ArrayList<>(mConversationInformations);
+    }
 
     public enum Permission{
         ADD_MEMBER(0, "Add members"),
@@ -103,7 +111,7 @@ public final class PFGroup extends PFEntity {
             return nameToPermission.get(name);
         }
 
-        Permission(int value, String name){
+        Permission(int value, String name) {
             this.value = value;
             this.name = name;
         }
@@ -141,6 +149,7 @@ public final class PFGroup extends PFEntity {
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
 
         List<String> rolesR = in.createStringArrayList();
+        mConversationInformations = in.createStringArrayList();
         List<List<Integer>> permissions = in.readArrayList(ArrayList.class.getClassLoader());
         mRolesPermissions = new HashMap<>();
         for(int i = 0; i < rolesR.size(); i++){
@@ -162,9 +171,8 @@ public final class PFGroup extends PFEntity {
     }
 
 
-    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames,
-                    List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate,
-                    String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions) {
+
+    private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions, List<String> conversationInformations) {
         super(groupId, PARSE_TABLE_GROUP, date);
 
         if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
@@ -196,6 +204,7 @@ public final class PFGroup extends PFEntity {
         mDescription = description;
         mPicture = picture;
         mRolesPermissions = new HashMap<>(rolesPermissions);
+        mConversationInformations = new ArrayList<>(conversationInformations);
     }
 
     private void fillMembersMap(List<String> users, List<String> nicknames, List<String[]> roles) {
@@ -370,6 +379,9 @@ public final class PFGroup extends PFEntity {
                             ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
                             file.saveInBackground();
                             object.put(GROUP_ENTRY_PICTURE, mPicture);
+                            break;
+                        case GROUP_ENTRY_CONVERSATIONS:
+                            object.put(GROUP_ENTRY_CONVERSATIONS, mConversationInformations);
                             break;
                         default:
                             return;
@@ -781,6 +793,18 @@ public final class PFGroup extends PFEntity {
         }
     }
 
+    public void setConversationInformations(List<String> conversationInformations) {
+        if (conversationInformations != null) {
+            ArrayList<String> oldConversationInformations = mConversationInformations;
+            this.mConversationInformations = new ArrayList<>(conversationInformations);
+            try {
+                updateToServer(GROUP_ENTRY_CONVERSATIONS);
+            } catch (PFException e) {
+                this.mConversationInformations = oldConversationInformations;
+            }
+        }
+    }
+
     /**
      * Setter for the privacy of the group
      *
@@ -882,12 +906,18 @@ public final class PFGroup extends PFEntity {
                 List<String> polls = new ArrayList<>();
                 polls.addAll(Arrays.asList(pollsArray));
 
+                String[] convsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_CONVERSATIONS));
+                List<String> conversationInformations = new ArrayList<>();
+                if(convsArray != null) {
+                    conversationInformations.addAll(Arrays.asList(convsArray));
+                }
+                Log.d("FETCH", "" + polls.size());
+
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
                 Bitmap[] picture = {null};
                 retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
-                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames,
-                        roles, events, polls, privacy, description, picture[0], rolesPermissions);
+                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events, polls, privacy, description, picture[0], rolesPermissions, conversationInformations);
             } else {
                 throw new PFException("Query failed for id " + id);
             }
@@ -958,11 +988,7 @@ public final class PFGroup extends PFEntity {
         try {
             object.save();
             String id = object.getObjectId();
-
-            PFGroup newGroup = new PFGroup(id, object.getUpdatedAt(), name, usersList,
-                    nickNamesList, rolesList, new ArrayList<String>(), new ArrayList<String>(),
-                    false, about, picture, rolesPermissionsMap);
-
+            PFGroup newGroup = new PFGroup(id, object.getUpdatedAt(), name, usersList, nickNamesList, rolesList, new ArrayList<String>(), new ArrayList<String>(), false, about, picture, rolesPermissionsMap, new ArrayList<String>());
             user.addToAGroup(newGroup);
             return newGroup;
         } catch (ParseException e) {
@@ -1024,7 +1050,7 @@ public final class PFGroup extends PFEntity {
         }
         dest.writeStringList(rolesList);
         dest.writeList(permissions);
-
+        dest.writeStringList(mConversationInformations);
         List<String> pollsKeys = new ArrayList<>();
         List<PFPoll> polls = new ArrayList<>();
         for (Map.Entry<String, PFPoll> entry : mPolls.entrySet()) {

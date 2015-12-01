@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -57,6 +58,9 @@ public class AppContactsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Contact cc = mAdapter.getObjects().get(position);
+                Intent i = new Intent(AppContactsActivity.this, MemberProfileActivity.class);
+                i.putExtra(MemberProfileActivity.MEMBER_KEY, cc.getMember());
+                startActivity(i);
             }
         });
 

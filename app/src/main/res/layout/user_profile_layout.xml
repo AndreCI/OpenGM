@@ -2,83 +2,106 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/userProfile"
-    android:weightSum="500">
+    android:id="@+id/editUserProfile"
+    android:weightSum="1">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="100"
-        android:layout_weight="200">
+        android:layout_height="150dp"
+        android:layout_weight="0.5"
+        android:weightSum="1">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/userPhoto"
-            android:layout_weight="50"
-            android:src="@mipmap/ic_launcher"
-            android:scaleType="centerCrop"
-            android:maxWidth="50dp"
-            android:layout_margin="10dp" />
-
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="[name]"
-            android:id="@+id/nameTV"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:password="false"
-            android:allowUndo="false"
-            android:maxWidth="50dp"
-            android:layout_weight="50" />
+            android:layout_weight="0.5">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/userPhoto"
+                android:src="@drawable/avatar_male1"
+                android:scaleType="centerCrop"
+                android:maxWidth="50dp"
+                android:layout_margin="10dp"
+                android:layout_weight="50" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[firstname]"
+                android:id="@+id/firstNameTV"
+                android:textSize="22dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[lastname]"
+                android:id="@+id/lastNameTV"
+                android:textSize="22dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView3"
-        android:layout_weight="300">
+        android:id="@+id/scrollView4"
+        android:layout_weight="0.5"
+        android:fillViewport="false">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/userInfoLinearLayout"
-            android:layout_margin="20dp"
-            android:layout_weight="300">
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.55">
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Username : "
-                    android:id="@+id/usernameTitle"
-                    android:textSize="16sp"
-                    android:textStyle="bold|italic" />
+                    android:text="Username :"
+                    android:id="@+id/textView2"
+                    android:textSize="16dp"
+                    android:textStyle="bold|italic"
+                    android:layout_marginBottom="3dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[username]"
                     android:id="@+id/usernameTV"
-                    android:textSize="16sp" />
-
+                    android:textSize="16dp"
+                    android:layout_marginLeft="5dp" />
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -86,21 +109,25 @@
                     android:text="Email : "
                     android:id="@+id/emailTitle"
                     android:textSize="16sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="bold|italic"
+                    android:layout_marginBottom="3dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[email]"
                     android:id="@+id/emailTV"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginLeft="5dp" />
+
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -108,22 +135,24 @@
                     android:text="Phone number : "
                     android:id="@+id/phoneTitle"
                     android:textSize="16sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="bold|italic"
+                    android:layout_marginBottom="3dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[phone]"
                     android:id="@+id/phoneTV"
-                    android:textSize="16sp" />
+                    android:layout_marginLeft="5dp"
+                    android:textSize="16dp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,14 +160,17 @@
                     android:text="Description : "
                     android:id="@+id/descriptionTitle"
                     android:textSize="16sp"
-                    android:textStyle="bold|italic" />
+                    android:textStyle="bold|italic"
+                    android:layout_marginBottom="3dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="[about]"
+                    android:text="[description]"
                     android:id="@+id/descriptionTV"
-                    android:textSize="16sp" />
+                    android:layout_marginLeft="5dp"
+                    android:textSize="16dp" />
+
             </LinearLayout>
 
         </LinearLayout>

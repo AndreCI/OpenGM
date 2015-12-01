@@ -192,7 +192,6 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
             holder.textView.setText(checkParticipant.getName());
             holder.checkBox.setChecked(checkParticipant.isChecked());
             holder.checkBox.setTag(checkParticipant);
-            holder.textView.setTag(checkParticipant);
 
             return convertView;
         }

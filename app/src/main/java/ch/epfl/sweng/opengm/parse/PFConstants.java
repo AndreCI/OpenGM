@@ -61,4 +61,9 @@ public final class PFConstants {
     public static final String POLL_ENTRY_ANSWERS = "answers";
     public static final String POLL_ENTRY_RESULTS = "results";
 
+
+    //Entries for "ConversationInformations" table :
+
+    public static final String GROUP_ENTRY_CONVERSATIONS = "conversationInformations";
+
 }

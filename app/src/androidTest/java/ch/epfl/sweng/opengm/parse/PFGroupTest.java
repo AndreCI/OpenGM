@@ -85,6 +85,9 @@ public class PFGroupTest {
         } catch (PFException e) {
             Assert.fail(parseExceptionFailTest);
         }
+        List<String> conversations = new ArrayList<>();
+        conversations.add("conv1");
+        group.setConversationInformations(conversations);
         group.writeToParcel(parcel, 0);
 
         parcel.setDataPosition(0);
@@ -121,6 +124,7 @@ public class PFGroupTest {
         assertEquals(description, parcel.readString());
         assertNull(parcel.readParcelable(Bitmap.class.getClassLoader()));
         parcel.createStringArrayList();
+        //assertEquals(conversations.size(), parcel.createStringArrayList().size());
         assertEquals(permissions, parcel.readArrayList(List.class.getClassLoader()));
     }
 
@@ -156,6 +160,9 @@ public class PFGroupTest {
         }
         permissions.add(permissionsForAdministrator);
 
+        List<String> conversations = new ArrayList<>();
+        conversations.add("conv1");
+
         Parcel in = Parcel.obtain();
 
         in.writeString(id1);
@@ -170,6 +177,7 @@ public class PFGroupTest {
         in.writeString(description);
         in.writeParcelable(picture, 0);
         in.writeStringList(rolesList);
+        in.writeStringList(conversations);
         in.writeList(permissions);
 
         in.setDataPosition(0);
@@ -198,6 +206,7 @@ public class PFGroupTest {
         assertNull(group.getPicture());
         assertEquals(ids.size(), group.getMembers().size());
         assertEquals(role.length, group.getRoles().size());
+        assertEquals(conversations.get(0), group.getConversationInformations().get(0));
         assertEquals(actualPermissions, group.getPermissionsForRole(adminRole));
     }
 
@@ -271,8 +280,8 @@ public class PFGroupTest {
             assertEquals(USERNAME, member.getNickname());
             assertEquals(user.getId(), member.getId());
             assertEquals(user.getUsername(), member.getUsername());
-            assertEquals(user.getFirstName(), member.getFirstname());
-            assertEquals(user.getLastName(), member.getLastname());
+            assertEquals(user.getFirstName(), member.getFirstName());
+            assertEquals(user.getLastName(), member.getLastName());
             assertEquals(user.getPicture(), member.getPicture());
             assertEquals(user.getAboutUser(), member.getAbout());
 
