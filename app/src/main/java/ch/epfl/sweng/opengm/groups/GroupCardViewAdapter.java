@@ -1,5 +1,6 @@
 package ch.epfl.sweng.opengm.groups;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -42,18 +43,16 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
 
     @Override
     public void onBindViewHolder(GroupViewHolder holder, int position) {
+        // square the card
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.cardView.getLayoutParams();
-
-        int screenWidth = screenMetrics.widthPixels;
-        layoutParams.height = screenWidth/2;
+        layoutParams.height = holder.cardView.getWidth();
         holder.cardView.setLayoutParams(layoutParams);
 
         holder.cardView.setTag(position);
         holder.groupName.setText(groups.get(position).getName());
 
-        holder.groupPhoto.setImageBitmap(groups.get(position).getPicture());
+        holder.groupPhoto.setImageBitmap(groups.get(position).getSquarePicture());
         holder.itemView.setLongClickable(true);
-
     }
 
     @Override

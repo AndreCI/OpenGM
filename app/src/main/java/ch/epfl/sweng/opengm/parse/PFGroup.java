@@ -854,6 +854,19 @@ public final class PFGroup extends PFEntity {
     }
 
     /**
+     * return a picture that is squared so it fits nicely where we need square picture
+     * @return the group picture that is squared
+     */
+    public Bitmap getSquarePicture() {
+        if (mPicture != null) {
+            int size = (mPicture.getWidth() > mPicture.getHeight()) ? mPicture.getWidth() : mPicture.getHeight();
+            return Bitmap.createScaledBitmap(mPicture, size, size, false);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Fetches an existing group from the server and returns the object as a PFGroup
      *
      * @param id The id of the group we are looking for

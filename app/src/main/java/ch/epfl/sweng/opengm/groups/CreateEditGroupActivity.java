@@ -171,7 +171,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Uri imageUri = data.getData();
                     String path = getRealPathFromURI(imageUri);
-                    
+
                     // handle images that are too big
                     BitmapFactory.Options imSize = new BitmapFactory.Options();
                     imSize.inJustDecodeBounds = true;
