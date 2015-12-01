@@ -16,6 +16,7 @@ import android.widget.TextView;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
+import ch.epfl.sweng.opengm.messages.ShowConversationsActivity;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
@@ -40,7 +41,7 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         setTitle(currentGroup.getName());
 
-        TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+        TextView descriptionView = (TextView) findViewById(R.id.textView_description);
         descriptionView.setText(currentGroup.getDescription());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,7 +73,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         }
     }
 
-    public void onManageGroup(View v){
+    public void onManageGroup(View v) {
         Intent intent = new Intent(this, CreateEditGroupActivity.class);
         startActivityForResult(intent, RESULT_FIRST_USER);
     }
@@ -99,6 +100,9 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
+                Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
+                intent2.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, OpenGMApplication.getCurrentUser().getGroups().indexOf(currentGroup));
+                startActivity(intent2);
                 break;
             case R.id.nav_manage:
                 break;
@@ -122,7 +126,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             // stay in the correct group home, comming back from MembersActivity
             case 1:
                 setTitle(currentGroup.getName());
-                TextView descriptionView  = (TextView) findViewById(R.id.textView_description);
+                TextView descriptionView = (TextView) findViewById(R.id.textView_description);
                 descriptionView.setText(currentGroup.getDescription());
                 break;
             default:

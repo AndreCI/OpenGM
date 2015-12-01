@@ -139,6 +139,8 @@
 
     <string name="hello_world">Hello world!</string>
 
+    <string name="title_activity_show_conversation_activity">ShowConversationActivity</string>
+    <string name="title_activity_show_messages_activity">ShowMessagesActivity</string>
 
     <!-- Phones numbers -->
 
@@ -412,5 +414,7 @@
     <string name="delete_poll">Delete</string>
     <string name="create_groups_members">Manage Group Members</string>
     <string name="past_poll">Show past polls</string>
+
+    <string name="title_activity_create_new_conversation">CreateNewConversationActivity</string>
 
 </resources>
