@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_CONVERSATIONS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
@@ -41,12 +42,10 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_CONVERSATIONS;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
 import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
 
@@ -283,9 +282,7 @@ public final class PFGroup extends PFEntity {
 
                 mDescription = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
-                mPicture = picture[0];
+                mPicture = null;
 
                 HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
@@ -915,9 +912,8 @@ public final class PFGroup extends PFEntity {
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, GROUP_ENTRY_PICTURE, picture);
-                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events, polls, privacy, description, picture[0], rolesPermissions, conversationInformations);
+                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events,
+                        polls, privacy, description, null, rolesPermissions, conversationInformations);
             } else {
                 throw new PFException("Query failed for id " + id);
             }

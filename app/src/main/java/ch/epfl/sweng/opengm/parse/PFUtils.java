@@ -51,30 +51,6 @@ public final class PFUtils {
     }
 
     /**
-     * Downloads in background the image of a Parse object and stores it at the first index of the array given in parameter
-     *
-     * @param object A Parse object which contains the image we want to get
-     * @param entry  A string whose value is the entry which contains the image in our table
-     * @param image  An array of image with only one case
-     */
-    public static void retrieveFileFromServer(ParseObject object, String entry, final Bitmap[] image) {
-        if (image.length != 1) {
-            // TODO : empty array
-        }
-        ParseFile fileObject = (ParseFile) object.get(entry);
-        if (fileObject != null) {
-            fileObject.getDataInBackground(new GetDataCallback() {
-                @Override
-                public void done(byte[] data, ParseException e) {
-                    if (e == null) {
-                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length); //I once get a OOMError.
-                    }
-                }
-            });
-        }
-    }
-
-    /**
      * Casts the object into a string
      *
      * @param o An object that we want to cast

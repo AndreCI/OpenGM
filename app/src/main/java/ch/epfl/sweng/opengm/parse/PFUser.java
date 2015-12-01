@@ -31,7 +31,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 /**
  * This class represents a user which extends PFEntity since it
@@ -108,8 +107,6 @@ public final class PFUser extends PFEntity {
                     // Do nothing
                 }
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
 
@@ -489,13 +486,11 @@ public final class PFUser extends PFEntity {
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = (groupsArray == null ?
                         new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
                 return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username,
-                        firstName, lastName, description, picture[0], groups);
+                        firstName, lastName, description, null, groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

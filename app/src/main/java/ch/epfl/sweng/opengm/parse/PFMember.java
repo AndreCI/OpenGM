@@ -26,13 +26,11 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
-import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 /**
  * This class represents a member of group : basically this is a user with a username and roles
@@ -105,8 +103,6 @@ public final class PFMember extends PFEntity implements Parcelable {
                 mPhoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 mAboutUser = object.getString(USER_ENTRY_ABOUT);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
 
@@ -342,13 +338,11 @@ public final class PFMember extends PFEntity implements Parcelable {
 
                 String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
 
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, USER_ENTRY_PICTURE, picture);
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
                 return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
                         nickName == null ? username : nickName, email, phoneNumber, description,
-                        picture[0], Arrays.asList(roles), groups);
+                        null, Arrays.asList(roles), groups);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }

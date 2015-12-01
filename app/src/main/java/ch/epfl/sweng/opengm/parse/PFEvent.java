@@ -32,7 +32,6 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_ENTRY_TITLE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.EVENT_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 
 public final class PFEvent extends PFEntity implements Parcelable, Comparable<PFEvent> {
     private final static String PARSE_TABLE_EVENT = PFConstants.EVENT_TABLE_NAME;
@@ -195,10 +194,6 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                     mPlace = object.getString(EVENT_ENTRY_PLACE);
                     mDate = object.getDate(EVENT_ENTRY_DATE);
 
-                    Bitmap[] picture = {null};
-                    retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
-                    mPicture = picture[0];
-
                     String[] groupsArray = convertFromJSONArray(
                             object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                     List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
@@ -357,12 +352,6 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 String place = object.getString(EVENT_ENTRY_PLACE);
                 Date date = object.getDate(EVENT_ENTRY_DATE);
 
-                //TODO : here we should get the bitmap
-                ParseFile pf = object.getParseFile(EVENT_ENTRY_PICTURE);
-                Bitmap[] picture = {null};
-                retrieveFileFromServer(object, EVENT_ENTRY_PICTURE, picture);
-                //This doesn't work.
-
                 String[] groupsArray = convertFromJSONArray(
                         object.getJSONArray(EVENT_ENTRY_PARTICIPANTS));
                 List<String> participants = new ArrayList<>(Arrays.asList(groupsArray));
@@ -375,7 +364,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 String imagePath = PFUtils.pathNotSpecified;
                 String imageName = PFUtils.nameNotSpecified;
                 return new PFEvent(id, object.getUpdatedAt(), title, place, date,
-                        description, members,imagePath,imageName,picture[0]);
+                        description, members, imagePath, imageName, null);
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
