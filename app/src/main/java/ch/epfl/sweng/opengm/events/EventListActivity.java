@@ -2,10 +2,17 @@ package ch.epfl.sweng.opengm.events;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -41,11 +48,25 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
         setTitle("List of your events");
         findViewById(R.id.Screen).setVisibility(View.GONE);
+        findViewById(R.id.eventListAddButton).setVisibility(View.GONE);
         findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
-
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+               // Intent intent = getIntent();
+                       /* new Intent(Utils.GROUP_INTENT_MESSAGE);
+
+
+                    intent.putExtra(Utils.GROUP_INTENT_MESSAGE, "TXxysfyRqV");
+               } catch (PFException e) {
+                    e.printStackTrace();
+                }*/
+               // int currentGroupLocation = intent.getIntExtra(Utils.GROUP_INTENT_MESSAGE, -1);
+                //currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(currentGroupLocation);
+
                 currentGroup = OpenGMApplication.getCurrentGroup();
 
                 eventMap = new ArrayMap<>();
@@ -58,11 +79,23 @@ public class EventListActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void result) {
                 findViewById(R.id.Screen).setVisibility(View.VISIBLE);
+                findViewById(R.id.eventListAddButton).setVisibility(View.VISIBLE);
                 displayEvents();
                 findViewById(R.id.EventListLoadingPanel).setVisibility(View.GONE);
             }
         }.execute();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return true;
+        }
     }
 
     @Override
@@ -107,6 +140,9 @@ public class EventListActivity extends AppCompatActivity {
                 }
                 eventMap.remove(event.getId());
             }
+            if(resultCode==Utils.SILENCE){
+                //DO NOTHING
+            }
             displayEvents();
         }
     }
@@ -117,9 +153,13 @@ public class EventListActivity extends AppCompatActivity {
      * @param v The View.
      */
     public void clickOnAddButton(View v){
-        Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
-        startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
+        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
+            Intent intent = new Intent(this, CreateEditEventActivity.class);
+            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+            startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
+        }else{
+            Toast.makeText(getApplicationContext(), "You don't have the permission to create a new event.", Toast.LENGTH_SHORT).show();
+        }
     }
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
@@ -135,11 +175,6 @@ public class EventListActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void[] params){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    return false;
-                }
                 try {
                     currentGroup.reload();
                     for (PFEvent e : currentGroup.getEvents()) {
@@ -207,8 +242,20 @@ public class EventListActivity extends AppCompatActivity {
         for(PFEvent event :eventList) {
             if (displayPastEvents || compareDate(event.getDate())) {
                 final Button b = new Button(this);
-                b.setText(String.format("%s: %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
-                b.setTag(event);
+                GradientDrawable gd = new GradientDrawable();
+                gd.setStroke(2, Color.WHITE);
+                gd.setColor(getResources().getColor(R.color.bluegreen));
+                b.setBackground(gd);
+                b.setTextColor(Color.WHITE);
+
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    b.setBackground(getDrawable(R.drawable.rounded_buttons));
+                    b.setTextColor(Color.WHITE);
+                }*/
+                SpannableString name = new SpannableString(String.format("%s \n %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
+                name.setSpan(new RelativeSizeSpan(2f),0,event.getName().length(),0);
+                b.setText(name);
+                 b.setTag(event);
                 b.setLayoutParams(linearLayoutListEvents.getLayoutParams());
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override

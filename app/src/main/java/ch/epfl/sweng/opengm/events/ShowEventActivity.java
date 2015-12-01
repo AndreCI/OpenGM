@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -39,9 +41,22 @@ public class ShowEventActivity extends AppCompatActivity {
         event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         setTitle("Event : "+event.getName() + " for the group : "+currentGroup.getName());
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         displayEventInformation();
     }
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                setResult(Utils.SILENCE);
+                finish();
+                return true;
+            default:
+                return true;
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -82,7 +97,9 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     private void fillEventName() {
-        ((TextView) findViewById(R.id.ShowEventNameText)).setText(event.getName());
+        TextView tt =
+        ((TextView) findViewById(R.id.ShowEventNameText));
+        tt.setText(" " +event.getName()+ " ");
     }
 
     private void fillEventPlace() {
@@ -90,15 +107,15 @@ public class ShowEventActivity extends AppCompatActivity {
         if (event.getPlace().isEmpty()) {
             textView.setHeight(0);
         } else {
-            textView.setText("      A lieu à : "+event.getPlace());
+            textView.setText("      A lieu à : "+event.getPlace()+ "  ");
         }
     }
 
     private void fillEventDate() {
         String hourString = String.format("%d : %02d", event.getHours(), event.getMinutes());
-        ((TextView)findViewById(R.id.ShowEventHourText)).setText("      A "+hourString);
+        ((TextView)findViewById(R.id.ShowEventHourText)).setText("      A "+hourString+ "  ");
         String dateString = String.format("%d/%02d/%04d", event.getDay(), event.getMonth(), event.getYear());
-        ((TextView)findViewById(R.id.ShowEventDateText)).setText("      Le : "+dateString);
+        ((TextView)findViewById(R.id.ShowEventDateText)).setText("      Le : "+dateString+ "  ");
     }
 
     private void fillEventDescription() {
@@ -106,7 +123,7 @@ public class ShowEventActivity extends AppCompatActivity {
         if (event.getDescription().isEmpty()) {
             textView.setHeight(0);
         } else {
-            String description = "Description: de l'evenement\n" + event.getDescription();
+            String description = "Description de l'evenement :\n" + event.getDescription();
             textView.setText(description);
         }
     }
@@ -139,16 +156,24 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     public void onEditButtonClick(View view) {
-        Intent intent = new Intent(this, CreateEditEventActivity.class);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
-        startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
+        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
+            Intent intent = new Intent(this, CreateEditEventActivity.class);
+            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
+            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+            startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
+        }else{
+            Toast.makeText(getApplicationContext(), "You don't have the permission to edit this event", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onDeleteButtonClick(View v){
+        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, ShowEventActivity.class);
             intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             setResult(Utils.DELETE_EVENT, intent);
             finish();
+        }else{
+            Toast.makeText(getApplicationContext(), "You don't have the permission to delete this event", Toast.LENGTH_SHORT).show();
+        }
     }
 }
