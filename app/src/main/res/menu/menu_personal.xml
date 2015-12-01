@@ -3,14 +3,21 @@
     xmlns:opengm="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_show_contacts"
-        android:icon="@drawable/ic_action_group"
-        android:title="My contacts"
+        android:id="@+id/action_refresh_user"
+        android:icon="@drawable/ic_refresh"
+        android:title="Refresh"
         opengm:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_show_contacts"
+        android:icon="@drawable/ic_contact"
+        android:title="My contacts"
+        opengm:showAsAction="ifRoom" />
+
+
+    <item
         android:id="@+id/action_show_user_profile"
-        android:icon="@mipmap/ic_person_outline_white_24dp"
+        android:icon="@drawable/ic_account"
         android:title="My Profile"
         opengm:showAsAction="ifRoom" />
 
