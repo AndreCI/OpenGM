@@ -1,7 +1,9 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -168,14 +170,38 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             case RESULT_LOAD_IMAGE:
                 if (resultCode == RESULT_OK) {
                     Uri imageUri = data.getData();
-                    try {
-                        image = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                    } catch (IOException e) {
-                        Toast.makeText(getBaseContext(), "Could not retrieve image", Toast.LENGTH_LONG).show();
-                    }
+                    String path = getRealPathFromURI(imageUri);
+                    
+                    // handle images that are too big
+                    BitmapFactory.Options imSize = new BitmapFactory.Options();
+                    imSize.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(path, imSize);
+                    BitmapFactory.Options opts = new BitmapFactory.Options();
+                    int sampleSize = ((imSize.outHeight / 1080) > (imSize.outWidth / 1920)) ? (imSize.outHeight / 1080) : (imSize.outWidth / 1920);
+                    opts.inSampleSize = sampleSize;
+
+                    image = BitmapFactory.decodeFile(path, opts);
                 }
                 break;
             default:
         }
     }
+
+    // get path from URI
+    private String getRealPathFromURI(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+
 }
