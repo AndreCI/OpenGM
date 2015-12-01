@@ -50,6 +50,23 @@ public class PhoneAddingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_adding);
 
+        // ************************************************************************** //
+        // FIXME: How to do a pointer on activity ?
+        /* int incomingActivityKey = getIntent().getIntExtra(INCOMING_ACTIVITY_KEY);
+        AppCompatActivity incomingActivity = RegisterActivity;
+        switch (incomingActivityKey) {
+            case 1:
+                incomingActivity = RegisterActivity;
+                break;
+            case 2:
+                incomingActivity = EditUserProfileActivity;
+                break;
+            default:
+                incomingActivity = RegisterActivity;
+        } */
+        // ************************************************************************** //
+
+
         mEditCountry = (TextView) findViewById(R.id.country_name);
         mEditCode = (TextView) findViewById(R.id.country_code);
         mEditNumber = (TextView) findViewById(R.id.input_phoneNumber);

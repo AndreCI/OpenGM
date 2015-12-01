@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
@@ -293,6 +292,25 @@ public final class PFUser extends PFEntity {
                 group.addUserWithId(getId());
                 mGroups.add(group);
                 mGroupsId.add(group.getId());
+                throw new PFException();
+            }
+        }
+    }
+
+
+    /**
+     * Setter for the email of the current user
+     *
+     * @param email The new email of the current user
+     * @throws PFException If something went wrong while updating on the server
+     */
+    public void setEmail(String email) throws PFException {
+        if (checkArguments(email) && !email.equals(mEmail)) {
+            try {
+                ParseUser.getCurrentUser().setEmail(email);
+                ParseUser.getCurrentUser().save();
+                this.mEmail = email;
+            } catch (ParseException e) {
                 throw new PFException();
             }
         }

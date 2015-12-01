@@ -24,9 +24,9 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.UserProfileActivity;
 import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
@@ -98,8 +98,11 @@ public class MembersActivity extends AppCompatActivity {
                 if (selectMode) {
                     view.findViewById(R.id.member_checkbox).performClick();
                 } else {
-                    Intent i = new Intent(MembersActivity.this, UserProfileActivity.class);
-                    i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
+                    // TODO: link towards MemberProfileActivity instead of MyProfileActivity
+                    Intent i = new Intent(MembersActivity.this, MemberProfileActivity.class);
+//                    i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
+//                    i.putExtra(UserProfileActivity.GROUP_INDEX, groupIndex);
+                    i.putExtra(MemberProfileActivity.MEMBER_KEY, members.get(position));
                     startActivity(i);
                 }
             }
