@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,13 +83,16 @@ public class PollsListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PFPoll poll = mAdapter.getItem(position);
                 setCurrentPoll(poll.getId());
-                Intent i;
                 if (poll.isOpen()) {
-                    i = new Intent(PollsListActivity.this, PollVoteActivity.class);
+                    if (poll.hasUserAlreadyVoted(getCurrentUser().getId())) {
+                        Toast.makeText(getBaseContext(), getString(R.string.already_vote_poll),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        startActivity(new Intent(PollsListActivity.this, PollVoteActivity.class));
+                    }
                 } else {
-                    i = new Intent(PollsListActivity.this, PollResultActivity.class);
+                    startActivity(new Intent(PollsListActivity.this, PollResultActivity.class));
                 }
-                startActivity(i);
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

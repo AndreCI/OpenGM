@@ -76,6 +76,8 @@ public final class CreatePollActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        setTitle("Create a poll");
+
         currentGroup = OpenGMApplication.getCurrentGroup();
 
         nOfAnswersText = (TextView) findViewById(R.id.nOfAnswers_textView);
