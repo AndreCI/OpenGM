@@ -103,11 +103,13 @@
         <activity
             android:name=".userProfile.MyProfileActivity"
             android:screenOrientation="portrait"
+            android:parentActivityName=".groups.MyGroupsActivity"
             android:label="@string/title_activity_my_profile" />
         <activity
             android:name=".userProfile.EditUserProfileActivity"
             android:label="@string/title_activity_edit_user_profile"
             android:screenOrientation="portrait"
+            android:parentActivityName=".userProfile.MyProfileActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".userProfile.MemberProfileActivity"

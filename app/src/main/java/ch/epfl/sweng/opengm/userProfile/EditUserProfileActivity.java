@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,12 +45,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private EditText mDescriptionEditText;
 
     private final PFUser currentUser = OpenGMApplication.getCurrentUser();
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
-        return true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +89,12 @@ public class EditUserProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
@@ -111,15 +112,15 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     currentUser.setPhoneNumber(mPhoneNumberEditText.getText().toString());
                     currentUser.setAboutUser(mDescriptionEditText.getText().toString());
                     Toast.makeText(this, getString(R.string.success_edit_profile), Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(EditUserProfileActivity.this, MyProfileActivity.class));
+                    setResult(Activity.RESULT_OK, new Intent());
+                    finish();
                 } catch (PFException e) {
-                    e.printStackTrace();
                     Toast.makeText(this, getString(R.string.error_edit_profile), Toast.LENGTH_LONG).show();
                 }
                 return true;
 
             case R.id.action_cancel_edit_profile:
-                onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
 
             default:
