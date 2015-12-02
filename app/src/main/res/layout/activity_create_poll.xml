@@ -108,6 +108,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <Button
+                android:id="@+id/minus_poll_answer"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -120,7 +121,7 @@
                 android:textSize="40sp" />
 
             <Button
-                android:id="@+id/button6"
+                android:id="@+id/plus_poll_answer"
                 android:layout_width="0dp"
                 android:background="@drawable/rounded_buttons"
                 android:layout_height="match_parent"

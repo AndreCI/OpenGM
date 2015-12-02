@@ -178,9 +178,9 @@ public final class CreatePollActivity extends AppCompatActivity {
                 } else if (answers.size() < 2) {
                     Toast.makeText(getBaseContext(), getString(R.string.less_two_answers_poll), Toast.LENGTH_LONG).show();
                 } else if (deadline == null) {
-                    mDeadlineButton.setError(getString(R.string.empty_date_poll));
+                    Toast.makeText(getBaseContext(), getString(R.string.empty_date_poll), Toast.LENGTH_LONG).show();
                 } else if (participants.isEmpty()) {
-                    mParticipantsButton.setError(getString(R.string.no_participants_poll));
+                    Toast.makeText(getBaseContext(), getString(R.string.no_participants_poll), Toast.LENGTH_LONG).show();
                 } else if (possibleAnswers == 0) {
                     Toast.makeText(getBaseContext(), getString(R.string.no_answer_poll), Toast.LENGTH_LONG).show();
                 } else {
