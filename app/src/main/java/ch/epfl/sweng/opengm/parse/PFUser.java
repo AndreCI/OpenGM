@@ -30,6 +30,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
+import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
 
 /**
@@ -396,7 +397,7 @@ public final class PFUser extends PFEntity {
      * @throws PFException If something went wrong while updating on the server
      */
     public void setAboutUser(String aboutUser) throws PFException {
-        if (checkArguments(aboutUser) && !aboutUser.equals(mAboutUser)) {
+        if (checkNullArguments(aboutUser) && !aboutUser.equals(mAboutUser)) {
             String oldAboutUser = mAboutUser;
             this.mAboutUser = aboutUser;
             try {
