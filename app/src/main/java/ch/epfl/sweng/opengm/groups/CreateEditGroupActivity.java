@@ -148,7 +148,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_members, menu);
+        getMenuInflater().inflate(R.menu.menu_create_group, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
