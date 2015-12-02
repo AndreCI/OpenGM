@@ -56,14 +56,27 @@ public class PFConversation extends PFEntity {
 
     public void writeMessage(String sender, String body) throws IOException, ParseException {
         File file = this.file.getFile();
+        Log.v("PFConv writeMessage", "file path: " + file.getAbsolutePath() + " vs old: " + this.file.getName());
         PrintWriter out = new PrintWriter(new FileWriter(file, true));
         out.println(String.format("<|%s|%s|%s|>\n", sender, getNewStringDate(), body));
+        this.file = new ParseFile(file);
+        try {
+            updateToServer();
+        } catch (PFException e) {
+            Log.e("PFConversation", "couldn't update on server");
+        }
     }
 
-    public void writeConversationInformation() throws IOException, ParseException {
-        File file = this.file.getFile();
-        PrintWriter out = new PrintWriter(new FileWriter(file, true));
-        out.println(String.format("<|%s|%s|%s|>\n", getId(), conversationName, groupId));
+    public void writeConversationInformation() throws PFException {
+        try {
+            File file = this.file.getFile();
+            PrintWriter out = new PrintWriter(new FileWriter(file, true));
+            out.println(String.format("<|%s|%s|%s|>\n", getId(), conversationName, groupId));
+            this.file = new ParseFile(file);
+            updateToServer();
+        } catch (IOException|ParseException e) {
+            throw new PFException(e);
+        }
     }
 
 
@@ -71,7 +84,7 @@ public class PFConversation extends PFEntity {
         ParseObject object = new ParseObject(TABLE_NAME);
         File newFile = new File(context.getFilesDir(), conversationName + "_" + groupId + ".txt");
         PrintWriter writer = new PrintWriter(newFile);
-        writer.print(String.format("<|%s|%s|%s|>\n", object.getObjectId(), conversationName, groupId));
+        writer.print("");
         writer.close();
         ParseFile file = new ParseFile(newFile);
         file.saveInBackground();
@@ -113,7 +126,7 @@ public class PFConversation extends PFEntity {
                 setLastModified(object);
                 mergeConflicts(file, object.getParseFile(TABLE_ENTRY_FILE));
             }
-        } catch (ParseException|IOException e) {
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -126,16 +139,16 @@ public class PFConversation extends PFEntity {
         BufferedReader remoteReader = new BufferedReader(new InputStreamReader(serverFile.getDataStream()));
         String localLine = localReader.readLine();
         String remoteLine = remoteReader.readLine();
-        while(localLine != null && remoteLine != null) {
+        while (localLine != null && remoteLine != null) {
             String localName = Utils.extractConversationName(localLine);
             String remoteName = Utils.extractConversationName(remoteLine);
             Date localDate = Utils.extractConversationDate(localLine);
             Date remoteDate = Utils.extractConversationDate(remoteLine);
-            if(localName.equals(remoteName)) {
+            if (localName.equals(remoteName)) {
                 strings.add(localLine);
                 localLine = localReader.readLine();
                 remoteLine = remoteReader.readLine();
-            } else if(localDate.before(remoteDate)) {
+            } else if (localDate.before(remoteDate)) {
                 strings.add(localLine);
                 localLine = localReader.readLine();
             } else {
@@ -143,22 +156,22 @@ public class PFConversation extends PFEntity {
                 remoteLine = remoteReader.readLine();
             }
         }
-        while(localLine != null) {
+        while (localLine != null) {
             strings.add(localLine);
             localLine = localReader.readLine();
         }
-        while(remoteLine != null) {
+        while (remoteLine != null) {
             strings.add(remoteLine);
             remoteLine = remoteReader.readLine();
         }
-        for(String s : strings) {
+        for (String s : strings) {
             printWriter.println(s);
         }
     }
 
     @Override
     public String toString() {
-        return String.format("<|%s|%s|%s|%s|>", getId(), dateToString(lastModified),conversationName, groupId);
+        return String.format("<|%s|%s|%s|%s|>", getId(), dateToString(lastModified), conversationName, groupId);
     }
 
     public void updateToServer() throws PFException {
@@ -167,6 +180,7 @@ public class PFConversation extends PFEntity {
 
     @Override
     protected void updateToServer(final String entry) throws PFException {
+        Log.v("PFConversation", "update to server");
         ParseQuery<ParseObject> query = ParseQuery.getQuery(TABLE_NAME);
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
@@ -174,6 +188,7 @@ public class PFConversation extends PFEntity {
                     switch (entry) {
                         case TABLE_NAME:
                             object.put(TABLE_ENTRY_FILE, file);
+                            file.saveInBackground();
                             break;
                         default:
                             return;
@@ -195,6 +210,10 @@ public class PFConversation extends PFEntity {
 
     public String getConversationName() {
         return conversationName;
+    }
+
+    public File getConversationFile() throws ParseException {
+        return file.getFile();
     }
 
     @Override

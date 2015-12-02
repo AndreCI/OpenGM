@@ -21,13 +21,19 @@ import android.widget.TextView;
 
 import com.parse.ParseException;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFConversation;
+import ch.epfl.sweng.opengm.parse.PFException;
 
 /**
  * Created by virgile on 18/11/2015.
@@ -49,23 +55,24 @@ public class ShowMessagesActivity extends AppCompatActivity {
         textBar = (EditText) findViewById(R.id.message_text_bar);
         textBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
                 String string = s.toString();
-                for(int i = 0; i < string.length(); ++i) {
-                    if(string.charAt(i) == '|' || System.lineSeparator().contains(string.charAt(i)+"")) {
-                        s.delete(i, i+1);
+                for (int i = 0; i < string.length(); ++i) {
+                    if (string.charAt(i) == '|' || System.lineSeparator().contains(string.charAt(i) + "")) {
+                        s.delete(i, i + 1);
                     }
                 }
             }
         });
         fillMessages();
-        Log.v("ShowMessagesAct", "just after on create, conv is: " + conversation + "groupid is: " + conversation.getGroupId());
         textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -82,7 +89,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private void sendMessage() {
         EditText editText = (EditText) findViewById(R.id.message_text_bar);
         String message = editText.getText().toString();
-        if(!message.isEmpty()) {
+        if (!message.isEmpty()) {
             Log.v("ShowMessage sendMessage", message);
             MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
             new SendMessage().execute(message);
@@ -116,7 +123,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
             try {
                 strings = Utils.readMessagesFile(params[0]);
                 messages = new ArrayList<>();
-                for(String s : strings) {
+                for (String s : strings) {
                     Log.v("ShowMessages readFile", s);
                     String[] data = Utils.extractMessage(s);
                     MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
@@ -124,7 +131,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                     Log.v("ShowMessages readFile", messageAdapter.toString());
                 }
             } catch (IOException e) {
-                Log.v("ShowMessageActivity", "couldn't read file "+params[0]);
+                Log.v("ShowMessageActivity", "couldn't read file " + params[0]);
             }
             return new CustomAdapter(ShowMessagesActivity.this, R.layout.message_info);
         }
@@ -133,6 +140,59 @@ public class ShowMessagesActivity extends AppCompatActivity {
         protected void onPostExecute(CustomAdapter res) {
             ListView listView = (ListView) findViewById(R.id.message_list);
             listView.setAdapter(res);
+            new GetServerFile().execute(conversation.getId());
+        }
+    }
+
+    class GetServerFile extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                PFConversation serverConversation = PFConversation.fetchExistingConversation(params[0]);
+                File remoteFile = serverConversation.getConversationFile();
+                File localFile = conversation.getConversationFile();
+                List<String> remoteStrings = Utils.readMessageFile(remoteFile);
+                List<String> localStrings = Utils.readMessageFile(localFile);
+                TreeSet<String> result = new TreeSet<>(new Comparator<String>() {
+                    @Override
+                    public int compare(String lhs, String rhs) {
+                        String[] lhsArray = Utils.extractMessage(lhs);
+                        String[] rhsArray = Utils.extractMessage(rhs);
+                        return lhsArray[1].compareTo(rhsArray[1]);
+                    }
+                });
+                for(String s : localStrings) {
+                    if( s != null) {
+                        result.add(s);
+                    }
+                }
+
+                for(String s : remoteStrings) {
+                    if( s != null) {
+                        result.add(s);
+                    }
+                }
+                PrintWriter writer = new PrintWriter(localFile);
+                for(String s : result) {
+                    writer.println(s);
+                }
+                conversation.updateToServer();
+            } catch (PFException | ParseException | IOException e) {
+                Log.e("PFConversation", "couldn't reach server");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void res) {
+            ListView listView = (ListView) findViewById(R.id.message_list);
+            listView.setAdapter(new CustomAdapter(ShowMessagesActivity.this, R.id.message_list));
+            try {
+                conversation.updateToServer();
+            } catch (PFException e) {
+                Log.e("ShowMessage", "couldn't update to serv");
+            }
         }
     }
 
@@ -141,9 +201,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                conversation.writeMessage(OpenGMApplication.getCurrentUser().getUsername(), params[0]);
                 Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(), conversation.getGroupId(), ShowMessagesActivity.this);
-            } catch (IOException|ParseException e) {
+                conversation.writeMessage(OpenGMApplication.getCurrentUser().getUsername(), params[0]);
+            } catch (IOException | ParseException e) {
                 Log.e("show message activity", "couldn't write message to conversation");
             }
             return null;

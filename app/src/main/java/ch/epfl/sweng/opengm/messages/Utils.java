@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -45,8 +46,36 @@ public class Utils {
     }
 
     public static List<String> readMessagesFile(String filePath) throws IOException {
-        List<String> result = new ArrayList<>();
+        File file = new File(filePath);
+        return readMessageFile(file);
+        /*List<String> result = new ArrayList<>();
         BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
+        result.add(bufferedReader.readLine()); //get conv info string
+        String line = bufferedReader.readLine();
+        StringBuilder stringBuilder = new StringBuilder();
+        while (line != null) {
+            Log.v("Utils readTxtFile", line);
+            if (line.startsWith("<|") && line.endsWith("|>")) {
+                result.add(line);
+            } else if (line.startsWith("<|")) {
+                stringBuilder = new StringBuilder();
+                stringBuilder.append(line);
+                stringBuilder.append('\n');
+            } else if (line.endsWith("|>")) {
+                stringBuilder.append(line);
+                result.add(stringBuilder.toString());
+            } else {
+                stringBuilder.append(line);
+                stringBuilder.append('\n');
+            }
+            line = bufferedReader.readLine();
+        }
+        return result;*/
+    }
+
+    public static List<String> readMessageFile(File file) throws IOException {
+        List<String> result = new ArrayList<>();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         result.add(bufferedReader.readLine()); //get conv info string
         String line = bufferedReader.readLine();
         StringBuilder stringBuilder = new StringBuilder();

@@ -165,7 +165,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 conversation.writeConversationInformation();
             } catch (FileNotFoundException e) {
                 Log.e("CreateNewConv", "couldn't createFile", e);
-            } catch (IOException|ParseException e) {
+            } catch (ParseException|PFException e) {
                 Log.e("CreateNewConv", "error with parse");
             }
             return conversation;
