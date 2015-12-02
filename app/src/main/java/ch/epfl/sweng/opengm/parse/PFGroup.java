@@ -258,6 +258,7 @@ public final class PFGroup extends PFEntity {
                 fillMembersMap(users, nickNames, roles);
 
                 String[] eventsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
+                String[] pollsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_POLLS));
 
                 HashSet<String> oldEvents = new HashSet<>();
                 for (String eventId : mEvents.keySet()) {
@@ -274,6 +275,27 @@ public final class PFGroup extends PFEntity {
                         try {
                             String eventId = eventsArray[i];
                             mEvents.put(eventId, PFEvent.fetchExistingEvent(eventId, this));
+                        } catch (PFException e) {
+                            // Do not add the event but to nothing
+                        }
+                    }
+                }
+
+                HashSet<String> oldPolls = new HashSet<>();
+                for (String pollId : mPolls.keySet()) {
+                    oldPolls.add(pollId);
+                }
+                HashSet<String> newPolls = new HashSet<>();
+                for (int i = 0; i < pollsArray.length; i++) {
+                    newPolls.add(pollsArray[i]);
+                }
+
+                if (!newPolls.equals(oldPolls)) {
+                    mPolls = new HashMap<>();
+                    for (int i = 0; i < pollsArray.length; i++) {
+                        try {
+                            String pollId = pollsArray[i];
+                            mPolls.put(pollId, PFPoll.fetchExistingPoll(pollId, this));
                         } catch (PFException e) {
                             // Do not add the event but to nothing
                         }
@@ -307,6 +329,9 @@ public final class PFGroup extends PFEntity {
             }
             for (PFEvent event : mEvents.values()) {
                 event.reload();
+            }
+            for (PFPoll poll : mPolls.values()) {
+                poll.reload();
             }
         } catch (ParseException e) {
             throw new PFException();
