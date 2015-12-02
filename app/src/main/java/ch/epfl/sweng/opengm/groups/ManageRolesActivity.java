@@ -56,7 +56,6 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     private int selected = 0;
 
-    public final static String GROUP_INDEX = "ch.epfl.ch.opengm.groups.manageroles.groupIndex";
     public final static String USER_IDS = "ch.epfl.ch.opengm.groups.manageroles.userids";
 
     private Map<String, Set<PFGroup.Permission>> addPermissionsForRoles = new HashMap<>();
