@@ -120,8 +120,10 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/phoneEditText"
                     android:textSize="16sp"
+                    android:clickable="true"
+                    android:focusable="false"
                     android:hint="Your phone number"
-                    android:inputType="phone" />
+                    android:inputType="none" />
 
             </LinearLayout>
 

@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEditFirstName = (EditText) findViewById(R.id.register_firstname);
         mEditLastName = (EditText) findViewById(R.id.register_lastname);
         mEditEmail = (EditText) findViewById(R.id.register_email);
-        mEditPhone = (EditText) findViewById(R.id.register_phone);
+        mEditPhone = (EditText) findViewById(R.id.register_number);
 
         popup = new PopupWindow(RegisterActivity.this);
 

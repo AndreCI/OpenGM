@@ -161,15 +161,16 @@
                     android:textColorHint="@color/white" />
 
                 <EditText
-                    android:id="@+id/register_phone"
+                    android:id="@+id/register_number"
+                    android:clickable="true"
+                    android:focusable="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:cursorVisible="false"
                     android:drawableEnd="@mipmap/ic_call_white_24dp"
                     android:hint="@string/hint_phone_activity_register"
-                    android:inputType="phone"
                     android:lines="1"
                     android:maxLines="1"
+                    android:inputType="none"
                     android:onClick="showPhoneChoice"
                     android:paddingEnd="15dp"
                     android:paddingStart="10dp"
