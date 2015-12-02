@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,28 +88,30 @@ public class PollsListActivity extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final PFPoll poll = mAdapter.getItem(position);
-                AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
-                builder.setMessage(getString(R.string.confirm_deletion_poll))
-                        .setPositiveButton(getString(R.string.delete_poll), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // Delete the poll
-                                currentGroup.removePoll(poll);
-                                try {
-                                    poll.delete();
-                                } catch (PFException e) {
-                                    // Just do nothing, the poll is still on the server but can't be reach
+                if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
+                    final PFPoll poll = mAdapter.getItem(position);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
+                    builder.setMessage(getString(R.string.confirm_deletion_poll))
+                            .setPositiveButton(getString(R.string.delete_poll), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // Delete the poll
+                                    currentGroup.removePoll(poll);
+                                    try {
+                                        poll.delete();
+                                    } catch (PFException e) {
+                                        // Just do nothing, the poll is still on the server but can't be reach
+                                    }
+                                    updateList();
                                 }
-                                updateList();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
                 return true;
             }
         });
@@ -118,7 +119,6 @@ public class PollsListActivity extends AppCompatActivity {
     }
 
     private void refreshList(final boolean shouldReload) {
-        Log.d("INFO", "REFRESH");
         setCurrentPoll(null);
 
         polls.clear();
@@ -152,17 +152,18 @@ public class PollsListActivity extends AppCompatActivity {
                 }
 
                 polls.addAll(userPoll);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Collections.sort(polls);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mAdapter.notifyDataSetChanged();
                     }
                 });
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
                 bar.setVisibility(View.GONE);
             }
         }.execute();
