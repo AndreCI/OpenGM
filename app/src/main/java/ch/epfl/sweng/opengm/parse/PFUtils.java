@@ -67,7 +67,7 @@ public final class PFUtils {
                 @Override
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
-                        image[0] = BitmapFactory.decodeByteArray(data, 0, data.length); //I once get a OOMError.
+                        //image[0] = BitmapFactory.decodeByteArray(data, 0, data.length); //I once get a OOMError.
                     }
                 }
             });

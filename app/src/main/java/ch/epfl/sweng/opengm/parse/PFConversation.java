@@ -36,6 +36,7 @@ public class PFConversation extends PFEntity {
     private static final String TABLE_ENTRY_NAME = "ConversationName";
     private static final String TABLE_ENTRY_GROUPID = "GroupId";
     String conversationName;
+    String displayedName;
     String groupId;
     ParseFile file;
 
@@ -49,14 +50,14 @@ public class PFConversation extends PFEntity {
 
     private PFConversation(String id, Date modifiedDate, String conversationName, String groupId, ParseFile file) {
         super(id, TABLE_NAME, modifiedDate);
-        this.conversationName = conversationName;
+        this.displayedName = conversationName;
+        this.conversationName = file.getName();
         this.groupId = groupId;
         this.file = file;
     }
 
     public void writeMessage(String sender, String body) throws IOException, ParseException {
         File file = this.file.getFile();
-        Log.v("PFConv writeMessage", "file path: " + file.getAbsolutePath() + " vs old: " + this.file.getName());
         PrintWriter out = new PrintWriter(new FileWriter(file, true));
         out.println(String.format("<|%s|%s|%s|>\n", sender, getNewStringDate(), body));
         this.file = new ParseFile(file);
@@ -187,8 +188,8 @@ public class PFConversation extends PFEntity {
                 if (e == null && object != null) {
                     switch (entry) {
                         case TABLE_NAME:
-                            object.put(TABLE_ENTRY_FILE, file);
                             file.saveInBackground();
+                            object.put(TABLE_ENTRY_FILE, file);
                             break;
                         default:
                             return;
@@ -214,6 +215,10 @@ public class PFConversation extends PFEntity {
 
     public File getConversationFile() throws ParseException {
         return file.getFile();
+    }
+
+    public String getDisplayedName() {
+        return displayedName;
     }
 
     @Override

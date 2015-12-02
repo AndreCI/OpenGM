@@ -99,7 +99,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void fillMessages() {
-        new readMessageFile().execute(String.format("%s/%s_%s.txt", getFilesDir().getAbsolutePath(), conversation.getConversationName(), conversation.getGroupId()));
+        new readMessageFile().execute(String.format("%s/%s_%s.txt", getFilesDir().getAbsolutePath(), conversation.getDisplayedName(), conversation.getGroupId()));
         /* TODO: get File on serv or local device + read and parse it for messages and fill messages
          * idea : get serv file in background while displaying local one, then compare, then if modification, do them
          */
@@ -201,7 +201,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(), conversation.getGroupId(), ShowMessagesActivity.this);
+                Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(),  ShowMessagesActivity.this);
                 conversation.writeMessage(OpenGMApplication.getCurrentUser().getUsername(), params[0]);
             } catch (IOException | ParseException e) {
                 Log.e("show message activity", "couldn't write message to conversation");
