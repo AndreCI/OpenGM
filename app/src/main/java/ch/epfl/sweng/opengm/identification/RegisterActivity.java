@@ -169,7 +169,6 @@ public class RegisterActivity extends AppCompatActivity {
                 cancel = true;
             } else if (!InputUtils.isPhoneEnteredValid(number)) {
                 mEditPhone.setError(getString(R.string.incorrect_phone_number_activity_register));
-                focusView = mEditPhone;
                 cancel = true;
             } else if ((inputErrorCode = InputUtils.isPasswordInvalid(password1)) != INPUT_CORRECT) {
                 String errorString = "";
@@ -202,7 +201,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             if (cancel) {
-                focusView.requestFocus();
+                if (focusView != null) {
+                    focusView.requestFocus();
+                }
             } else {
                 // First : SignUp the user in the _User table
                 final ProgressDialog dialog = Utils.getProgressDialog(this);

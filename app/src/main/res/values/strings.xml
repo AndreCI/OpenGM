@@ -25,7 +25,7 @@
     <string name="error_edit_profile">Error while updating your informations</string>
 
 
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_register">Create an account</string>
 
     <string name="title_activity_my_groups">My Groups</string>
     <string name="noGroupsYet">No groups yet ? Click on the + button below to create one !</string>

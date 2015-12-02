@@ -158,7 +158,7 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_number)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_phone_number_activity_register), true)));
+        onView(withId(R.id.register_number)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_phone_number_activity_register), false)));
     }
 
     public void testShortPassword() {
