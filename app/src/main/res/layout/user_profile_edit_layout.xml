@@ -3,107 +3,85 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/editUserProfile"
-    android:weightSum="1000">
+    android:weightSum="1">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_weight="1000">
+        android:layout_height="150dp"
+        android:layout_weight="0.4">
 
-        <ImageView
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/userPhoto"
+                android:src="@drawable/avatar_male1"
+                android:scaleType="centerCrop"
+                android:maxWidth="50dp"
+                android:layout_margin="10dp"
+                android:layout_weight="50" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Change Picture"
+                android:id="@+id/changePictureButton"
+                android:clickable="true"
+                android:layout_gravity="center"
+                android:textSize="10dp"
+                android:onClick="changePicture" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/userPhoto"
             android:layout_weight="50"
-            android:src="@mipmap/ic_launcher"
-            android:scaleType="centerCrop"
-            android:maxWidth="50dp"
-            android:layout_margin="10dp" />
+            android:gravity="center">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button3"
-            android:layout_weight="50" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/firstNameEditText"
+                android:hint="First name" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="[name]"
-            android:id="@+id/nameTV"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:password="false"
-            android:allowUndo="false"
-            android:maxWidth="50dp"
-            android:layout_weight="50" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lastNameEditText"
+                android:hint="Last name" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="100"
-        android:gravity="left"
-        android:paddingLeft="20dp">
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:text="Change Picture"
-            android:id="@+id/button4"
-            android:gravity="left"
-            android:paddingLeft="20dp" />
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView3"
-        android:layout_weight="400">
+        android:id="@+id/scrollView4"
+        android:layout_weight="0.55">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/userInfoLinearLayout"
-            android:layout_margin="20dp"
-            android:layout_weight="300">
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.55">
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Username : "
-                    android:id="@+id/usernameTitle"
-                    android:textSize="16sp"
-                    android:textStyle="bold|italic" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/usernameEditText"
-                    android:textSize="16sp"
-                    android:hint="[username]" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginLeft="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -117,16 +95,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/emailEditText"
-                    android:hint="[email]"
-                    android:textSize="16sp" />
+                    android:hint="Your email address"
+                    android:textSize="16sp"
+                    android:inputType="textWebEmailAddress" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginLeft="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -141,15 +120,16 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/phoneEditText"
                     android:textSize="16sp"
-                    android:hint="[phone]" />
+                    android:hint="Your phone number"
+                    android:inputType="phone" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -160,10 +140,10 @@
                     android:textStyle="bold|italic" />
 
                 <EditText
-                    android:layout_width="338dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:id="@+id/descriptionEditText"
-                    android:hint="[about]"
+                    android:hint="Write something about you..."
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -176,20 +156,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_weight="200">
+        android:layout_marginTop="10dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="0.05"
+        android:layout_marginBottom="10dp">
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:text="Change Password"
             android:id="@+id/changePasswordButton"
-            android:singleLine="false" />
+            android:singleLine="false"
+            android:clickable="true"
+            android:onClick="changePassword" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save Profile"
-            android:id="@+id/saveProfileButton" />
     </LinearLayout>
 
 </LinearLayout>

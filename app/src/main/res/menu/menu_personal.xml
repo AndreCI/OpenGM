@@ -9,9 +9,9 @@
         opengm:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_show_settings"
-        android:icon="@mipmap/ic_edit_white_48dp"
-        android:title="My Settings"
+        android:id="@+id/action_show_user_profile"
+        android:icon="@mipmap/ic_person_outline_white_24dp"
+        android:title="My Profile"
         opengm:showAsAction="ifRoom" />
 
 </menu>

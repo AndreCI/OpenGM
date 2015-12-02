@@ -97,6 +97,8 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
+               // intent.putExtra(Utils.GROUP_INTENT_MESSAGE, OpenGMApplication.getCurrentUser().getGroups().indexOf(currentGroup));
+                //intent.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:

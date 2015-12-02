@@ -280,8 +280,8 @@ public class PFGroupTest {
             assertEquals(USERNAME, member.getNickname());
             assertEquals(user.getId(), member.getId());
             assertEquals(user.getUsername(), member.getUsername());
-            assertEquals(user.getFirstName(), member.getFirstname());
-            assertEquals(user.getLastName(), member.getLastname());
+            assertEquals(user.getFirstName(), member.getFirstName());
+            assertEquals(user.getLastName(), member.getLastName());
             assertEquals(user.getPicture(), member.getPicture());
             assertEquals(user.getAboutUser(), member.getAbout());
 

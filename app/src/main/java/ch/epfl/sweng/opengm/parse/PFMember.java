@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -176,7 +175,7 @@ public final class PFMember extends PFEntity implements Parcelable {
      *
      * @return the first name associated with this member
      */
-    public String getFirstname() {
+    public String getFirstName() {
         return mFirstName;
     }
 
@@ -185,7 +184,7 @@ public final class PFMember extends PFEntity implements Parcelable {
      *
      * @return the last name associated with this member
      */
-    public String getLastname() {
+    public String getLastName() {
         return mLastName;
     }
 
@@ -392,7 +391,7 @@ public final class PFMember extends PFEntity implements Parcelable {
     }
 
     public String getName() {
-        return getLastname() + " - " + getFirstname();
+        return getLastName() + " - " + getFirstName();
     }
 
     @Override

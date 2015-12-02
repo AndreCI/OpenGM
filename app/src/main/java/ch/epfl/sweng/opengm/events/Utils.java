@@ -1,5 +1,10 @@
 package ch.epfl.sweng.opengm.events;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+import android.widget.ImageView;
+
 import java.util.Date;
 
 public class Utils {
@@ -8,6 +13,7 @@ public class Utils {
     public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
     public static final int DELETE_EVENT = 690;
     public static final int SHOWING_EVENT = 490;
+    public static final int SILENCE = 830;
     public static final String EDIT_INTENT_MESSAGE = "ch.epfl.opengm.edit_intent_message";
 
     public static Date stringToDate(String s) {
