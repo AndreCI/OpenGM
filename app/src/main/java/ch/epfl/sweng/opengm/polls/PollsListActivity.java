@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -49,19 +53,7 @@ public class PollsListActivity extends AppCompatActivity {
 
         setTitle(R.string.title_list_poll);
 
-        setCurrentPoll(null);
-
         currentGroup = OpenGMApplication.getCurrentGroup();
-
-        final List<PFPoll> groupsPoll = currentGroup.getPolls();
-        List<PFPoll> userPoll = new ArrayList<>();
-
-        for (PFPoll poll : groupsPoll) {
-            if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
-                userPoll.add(poll);
-        }
-
-        polls.addAll(userPoll);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddPoll);
 
@@ -76,7 +68,6 @@ public class PollsListActivity extends AppCompatActivity {
 
         mAdapter = new PollListAdapter(this, polls);
         list.setAdapter(mAdapter);
-
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -123,6 +114,66 @@ public class PollsListActivity extends AppCompatActivity {
                 return true;
             }
         });
+        refreshList(false);
+    }
+
+    private void refreshList(final boolean shouldReload) {
+        Log.d("INFO", "REFRESH");
+        setCurrentPoll(null);
+
+        polls.clear();
+        mAdapter.notifyDataSetChanged();
+
+        final ProgressBar bar = (ProgressBar) findViewById(R.id.progressRefresh);
+        bar.setVisibility(View.VISIBLE);
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (shouldReload) {
+                    try {
+                        OpenGMApplication.getCurrentGroup().reload();
+                    } catch (PFException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                bar.setVisibility(View.GONE);
+                                Toast.makeText(getBaseContext(), "An error appeared while loading your polls", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+                final List<PFPoll> groupsPoll = currentGroup.getPolls();
+                List<PFPoll> userPoll = new ArrayList<>();
+
+                for (PFPoll poll : groupsPoll) {
+                    if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
+                        userPoll.add(poll);
+                }
+
+                polls.addAll(userPoll);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                bar.setVisibility(View.GONE);
+            }
+        }.execute();
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_refresh_list, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void addPoll(View view) {
@@ -140,6 +191,9 @@ public class PollsListActivity extends AppCompatActivity {
             case android.R.id.home:
                 setCurrentPoll(null);
                 finish();
+                return true;
+            case R.id.action_refresh:
+                refreshList(true);
                 return true;
             default:
                 return true;
