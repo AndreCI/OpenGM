@@ -3,9 +3,7 @@ package ch.epfl.sweng.opengm.polls;
 import android.app.Activity;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.PickerActions;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import android.widget.DatePicker;
 
 import junit.framework.Assert;
@@ -73,7 +71,7 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
 
     public void testEmptyName() {
         getActivity();
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
         onView(withId(R.id.namePollEditText)).check(matches(isTextStyleCorrect(getActivity().getString(R.string.empty_name_poll), true)));
     }
 
@@ -81,7 +79,7 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         Activity act = getActivity();
         onView(withId(R.id.namePollEditText)).perform(typeText("blabla"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
         onView(withId(R.id.descriptionPollEditText)).check(matches(isTextStyleCorrect(act.getString(R.string.empty_description_poll), true)));
     }
 
@@ -91,7 +89,7 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
         onView(withText(R.string.less_two_answers_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
                 .check(matches(isDisplayed()));
@@ -104,12 +102,12 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 1"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
 
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
 
         onView(withText(R.string.less_two_answers_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
@@ -123,15 +121,15 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 1"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 2"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
 
         onView(withText(R.string.empty_date_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
@@ -145,11 +143,11 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 1"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 2"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
@@ -157,7 +155,7 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         onView(withId(R.id.deadlineButton)).perform(click());
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2016, 1, 1));
         onView(withId(android.R.id.button1)).perform(click());
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
 
         onView(withText(R.string.no_participants_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
@@ -170,11 +168,11 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 1"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 2"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
@@ -189,15 +187,15 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
             PFMember m = PFMember.fetchExistingMember(currentUser.getId());
             Participant p = new Participant(m);
             onView(withTagValue(is((Object) p))).perform(click());
-            onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+            onView(withId(R.id.action_validate)).perform(click());
             onView(withId(R.id.participantsButton)).perform(click());
             onView(withTagValue(is((Object) p))).perform(click());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
 
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
 
         onView(withText(R.string.no_participants_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
@@ -211,11 +209,11 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 1"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 2"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
@@ -230,12 +228,12 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
             PFMember m = PFMember.fetchExistingMember(currentUser.getId());
             Participant p = new Participant(m);
             onView(withTagValue(is((Object) p))).perform(click());
-            onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+            onView(withId(R.id.action_validate)).perform(click());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
 
         onView(withText(R.string.no_answer_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
@@ -248,11 +246,11 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         closeSoftKeyboard();
         onView(withId(R.id.descriptionPollEditText)).perform(typeText("description"));
         closeSoftKeyboard();
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 1"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
-        onView(ViewMatchers.withId(R.id.add_answer_poll)).perform(click());
+        onView(withId(R.id.add_answer_poll)).perform(click());
         onView(withId(R.id.answer_editText)).perform(typeText("Answer 2"));
         closeSoftKeyboard();
         onView(withText(act.getString(R.string.add))).perform(click());
@@ -267,20 +265,20 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
             PFMember m = PFMember.fetchExistingMember(currentUser.getId());
             Participant p = new Participant(m);
             onView(withTagValue(is((Object) p))).perform(click());
-            onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+            onView(withId(R.id.action_validate)).perform(click());
         } catch (PFException e) {
             Assert.fail("Network error");
         }
 
-        onView(ViewMatchers.withId(R.id.minus_poll_answer)).perform(click());
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.minus_poll_answer)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
         onView(withText(R.string.no_answer_poll))
                 .inRoot(withDecorView(not(act.getWindow().getDecorView())))
                 .check(matches(isDisplayed()));
 
-        onView(ViewMatchers.withId(R.id.plus_poll_answer)).perform(click());
+        onView(withId(R.id.plus_poll_answer)).perform(click());
 
-        onView(ViewMatchers.withId(R.id.action_validate)).perform(click());
+        onView(withId(R.id.action_validate)).perform(click());
         Thread.sleep(2000);
 
         try {
