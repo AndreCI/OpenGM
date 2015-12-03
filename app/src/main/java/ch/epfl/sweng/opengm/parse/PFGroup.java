@@ -89,7 +89,8 @@ public final class PFGroup extends PFEntity {
         ADD_EVENT(4, "Add events"),
         MANAGE_EVENT(5, "Manage events"),
         MANAGE_GROUP(6, "Manage groups"),
-        CREATE_POLL(7, "Create Poll");
+        CREATE_POLL(7, "Create Poll"),
+        MODIFY_PERMISSIONS(8, "Modify Permissions");
 
         private int value;
         private String name;
