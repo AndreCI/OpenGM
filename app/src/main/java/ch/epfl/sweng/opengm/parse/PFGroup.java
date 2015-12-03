@@ -1,11 +1,13 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -304,8 +306,16 @@ public final class PFGroup extends PFEntity {
 
                 mDescription = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                mPicture = null;
-
+                // retrieve image
+                ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            mPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        }
+                    });
+                }
                 HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
                 for(int i = 0; i < permissionsForRoles.length(); i++){
@@ -344,7 +354,7 @@ public final class PFGroup extends PFEntity {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(GROUP_TABLE_NAME);
         query.getInBackground(getId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, ParseException e) {
-                if (e == null && object != null) {
+                if (e == null) {
                     switch (entry) {
                         case GROUP_ENTRY_NAME:
                             object.put(GROUP_ENTRY_NAME, mName);
@@ -395,12 +405,17 @@ public final class PFGroup extends PFEntity {
                             object.put(GROUP_ENTRY_ISPRIVATE, mIsPrivate);
                             break;
                         case GROUP_ENTRY_PICTURE:
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] image = stream.toByteArray();
-                            ParseFile file = new ParseFile(String.format("group%s.png", getId()), image);
-                            file.saveInBackground();
-                            object.put(GROUP_ENTRY_PICTURE, mPicture);
+                            // convert bitmap to a bytes array to send it on the server
+                            if (mPicture != null) {
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] imageData = stream.toByteArray();
+                                ParseFile image = new ParseFile(mName + ".png", imageData);
+                                object.put(GROUP_ENTRY_PICTURE, image);
+                            } else {
+                                object.remove(GROUP_ENTRY_PICTURE);
+                            }
+
                             break;
                         case GROUP_ENTRY_CONVERSATIONS:
                             object.put(GROUP_ENTRY_CONVERSATIONS, mConversationInformations);
@@ -408,14 +423,7 @@ public final class PFGroup extends PFEntity {
                         default:
                             return;
                     }
-                    object.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null) {
-                                // throw new ParseException("No object for the selected id.");
-                            }
-                        }
-                    });
+                    object.saveInBackground();
                 } else {
                     // throw new ParseException("No object for the selected id.");
                 }
@@ -853,19 +861,32 @@ public final class PFGroup extends PFEntity {
      * @param picture The new picture of the group
      */
     public void setPicture(Bitmap picture) {
-        if (!mPicture.equals(picture)) {
+        if (mPicture == null || !mPicture.equals(picture)) {
             Bitmap oldPicture = mPicture;
-            this.mPicture = picture;
+            mPicture = picture;
             try {
                 updateToServer(GROUP_ENTRY_PICTURE);
             } catch (PFException e) {
-                this.mPicture = oldPicture;
+                mPicture = oldPicture;
             }
         }
     }
 
     public Bitmap getPicture() {
         return (mPicture == null) ? null : Bitmap.createBitmap(mPicture);
+    }
+
+    /**
+     * return a picture that is squared so it fits nicely where we need square picture
+     * @return the group picture that is squared
+     */
+    public Bitmap getSquarePicture() {
+        if (mPicture != null) {
+            int size = (mPicture.getWidth() > mPicture.getHeight()) ? mPicture.getWidth() : mPicture.getHeight();
+            return Bitmap.createScaledBitmap(mPicture, size, size, false);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -937,8 +958,22 @@ public final class PFGroup extends PFEntity {
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 
-                return new PFGroup(id, object.getUpdatedAt(), name, users, nickNames, roles, events,
-                        polls, privacy, description, null, rolesPermissions, conversationInformations);
+                final PFGroup group = new PFGroup(id, object.getUpdatedAt(), name, users, nickNames,
+                        roles, events, polls, privacy, description, null, rolesPermissions, conversationInformations);
+
+                // retrieve image from server
+                ParseFile imageFile = (ParseFile) object.get(GROUP_ENTRY_PICTURE);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            group.setPicture(picture);
+                        }
+                    });
+                }
+
+                return group;
             } else {
                 throw new PFException("Query failed for id " + id);
             }
@@ -1003,7 +1038,12 @@ public final class PFGroup extends PFEntity {
         object.put(GROUP_ENTRY_ISPRIVATE, false);
         object.put(GROUP_ENTRY_ROLES_PERMISSIONS, rolesPermissions);
         if (picture != null) {
-            object.put(GROUP_ENTRY_PICTURE, picture);
+            // convert bitmap to a bytes array to send it on the server (FREEZE THE APP)
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] imageData = stream.toByteArray();
+            ParseFile image = new ParseFile(name + ".png", imageData);
+            object.put(GROUP_ENTRY_PICTURE, image);
         }
 
         try {
