@@ -53,6 +53,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private final PFUser currentUser = OpenGMApplication.getCurrentUser();
     private Bitmap image = null;
 
+    private boolean startingChangePicture = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +100,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
     }
 
     public void changePicture(View view) {
+        startingChangePicture = true;
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
@@ -125,7 +128,9 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     currentUser.setEmail(mEmailEditText.getText().toString());
                     currentUser.setPhoneNumber(mPhoneNumberEditText.getText().toString());
                     currentUser.setAboutUser(mDescriptionEditText.getText().toString());
-                    currentUser.setPicture(image);
+                    if (startingChangePicture) {
+                        currentUser.setPicture(image);
+                    }
                     Toast.makeText(this, getString(R.string.success_edit_profile), Toast.LENGTH_LONG).show();
                     setResult(Activity.RESULT_OK, new Intent());
                     finish();
