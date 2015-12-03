@@ -45,7 +45,9 @@ public class GroupCardViewAdapter extends RecyclerView.Adapter<GroupCardViewAdap
     public void onBindViewHolder(GroupViewHolder holder, int position) {
         // square the card
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.cardView.getLayoutParams();
-        layoutParams.height = holder.cardView.getWidth();
+        layoutParams.width = (screenMetrics.widthPixels / 2) - 10;
+        layoutParams.height = layoutParams.width;
+        layoutParams.leftMargin = 5;
         holder.cardView.setLayoutParams(layoutParams);
 
         holder.cardView.setTag(position);
