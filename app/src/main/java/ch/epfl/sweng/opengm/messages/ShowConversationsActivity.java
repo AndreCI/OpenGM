@@ -138,10 +138,12 @@ public class ShowConversationsActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(PFGroup... params) {
             for(String s : params[0].getConversationInformations()) {
-                try {
-                    conversations.add(PFConversation.fetchExistingConversation(s));
-                } catch (PFException e) {
-                    Log.v("ShowConv read index", "coudln't add conversation " + s);
+                if(s != null && !s.isEmpty()) {
+                    try {
+                        conversations.add(PFConversation.fetchExistingConversation(s));
+                    } catch (PFException e) {
+                        Log.v("ShowConv read index", "coudln't add conversation " + s);
+                    }
                 }
             }
             return null;

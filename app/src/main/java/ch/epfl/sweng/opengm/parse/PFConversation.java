@@ -14,6 +14,7 @@ import com.parse.SaveCallback;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,31 +37,26 @@ public class PFConversation extends PFEntity {
     private static final String TABLE_ENTRY_NAME = "ConversationName";
     private static final String TABLE_ENTRY_GROUPID = "GroupId";
     String conversationName;
-    String displayedName;
     String groupId;
-    ParseFile file;
+    File file;
 
     public PFConversation(Parcel in) {
         super(in, TABLE_NAME);
         conversationName = in.readString();
         groupId = in.readString();
-        File file = new File(in.readString(), in.readString());
-        this.file = new ParseFile(file);
+        file = new File(in.readString(), in.readString());
     }
 
-    private PFConversation(String id, Date modifiedDate, String conversationName, String groupId, ParseFile file) {
+    private PFConversation(String id, Date modifiedDate, String conversationName, String groupId, File file) {
         super(id, TABLE_NAME, modifiedDate);
-        this.displayedName = conversationName;
-        this.conversationName = file.getName();
+        this.conversationName = conversationName;
         this.groupId = groupId;
         this.file = file;
     }
 
     public void writeMessage(String sender, String body) throws IOException, ParseException {
-        File file = this.file.getFile();
         PrintWriter out = new PrintWriter(new FileWriter(file, true));
         out.println(String.format("<|%s|%s|%s|>\n", sender, getNewStringDate(), body));
-        this.file = new ParseFile(file);
         try {
             updateToServer();
         } catch (PFException e) {
@@ -70,12 +66,10 @@ public class PFConversation extends PFEntity {
 
     public void writeConversationInformation() throws PFException {
         try {
-            File file = this.file.getFile();
             PrintWriter out = new PrintWriter(new FileWriter(file, true));
             out.println(String.format("<|%s|%s|%s|>\n", getId(), conversationName, groupId));
-            this.file = new ParseFile(file);
             updateToServer();
-        } catch (IOException|ParseException e) {
+        } catch (IOException e) {
             throw new PFException(e);
         }
     }
@@ -93,7 +87,7 @@ public class PFConversation extends PFEntity {
         object.put(TABLE_ENTRY_FILE, file);
         object.put(TABLE_ENTRY_GROUPID, groupId);
         object.save();
-        return new PFConversation(object.getObjectId(), object.getUpdatedAt(), conversationName, groupId, file);
+        return new PFConversation(object.getObjectId(), object.getUpdatedAt(), conversationName, groupId, newFile);
     }
 
     public static PFConversation fetchExistingConversation(String id) throws PFException {
@@ -108,7 +102,7 @@ public class PFConversation extends PFEntity {
                 ParseFile file = object.getParseFile(TABLE_ENTRY_FILE);
                 String conversationName = object.getString(TABLE_ENTRY_NAME);
                 String groupId = object.getString(TABLE_ENTRY_GROUPID);
-                return new PFConversation(id, object.getUpdatedAt(), conversationName, groupId, file);
+                return new PFConversation(id, object.getUpdatedAt(), conversationName, groupId, file.getFile());
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
@@ -125,19 +119,19 @@ public class PFConversation extends PFEntity {
             ParseObject object = query.get(getId());
             if (hasBeenModified(object)) {
                 setLastModified(object);
-                mergeConflicts(file, object.getParseFile(TABLE_ENTRY_FILE));
+                mergeConflicts(file, object.getParseFile(TABLE_ENTRY_FILE).getFile());
             }
         } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void mergeConflicts(ParseFile file, ParseFile serverFile) throws ParseException, IOException {
-        File newFile = new File(file.getFile().getAbsolutePath());
+    private void mergeConflicts(File file, File serverFile) throws ParseException, IOException {
+        File newFile = new File(file.getAbsolutePath());
         PrintWriter printWriter = new PrintWriter(newFile);
         List<String> strings = new ArrayList<>();
-        BufferedReader localReader = new BufferedReader(new InputStreamReader(file.getDataStream()));
-        BufferedReader remoteReader = new BufferedReader(new InputStreamReader(serverFile.getDataStream()));
+        BufferedReader localReader = new BufferedReader(new FileReader(file));
+        BufferedReader remoteReader = new BufferedReader(new FileReader(serverFile));
         String localLine = localReader.readLine();
         String remoteLine = remoteReader.readLine();
         while (localLine != null && remoteLine != null) {
@@ -188,20 +182,20 @@ public class PFConversation extends PFEntity {
                 if (e == null && object != null) {
                     switch (entry) {
                         case TABLE_NAME:
+                            ParseFile file = new ParseFile(PFConversation.this.file);
                             file.saveInBackground();
                             object.put(TABLE_ENTRY_FILE, file);
+                            object.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null) {
+                                        // throw new ParseException("No object for the selected id.");
+                                    }
+                                }
+                            });
                             break;
                         default:
-                            return;
                     }
-                    object.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null) {
-                                // throw new ParseException("No object for the selected id.");
-                            }
-                        }
-                    });
                 } else {
                     // throw new ParseException("No object for the selected id.");
                 }
@@ -214,12 +208,9 @@ public class PFConversation extends PFEntity {
     }
 
     public File getConversationFile() throws ParseException {
-        return file.getFile();
+        return file;
     }
 
-    public String getDisplayedName() {
-        return displayedName;
-    }
 
     @Override
     public int describeContents() {
@@ -232,12 +223,8 @@ public class PFConversation extends PFEntity {
         dest.writeString(dateToString(lastModified));
         dest.writeString(conversationName);
         dest.writeString(groupId);
-        try {
-            dest.writeString(file.getFile().getPath());
-            dest.writeString(file.getFile().getName());
-        } catch (ParseException e) {
-            Log.e("PFConversation", "couldn't write to parcel the file");
-        }
+        dest.writeString(file.getPath());
+        dest.writeString(file.getName());
     }
 
     public static final Creator<PFConversation> CREATOR = new Creator<PFConversation>() {

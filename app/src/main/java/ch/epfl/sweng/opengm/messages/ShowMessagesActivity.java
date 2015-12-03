@@ -99,7 +99,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void fillMessages() {
-        new readMessageFile().execute(String.format("%s/%s_%s.txt", getFilesDir().getAbsolutePath(), conversation.getDisplayedName(), conversation.getGroupId()));
+        new readMessageFile().execute(String.format("%s/%s_%s.txt", getFilesDir().getAbsolutePath(), conversation.getConversationName(), conversation.getGroupId()));
         /* TODO: get File on serv or local device + read and parse it for messages and fill messages
          * idea : get serv file in background while displaying local one, then compare, then if modification, do them
          */
@@ -124,11 +124,13 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 strings = Utils.readMessagesFile(params[0]);
                 messages = new ArrayList<>();
                 for (String s : strings) {
-                    Log.v("ShowMessages readFile", s);
-                    String[] data = Utils.extractMessage(s);
-                    MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
-                    messages.add(messageAdapter);
-                    Log.v("ShowMessages readFile", messageAdapter.toString());
+                    if(s != null) {
+                        Log.v("ShowMessages readFile", s);
+                        String[] data = Utils.extractMessage(s);
+                        MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
+                        messages.add(messageAdapter);
+                        Log.v("ShowMessages readFile", messageAdapter.toString());
+                    }
                 }
             } catch (IOException e) {
                 Log.v("ShowMessageActivity", "couldn't read file " + params[0]);
@@ -179,7 +181,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 }
                 conversation.updateToServer();
             } catch (PFException | ParseException | IOException e) {
-                Log.e("PFConversation", "couldn't reach server");
+                Log.e("ShowMess GetServ", "couldn't reach server");
             }
             return null;
         }
@@ -201,8 +203,10 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(),  ShowMessagesActivity.this);
+                Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(), conversation.getGroupId(),  ShowMessagesActivity.this);
+                Log.v("ShowMessage sendmessage", "write to local done");
                 conversation.writeMessage(OpenGMApplication.getCurrentUser().getUsername(), params[0]);
+                Log.v("ShowMessage sendmessage", "write to remote done");
             } catch (IOException | ParseException e) {
                 Log.e("show message activity", "couldn't write message to conversation");
             }

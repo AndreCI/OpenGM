@@ -88,7 +88,8 @@ public class CreateNewConversationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(!((TextView) findViewById(R.id.conversation_title)).getText().toString().isEmpty()) {
+        TextView textView = (TextView) findViewById(R.id.conversation_title);
+        if(textView != null && !textView.getText().toString().isEmpty()) {
             sendBackResult();
         } else {
             super.onBackPressed();

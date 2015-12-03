@@ -30,10 +30,10 @@ public class Utils {
     public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.file_info";
     public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.conv_info";
 
-    public static void writeMessageLocal(String sender, String body, String conversationName,  Context context) {
+    public static void writeMessageLocal(String sender, String body, String conversationName, String groupId,  Context context) {
         try {
-            Log.v("Utils write local mes", context.getFilesDir().getAbsolutePath() + '/' + conversationName + " : " + sender + " - " + body);
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(conversationName + ".txt", Context.MODE_APPEND));
+            Log.v("Utils write local mes", context.getFilesDir().getAbsolutePath() + '/' + conversationName  + "_" + groupId + ".txt" + " : " + sender + " - " + body);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(conversationName  + "_" + groupId + ".txt", Context.MODE_APPEND));
             outputStreamWriter.write(createNewMessage(sender, body));
             outputStreamWriter.close();
         } catch (IOException e) {
