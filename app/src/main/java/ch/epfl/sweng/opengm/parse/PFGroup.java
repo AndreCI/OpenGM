@@ -415,7 +415,6 @@ public final class PFGroup extends PFEntity {
                             } else {
                                 object.remove(GROUP_ENTRY_PICTURE);
                             }
-
                             break;
                         case GROUP_ENTRY_CONVERSATIONS:
                             object.put(GROUP_ENTRY_CONVERSATIONS, mConversationInformations);
@@ -954,7 +953,6 @@ public final class PFGroup extends PFEntity {
                 if(convsArray != null) {
                     conversationInformations.addAll(Arrays.asList(convsArray));
                 }
-                Log.d("FETCH", "" + polls.size());
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 

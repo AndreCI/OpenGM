@@ -199,7 +199,8 @@ public class MyGroupsActivity extends AppCompatActivity {
             });
             int current = 0;
             if (reloadGroups) {
-                for (PFGroup group : getCurrentUser().getGroups()) {
+                List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
+                for (PFGroup group : groups) {
                     try {
                         group.reload();
                         groups.add(group);

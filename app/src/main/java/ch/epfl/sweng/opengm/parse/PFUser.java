@@ -1,9 +1,12 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
+import android.util.Log;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -120,7 +123,6 @@ public final class PFUser extends PFEntity {
                             throw new PFException("Error while retrieving the existing group with id " + groupId);
                         }
                     }
-
                 }
             }
         } catch (ParseException e) {
@@ -155,12 +157,15 @@ public final class PFUser extends PFEntity {
                                 object.put(USER_ENTRY_ABOUT, mAboutUser);
                                 break;
                             case USER_ENTRY_PICTURE:
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                byte[] image = stream.toByteArray();
-                                ParseFile file = new ParseFile(String.format("user%s.png", getId()), image);
-                                file.saveInBackground();
-                                object.put(USER_ENTRY_PICTURE, mPicture);
+                                if (mPicture != null) {
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                    mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    byte[] imageData = stream.toByteArray();
+                                    ParseFile image = new ParseFile(String.format("user%s.png", getId()), imageData);
+                                    object.put(USER_ENTRY_PICTURE, image);
+                                } else {
+                                    object.remove(USER_ENTRY_PICTURE);
+                                }
                                 break;
                             case USER_ENTRY_GROUPS:
                                 JSONArray array = new JSONArray();
@@ -413,17 +418,16 @@ public final class PFUser extends PFEntity {
      * Setter for the profile picture of the current user
      *
      * @param picture The new picture of the current user
-     * @throws PFException If something went wrong while updating on the server
      */
-    public void setPicture(Bitmap picture) throws PFException {
-        if (!mPicture.equals(picture)) {
+    public void setPicture(Bitmap picture) {
+        if ((mPicture == null && picture != null) ||
+                (mPicture != null && !mPicture.equals(picture))) {
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
             try {
                 updateToServer(USER_ENTRY_PICTURE);
             } catch (PFException e) {
                 this.mPicture = oldPicture;
-                throw new PFException();
             }
         }
     }
@@ -490,8 +494,21 @@ public final class PFUser extends PFEntity {
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = (groupsArray == null ?
                         new ArrayList<String>() : new ArrayList<>(Arrays.asList(groupsArray)));
-                return new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username,
+                final PFUser user = new PFUser(id, object.getUpdatedAt(), phoneNumber, email, username,
                         firstName, lastName, description, null, groups);
+
+                // retrieve image from server
+                ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            user.setPicture(picture);
+                        }
+                    });
+                }
+                return user;
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
