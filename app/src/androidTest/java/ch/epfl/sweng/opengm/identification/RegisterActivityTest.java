@@ -60,11 +60,6 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
         activity = getActivity();
     }
 
-    @Before
-    public void newIds() {
-
-    }
-
     public void testEmptyUsername() {
         onView(ViewMatchers.withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_username)).check(matches(isTextStyleCorrect(activity.getString(R.string.emtpy_username_activity_register), true)));

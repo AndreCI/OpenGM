@@ -449,7 +449,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         testUsers = new ArrayList<>();
 
         PFUser firstUser = PFUser.createNewUser(TEST_USER_ID_PREFIX + 0, TEST_USER_MAIL_PREFIX + 0 + TEST_USER_MAIL_SUFFIX, "0", TEST_USERNAME_PREFIX + 0, TEST_USER_FIRST_PREFIX + 0, TEST_USER_LAST_PREFIX + 0);
-        OpenGMApplication.setCurrentUserWithId(firstUser.getId());
+        OpenGMApplication.setCurrentUser(firstUser);
         testUsers.add(firstUser);
 
 
