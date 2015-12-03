@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
+import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_CONVERSATIONS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_DESCRIPTION;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_EVENTS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_ISPRIVATE;
@@ -43,12 +44,10 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_TABLE_NAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_EMAIL;
 import static ch.epfl.sweng.opengm.parse.PFConstants._USER_TABLE_USERNAME;
-import static ch.epfl.sweng.opengm.parse.PFConstants.GROUP_ENTRY_CONVERSATIONS;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.checkNullArguments;
 import static ch.epfl.sweng.opengm.parse.PFUtils.collectionToArray;
 import static ch.epfl.sweng.opengm.parse.PFUtils.convertFromJSONArray;
-import static ch.epfl.sweng.opengm.parse.PFUtils.retrieveFileFromServer;
 import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
 import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
 
@@ -261,6 +260,7 @@ public final class PFGroup extends PFEntity {
                 fillMembersMap(users, nickNames, roles);
 
                 String[] eventsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_EVENTS));
+                String[] pollsArray = convertFromJSONArray(object.getJSONArray(GROUP_ENTRY_POLLS));
 
                 HashSet<String> oldEvents = new HashSet<>();
                 for (String eventId : mEvents.keySet()) {
@@ -283,6 +283,27 @@ public final class PFGroup extends PFEntity {
                     }
                 }
 
+                HashSet<String> oldPolls = new HashSet<>();
+                for (String pollId : mPolls.keySet()) {
+                    oldPolls.add(pollId);
+                }
+                HashSet<String> newPolls = new HashSet<>();
+                for (int i = 0; i < pollsArray.length; i++) {
+                    newPolls.add(pollsArray[i]);
+                }
+
+                if (!newPolls.equals(oldPolls)) {
+                    mPolls = new HashMap<>();
+                    for (int i = 0; i < pollsArray.length; i++) {
+                        try {
+                            String pollId = pollsArray[i];
+                            mPolls.put(pollId, PFPoll.fetchExistingPoll(pollId, this));
+                        } catch (PFException e) {
+                            // Do not add the event but to nothing
+                        }
+                    }
+                }
+
                 mDescription = object.getString(GROUP_ENTRY_DESCRIPTION);
 
                 // retrieve image
@@ -295,7 +316,6 @@ public final class PFGroup extends PFEntity {
                         }
                     });
                 }
-
                 HashMap<String, List<Permission>> rolesPermissions = new HashMap<>();
                 JSONArray permissionsForRoles = object.getJSONArray(GROUP_ENTRY_ROLES_PERMISSIONS);
                 for(int i = 0; i < permissionsForRoles.length(); i++){
@@ -319,6 +339,9 @@ public final class PFGroup extends PFEntity {
             }
             for (PFEvent event : mEvents.values()) {
                 event.reload();
+            }
+            for (PFPoll poll : mPolls.values()) {
+                poll.reload();
             }
         } catch (ParseException e) {
             throw new PFException();
@@ -392,7 +415,6 @@ public final class PFGroup extends PFEntity {
                             } else {
                                 object.remove(GROUP_ENTRY_PICTURE);
                             }
-
                             break;
                         case GROUP_ENTRY_CONVERSATIONS:
                             object.put(GROUP_ENTRY_CONVERSATIONS, mConversationInformations);
@@ -931,7 +953,6 @@ public final class PFGroup extends PFEntity {
                 if(convsArray != null) {
                     conversationInformations.addAll(Arrays.asList(convsArray));
                 }
-                Log.d("FETCH", "" + polls.size());
 
                 String description = object.getString(GROUP_ENTRY_DESCRIPTION);
 

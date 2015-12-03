@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
 
@@ -25,7 +23,7 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
 
     public EventListTest() {
         super(EventListActivity.class);
-        }
+    }
 
     @Override
     public void setUp() throws Exception {
@@ -54,11 +52,7 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
         } catch (PFException e) {
             e.printStackTrace();
         }
-        try {
-            OpenGMApplication.setCurrentUserWithId(user.getId());
-        } catch (PFException e) {
-            Assert.fail("Network error");
-        }
+        OpenGMApplication.setCurrentUser(user);
         Thread.sleep(2000);
         try {
             group = PFGroup.createNewGroup(user, "EventListTest", "testDescription", null);
@@ -74,10 +68,10 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
 
     @After
     public void tearDown() {
-        if(group != null) {
+        if (group != null) {
             group.deleteGroup();
         }
-        if(user != null) {
+        if (user != null) {
             deleteUserWithId(id);
         }
         OpenGMApplication.logOut();

@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEditFirstName = (EditText) findViewById(R.id.register_firstname);
         mEditLastName = (EditText) findViewById(R.id.register_lastname);
         mEditEmail = (EditText) findViewById(R.id.register_email);
-        mEditPhone = (EditText) findViewById(R.id.register_phone);
+        mEditPhone = (EditText) findViewById(R.id.register_number);
 
         popup = new PopupWindow(RegisterActivity.this);
 
@@ -169,7 +169,6 @@ public class RegisterActivity extends AppCompatActivity {
                 cancel = true;
             } else if (!InputUtils.isPhoneEnteredValid(number)) {
                 mEditPhone.setError(getString(R.string.incorrect_phone_number_activity_register));
-                focusView = mEditPhone;
                 cancel = true;
             } else if ((inputErrorCode = InputUtils.isPasswordInvalid(password1)) != INPUT_CORRECT) {
                 String errorString = "";
@@ -202,7 +201,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             if (cancel) {
-                focusView.requestFocus();
+                if (focusView != null) {
+                    focusView.requestFocus();
+                }
             } else {
                 // First : SignUp the user in the _User table
                 final ProgressDialog dialog = Utils.getProgressDialog(this);
@@ -227,12 +228,8 @@ public class RegisterActivity extends AppCompatActivity {
                                                     // error while updating the _User table
                                                     switch (e.getCode()) {
                                                         case EMAIL_TAKEN:
-                                                            mEditEmail.setError(String.format(getString(R.string.taken_email_activity_register), username));
+                                                            mEditEmail.setError(String.format(getString(R.string.taken_email_activity_register), email));
                                                             mEditEmail.requestFocus();
-                                                            break;
-                                                        case USERNAME_MISSING:
-                                                            mEditUsername.setError(String.format(getString(R.string.taken_email_activity_register), email));
-                                                            mEditUsername.requestFocus();
                                                             break;
                                                         default:
                                                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

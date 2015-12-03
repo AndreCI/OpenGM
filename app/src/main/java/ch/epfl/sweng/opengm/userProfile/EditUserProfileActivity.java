@@ -3,10 +3,14 @@ package ch.epfl.sweng.opengm.userProfile;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,8 +37,11 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_SHORT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_LETTER;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITHOUT_NUMBER;
+import static ch.epfl.sweng.opengm.utils.Utils.getRealPathFromURI;
 
 public class EditUserProfileActivity extends AppCompatActivity {
+
+    private final int RESULT_LOAD_IMAGE = 13772;
 
     private ImageView mPhotoImageView;
     private EditText mFirstNameEditText;
@@ -44,12 +51,9 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private EditText mDescriptionEditText;
 
     private final PFUser currentUser = OpenGMApplication.getCurrentUser();
+    private Bitmap image = null;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
-        return true;
-    }
+    private boolean startingChangePicture = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +64,11 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
             // Display profile picture of user :
             mPhotoImageView = (ImageView) findViewById(R.id.userPhoto);
-            mPhotoImageView.setImageResource(R.drawable.avatar_male1);
-
+            if (currentUser.getPicture() == null) {
+                mPhotoImageView.setImageResource(R.drawable.avatar_male1);
+            } else {
+                mPhotoImageView.setImageBitmap(currentUser.getPicture());
+            }
             // Display first name of user :
             mFirstNameEditText = (EditText) findViewById(R.id.firstNameEditText);
             mFirstNameEditText.setText(currentUser.getFirstName());
@@ -90,7 +97,18 @@ public class EditUserProfileActivity extends AppCompatActivity {
             mDescriptionEditText.setText(currentUser.getAboutUser());
 
         }
+    }
 
+    public void changePicture(View view) {
+        startingChangePicture = true;
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, RESULT_LOAD_IMAGE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_user_profile, menu);
+        return true;
     }
 
     @Override
@@ -110,16 +128,19 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     currentUser.setEmail(mEmailEditText.getText().toString());
                     currentUser.setPhoneNumber(mPhoneNumberEditText.getText().toString());
                     currentUser.setAboutUser(mDescriptionEditText.getText().toString());
+                    if (startingChangePicture) {
+                        currentUser.setPicture(image);
+                    }
                     Toast.makeText(this, getString(R.string.success_edit_profile), Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(EditUserProfileActivity.this, MyProfileActivity.class));
+                    setResult(Activity.RESULT_OK, new Intent());
+                    finish();
                 } catch (PFException e) {
-                    e.printStackTrace();
                     Toast.makeText(this, getString(R.string.error_edit_profile), Toast.LENGTH_LONG).show();
                 }
                 return true;
 
             case R.id.action_cancel_edit_profile:
-                onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
 
             default:
@@ -130,13 +151,31 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RegisterActivity.PHONE_ACT_KEY) {
-            if (resultCode == Activity.RESULT_OK) {
-                mPhoneNumberEditText.setText(data.getStringExtra(RegisterActivity.PHONE_KEY));
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
-            }
+        switch (requestCode) {
+            case RegisterActivity.PHONE_ACT_KEY:
+                if (resultCode == Activity.RESULT_OK) {
+                    mPhoneNumberEditText.setText(data.getStringExtra(RegisterActivity.PHONE_KEY));
+                }
+                break;
+            case RESULT_LOAD_IMAGE:
+                if (resultCode == RESULT_OK) {
+                    Uri imageUri = data.getData();
+                    String path = getRealPathFromURI(imageUri, this);
+
+                    // handle images that are too big
+                    BitmapFactory.Options imSize = new BitmapFactory.Options();
+                    imSize.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(path, imSize);
+                    BitmapFactory.Options opts = new BitmapFactory.Options();
+                    int sampleSize = ((imSize.outHeight / 1080) > (imSize.outWidth / 1920)) ? (imSize.outHeight / 1080) : (imSize.outWidth / 1920);
+                    opts.inSampleSize = sampleSize;
+                    image = BitmapFactory.decodeFile(path, opts);
+                    if (image != null) {
+                        mPhotoImageView.setImageBitmap(image);
+                    }
+                }
+                break;
+            default:
         }
     }
 
@@ -256,10 +295,4 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     }
 
-
-
-    public void changePicture(View view) {
-        Log.v("INFO", "change picture");
-        // TODO
-    }
 }

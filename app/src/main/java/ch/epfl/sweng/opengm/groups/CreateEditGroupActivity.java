@@ -1,9 +1,9 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,8 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import java.io.IOException;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -31,6 +29,7 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_SHORT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITH_SYMBOL;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isGroupNameValid;
+import static ch.epfl.sweng.opengm.utils.Utils.getRealPathFromURI;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
 public class CreateEditGroupActivity extends AppCompatActivity {
@@ -170,7 +169,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             case RESULT_LOAD_IMAGE:
                 if (resultCode == RESULT_OK) {
                     Uri imageUri = data.getData();
-                    String path = getRealPathFromURI(imageUri);
+                    String path = getRealPathFromURI(imageUri, this);
 
                     // handle images that are too big
                     BitmapFactory.Options imSize = new BitmapFactory.Options();
@@ -186,22 +185,4 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             default:
         }
     }
-
-    // get path from URI
-    private String getRealPathFromURI(Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = getContentResolver().query(contentUri,  proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-
 }

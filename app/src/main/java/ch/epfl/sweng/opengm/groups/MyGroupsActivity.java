@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,13 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ch.epfl.sweng.opengm.userProfile.MyProfileActivity;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.identification.LogoutDialogFragment;
 import ch.epfl.sweng.opengm.identification.contacts.AppContactsActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
+import ch.epfl.sweng.opengm.userProfile.MyProfileActivity;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -44,6 +43,9 @@ public class MyGroupsActivity extends AppCompatActivity {
 
     private GroupCardViewAdapter adapter;
     private final List<PFGroup> groups = new ArrayList<>();
+
+    private ProgressBar progressBar;
+    private TextView progressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +70,8 @@ public class MyGroupsActivity extends AppCompatActivity {
         adapter = new GroupCardViewAdapter(groups, metrics);
         groupsRecyclerView.setAdapter(adapter);
 
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        final TextView progressText = (TextView) findViewById(R.id.progressText);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressText = (TextView) findViewById(R.id.progressText);
 
         progressText.setText("Retrieving your user's information");
 
@@ -77,23 +79,6 @@ public class MyGroupsActivity extends AppCompatActivity {
 
             new RetrievingTask(progressBar, progressText, groups, adapter).execute(false);
 
-            final SwipeRefreshLayout swipeToRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_swipe_layout);
-            swipeToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    swipeToRefreshLayout.setRefreshing(true);
-                    try {
-                        getCurrentUser().reload();
-                        groups.clear();
-                        adapter.notifyDataSetChanged();
-                        new RetrievingTask(progressBar, progressText, groups, adapter).execute(true);
-                        findViewById(R.id.myGroupsMainLayout).invalidate();
-                    } catch (PFException e) {
-                        e.printStackTrace();
-                    }
-                    swipeToRefreshLayout.setRefreshing(false);
-                }
-            });
         } else if (getCurrentUser() != null) {
             groups.clear();
             groups.addAll(getCurrentUser().getGroups());
@@ -116,6 +101,17 @@ public class MyGroupsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.action_refresh_user:
+                try {
+                    getCurrentUser().reload();
+                    groups.clear();
+                    adapter.notifyDataSetChanged();
+                    new RetrievingTask(progressBar, progressText, groups, adapter).execute(true);
+                    findViewById(R.id.myGroupsMainLayout).invalidate();
+                } catch (PFException e) {
+                    Toast.makeText(getBaseContext(), "Error while reloading your informations", Toast.LENGTH_LONG).show();
+                }
                 return true;
             case R.id.action_show_contacts:
                 startActivity(new Intent(MyGroupsActivity.this, AppContactsActivity.class));
@@ -190,7 +186,8 @@ public class MyGroupsActivity extends AppCompatActivity {
             try {
                 OpenGMApplication.setCurrentUserWithId(ParseUser.getCurrentUser().getObjectId());
             } catch (PFException e) {
-                Toast.makeText(getBaseContext(), "Error while retrieving the your user information", Toast.LENGTH_LONG).show();
+                showToast("Error while retrieving the your user information");
+                return null;
             }
             final int max = getCurrentUser().getGroupsIds().size();
             runOnUiThread(new Runnable() {
@@ -202,7 +199,8 @@ public class MyGroupsActivity extends AppCompatActivity {
             });
             int current = 0;
             if (reloadGroups) {
-                for (PFGroup group : getCurrentUser().getGroups()) {
+                List<PFGroup> groups = new ArrayList<>(getCurrentUser().getGroups());
+                for (PFGroup group : groups) {
                     try {
                         group.reload();
                         groups.add(group);
@@ -213,7 +211,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                             }
                         });
                     } catch (PFException e) {
-                        Toast.makeText(getBaseContext(), "Error while reloading one of your group", Toast.LENGTH_LONG).show();
+                        showToast("Error while reloading one of your group");
                     }
                     publishProgress(++current);
                 }
@@ -229,7 +227,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                             }
                         });
                     } catch (PFException e) {
-                        Toast.makeText(getBaseContext(), "Error while retrieving one of your group", Toast.LENGTH_LONG).show();
+                        showToast("Error while reloading you information");
                     }
                     publishProgress(++current);
                 }
@@ -253,5 +251,15 @@ public class MyGroupsActivity extends AppCompatActivity {
             progressText.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();
         }
+
+        private void showToast(final String text) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getBaseContext(), text, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
     }
 }
