@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".OpenGMApplication"
@@ -48,8 +49,8 @@
             android:name=".groups.MembersActivity"
             android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat" />
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".groups.CreateEditGroupActivity"
             android:label="@string/title_activity_create_group"

@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.groups;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -67,8 +68,9 @@ public class ManageRolesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_roles);
         roles = new ArrayList<>();
-        currentGroup = getCurrentGroup();
-        List<String> memberIDs = getIntent().getStringArrayListExtra(USER_IDS);
+        Intent intent = getIntent();
+        currentGroup = OpenGMApplication.getCurrentGroup();
+        List<String> memberIDs = intent.getStringArrayListExtra(USER_IDS);
         HashMap<String, PFMember> idsMembers = currentGroup.getMembers();
         groupMembers = new ArrayList<>();
         for(String memberID : memberIDs){
