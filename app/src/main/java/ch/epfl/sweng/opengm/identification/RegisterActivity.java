@@ -228,12 +228,8 @@ public class RegisterActivity extends AppCompatActivity {
                                                     // error while updating the _User table
                                                     switch (e.getCode()) {
                                                         case EMAIL_TAKEN:
-                                                            mEditEmail.setError(String.format(getString(R.string.taken_email_activity_register), username));
+                                                            mEditEmail.setError(String.format(getString(R.string.taken_email_activity_register), email));
                                                             mEditEmail.requestFocus();
-                                                            break;
-                                                        case USERNAME_MISSING:
-                                                            mEditUsername.setError(String.format(getString(R.string.taken_email_activity_register), email));
-                                                            mEditUsername.requestFocus();
                                                             break;
                                                         default:
                                                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
