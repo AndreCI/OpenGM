@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -106,6 +107,10 @@ public class GroupsHomeActivity extends AppCompatActivity
         // show the floating button (+) only if user can add a member
         if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER)) {
             fab.setVisibility(View.VISIBLE);
+
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) descriptionView.getLayoutParams();
+            params.setMargins(0,0,20,0);
+            descriptionView.setLayoutParams(params);
         } else {
             fab.setVisibility(View.GONE);
         }
@@ -130,6 +135,21 @@ public class GroupsHomeActivity extends AppCompatActivity
         }
     }
 
+    public void goToMessages(View view){
+        Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
+        startActivity(intent2);
+    }
+
+    public void goToPoll(View view){
+        Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
+        startActivity(intent1);
+    }
+
+    public void goToEvents(View view){
+        Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
+        startActivity(intent);
+    }
+
     public void onManageGroup(View v) {
         Intent intent = new Intent(this, CreateEditGroupActivity.class);
         startActivityForResult(intent, RESULT_EDIT);
@@ -152,13 +172,10 @@ public class GroupsHomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_events:
                 Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
-               // intent.putExtra(Utils.GROUP_INTENT_MESSAGE, OpenGMApplication.getCurrentUser().getGroups().indexOf(currentGroup));
-                //intent.putExtra(GROUP_INTENT_MESSAGE, currentGroup);
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
                 Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
-                intent2.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, OpenGMApplication.getCurrentUser().getGroups().indexOf(currentGroup));
                 startActivity(intent2);
                 break;
             case R.id.nav_manage:
