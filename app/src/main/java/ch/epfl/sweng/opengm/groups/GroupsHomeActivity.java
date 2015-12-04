@@ -107,6 +107,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent2);
                 break;
             case R.id.nav_manage:
+                onManageGroup(null);
                 break;
             case R.id.nav_polls:
                 Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
