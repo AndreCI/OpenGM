@@ -1,11 +1,14 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -26,6 +29,7 @@ import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_GROUPS;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_LASTNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PHONENUMBER;
+import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_PICTURE;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERID;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_USERNAME;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_TABLE_NAME;
@@ -111,6 +115,18 @@ public final class PFMember extends PFEntity implements Parcelable {
                 if (!oldGroups.equals(new HashSet<>(groups))) {
                     mGroups.clear();
                     mGroups.addAll(groups);
+                }
+
+                // retrieve image from server
+                ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            setPicture(picture);
+                        }
+                    });
                 }
             }
         } catch (ParseException e) {
@@ -251,6 +267,15 @@ public final class PFMember extends PFEntity implements Parcelable {
     }
 
     /**
+     * Setter for the member's picture
+     *
+     * @param picture the new image for this member
+     */
+    public void setPicture(Bitmap picture) {
+        this.mPicture = picture;
+    }
+
+    /**
      * Setter to add the member to a new group
      *
      * @param groupId the id of the group that the member will belong to
@@ -340,9 +365,23 @@ public final class PFMember extends PFEntity implements Parcelable {
 
                 String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-                return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
+
+                final PFMember member = new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
                         nickName == null ? username : nickName, email, phoneNumber, description,
                         null, Arrays.asList(roles), groups);
+
+                // retrieve image from server
+                ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            member.setPicture(picture);
+                        }
+                    });
+                }
+                return member;
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
