@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +29,8 @@ import ch.epfl.sweng.opengm.polls.CreatePollActivity;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class ListParticipantActivity extends AppCompatActivity {
+
+    public static String EVERY_BODY = "Everybody";
 
     private PFGroup group;
 
@@ -115,8 +116,6 @@ public class ListParticipantActivity extends AppCompatActivity {
 
     private void checkCorrespondingBoxes() {
 
-        Log.d("CHILD COUNT", "" + list.getChildCount());
-
         for (int i = 0; i < list.getChildCount(); i++) {
             View row = list.getChildAt(i);
             Participant child = mAdapter.getItem(i);
@@ -177,6 +176,10 @@ public class ListParticipantActivity extends AppCompatActivity {
             Participant p = new Participant(role, membersForRole);
             participants.add(p);
         }
+
+        Participant p = new Participant(EVERY_BODY, new ArrayList<>(group.getMembers().values()));
+
+        participants.add(p);
 
         Collections.sort(participants);
     }

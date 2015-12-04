@@ -77,7 +77,11 @@ public class Participant implements Comparable<Participant> {
 
     @Override
     public int compareTo(@NonNull Participant another) {
-        if (isGroup && !another.isGroup) {
+        if (name.equals(ListParticipantActivity.EVERY_BODY)) {
+            return -1;
+        } else if (another.name.equals(ListParticipantActivity.EVERY_BODY)) {
+            return 1;
+        } else if (isGroup && !another.isGroup) {
             return -1;
         } else if (!isGroup && another.isGroup) {
             return 1;
