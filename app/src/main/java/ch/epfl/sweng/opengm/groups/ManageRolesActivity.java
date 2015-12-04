@@ -34,6 +34,7 @@ import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class ManageRolesActivity extends AppCompatActivity {
+    private static final int MAX_ROLE_LENGTH = 15;
     private List<String> roles;
     private ListView rolesListView;
     private List<String> allRoles;
@@ -111,28 +112,13 @@ public class ManageRolesActivity extends AppCompatActivity {
                         roles.addAll(dialogAddedRoles);
                         addedRoles.addAll(dialogAddedRoles);
                         adapter.notifyDataSetChanged();
-                        edit.getText().clear();
                         invalidateOptionsMenu();
                         allRoles.clear();
                         allRoles.addAll(currentGroup.getRoles());
                         allRoles.removeAll(roles);
                         allRolesAdapter.notifyDataSetChanged();
                     }
-//                    String role = edit.getText().toString();
-//                    if(!role.isEmpty() && (role.charAt(0) != ' ')){
-//                        if(!isAdministrator && role.equals("Administrator")){
-//                            Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
-//                        } else {
-//                            List<String> dialogAddedRoles = getAddedCheckedRoles(addRoleList);
-//                            roles.add(role);
-//                            addedRoles.add(role);
-//                            adapter.notifyDataSetChanged();
-//                            edit.getText().clear();
-//                            invalidateOptionsMenu();
-//                        }
-//                    } else {
-//                        Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
-//                    }
+                    edit.getText().clear();
                 }
             }).setNegativeButton(R.string.cancel, null);
         addRole = alertBuilder.create();
@@ -188,6 +174,8 @@ public class ManageRolesActivity extends AppCompatActivity {
         if(!role.equals("")){
             if(role.charAt(0) == ' '){
                 Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
+            } else if(role.length() > MAX_ROLE_LENGTH) {
+                Toast.makeText(getBaseContext(), "Role name can have " + MAX_ROLE_LENGTH + " characters at most.", Toast.LENGTH_LONG).show();
             } else if (!isAdministrator && role.equals("Administrator")){
                 Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
             } else {
@@ -196,6 +184,8 @@ public class ManageRolesActivity extends AppCompatActivity {
                 }
             }
         }
+
+        addedRoles.removeAll(roles);
 
         return addedRoles;
     }
