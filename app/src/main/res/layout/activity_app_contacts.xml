@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:weightSum="100"
     tools:context="ch.epfl.sweng.opengm.identification.contacts.PhoneContactsActivity">
 
@@ -16,17 +14,14 @@
         android:layout_weight="90"
         android:choiceMode="singleChoice" />
 
-    <TextView
-        android:layout_width="match_parent"
+    <Button
+        android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/invite_contact"
-        android:id="@+id/textView"
         android:layout_weight="10"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textAlignment="center"
-        android:onClick="showPhoneContact" />
+        android:background="@color/bluegreen"
+        android:onClick="showPhoneContact"
+        android:text="@string/invite_contact"
+        android:textColor="@color/white" />
 
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.polls;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -121,18 +122,22 @@ public class PollResultActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                setCurrentPoll(null);
-                finish();
+                onBackPressed();
                 return true;
             case R.id.action_poll_result_change:
                 changeGraph(null);
                 return true;
             case R.id.action_poll_result_validate:
-                setCurrentPoll(null);
-                finish();
+                onBackPressed();
                 return true;
             default:
                 return true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        setCurrentPoll(null);
+        NavUtils.navigateUpFromSameTask(this);
     }
 }

@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,19 +52,7 @@ public class PollsListActivity extends AppCompatActivity {
 
         setTitle(R.string.title_list_poll);
 
-        setCurrentPoll(null);
-
         currentGroup = OpenGMApplication.getCurrentGroup();
-
-        final List<PFPoll> groupsPoll = currentGroup.getPolls();
-        List<PFPoll> userPoll = new ArrayList<>();
-
-        for (PFPoll poll : groupsPoll) {
-            if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
-                userPoll.add(poll);
-        }
-
-        polls.addAll(userPoll);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddPoll);
 
@@ -76,49 +68,113 @@ public class PollsListActivity extends AppCompatActivity {
         mAdapter = new PollListAdapter(this, polls);
         list.setAdapter(mAdapter);
 
-
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PFPoll poll = mAdapter.getItem(position);
                 setCurrentPoll(poll.getId());
-                Intent i;
                 if (poll.isOpen()) {
-                    i = new Intent(PollsListActivity.this, PollVoteActivity.class);
+                    if (poll.hasUserAlreadyVoted(getCurrentUser().getId())) {
+                        Toast.makeText(getBaseContext(), getString(R.string.already_vote_poll),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        startActivity(new Intent(PollsListActivity.this, PollVoteActivity.class));
+                    }
                 } else {
-                    i = new Intent(PollsListActivity.this, PollResultActivity.class);
+                    startActivity(new Intent(PollsListActivity.this, PollResultActivity.class));
                 }
-                startActivity(i);
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final PFPoll poll = mAdapter.getItem(position);
-                AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
-                builder.setMessage(getString(R.string.confirm_deletion_poll))
-                        .setPositiveButton(getString(R.string.delete_poll), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // Delete the poll
-                                currentGroup.removePoll(poll);
-                                try {
-                                    poll.delete();
-                                } catch (PFException e) {
-                                    // Just do nothing, the poll is still on the server but can't be reach
+                if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
+                    final PFPoll poll = mAdapter.getItem(position);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
+                    builder.setMessage(getString(R.string.confirm_deletion_poll))
+                            .setPositiveButton(getString(R.string.delete_poll), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // Delete the poll
+                                    currentGroup.removePoll(poll);
+                                    try {
+                                        poll.delete();
+                                    } catch (PFException e) {
+                                        // Just do nothing, the poll is still on the server but can't be reach
+                                    }
+                                    updateList();
                                 }
-                                updateList();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
                 return true;
             }
         });
+        refreshList(false);
+    }
+
+    private void refreshList(final boolean shouldReload) {
+        setCurrentPoll(null);
+
+        polls.clear();
+        mAdapter.notifyDataSetChanged();
+
+        final ProgressBar bar = (ProgressBar) findViewById(R.id.progressRefresh);
+        bar.setVisibility(View.VISIBLE);
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (shouldReload) {
+                    try {
+                        OpenGMApplication.getCurrentGroup().reload();
+                    } catch (PFException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                bar.setVisibility(View.GONE);
+                                Toast.makeText(getBaseContext(), "An error appeared while loading your polls", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+                final List<PFPoll> groupsPoll = currentGroup.getPolls();
+                List<PFPoll> userPoll = new ArrayList<>();
+
+                for (PFPoll poll : groupsPoll) {
+                    if (poll.isUserEnrolled(OpenGMApplication.getCurrentUser().getId()))
+                        userPoll.add(poll);
+                }
+
+                polls.addAll(userPoll);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Collections.sort(polls);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                bar.setVisibility(View.GONE);
+            }
+        }.execute();
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_refresh_list, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void addPoll(View view) {
@@ -136,6 +192,9 @@ public class PollsListActivity extends AppCompatActivity {
             case android.R.id.home:
                 setCurrentPoll(null);
                 finish();
+                return true;
+            case R.id.action_refresh:
+                refreshList(true);
                 return true;
             default:
                 return true;

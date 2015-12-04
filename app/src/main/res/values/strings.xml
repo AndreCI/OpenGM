@@ -25,7 +25,7 @@
     <string name="error_edit_profile">Error while updating your informations</string>
 
 
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_register">Create an account</string>
 
     <string name="title_activity_my_groups">My Groups</string>
     <string name="noGroupsYet">No groups yet ? Click on the + button below to create one !</string>
@@ -141,6 +141,15 @@
 
     <string name="title_activity_show_conversation_activity">ShowConversationActivity</string>
     <string name="title_activity_show_messages_activity">ShowMessagesActivity</string>
+
+    <string name="group_menu_home">Home</string>
+    <string name="group_menu_members">Members</string>
+    <string name="group_menu_events">Events</string>
+    <string name="group_menu_messages">Messages</string>
+    <string name="group_menu_polls">Polls</string>
+    <string name="group_menu_manage">Manage group</string>
+    <string name="group_menu_leave">Leave group</string>
+    <string name="group_menu_settings">My settings</string>
 
     <!-- Phones numbers -->
 

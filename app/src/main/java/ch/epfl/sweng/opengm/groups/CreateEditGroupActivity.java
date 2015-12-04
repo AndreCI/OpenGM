@@ -1,9 +1,17 @@
 package ch.epfl.sweng.opengm.groups;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -21,19 +29,24 @@ import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_LONG;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_TOO_SHORT;
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_WITH_SYMBOL;
 import static ch.epfl.sweng.opengm.identification.InputUtils.isGroupNameValid;
+import static ch.epfl.sweng.opengm.utils.Utils.getRealPathFromURI;
 import static ch.epfl.sweng.opengm.utils.Utils.onTapOutsideBehaviour;
 
 public class CreateEditGroupActivity extends AppCompatActivity {
 
     private EditText mGroupName;
     private EditText mGroupDescription;
+    private Button mAddImage;
 
     private PFGroup currentGroup = null;
 
     private String initialName = null;
     private String initialDescription = null;
+    private Bitmap image = null;
 
     private boolean isCreatingAGroup = false;
+
+    private final int RESULT_LOAD_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +59,16 @@ public class CreateEditGroupActivity extends AppCompatActivity {
         mGroupName = (EditText) findViewById(R.id.enterGroupName);
         mGroupDescription = (EditText) findViewById(R.id.enterGroupDescription);
 
+        mAddImage = (Button)findViewById(R.id.chooseGroupImage);
+        mAddImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // trigger image gallery intent
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, RESULT_LOAD_IMAGE);
+            }
+        });
+
         currentGroup = OpenGMApplication.getCurrentGroup();
 
         if (currentGroup != null) {
@@ -53,8 +76,12 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             mGroupDescription.setText(currentGroup.getDescription());
             initialName = currentGroup.getName();
             initialDescription = currentGroup.getDescription();
+            image = currentGroup.getPicture();
             findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
             setTitle(getString(R.string.create_edit_group_edit_group));
+        }
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -68,7 +95,6 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             isCreatingAGroup = true;
             String name = mGroupName.getText().toString();
             String description = mGroupDescription.getText().toString();
-            // TODO : retrieve image from button
 
             int groupNameValid = isGroupNameValid(name);
 
@@ -80,11 +106,12 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                     if (!description.equals(initialDescription)) {
                         currentGroup.setDescription(description);
                     }
+                    currentGroup.setPicture(image);
                     setResult(RESULT_OK);
                     finish();
                 } else {
                     try {
-                        PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, null);
+                        PFGroup newGroup = PFGroup.createNewGroup(getCurrentUser(), name, description, image);
                         getCurrentUser().addToAGroup(newGroup);
                         OpenGMApplication.setCurrentGroup(OpenGMApplication.getCurrentUser().getGroups().size() - 1);
                         startActivity(new Intent(CreateEditGroupActivity.this, GroupsHomeActivity.class));
@@ -116,6 +143,47 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                 mGroupName.requestFocus();
                 isCreatingAGroup = false;
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_create_group, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            // get back the image from the gallery
+            case RESULT_LOAD_IMAGE:
+                if (resultCode == RESULT_OK) {
+                    Uri imageUri = data.getData();
+                    String path = getRealPathFromURI(imageUri, this);
+
+                    // handle images that are too big
+                    BitmapFactory.Options imSize = new BitmapFactory.Options();
+                    imSize.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(path, imSize);
+                    BitmapFactory.Options opts = new BitmapFactory.Options();
+                    int sampleSize = ((imSize.outHeight / 1080) > (imSize.outWidth / 1920)) ? (imSize.outHeight / 1080) : (imSize.outWidth / 1920);
+                    opts.inSampleSize = sampleSize;
+
+                    image = BitmapFactory.decodeFile(path, opts);
+                }
+                break;
+            default:
         }
     }
 }
