@@ -83,6 +83,7 @@ public final class PFUser extends PFEntity {
     }
 
     public PFGroup fetchGroupWithId(String groupId) throws PFException {
+        Log.d("IMAGE", "FETCH group");
         PFGroup newGroup = PFGroup.fetchExistingGroup(groupId);
         mGroups.add(newGroup);
         return newGroup;

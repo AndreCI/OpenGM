@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -120,6 +121,7 @@ public final class PFMember extends PFEntity implements Parcelable {
                 // retrieve image from server
                 ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
                 if (imageFile != null) {
+                    Log.d("IMAGE", "MEMBER 1");
                     imageFile.getDataInBackground(new GetDataCallback() {
                         @Override
                         public void done(byte[] data, ParseException e) {
@@ -127,6 +129,8 @@ public final class PFMember extends PFEntity implements Parcelable {
                             setPicture(picture);
                         }
                     });
+                } else {
+                    Log.d("IMAGE", "MEMBER 2");
                 }
             }
         } catch (ParseException e) {
@@ -337,6 +341,7 @@ public final class PFMember extends PFEntity implements Parcelable {
 
 
     public static PFMember fetchExistingMember(String id, String nickName, String[] roles) throws PFException {
+        Log.d("IMAGE", "MEMBER 0");
         if (id == null) {
             throw new PFException();
         }
@@ -370,9 +375,9 @@ public final class PFMember extends PFEntity implements Parcelable {
                         nickName == null ? username : nickName, email, phoneNumber, description,
                         null, Arrays.asList(roles), groups);
 
-                // retrieve image from server
                 ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
                 if (imageFile != null) {
+                    Log.d("IMAGE", "MEMBER 1");
                     imageFile.getDataInBackground(new GetDataCallback() {
                         @Override
                         public void done(byte[] data, ParseException e) {
@@ -380,13 +385,14 @@ public final class PFMember extends PFEntity implements Parcelable {
                             member.setPicture(picture);
                         }
                     });
+                } else {
+                    Log.d("IMAGE", "MEMBER 2");
                 }
                 return member;
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
         } catch (ParseException e) {
-            e.printStackTrace();
             throw new PFException("Parse query for id " + id + " failed");
         }
     }

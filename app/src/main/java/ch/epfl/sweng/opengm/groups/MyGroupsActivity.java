@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +40,6 @@ import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 public class MyGroupsActivity extends AppCompatActivity {
 
     public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
-    public static final String RELOAD_USER_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.reloadUser";
 
     private GroupCardViewAdapter adapter;
     private final List<PFGroup> groups = new ArrayList<>();
@@ -51,7 +51,7 @@ public class MyGroupsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
-
+        Log.d("IMAGE", "HERE");
         OpenGMApplication.setCurrentGroup(-1);
 
         if (getSupportActionBar() != null) {
@@ -172,6 +172,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         private final List<PFGroup> groups;
 
         private RetrievingTask(ProgressBar progressBar, TextView progressText, List<PFGroup> groups, GroupCardViewAdapter adapter) {
+            Log.d("IMAGE", "HERE1");
             this.progressBar = progressBar;
             this.progressText = progressText;
             this.groups = groups;
