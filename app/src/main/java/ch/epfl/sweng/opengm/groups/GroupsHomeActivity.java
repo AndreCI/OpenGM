@@ -190,12 +190,12 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent2);
                 break;
             case R.id.nav_manage:
+                Intent intent3 = new Intent(this, CreateEditGroupActivity.class);
+                startActivityForResult(intent3, RESULT_EDIT);
                 break;
             case R.id.nav_polls:
                 Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
                 startActivity(intent1);
-                break;
-            case R.id.nav_my_settings:
                 break;
             default:
                 break;
