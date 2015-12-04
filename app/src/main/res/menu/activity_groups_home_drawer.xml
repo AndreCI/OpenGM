@@ -11,10 +11,6 @@
             android:icon="@mipmap/ic_group_white_48dp"
             android:title="@string/group_menu_members" />
         <item
-            android:id="@+id/nav_events"
-            android:icon="@mipmap/ic_insert_invitation_white_48dp"
-            android:title="@string/group_menu_events" />
-        <item
             android:id="@+id/nav_messages"
             android:icon="@mipmap/ic_mail_white_48dp"
             android:title="@string/group_menu_messages" />
@@ -22,6 +18,10 @@
             android:id="@+id/nav_polls"
             android:icon="@mipmap/ic_poll_white_48dp"
             android:title="@string/group_menu_polls" />
+        <item
+            android:id="@+id/nav_events"
+            android:icon="@mipmap/ic_insert_invitation_white_48dp"
+            android:title="@string/group_menu_events" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@mipmap/ic_settings_white_48dp"
