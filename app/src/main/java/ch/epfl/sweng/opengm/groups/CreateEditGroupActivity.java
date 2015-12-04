@@ -54,6 +54,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             initialName = currentGroup.getName();
             initialDescription = currentGroup.getDescription();
             findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+            setTitle(getString(R.string.create_edit_group_edit_group));
         }
     }
 
