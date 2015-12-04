@@ -66,7 +66,7 @@
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/rounded_buttons"
                     android:drawableTop="@mipmap/ic_mail_white_48dp"
-                    android:onClick="gotoMail"
+                    android:onClick="goToMessages"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
                     android:text="Chat"
