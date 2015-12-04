@@ -48,9 +48,8 @@ public class MembersAdapter extends ArrayAdapter<PFMember> {
         }
 
         PFMember member = objects.get(position);
-        if (member.getPicture() == null) {
-            holder.icon.setImageResource(R.drawable.avatar_male1);
-        } else {
+        if (member.getPicture() != null) {
+            holder.icon.setBackground(null);
             holder.icon.setImageBitmap(member.getPicture());
         }
         holder.username.setText(member.getUsername());

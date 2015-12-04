@@ -1,34 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="90dp"
-    android:padding="5dp">
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:paddingStart="20dp"
+    android:weightSum="100">
 
     <CheckBox
         android:id="@+id/member_checkbox"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="10"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:gravity="center" />
+        android:gravity="center"
+        android:paddingStart="20dp" />
 
     <ImageView
         android:id="@+id/member_img"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
         android:layout_marginStart="15dp"
-        android:layout_toEndOf="@id/member_checkbox" />
+        android:layout_weight="25"
+        android:background="@drawable/avatar_male1" />
 
     <TextView
         android:id="@+id/member_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/member_img"
-        android:layout_alignTop="@id/member_img"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_marginStart="15dp"
-        android:layout_toEndOf="@id/member_img"
-        android:gravity="center"
-        android:textSize="35sp" />
+        android:layout_weight="65"
+        android:text="COUCOU"
+        android:textSize="35sp"
+        android:singleLine="false"
+        android:gravity="center_vertical" />
 
-</RelativeLayout>
+</LinearLayout>

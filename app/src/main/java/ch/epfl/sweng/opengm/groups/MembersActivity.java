@@ -44,8 +44,6 @@ public class MembersActivity extends AppCompatActivity {
     private List<PFMember> members;
     private boolean selectMode;
 
-    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
