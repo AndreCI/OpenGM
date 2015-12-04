@@ -67,7 +67,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         if (getCurrentUser().getPicture() != null) {
             imageView.setImageBitmap(getCurrentUser().getPicture());
         }else{
-            imageView.setImageDrawable(getDrawable(R.drawable.side_nav_bar));
+            imageView.setImageResource(R.drawable.side_nav_bar);
         }
 
         TextView userText = (TextView) headerView.findViewById(R.id.usernameUserView);
