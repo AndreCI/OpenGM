@@ -24,7 +24,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:background="#DD5555" />
+                android:adjustViewBounds="true"
+                android:background="#DD5555"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:scaleType="centerCrop" />
 
             <Button
                 android:id="@+id/button2"
@@ -88,8 +91,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_buttons"
-                    android:onClick="goToEvents"
                     android:drawableTop="@mipmap/ic_insert_invitation_white_48dp"
+                    android:onClick="goToEvents"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
                     android:text="Events"

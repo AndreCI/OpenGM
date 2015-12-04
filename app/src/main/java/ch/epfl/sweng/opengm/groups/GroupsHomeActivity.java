@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,18 +25,17 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
-import ch.epfl.sweng.opengm.events.Utils;
 import ch.epfl.sweng.opengm.identification.InputUtils;
-import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.messages.ShowConversationsActivity;
+import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.groups.MyGroupsActivity.RELOAD_USER_KEY;
+import static ch.epfl.sweng.opengm.OpenGMApplication.setCurrentGroup;
 
 public class GroupsHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -46,13 +44,9 @@ public class GroupsHomeActivity extends AppCompatActivity
 
     private PFGroup currentGroup;
 
-    private ListView mEventLists;
-
-    private int groupPos;
-
     private AlertDialog addMember;
 
-    private final int RESULT_EDIT = 1;
+    private final int RESULT_EDIT = 1326;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +54,36 @@ public class GroupsHomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_groups_home);
 
-        currentGroup = OpenGMApplication.getCurrentGroup();
+        currentGroup = getCurrentGroup();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView navView = (NavigationView) drawer.findViewById(R.id.nav_view);
+
+        View headerView = navView.getHeaderView(0);
+
+        ImageView imageView = (ImageView) headerView.findViewById(R.id.imageUserView);
+
+        if (getCurrentUser().getPicture() != null) {
+            imageView.setImageBitmap(getCurrentUser().getPicture());
+        }else{
+            imageView.setImageDrawable(getDrawable(R.drawable.side_nav_bar));
+        }
+
+        TextView userText = (TextView) headerView.findViewById(R.id.usernameUserView);
+        userText.setText(getCurrentUser().getUsername());
+        TextView groupText = (TextView) headerView.findViewById(R.id.groupNameUserView);
+        groupText.setText(currentGroup.getName());
 
         setTitle(currentGroup.getName());
 
         // set image of the group on the layout
-        ImageView groupImage = (ImageView)findViewById(R.id.group_image);
+        ImageView groupImage = (ImageView) findViewById(R.id.group_image);
         if (currentGroup.getPicture() != null) {
             groupImage.setImageBitmap(currentGroup.getPicture());
         }
 
-        TextView descriptionView = (TextView)findViewById(R.id.textView_description);
+        TextView descriptionView = (TextView) findViewById(R.id.textView_description);
 
         descriptionView.setText(currentGroup.getDescription());
 
@@ -109,7 +120,7 @@ public class GroupsHomeActivity extends AppCompatActivity
             fab.setVisibility(View.VISIBLE);
 
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) descriptionView.getLayoutParams();
-            params.setMargins(0,0,20,0);
+            params.setMargins(0, 0, 20, 0);
             descriptionView.setLayoutParams(params);
         } else {
             fab.setVisibility(View.GONE);
@@ -130,22 +141,22 @@ public class GroupsHomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            OpenGMApplication.setCurrentGroup(-1);
+            setCurrentGroup(-1);
             finish();
         }
     }
 
-    public void goToMessages(View view){
+    public void goToMessages(View view) {
         Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
         startActivity(intent2);
     }
 
-    public void goToPoll(View view){
+    public void goToPoll(View view) {
         Intent intent1 = new Intent(GroupsHomeActivity.this, PollsListActivity.class);
         startActivity(intent1);
     }
 
-    public void goToEvents(View view){
+    public void goToEvents(View view) {
         Intent intent = new Intent(GroupsHomeActivity.this, EventListActivity.class);
         startActivity(intent);
     }
@@ -164,7 +175,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 leaveGroupDialog.show(getFragmentManager(), "leaveGroupDialog");
                 break;
             case R.id.nav_home:
-                OpenGMApplication.setCurrentGroup(-1);
+                setCurrentGroup(-1);
                 NavUtils.navigateUpFromSameTask(this);
                 break;
             case R.id.nav_members:
@@ -202,7 +213,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 setTitle(currentGroup.getName());
                 TextView descriptionView = (TextView) findViewById(R.id.textView_description);
                 descriptionView.setText(currentGroup.getDescription());
-                ImageView groupImage = (ImageView)findViewById(R.id.group_image);
+                ImageView groupImage = (ImageView) findViewById(R.id.group_image);
                 groupImage.setImageBitmap(currentGroup.getPicture());
                 break;
             default:
