@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,11 +36,13 @@ import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 public class ManageRolesActivity extends AppCompatActivity {
     private List<String> roles;
     private ListView rolesListView;
+    private List<String> allRoles;
 
     private AlertDialog addRole;
     private AlertDialog modifyPermissions;
 
     private RolesAdapter adapter;
+    private RolesAdapter allRolesAdapter;
     private PermissionsAdapter permissionsAdapter;
 
     private List<PFGroup.Permission> initialPermissions = new ArrayList<>();
@@ -87,27 +90,49 @@ public class ManageRolesActivity extends AppCompatActivity {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
         View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_role, null);
 
+        final ListView addRoleList = (ListView)dialogLayout.findViewById(R.id.addRolesList);
+        allRoles = new ArrayList<>(currentGroup.getRoles());
+        if(!isAdministrator){
+            allRoles.remove("Administrator");
+        }
+        allRoles.removeAll(roles);
+        allRolesAdapter = new RolesAdapter(this, R.layout.item_role, allRoles, false);
+        addRoleList.setAdapter(allRolesAdapter);
+
         rolesListView = (ListView) findViewById(R.id.rolesListView);
-        adapter = new RolesAdapter(this, R.layout.item_role, roles);
+        adapter = new RolesAdapter(this, R.layout.item_role, roles, true);
         rolesListView.setAdapter(adapter);
         final EditText edit = (EditText)dialogLayout.findViewById(R.id.dialog_add_role_role);
         alertBuilder.setView(dialogLayout).setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String role = edit.getText().toString();
-                    if(!role.isEmpty() && (role.charAt(0) != ' ')){
-                        if(!isAdministrator && role.equals("Administrator")){
-                            Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
-                        } else {
-                            roles.add(role);
-                            addedRoles.add(role);
-                            adapter.notifyDataSetChanged();
-                            edit.getText().clear();
-                            invalidateOptionsMenu();
-                        }
-                    } else {
-                        Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
+                    List<String> dialogAddedRoles = getAddedCheckedRoles(addRoleList, edit);
+                    if(dialogAddedRoles.size() > 0){
+                        roles.addAll(dialogAddedRoles);
+                        addedRoles.addAll(dialogAddedRoles);
+                        adapter.notifyDataSetChanged();
+                        edit.getText().clear();
+                        invalidateOptionsMenu();
+                        allRoles.clear();
+                        allRoles.addAll(currentGroup.getRoles());
+                        allRoles.removeAll(roles);
+                        allRolesAdapter.notifyDataSetChanged();
                     }
+//                    String role = edit.getText().toString();
+//                    if(!role.isEmpty() && (role.charAt(0) != ' ')){
+//                        if(!isAdministrator && role.equals("Administrator")){
+//                            Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
+//                        } else {
+//                            List<String> dialogAddedRoles = getAddedCheckedRoles(addRoleList);
+//                            roles.add(role);
+//                            addedRoles.add(role);
+//                            adapter.notifyDataSetChanged();
+//                            edit.getText().clear();
+//                            invalidateOptionsMenu();
+//                        }
+//                    } else {
+//                        Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
+//                    }
                 }
             }).setNegativeButton(R.string.cancel, null);
         addRole = alertBuilder.create();
@@ -145,6 +170,34 @@ public class ManageRolesActivity extends AppCompatActivity {
         if(rolesForCurrent != null){
             isAdministrator = rolesForCurrent.contains("Administrator");
         }
+    }
+
+    private List<String> getAddedCheckedRoles(ListView addRoleList, EditText edit) {
+        List<String> addedRoles = new ArrayList<>();
+        for(int i = 0; i < addRoleList.getCount(); i++){
+            View v = addRoleList.getChildAt(i);
+            TextView roleName = (TextView)v.findViewById(R.id.role_name);
+            CheckBox box = (CheckBox)v.findViewById(R.id.role_checkbox);
+            if(box.isChecked()){
+                addedRoles.add(roleName.getText().toString());
+                box.setChecked(false);
+            }
+        }
+
+        String role = edit.getText().toString();
+        if(!role.equals("")){
+            if(role.charAt(0) == ' '){
+                Toast.makeText(getBaseContext(), "Cannot add role without a name or starting with a space", Toast.LENGTH_LONG).show();
+            } else if (!isAdministrator && role.equals("Administrator")){
+                Toast.makeText(getBaseContext(), "You cannot add administrator role if you're not an administrator.", Toast.LENGTH_LONG).show();
+            } else {
+                if(!addedRoles.contains(role)){
+                    addedRoles.add(role);
+                }
+            }
+        }
+
+        return addedRoles;
     }
 
     private void keepIntersectionRoles(List<String> otherRoles){
@@ -328,6 +381,10 @@ public class ManageRolesActivity extends AppCompatActivity {
                 removedRoles.add(role);
             }
             roles.remove(role);
+            allRoles.clear();
+            allRoles.addAll(currentGroup.getRoles());
+            allRoles.removeAll(roles);
+            allRolesAdapter.notifyDataSetChanged();
         }
         adapter.notifyDataSetChanged();
         invalidateOptionsMenu();

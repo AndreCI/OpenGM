@@ -17,12 +17,14 @@ public class RolesAdapter extends ArrayAdapter<String>{
     private Context context;
     private int ressource;
     private List<String> roles;
+    boolean checkingModifiesActivity;
 
-    public RolesAdapter(Context context, int resource, List<String> objects) {
+    public RolesAdapter(Context context, int resource, List<String> objects, boolean checkingModifiesActivity) {
         super(context, resource, objects);
         this.context = context;
         this.ressource = resource;
         this.roles = objects;
+        this.checkingModifiesActivity = checkingModifiesActivity;
     }
 
     @Override
@@ -48,13 +50,17 @@ public class RolesAdapter extends ArrayAdapter<String>{
             @Override
             public void onClick(View v) {
                 holder.checkBox.setChecked(!holder.checkBox.isChecked());
-                ((ManageRolesActivity) context).updateOptions(!holder.checkBox.isChecked());
+                if(checkingModifiesActivity){
+                    ((ManageRolesActivity) context).updateOptions(!holder.checkBox.isChecked());
+                }
             }
         });
         holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ManageRolesActivity) context).updateOptions(((CheckBox) v).isChecked());
+                if(checkingModifiesActivity) {
+                    ((ManageRolesActivity) context).updateOptions(((CheckBox) v).isChecked());
+                }
             }
         });
 
