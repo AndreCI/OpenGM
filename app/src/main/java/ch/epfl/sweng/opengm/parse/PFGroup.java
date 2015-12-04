@@ -175,7 +175,6 @@ public final class PFGroup extends PFEntity {
 
     private PFGroup(String groupId, Date date, String name, List<String> users, List<String> nicknames, List<String[]> roles, List<String> events, List<String> polls, boolean isPrivate, String description, Bitmap picture, Map<String, List<Permission>> rolesPermissions, List<String> conversationInformations) {
         super(groupId, PARSE_TABLE_GROUP, date);
-        Log.d("IMAGE", "NEW group " + name);
         if ((users == null) || (nicknames == null) || (roles == null) || (events == null)) {
             throw new IllegalArgumentException("One of the array  is null");
         }
@@ -218,7 +217,6 @@ public final class PFGroup extends PFEntity {
                     String[] role = roles.get(i);
                     mMembers.put(userId, PFMember.fetchExistingMember(userId, nickname, role));
                 } catch (PFException e) {
-                    Log.d("IMAGE", "MEMBER FETCH");
                 }
             }
         } else {

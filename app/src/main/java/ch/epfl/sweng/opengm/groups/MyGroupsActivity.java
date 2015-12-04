@@ -51,7 +51,6 @@ public class MyGroupsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups);
-        Log.d("IMAGE", "HERE");
         OpenGMApplication.setCurrentGroup(-1);
 
         if (getSupportActionBar() != null) {
@@ -172,7 +171,6 @@ public class MyGroupsActivity extends AppCompatActivity {
         private final List<PFGroup> groups;
 
         private RetrievingTask(ProgressBar progressBar, TextView progressText, List<PFGroup> groups, GroupCardViewAdapter adapter) {
-            Log.d("IMAGE", "HERE1");
             this.progressBar = progressBar;
             this.progressText = progressText;
             this.groups = groups;
