@@ -23,9 +23,13 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static org.hamcrest.Matchers.not;
 
 public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<ManageRolesActivity>{
     private ListView listView;
@@ -383,6 +387,41 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
             }
         });
 
+    }
+
+    public void testIfDoesntAddPresentRole() throws Exception {
+        prepareIntentAndDatabase(1);
+        getActivityAndLayout();
+        addNewRoleWithView(ADMIN_ROLE, "");
+        assertTrue(getDisplayedRoles().contains(ADMIN_ROLE) && getDisplayedRoles().size() == 1);
+        onView(withId(R.id.button)).perform(click());
+        updateReferencesFromDatabase();
+    }
+
+    public void testAddRoleWithButton() throws Exception {
+        prepareIntentAndDatabase(2);
+        getActivityAndLayout();
+
+        onView(withId(R.id.action_add_role)).perform(click());
+        onView(withText("User")).perform(click());
+        onView(withText("Add")).perform(click());
+
+        assertTrue(getDisplayedRoles().contains("User"));
+    }
+
+    public void testNotAddAdministrator() throws Exception {
+        prepareIntentAndDatabase(2);
+        testGroup.addRoleToUser(ADMIN_ROLE, testUsers.get(1).getId());
+        testGroup.addRoleToUser("User", testUsers.get(0).getId());
+        testGroup.removeRoleToUser(ADMIN_ROLE, testUsers.get(0).getId());
+        Thread.sleep(1000);
+        OpenGMApplication.getCurrentUser().getGroups().get(0).reload();
+        Thread.sleep(1000);
+        getActivityAndLayout();
+
+        onView(withId(R.id.action_add_role)).perform(click());
+
+        onView(withText(ADMIN_ROLE)).check(doesNotExist());
     }
 
     private CheckBox getCheckBoxForPermission(PFGroup.Permission permission){
