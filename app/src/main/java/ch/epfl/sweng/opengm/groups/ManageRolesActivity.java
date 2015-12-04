@@ -216,6 +216,7 @@ public class ManageRolesActivity extends AppCompatActivity {
         } else {
             selected--;
         }
+        Log.d("NICE", "" + selected);
         invalidateOptionsMenu();
     }
 

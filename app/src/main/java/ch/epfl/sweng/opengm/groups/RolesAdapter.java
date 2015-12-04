@@ -51,7 +51,7 @@ public class RolesAdapter extends ArrayAdapter<String>{
             public void onClick(View v) {
                 holder.checkBox.setChecked(!holder.checkBox.isChecked());
                 if(checkingModifiesActivity){
-                    ((ManageRolesActivity) context).updateOptions(!holder.checkBox.isChecked());
+                    ((ManageRolesActivity) context).updateOptions(holder.checkBox.isChecked());
                 }
             }
         });

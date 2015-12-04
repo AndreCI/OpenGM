@@ -729,7 +729,9 @@ public final class PFGroup extends PFEntity {
             if (containsMember(memberId)) {
                 PFMember member = mMembers.get(memberId);
                 member.removeRole(role);
-                mRolesPermissions.remove(role);
+                if(getMembersWithRole(role).isEmpty()){
+                    mRolesPermissions.remove(role);
+                }
                 try {
                     updateToServer(GROUP_ENTRY_USERS);
                 } catch (PFException e) {
