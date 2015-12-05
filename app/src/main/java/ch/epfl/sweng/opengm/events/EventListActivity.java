@@ -3,22 +3,20 @@ package ch.epfl.sweng.opengm.events;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -31,7 +29,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
 import ch.epfl.sweng.opengm.identification.contacts.AppContactsActivity;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -104,7 +101,7 @@ public class EventListActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.action_refresh_user:
-                clickOnRefreshButton(null);
+                refresh();
                 return true;
             case R.id.action_show_contacts:
                 startActivity(new Intent(this, AppContactsActivity.class));
@@ -181,15 +178,12 @@ public class EventListActivity extends AppCompatActivity {
     }
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
-    }//TODO : Fix it
+    }
 
-    public void clickOnRefreshButton(View v){
+    public void refresh(){
         findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
         findViewById(R.id.scrollView4).setVisibility(View.GONE);
         findViewById(R.id.eventListAddButton).setClickable(false);
-        Button re=(Button) findViewById(R.id.eventListRefreshButton);
-        re.setClickable(false);
-        re.setText("WAIT");
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void[] params){
@@ -215,9 +209,6 @@ public class EventListActivity extends AppCompatActivity {
             }
             @Override
             protected void onPostExecute(Boolean result){
-                Button re=(Button) findViewById(R.id.eventListRefreshButton);
-                re.setClickable(true);
-                re.setText("REFRESH");
                 findViewById(R.id.EventListLoadingPanel).setVisibility(View.GONE);
                 findViewById(R.id.scrollView4).setVisibility(View.VISIBLE);
                 findViewById(R.id.eventListAddButton).setClickable(true);
