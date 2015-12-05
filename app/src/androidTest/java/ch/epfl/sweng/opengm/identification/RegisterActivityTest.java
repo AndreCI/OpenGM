@@ -37,13 +37,15 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
     private final static String USERNAME = "DELETE" + CURRENT_DATE;
     private final static String FIRSTNAME = "Chuck";
-    private final static String LASTRNAME = "Norris";
+    private final static String LASTNAME = "Norris";
     private final static String PASSWORD_INCORRECT = "abc";
     private final static String PASSWORD_CORRECT = "Abcdef12";
     private final static String EMAIL_INCORRECT = "yolo";
     private final static String EMAIL_CORRECT = CURRENT_DATE + "@yolo.ch";
 
     private String id;
+
+    private RegisterActivity activity;
 
     public RegisterActivityTest() {
         super(RegisterActivity.class);
@@ -53,124 +55,271 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
     public void setUp() throws Exception {
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
-
-    @Before
-    public void newIds() {
         id = null;
+        OpenGMApplication.logOut();
+        activity = getActivity();
     }
 
-    public void testFields() {
-
-        OpenGMApplication.logOut();
-
-        RegisterActivity activity = getActivity();
-
-        // empty username
+    public void testEmptyUsername() {
         onView(ViewMatchers.withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_username)).check(matches(isTextStyleCorrect(activity.getString(R.string.emtpy_username_activity_register), true)));
+    }
 
-        //empty password1
+    public void testEmptyPassword1() {
         onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
+    }
 
-        //empty password2
+    public void testEmptyPassword2() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
+    }
 
-        //empty firstname
+    public void testEmptyFirstName() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
         onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_firstname)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_firstname_activity_register), true)));
+    }
 
-        //empty lastname
+    public void testEmptyLastName() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
         onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_lastname)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_lastname_activity_register), true)));
+    }
 
-        //empty email
-        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTRNAME));
+    public void testEmptyMail() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_email)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_email_activity_register), true)));
+    }
 
-        //bad email
+    public void testBadMail() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
         onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_INCORRECT));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
         onView(withId(R.id.register_email)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_email_activity_register), true)));
+    }
 
-        String email = EMAIL_CORRECT;
-
-        //empty of bad phone number
-        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(email));
+    public void testEmptyPhone() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
         closeSoftKeyboard();
         onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_phone)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_phone_number_activity_register), true)));
-        onView(withId(R.id.register_phone)).perform(click());
-        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
-        onView(withId(R.id.action_phone_number_validate)).perform(click());
+        onView(withId(R.id.register_number)).check(matches(isTextStyleCorrect(activity.getString(R.string.incorrect_phone_number_activity_register), false)));
+    }
 
-        //short password1
+    public void testShortPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("a"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        closeSoftKeyboard();
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.short_password_activity_register), true)));
+    }
 
-        //long password1
+    public void testLongPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
         closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.long_password_activity_register), true)));
+    }
 
-        //all caps password1
-        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("1AAAAAAAAAAAAA"));
+    public void testAllCapsPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("1AAAAAAAAAA"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.case_password_activity_register), true)));
+    }
 
-        //without caps password1
-        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("1aaaaaaaaaaaa"));
+    public void testNoCapsPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("1aaaaaaaaa"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.case_password_activity_register), true)));
+    }
 
-        //without numbers password1
-        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("Aaaaaaaaaaaa"));
+    public void testNoNumberPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("Aaaaaaaaaa"));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.no_number_password_activity_register), true)));
+    }
 
-        //without letters password1
+    public void testNoLetterPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText("123456789"));
         closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
         onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.no_letter_password_activity_register), true)));
+    }
 
-        //password not correct
+    public void testNoMatchingPassword() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
+        closeSoftKeyboard();
         onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
         closeSoftKeyboard();
-        onView(withId(R.id.button_signup)).perform(click());
-        onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.non_matching_passwords_activity_register), true)));
-
-        onView(withId(R.id.register_password2)).perform(clearText());
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_INCORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
         onView(withId(R.id.button_signup)).perform(click());
         activity.dismissPopUp();
-        onView(withId(R.id.register_password2)).check(matches(isTextStyleCorrect(activity.getString(R.string.empty_password_activity_register), true)));
-        onView(withId(R.id.register_password2)).perform(typeText(PASSWORD_CORRECT));
+        onView(withId(R.id.register_password1)).check(matches(isTextStyleCorrect(activity.getString(R.string.non_matching_passwords_activity_register), true)));
+    }
+
+    public void testCreateUser() {
+        onView(withId(R.id.register_username)).perform(clearText()).perform(typeText(USERNAME));
         closeSoftKeyboard();
+        onView(withId(R.id.register_password1)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_password2)).perform(clearText()).perform(typeText(PASSWORD_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_firstname)).perform(clearText()).perform(typeText(FIRSTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_lastname)).perform(clearText()).perform(typeText(LASTNAME));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(clearText()).perform(typeText(EMAIL_CORRECT));
+        closeSoftKeyboard();
+        onView(withId(R.id.register_number)).perform(click());
+        onView(withId(R.id.input_phoneNumber)).perform(clearText()).perform(replaceText("123456789"));
+        onView(withId(R.id.action_phone_number_validate)).perform(click());
 
         assertNull(ParseUser.getCurrentUser());
 
@@ -193,14 +342,13 @@ public class RegisterActivityTest extends ActivityInstrumentationTestCase2<Regis
 
         assertEquals(id, ParseUser.getCurrentUser().getObjectId());
 
-        assertEquals(email, user.getEmail());
-
-        OpenGMApplication.logOut();
+        assertEquals(EMAIL_CORRECT, user.getEmail());
     }
 
     @AfterClass
     public void tearDown() {
         deleteUserWithId(id);
+        OpenGMApplication.logOut();
     }
 
 }

@@ -1,6 +1,7 @@
 package ch.epfl.sweng.opengm.polls;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +30,6 @@ public class PollVoteActivity extends AppCompatActivity {
 
     private PFPoll mPoll;
 
-    private boolean userCanVote;
-
     private LinearLayout scrollViewLayout;
 
     @Override
@@ -45,8 +44,6 @@ public class PollVoteActivity extends AppCompatActivity {
         }
 
         mPoll = getCurrentPoll();
-
-        userCanVote = !mPoll.hasUserAlreadyVoted(getCurrentUser().getId());
 
         scrollViewLayout = (LinearLayout) findViewById(R.id.container_scrollView_answers);
 
@@ -69,7 +66,6 @@ public class PollVoteActivity extends AppCompatActivity {
             for (Answer answer : mPoll.getAnswers()) {
                 CheckBox button = new CheckBox(this);
                 button.setText(answer.getAnswer());
-                button.setEnabled(userCanVote);
                 button.setTextColor(getResources().getColor(R.color.bluegreen));
                 button.setTag(answer);
                 scrollViewLayout.addView(button);
@@ -79,18 +75,15 @@ public class PollVoteActivity extends AppCompatActivity {
             for (Answer answer : mPoll.getAnswers()) {
                 RadioButton button = new RadioButton(this);
                 button.setText(answer.getAnswer());
-                button.setEnabled(userCanVote);
                 button.setTextColor(getResources().getColor(R.color.bluegreen));
                 button.setTag(answer);
                 rg.addView(button);
             }
             scrollViewLayout.addView(rg);
         }
-
     }
 
     public void validateVote(View view) {
-        if (userCanVote) {
             List<Answer> checkedAnswers = new ArrayList<>();
             ViewGroup container = mPoll.getNOfAnswers() != 1 ? scrollViewLayout : (RadioGroup) scrollViewLayout.getChildAt(0);
             for (int i = 0; i < container.getChildCount(); i++) {
@@ -110,16 +103,12 @@ public class PollVoteActivity extends AppCompatActivity {
                     mPoll.updateAnswers(getCurrentUser().getId());
                     Toast.makeText(this, getString(R.string.vote_success_poll),
                             Toast.LENGTH_LONG).show();
-                    finish();
+                    NavUtils.navigateUpFromSameTask(this);
                 } catch (PFException e) {
                     Toast.makeText(this, getString(R.string.vote_error_poll),
                             Toast.LENGTH_LONG).show();
                 }
             }
-        } else {
-            Toast.makeText(this, getString(R.string.already_vote_poll),
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override

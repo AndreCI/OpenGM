@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -22,8 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
@@ -46,6 +48,8 @@ public class PhoneContactsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        setTitle("Phone contacts");
 
         list = (ListView) findViewById(R.id.contacts_list);
 
@@ -119,6 +123,22 @@ public class PhoneContactsActivity extends AppCompatActivity {
         Collections.sort(mAdapter.getObjects());
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
     }
 
     @SuppressWarnings("SameReturnValue")

@@ -7,7 +7,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.parse.PFMember;
 
-class Participant implements Comparable<Participant> {
+public class Participant implements Comparable<Participant> {
 
     private final ArrayList<PFMember> participants;
     private final String prefix;

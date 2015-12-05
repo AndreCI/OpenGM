@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -282,6 +283,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
                 String name = object.getString(POLL_ENTRY_NAME);
                 String description = object.getString(POLL_ENTRY_DESCRIPTION);
                 Date deadline = object.getDate(POLL_ENTRY_DEADLINE);
+
                 int nAnswers = object.getInt(POLL_ENTRY_NUMBER_ANSWERS);
 
                 JSONArray votesArray = object.getJSONArray(POLL_ENTRY_RESULTS);
