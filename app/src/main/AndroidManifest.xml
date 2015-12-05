@@ -15,6 +15,9 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
 
+        <service
+            android:name=".messages.ShowMessagesActivity$RefreshMessages"
+            android:exported="false"/>
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"

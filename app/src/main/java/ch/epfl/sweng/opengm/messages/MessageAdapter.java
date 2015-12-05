@@ -14,11 +14,6 @@ public class MessageAdapter {
         this.sendDate = sendDate;
     }
 
-    public MessageAdapter(String sender, String body) {
-        this(sender, null, body);
-        sendDate = Utils.getNewStringDate();
-    }
-
     public String getSenderName() {
         return sender;
     }

@@ -102,9 +102,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
-                Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
-                intent2.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, OpenGMApplication.getCurrentUser().getGroups().indexOf(currentGroup));
-                startActivity(intent2);
+                startActivity(new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class));
                 break;
             case R.id.nav_manage:
                 break;

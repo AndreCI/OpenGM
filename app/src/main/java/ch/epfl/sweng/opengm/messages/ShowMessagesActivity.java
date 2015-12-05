@@ -1,12 +1,14 @@
 package ch.epfl.sweng.opengm.messages;
 
+import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,28 +23,29 @@ import android.widget.TextView;
 
 import com.parse.ParseException;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
-import java.util.TreeSet;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFConversation;
 import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFMessage;
 
 /**
  * Created by virgile on 18/11/2015.
  */
 public class ShowMessagesActivity extends AppCompatActivity {
-    private PFConversation conversation;
+    private static String INTENT_CONVERSATION_NAME = "ch.epfl.sweng.opengm.intent_conv_name";
+    private static String BROADCAST_ACTION = "ch.epfl.sweng.opengm.broadcast_action";
+    private static final String EXTENDED_DATA_STATUS = "ch.epfl.sweng.opengm.status";
+    private String conversation;
     private ListView messageList;
     private List<MessageAdapter> messages;
     private EditText textBar;
+    private CustomAdapter adapter;
+    private Intent mServiceIntent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,29 +53,13 @@ public class ShowMessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_messages);
         messages = new ArrayList<>();
         Intent intent = getIntent();
-        conversation = intent.getParcelableExtra(Utils.FILE_INFO_INTENT_MESSAGE);
+        conversation = intent.getStringExtra(Utils.FILE_INFO_INTENT_MESSAGE);
+        Log.v("ShowMessages", conversation);
+        new DisplayMessages().execute(conversation);
         messageList = (ListView) findViewById(R.id.message_list);
+        adapter = new CustomAdapter(this, R.id.message_list);
+        messageList.setAdapter(adapter);
         textBar = (EditText) findViewById(R.id.message_text_bar);
-        textBar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String string = s.toString();
-                for (int i = 0; i < string.length(); ++i) {
-                    if (string.charAt(i) == '|' || System.lineSeparator().contains(string.charAt(i) + "")) {
-                        s.delete(i, i + 1);
-                    }
-                }
-            }
-        });
-        fillMessages();
         textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -84,25 +71,22 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 return handled;
             }
         });
+
+        mServiceIntent = new Intent(this, RefreshMessages.class);
+        mServiceIntent.putExtra(INTENT_CONVERSATION_NAME, conversation);
+        startService(mServiceIntent);
+
+        ResponseReceiver mResponseReceiver = new ResponseReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mResponseReceiver, new IntentFilter(BROADCAST_ACTION));
+
     }
 
     private void sendMessage() {
-        EditText editText = (EditText) findViewById(R.id.message_text_bar);
-        String message = editText.getText().toString();
+        String message = textBar.getText().toString();
         if (!message.isEmpty()) {
-            Log.v("ShowMessage sendMessage", message);
-            MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
             new SendMessage().execute(message);
-            editText.setText("");
-            messages.add(messageAdapter);
         }
-    }
-
-    private void fillMessages() {
-        new readMessageFile().execute(String.format("%s/%s_%s.txt", getFilesDir().getAbsolutePath(), conversation.getConversationName(), conversation.getGroupId()));
-        /* TODO: get File on serv or local device + read and parse it for messages and fill messages
-         * idea : get serv file in background while displaying local one, then compare, then if modification, do them
-         */
+        textBar.setText("");
     }
 
     public void clickOnSendButton(View view) {
@@ -115,116 +99,46 @@ public class ShowMessagesActivity extends AppCompatActivity {
         sendMessage();
     }
 
-    class readMessageFile extends AsyncTask<String, Void, CustomAdapter> {
+    class SendMessage extends AsyncTask<String, Void, MessageAdapter> {
 
         @Override
-        protected CustomAdapter doInBackground(String... params) {
-            List<String> strings = null;
+        protected MessageAdapter doInBackground(String... params) {
             try {
-                strings = Utils.readMessagesFile(params[0]);
-                messages = new ArrayList<>();
-                for (String s : strings) {
-                    if(s != null) {
-                        Log.v("ShowMessages readFile", s);
-                        String[] data = Utils.extractMessage(s);
-                        MessageAdapter messageAdapter = new MessageAdapter(data[0], data[1], data[2]);
-                        messages.add(messageAdapter);
-                        Log.v("ShowMessages readFile", messageAdapter.toString());
-                    }
-                }
-            } catch (IOException e) {
-                Log.v("ShowMessageActivity", "couldn't read file " + params[0]);
+                PFMessage.writeMessage(conversation, OpenGMApplication.getCurrentGroup().getId(), OpenGMApplication.getCurrentUser().getUsername(), params[0]);
+            } catch (IOException|ParseException|PFException e) {
+                e.printStackTrace();
             }
-            return new CustomAdapter(ShowMessagesActivity.this, R.layout.message_info);
-        }
-
-        @Override
-        protected void onPostExecute(CustomAdapter res) {
-            ListView listView = (ListView) findViewById(R.id.message_list);
-            listView.setAdapter(res);
-            new GetServerFile().execute(conversation.getId());
-        }
-    }
-
-    class GetServerFile extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                PFConversation serverConversation = PFConversation.fetchExistingConversation(params[0]);
-                File remoteFile = serverConversation.getConversationFile();
-                File localFile = conversation.getConversationFile();
-                List<String> remoteStrings = Utils.readMessageFile(remoteFile);
-                List<String> localStrings = Utils.readMessageFile(localFile);
-                TreeSet<String> result = new TreeSet<>(new Comparator<String>() {
-                    @Override
-                    public int compare(String lhs, String rhs) {
-                        String[] lhsArray = Utils.extractMessage(lhs);
-                        String[] rhsArray = Utils.extractMessage(rhs);
-                        return lhsArray[1].compareTo(rhsArray[1]);
-                    }
-                });
-                for(String s : localStrings) {
-                    if( s != null) {
-                        result.add(s);
-                    }
-                }
-
-                for(String s : remoteStrings) {
-                    if( s != null) {
-                        result.add(s);
-                    }
-                }
-                PrintWriter writer = new PrintWriter(localFile);
-                for(String s : result) {
-                    writer.println(s);
-                }
-                conversation.updateToServer();
-            } catch (PFException | ParseException | IOException e) {
-                Log.e("ShowMess GetServ", "couldn't reach server");
-            }
+            Log.v("ShowMessage sendMessage", params[0]);
+            MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), params[0]);
+            messages.add(messageAdapter);
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void res) {
-            ListView listView = (ListView) findViewById(R.id.message_list);
-            listView.setAdapter(new CustomAdapter(ShowMessagesActivity.this, R.id.message_list));
-            try {
-                conversation.updateToServer();
-            } catch (PFException e) {
-                Log.e("ShowMessage", "couldn't update to serv");
-            }
+        protected void onPostExecute(MessageAdapter messageAdapter) {
+            super.onPostExecute(messageAdapter);
+            messageList.smoothScrollToPosition(messages.size()-1);
         }
     }
 
-    class SendMessage extends AsyncTask<String, Void, Void> {
+    class DisplayMessages extends AsyncTask<String, Void, List<MessageAdapter>> {
 
         @Override
-        protected Void doInBackground(String... params) {
-            try {
-                Utils.writeMessageLocal(OpenGMApplication.getCurrentUser().getUsername(), params[0], conversation.getConversationName(), conversation.getGroupId(),  ShowMessagesActivity.this);
-                Log.v("ShowMessage sendmessage", "write to local done");
-                conversation.writeMessage(OpenGMApplication.getCurrentUser().getUsername(), params[0]);
-                Log.v("ShowMessage sendmessage", "write to remote done");
-            } catch (IOException | ParseException e) {
-                Log.e("show message activity", "couldn't write message to conversation");
+        protected List<MessageAdapter> doInBackground(String... params) {
+            List<MessageAdapter> messageAdapters = new ArrayList<>();
+            for (PFMessage message : Utils.getMessagesForConversationName(params[0])) {
+                messageAdapters.add(new MessageAdapter(message.getSender(), (new Date(message.getTimestamp())).toString(), message.getBody()));
             }
-            return null;
+            return messageAdapters;
         }
-    }
-
-    class FetchMessages extends AsyncTask<PFConversation, Void, Boolean> {
 
         @Override
-        protected Boolean doInBackground(PFConversation... params) {
-           /* TODO: get File on serv or local device + read and parse it for messages and fill messages
-            * idea : get serv file in background while displaying local one, then compare, then if modification, do them
-            */
-            return null;
+        protected void onPostExecute(List<MessageAdapter> messages) {
+            ShowMessagesActivity.this.messages.clear();
+            ShowMessagesActivity.this.messages.addAll(messages);
+            adapter.notifyDataSetChanged();
         }
     }
-
 
     private class CustomAdapter extends ArrayAdapter<MessageAdapter> {
 
@@ -258,4 +172,56 @@ public class ShowMessagesActivity extends AppCompatActivity {
             return convertView;
         }
     }
+
+    private class ResponseReceiver extends BroadcastReceiver {
+
+        private ResponseReceiver() {}
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
+            if(messagesFragmented.size()/3 > messages.size()) {
+                ArrayList<MessageAdapter> messages = new ArrayList<>();
+                for (int i = 0; i < messagesFragmented.size() - 2; i += 3) {
+                    Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
+                    messages.add(new MessageAdapter(messagesFragmented.get(i), messagesFragmented.get(i + 1), messagesFragmented.get(i + 2)));
+                }
+                ShowMessagesActivity.this.messages.clear();
+                ShowMessagesActivity.this.messages.addAll(messages);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public static class RefreshMessages extends IntentService {
+
+        public RefreshMessages() {
+            super("RefreshMessagesService");
+        }
+        /**
+         * Creates an IntentService.  Invoked by your subclass's constructor.
+         *
+         * @param name Used to name the worker thread, important only for debugging.
+         */
+        public RefreshMessages(String name) {
+            super(name);
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            while (true) {
+                List<PFMessage> messages = Utils.getMessagesForConversationName(intent.getStringExtra(INTENT_CONVERSATION_NAME));
+                ArrayList<String> result = new ArrayList<>();
+                for (PFMessage message : messages) {
+                    result.add(message.getSender());
+                    result.add(message.getTimestamp().toString());
+                    result.add(message.getBody());
+                }
+                Log.v("RefreshMessages","messages size: " + messages.size());
+                Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+            }
+        }
+    }
+
 }

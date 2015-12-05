@@ -2,29 +2,18 @@ package ch.epfl.sweng.opengm.messages;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.parse.ParseException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFConversation;
-import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class CreateNewConversationActivity extends AppCompatActivity {
     String groupId;
@@ -78,12 +67,15 @@ public class CreateNewConversationActivity extends AppCompatActivity {
     }
 
     private void sendBackResult() {
-        //Check that conv name doesn't already exist. Check in file !!!!!!!
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
-        intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversationName);
-        setResult(Activity.RESULT_OK, intent);
-        finish();
+        if(!conversationName.isEmpty()) {
+            intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversationName);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Conversation name cannot be empty", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -22,10 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_toStartOf="@+id/send_message_button"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-        android:hint="tap message here ..."
-        android:imeOptions="actionSend"
-        android:minLines="1"
-        android:maxLines="1"/>
+        android:hint="tap message here ..." />
 
     <Button
         android:layout_width="wrap_content"
