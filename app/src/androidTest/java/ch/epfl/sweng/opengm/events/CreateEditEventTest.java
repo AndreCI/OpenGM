@@ -16,12 +16,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
+import ch.epfl.sweng.opengm.parse.PFUtils;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
@@ -48,48 +50,48 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         super(CreateEditEventActivity.class);
     }
 
-    private final String EMAIL = "bobby.lapointe@caramail.co.uk";
-    private final String USERNAME = "CreateEditEventTest";
-    private final String FIRST_NAME = "Bobby";
-    private final String LAST_NAME = "LaPointe";
+    private final String EMAIL = "CreateEditEvent@caramail.co.uk";
+    private final String USERNAME = "UserName_CreateEditEvent";
+    private final String FIRST_NAME = "FirstName_CreateEditEvent";
+    private final String LAST_NAME = "LastName_CreateEditEvent";
 
     private PFEvent e;
     private PFGroup group;
     private PFUser user;
     private String id;
 
-    @Before
+  /*  @Before
     public void newIds() {
         e = null;
         group = null;
         id = null;
         user = null;
-    }
+    }*/
 
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
-
-    // TODO : fix this
-/*    public void notestNoName() throws PFException {
         id = getRandomId();
-        String name = "testEventInIntent";
-        String description = "A group, much nicer than the previous one";
+        String name = "eventName_CreateEditEvent";
+        String description = "eventDescription_CreateEditEvent";
         try {
             user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
+            OpenGMApplication.setCurrentUser(user);
+            Thread.sleep(2000);
             group = createNewGroup(user, name, description, null);
+            Thread.sleep(2000);
+            OpenGMApplication.setCurrentGroup(0);
         } catch (PFException e) {
             e.printStackTrace();
             Assert.fail("Network error");
         }
-        Intent i = new Intent();
-        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "", "", "testDescription", null);
-        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
-        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
-        setActivityIntent(i);
+        e = PFEvent.createEvent(group, "eventName2_CreateEditEvent", "eventPlace_CreateEditEvent", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "eventDescription_CreateEditEvent", PFUtils.pathNotSpecified, PFUtils.nameNotSpecified, null);
+    }
+    
+    public void testNoName() throws PFException {
+
         CreateEditEventActivity act = getActivity();
         ViewInteraction nameText = onView(withId(R.id.CreateEditEventNameText));
         nameText.perform(clearText());
@@ -97,21 +99,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         nameText.check(matches(hasErrorText(act.getString(R.string.CreateEditEmptyNameErrorMessage))));
     }
 
-    // TODO : fix this
-    public void notestNameButNoTime() throws PFException {
-        id = getRandomId();
-        String name = "testEventInIntent";
-        String description = "A group, much nicer than the previous one";
-        try {
-            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
-            group = createNewGroup(user, name, description, null);
-        } catch (PFException e) {
-            e.printStackTrace();
-            Assert.fail("Network error");
-        }
-        Intent i = new Intent();
-        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
-        setActivityIntent(i);
+    public void testNameButNoTime() throws PFException {
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
         closeSoftKeyboard();
@@ -123,93 +111,44 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         onView(withText(R.string.CreateEditEmptyTimeDateErrorMessage)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 
-    // TODO : fix this
-    public void notestEventInIntent() throws PFException {
-        id = getRandomId();
-        String name = "testEventInIntent";
-        String description = "A group, much nicer than the previous one";
-        try {
-            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
-            group = createNewGroup(user, name, description, null);
-        } catch (PFException e) {
-            e.printStackTrace();
-            Assert.fail("Network error");
-        }
+    public void testEventInIntent() throws PFException {
         Intent i = new Intent();
-        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "", "", "testDescription", null);
-        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
         i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
-        onView(withId(R.id.CreateEditEventNameText)).check(matches(withText("testName")));
-        onView(withId(R.id.CreateEditEventPlaceText)).check(matches(withText("testPlace")));
+        onView(withId(R.id.CreateEditEventNameText)).check(matches(withText("eventName2_CreateEditEvent")));
+        onView(withId(R.id.CreateEditEventPlaceText)).check(matches(withText("eventPlace_CreateEditEvent")));
         assertEquals("10 : 10", ((Button) act.findViewById(R.id.CreateEditEventTimeText)).getText());
         assertEquals("1/01/2000", ((Button) act.findViewById(R.id.CreateEditEventDateText)).getText());
-        onView(withId(R.id.CreateEditEventDescriptionText)).check(matches(withText("testDescription")));
+        onView(withId(R.id.CreateEditEventDescriptionText)).check(matches(withText("eventDescription_CreateEditEvent")));
     }
 
     // TODO : fix this
-    public void notestNoParticipants() throws PFException {
-        id = getRandomId();
-        String name = "testNoParticipants";
-        String description = "A group, much nicer than the previous one";
-        try {
-            user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
-            group = createNewGroup(user, name, description, null);
-        } catch (PFException e) {
-            Assert.fail("Network error");
-        }
-        Intent i = new Intent();
+    public void NotestNoParticipants() throws PFException {
+        CreateEditEventActivity act = getActivity();
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
-        Date date = new Date(year, month + 1, day, hour, min);
-        e = PFEvent.createEvent(group, "testName", "testPlace", date, new ArrayList<PFMember>(), "", "", "testDescription", null);
-        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
-        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
-        setActivityIntent(i);
-        getActivity();
+       String date = day +"/"+ (month+1)+"/" +(year+1);
+        String time = hour+":"+min;
+        onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
+        closeSoftKeyboard();
+       onView(withId(R.id.CreateEditEventTimeText)).perform()
+        closeSoftKeyboard();
+        onView(withId(R.id.CreateEditEventDateText)).perform(typeText(date));
         onView(withId(R.id.CreateEditOkButton)).perform(click());
         onView(withText(R.string.CreateEditNoParticipants)).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
     }
 
     public void testCanClickOnBrowseButton() throws PFException{
-        id = getRandomId();
-        String name = "Really Nice Group to test BrowseButton";
-        String description = "A group, much nicer than the previous one";
-        try {
-            user = createNewUser(id, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
-            group = createNewGroup(user, name, description, null);
-        } catch (PFException e) {
-            Assert.fail("Network error");
-        }
-        Intent i = new Intent();
-        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "", "", "testDescription", null);
-        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
-        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
-        setActivityIntent(i);
         getActivity();
         onView(withId(R.id.CreateEditEventBitmapBrowseButton)).perform(click());
     }
 
-    public void noTestImageNameChanged() throws PFException{
-        id = getRandomId();
-        String name = "Really Nice Group to test BrowseButton";
-        String description = "A group, much nicer than the previous one";
-        try {
-            user = createNewUser(id, EMAIL, PHONE_NUMBER, USERNAME, FIRST_NAME, LAST_NAME);
-            group = createNewGroup(user, name, description, null);
-        } catch (PFException e) {
-            Assert.fail("Network error");
-        }
-        Intent i = new Intent();
-        e = PFEvent.createEvent(group, "testName", "testPlace", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "", "", "testDescription", null);
-        i.putExtra(Utils.GROUP_INTENT_MESSAGE, group);
-        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
-        setActivityIntent(i);
+    public void NotestImageNameChanged() throws PFException{
         CreateEditEventActivity a = getActivity();
         Intent data = null;
         a.onActivityResult(CreateEditEventActivity.CREATE_EDIT_EVENT_RESULT_CODE_BROWSE_FOR_BITMAP,
@@ -227,5 +166,5 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         if(user != null) {
             deleteUserWithId(id);
         }
-    }*/
+    }
 }

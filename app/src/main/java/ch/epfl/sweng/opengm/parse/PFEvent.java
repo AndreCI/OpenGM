@@ -254,7 +254,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                     mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                     byte[] imageData = stream.toByteArray();
-                                    ParseFile image = new ParseFile("tester" + ".png", imageData);
+                                    ParseFile image = new ParseFile(getName()+ ".png", imageData);
                                   // image.saveInBackground();
                                     object.put(EVENT_ENTRY_PICTURE, image);
                                 } else if(mPicturePath!=PFUtils.pathNotSpecified){
@@ -324,7 +324,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] image = stream.toByteArray();
-            ParseFile file = new ParseFile("testing.png", image);
+            ParseFile file = new ParseFile(pictureName+".png", image);
            // file.saveInBackground();
             object.put(EVENT_ENTRY_PICTURE, file);
         }
