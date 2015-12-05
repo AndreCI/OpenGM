@@ -158,7 +158,6 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onEditButtonClick(View view) {
         if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
-            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
             intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
         }else{

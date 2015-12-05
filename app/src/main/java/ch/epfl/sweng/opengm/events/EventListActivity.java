@@ -39,6 +39,7 @@ import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class EventListActivity extends AppCompatActivity {
 
+    //TODO : Image is not optimal.
     public static final int EVENT_LIST_RESULT_CODE = 666;
 
     private Map<String,PFEvent> eventMap;
