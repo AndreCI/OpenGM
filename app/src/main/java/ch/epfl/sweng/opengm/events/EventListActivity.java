@@ -12,11 +12,13 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -29,10 +31,13 @@ import java.util.Map;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.groups.MyGroupsActivity;
+import ch.epfl.sweng.opengm.identification.contacts.AppContactsActivity;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUtils;
+import ch.epfl.sweng.opengm.userProfile.MyProfileActivity;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class EventListActivity extends AppCompatActivity {
@@ -88,13 +93,27 @@ public class EventListActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_personal, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
-            default:
+            case R.id.action_refresh_user:
+                clickOnRefreshButton(null);
                 return true;
+            case R.id.action_show_contacts:
+                startActivity(new Intent(this, AppContactsActivity.class));
+                return true;
+            case R.id.action_show_user_profile:
+                startActivity(new Intent(this, MyProfileActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -155,7 +174,6 @@ public class EventListActivity extends AppCompatActivity {
     public void clickOnAddButton(View v){
         if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
-            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
             startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
         }else{
             Toast.makeText(getApplicationContext(), "You don't have the permission to create a new event.", Toast.LENGTH_SHORT).show();

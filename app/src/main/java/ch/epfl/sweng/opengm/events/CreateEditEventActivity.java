@@ -183,7 +183,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
     public void onParticipantsButtonClick(View v) {
         Intent intent = new Intent(this, AddRemoveParticipantsActivity.class);
-        intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
         if (editing) {
             intent.putExtra(Utils.EVENT_INTENT_MESSAGE, createEditEvent());
         }
