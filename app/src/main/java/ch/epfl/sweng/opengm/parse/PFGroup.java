@@ -408,7 +408,7 @@ public final class PFGroup extends PFEntity {
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                 mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
                                 byte[] imageData = stream.toByteArray();
-                                ParseFile image = new ParseFile(mName + ".png", imageData);
+                                ParseFile image = new ParseFile(String.format("group%s.png", getId()), imageData);
                                 object.put(GROUP_ENTRY_PICTURE, image);
                             } else {
                                 object.remove(GROUP_ENTRY_PICTURE);
@@ -859,7 +859,8 @@ public final class PFGroup extends PFEntity {
      * @param picture The new picture of the group
      */
     public void setPicture(Bitmap picture) {
-        if (mPicture == null || !mPicture.equals(picture)) {
+        if ((mPicture == null && picture != null) ||
+                (mPicture != null && !mPicture.equals(picture))) {
             Bitmap oldPicture = mPicture;
             mPicture = picture;
             try {

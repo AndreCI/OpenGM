@@ -108,7 +108,7 @@ public class MembersActivity extends AppCompatActivity {
                     Intent i = new Intent(MembersActivity.this, MemberProfileActivity.class);
 //                    i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
 //                    i.putExtra(UserProfileActivity.GROUP_INDEX, groupIndex);
-                    i.putExtra(MemberProfileActivity.MEMBER_KEY, members.get(position));
+                    i.putExtra(MemberProfileActivity.MEMBER_KEY, members.get(position).getId());
                     startActivity(i);
                 }
             }
