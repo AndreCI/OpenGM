@@ -60,17 +60,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, R.id.message_list);
         messageList.setAdapter(adapter);
         textBar = (EditText) findViewById(R.id.message_text_bar);
-        textBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage();
-                    handled = true;
-                }
-                return handled;
-            }
-        });
 
         mServiceIntent = new Intent(this, RefreshMessages.class);
         mServiceIntent.putExtra(INTENT_CONVERSATION_NAME, conversation);
@@ -81,22 +70,19 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
     }
 
-    private void sendMessage() {
-        String message = textBar.getText().toString();
+    private void sendMessage(String message) {
+        textBar.setText("");
         if (!message.isEmpty()) {
             new SendMessage().execute(message);
         }
-        textBar.setText("");
     }
 
     public void clickOnSendButton(View view) {
-        InputMethodManager inputManager = (InputMethodManager)
-                getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
-
-        sendMessage();
+        String message = textBar.getText().toString();
+        sendMessage(message);
+        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
+        messages.add(messageAdapter);
+        messageList.smoothScrollToPosition(messages.size() - 1);
     }
 
     class SendMessage extends AsyncTask<String, Void, MessageAdapter> {
@@ -109,15 +95,12 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Log.v("ShowMessage sendMessage", params[0]);
-            MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), params[0]);
-            messages.add(messageAdapter);
             return null;
         }
 
         @Override
         protected void onPostExecute(MessageAdapter messageAdapter) {
             super.onPostExecute(messageAdapter);
-            messageList.smoothScrollToPosition(messages.size()-1);
         }
     }
 
