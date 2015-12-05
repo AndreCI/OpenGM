@@ -10,6 +10,7 @@ import junit.framework.Assert;
 
 import org.hamcrest.Matchers;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -284,7 +285,7 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         try {
             PFUser u2 = PFUser.fetchExistingUser(currentUser.getId());
             PFGroup g = PFGroup.fetchExistingGroup(u2.getGroupsIds().get(0));
-            PFPoll p = g.getPolls().get(0);
+            PFPoll p = new ArrayList<>(g.getPolls()).get(0);
             assertEquals("blabla", p.getName());
             assertEquals("description", p.getDescription());
             assertEquals(new Date(116, 0, 1), p.getDeadline());
