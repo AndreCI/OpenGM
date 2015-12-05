@@ -49,7 +49,8 @@
             android:name=".groups.MembersActivity"
             android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".groups.CreateEditGroupActivity"
             android:label="@string/title_activity_create_group"

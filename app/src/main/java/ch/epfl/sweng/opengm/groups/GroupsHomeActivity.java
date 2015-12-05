@@ -116,7 +116,7 @@ public class GroupsHomeActivity extends AppCompatActivity
         });
 
         // show the floating button (+) only if user can add a member
-        if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER)) {
+        if (currentGroup.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER)) {
             fab.setVisibility(View.VISIBLE);
 
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) descriptionView.getLayoutParams();

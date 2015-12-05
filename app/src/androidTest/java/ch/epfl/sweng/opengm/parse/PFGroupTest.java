@@ -561,8 +561,8 @@ public class PFGroupTest {
             assertEquals(permissions, group.getPermissionsForUser(user1.getId()));
             assertEquals(permissions, group.getPermissionsForRole(adminRole));
             for(PFGroup.Permission permission : permissions){
-                assertTrue(group2.userHavePermission(user1.getId(), permission));
-                assertTrue(group.userHavePermission(user1.getId(), permission));
+                assertTrue(group2.hasUserPermission(user1.getId(), permission));
+                assertTrue(group.hasUserPermission(user1.getId(), permission));
             }
         } catch (PFException e) {
             Assert.fail(parseExceptionFailTest);
@@ -579,8 +579,8 @@ public class PFGroupTest {
             assertEquals(permissions, group.getPermissionsForUser(user2.getId()));
             assertEquals(permissions, group.getPermissionsForRole(userRole));
             for(PFGroup.Permission permission : permissions){
-                assertTrue(group2.userHavePermission(user2.getId(), permission));
-                assertTrue(group.userHavePermission(user2.getId(), permission));
+                assertTrue(group2.hasUserPermission(user2.getId(), permission));
+                assertTrue(group.hasUserPermission(user2.getId(), permission));
             }
         } catch (PFException e) {
             Assert.fail(parseExceptionFailTest);

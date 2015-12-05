@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -20,6 +19,7 @@ import org.json.JSONException;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -453,7 +453,7 @@ public final class PFGroup extends PFEntity {
      * @return A map of members in the group
      */
     public HashMap<String, PFMember> getMembers() {
-        return new HashMap<>(mMembers);
+        return mMembers;
     }
 
     /**
@@ -543,16 +543,16 @@ public final class PFGroup extends PFEntity {
         return new ArrayList<>(roles);
     }
 
-    public List<PFEvent> getEvents() {
-        return new ArrayList<>(mEvents.values());
+    public Collection<PFEvent> getEvents() {
+        return mEvents.values();
     }
 
-    public List<PFPoll> getPolls() {
-        return new ArrayList<>(mPolls.values());
+    public Collection<PFPoll> getPolls() {
+        return mPolls.values();
     }
 
     public HashMap<String, PFPoll> getPollsWithId() {
-        return new HashMap<>(mPolls);
+        return mPolls;
     }
 
     public boolean hasMembers() {
@@ -871,7 +871,7 @@ public final class PFGroup extends PFEntity {
     }
 
     public Bitmap getPicture() {
-        return (mPicture == null) ? null : Bitmap.createBitmap(mPicture);
+        return mPicture;
     }
 
     /**
@@ -1204,7 +1204,7 @@ public final class PFGroup extends PFEntity {
      * @param permission the permission to check
      * @return true if userId has the specified permission
      */
-    public boolean userHavePermission(String userId, Permission permission) {
+    public boolean hasUserPermission(String userId, Permission permission) {
         List<Permission> permissionsForUser = getPermissionsForUser(userId);
         return permissionsForUser.contains(permission);
     }

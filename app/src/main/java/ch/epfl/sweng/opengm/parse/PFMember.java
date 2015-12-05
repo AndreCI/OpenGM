@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_ABOUT;
 import static ch.epfl.sweng.opengm.parse.PFConstants.USER_ENTRY_FIRSTNAME;
@@ -241,7 +242,7 @@ public final class PFMember extends PFEntity implements Parcelable {
      * @return the roles associated with this member
      */
     public List<String> getRoles() {
-        return Collections.unmodifiableList(mRoles);
+        return mRoles;
     }
 
     /**
@@ -355,36 +356,41 @@ public final class PFMember extends PFEntity implements Parcelable {
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
 
-                ParseObject mailObject = null;
+                if (id.equals(getCurrentUser().getId())) {
+                    return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
+                            nickName == null ? username : nickName, getCurrentUser().getEmail(), phoneNumber, description,
+                            getCurrentUser().getPicture(), Arrays.asList(roles), getCurrentUser().getGroupsIds());
 
-                ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
+                } else {
+                    ParseObject mailObject = null;
 
-                try {
-                    mailObject = mailQuery.get(id);
-                } catch (ParseException pe) {
-                    // Do nothing
+                    ParseQuery<ParseUser> mailQuery = ParseUser.getQuery();
+                    try {
+                        mailObject = mailQuery.get(id);
+                    } catch (ParseException pe) {
+                        // Do nothing
+                    }
+                    String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
+
+                    String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
+                    List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
+
+                    final PFMember member = new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
+                            nickName == null ? username : nickName, email, phoneNumber, description,
+                            null, Arrays.asList(roles), groups);
+
+                    ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
+                    if (imageFile != null) {
+                        imageFile.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+                                Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                member.setPicture(picture);
+                            }
+                        });
+                    }
+                    return member;
                 }
-
-                String email = (mailObject == null) ? "" : mailObject.getString(_USER_TABLE_EMAIL);
-
-                String[] groupsArray = convertFromJSONArray(object.getJSONArray(USER_ENTRY_GROUPS));
-                List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
-
-                final PFMember member = new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
-                        nickName == null ? username : nickName, email, phoneNumber, description,
-                        null, Arrays.asList(roles), groups);
-
-                ParseFile imageFile = (ParseFile) object.get(USER_ENTRY_PICTURE);
-                if (imageFile != null) {
-                    imageFile.getDataInBackground(new GetDataCallback() {
-                        @Override
-                        public void done(byte[] data, ParseException e) {
-                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
-                            member.setPicture(picture);
-                        }
-                    });
-                }
-                return member;
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
