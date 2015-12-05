@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,7 @@ public class MyGroupsActivity extends AppCompatActivity {
     public static final String COMING_FROM_KEY = "ch.epfl.ch.opengm.connexion.signup.groupsActivity.coming";
 
     private GroupCardViewAdapter adapter;
-    private final List<PFGroup> groups = new ArrayList<>();
+    private final List<PFGroup> mGroups = new ArrayList<>();
 
     private ProgressBar progressBar;
     private TextView progressText;
@@ -66,7 +65,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        adapter = new GroupCardViewAdapter(groups, metrics);
+        adapter = new GroupCardViewAdapter(mGroups, metrics);
         groupsRecyclerView.setAdapter(adapter);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -76,13 +75,13 @@ public class MyGroupsActivity extends AppCompatActivity {
 
         if (NetworkUtils.haveInternet(getBaseContext()) && getCurrentUser() == null) {
 
-            new RetrievingTask(progressBar, progressText, groups, adapter).execute(false);
+            new RetrievingTask(progressBar, progressText, mGroups, adapter).execute(false);
 
         } else if (getCurrentUser() != null) {
-            groups.clear();
-            groups.addAll(getCurrentUser().getGroups());
+            mGroups.clear();
+            mGroups.addAll(getCurrentUser().getGroups());
             adapter.notifyDataSetChanged();
-            if (groups.isEmpty()) {
+            if (mGroups.isEmpty()) {
                 DialogFragment noGroupsFragment = new NoGroupsDialogFragment();
                 noGroupsFragment.show(getFragmentManager(), "noGroupsYetDialog");
             }
@@ -104,9 +103,9 @@ public class MyGroupsActivity extends AppCompatActivity {
             case R.id.action_refresh_user:
                 try {
                     getCurrentUser().reload();
-                    groups.clear();
+                    mGroups.clear();
                     adapter.notifyDataSetChanged();
-                    new RetrievingTask(progressBar, progressText, groups, adapter).execute(true);
+                    new RetrievingTask(progressBar, progressText, mGroups, adapter).execute(true);
                     findViewById(R.id.myGroupsMainLayout).invalidate();
                 } catch (PFException e) {
                     Toast.makeText(getBaseContext(), "Error while reloading your informations", Toast.LENGTH_LONG).show();
@@ -193,7 +192,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     progressBar.setMax(max);
-                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : 0 of %d ...", max));
+                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your mGroups : 0 of %d ...", max));
                 }
             });
             int current = 0;
@@ -202,7 +201,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                 for (PFGroup group : groups) {
                     try {
                         group.reload();
-                        groups.add(group);
+                        mGroups.add(group);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -218,7 +217,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                 List<String> groupsIds = new ArrayList<>(getCurrentUser().getGroupsIds());
                 for (String groupId : groupsIds) {
                     try {
-                        groups.add(getCurrentUser().fetchGroupWithId(groupId));
+                        mGroups.add(getCurrentUser().fetchGroupWithId(groupId));
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -237,7 +236,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(java.lang.Integer... values) {
             progressBar.setProgress(values[0]);
-            progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : %d of %d ...", values[0], progressBar.getMax()));
+            progressText.setText(String.format(Locale.getDefault(), "Retrieving your mGroups : %d of %d ...", values[0], progressBar.getMax()));
         }
 
         @Override
