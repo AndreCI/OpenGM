@@ -1,10 +1,12 @@
 package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -248,13 +250,16 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                                         collectionToArray(mParticipants.values()));
                                 break;
                             case EVENT_ENTRY_PICTURE:
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                byte[] image = stream.toByteArray();
-                                ParseFile file = new ParseFile(
-                                        String.format("event%s.png", getId()), image);
-                                file.saveInBackground();
-                                object.put(EVENT_ENTRY_PICTURE, file); //TODO : whaaaat?
+                                if (mPicture != null) {
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                    mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    byte[] imageData = stream.toByteArray();
+                                    ParseFile image = new ParseFile("tester" + ".png", imageData);
+                                  // image.saveInBackground();
+                                    object.put(EVENT_ENTRY_PICTURE, image);
+                                } else if(mPicturePath!=PFUtils.pathNotSpecified){
+                                    object.remove(EVENT_ENTRY_PICTURE);
+                                }
                                 break;
                             default:
                                 return;
@@ -320,7 +325,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
             picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] image = stream.toByteArray();
             ParseFile file = new ParseFile("testing.png", image);
-            file.saveInBackground();
+           // file.saveInBackground();
             object.put(EVENT_ENTRY_PICTURE, file);
         }
 
@@ -363,8 +368,19 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
                 }
                 String imagePath = PFUtils.pathNotSpecified;
                 String imageName = PFUtils.nameNotSpecified;
-                return new PFEvent(id, object.getUpdatedAt(), title, place, date,
+                ParseFile imageFile = (ParseFile) object.get(EVENT_ENTRY_PICTURE);
+                final PFEvent event =  new PFEvent(id, object.getUpdatedAt(), title, place, date,
                         description, members, imagePath, imageName, null);
+                if (imageFile != null) {
+                    imageFile.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] data, ParseException e) {
+                            Bitmap picture = BitmapFactory.decodeByteArray(data, 0, data.length);
+                            event.setPicture(picture);
+                        }
+                    });
+                }
+                return event;
             } else {
                 throw new PFException("Parse query for id " + id + " failed");
             }
