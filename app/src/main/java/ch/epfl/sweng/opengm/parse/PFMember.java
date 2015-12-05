@@ -356,7 +356,7 @@ public final class PFMember extends PFEntity implements Parcelable {
                 String phoneNumber = object.getString(USER_ENTRY_PHONENUMBER);
                 String description = object.getString(USER_ENTRY_ABOUT);
 
-                if (id.equals(getCurrentUser().getId())) {
+                if (getCurrentUser() != null && id.equals(getCurrentUser().getId())) {
                     return new PFMember(id, object.getUpdatedAt(), username, firstName, lastName,
                             nickName == null ? username : nickName, getCurrentUser().getEmail(), phoneNumber, description,
                             getCurrentUser().getPicture(), Arrays.asList(roles), getCurrentUser().getGroupsIds());
