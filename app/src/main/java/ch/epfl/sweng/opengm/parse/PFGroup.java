@@ -822,7 +822,7 @@ public final class PFGroup extends PFEntity {
 
 
     public void addConversation(String conversation) {
-        if (!conversation.isEmpty() && !mConversationNames.contains(conversation)) {
+        if(!conversation.isEmpty() && !mConversationNames.contains(conversation)) {
             ArrayList<String> oldConversationInformations = mConversationNames;
             mConversationNames.add(conversation);
             try {
@@ -888,6 +888,20 @@ public final class PFGroup extends PFEntity {
 
     public Bitmap getPicture() {
         return mPicture;
+    }
+
+    /**
+     * return a picture that is squared so it fits nicely where we need square picture
+     *
+     * @return the group picture that is squared
+     */
+    public Bitmap getSquarePicture() {
+        if (mPicture != null) {
+            int size = (mPicture.getWidth() > mPicture.getHeight()) ? mPicture.getWidth() : mPicture.getHeight();
+            return Bitmap.createScaledBitmap(mPicture, size, size, false);
+        } else {
+            return null;
+        }
     }
 
     /**

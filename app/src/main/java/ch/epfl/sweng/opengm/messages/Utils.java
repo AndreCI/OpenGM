@@ -17,8 +17,8 @@ import java.util.Locale;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
 public class Utils {
-    public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.file_info";
-    public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.conv_info";
+    public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.sweng.opengm.file_info";
+    public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.s weng.opengm.conv_info";
 
     public static List<PFMessage> getMessagesForConversationName(String conversation) {
         List<PFMessage> messages = new ArrayList<>();
@@ -37,11 +37,6 @@ public class Utils {
         } catch (ParseException e) {
         }
         return messages;
-    }
-
-    public static String getNewStringDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
-        return dateFormat.format(Calendar.getInstance().getTime());
     }
 
     public static String getDateFromTimestamp(String timestamp) {

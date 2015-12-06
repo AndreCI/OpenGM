@@ -3,9 +3,9 @@ package ch.epfl.sweng.opengm.messages;
 import java.util.Date;
 
 public class MessageAdapter {
-    private String senderId;
-    private String body;
-    private String sendDate;
+    private final String senderId;
+    private final String body;
+    private final String sendDate;
 
     public MessageAdapter(String sender, String sendDate, String body) {
         this.senderId = sender;

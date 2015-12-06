@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -99,7 +100,8 @@ public class ShowMessagesActivity extends AppCompatActivity {
     public void clickOnSendButton(View view) {
         String message = textBar.getText().toString();
         sendMessage(message);
-        MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getFirstName(), Calendar.getInstance().getTime().toString(), message);
+        MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getId(),
+                Long.toString(Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis()), message);
         messages.add(messageAdapter);
         messageList.smoothScrollToPosition(messages.size() - 1);
     }
@@ -123,23 +125,22 @@ public class ShowMessagesActivity extends AppCompatActivity {
         }
     }
 
-    class DisplayMessages extends AsyncTask<String, Void, List<MessageAdapter>> {
+    class DisplayMessages extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected List<MessageAdapter> doInBackground(String... params) {
-            List<MessageAdapter> messageAdapters = new ArrayList<>();
+        protected Void doInBackground(String... params) {
             for (PFMessage message : Utils.getMessagesForConversationName(params[0])) {
-                messageAdapters.add(new MessageAdapter(message.getSenderId(), message.getTimestamp().toString(), message.getBody()));
+                messages.add(new MessageAdapter(message.getSenderId(), message.getTimestamp().toString(), message.getBody()));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
-            return messageAdapters;
+            return null;
         }
 
-        @Override
-        protected void onPostExecute(List<MessageAdapter> messages) {
-            ShowMessagesActivity.this.messages.clear();
-            ShowMessagesActivity.this.messages.addAll(messages);
-            adapter.notifyDataSetChanged();
-        }
     }
 
     private class CustomAdapter extends ArrayAdapter<MessageAdapter> {
@@ -165,9 +166,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (isSender) {
-                    convertView = vi.inflate(R.layout.chat_item_rcv, null);
-                } else {
                     convertView = vi.inflate(R.layout.chat_item_sent, null);
+                } else {
+                    convertView = vi.inflate(R.layout.chat_item_rcv, null);
                 }
                 holder = new ViewHolder();
                 holder.image = (ImageView) convertView.findViewById(R.id.message_sender_image);
