@@ -1,7 +1,5 @@
 package ch.epfl.sweng.opengm.messages;
 
-import android.util.Log;
-
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -27,16 +25,15 @@ public class Utils {
                     whereGreaterThan(PFMessage.TABLE_ENTRY_TIMESTAMP, lastTimestamp).
                     whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).
                     orderByAscending(PFMessage.TABLE_ENTRY_TIMESTAMP);
-            Log.v("Utils getMessages", "query size: " + query.count());
+            query.setLimit(25);
             List<ParseObject> objects = query.find();
-            Log.v("Utils getMessages", "query find: " + objects.size());
             for (ParseObject object : objects) {
                 messages.add(PFMessage.getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
-                        (String) object.get(PFMessage.TABLE_ENTRY_SENDER),
-                        (long) object.get(PFMessage.TABLE_ENTRY_TIMESTAMP),
-                        (String) object.get(PFMessage.TABLE_ENTRY_NAME),
-                        (String) object.get(PFMessage.TABLE_ENTRY_BODY),
-                        (String) object.get(PFMessage.TABLE_ENTRY_GROUPID)));
+                        object.getString(PFMessage.TABLE_ENTRY_SENDER),
+                        object.getLong(PFMessage.TABLE_ENTRY_TIMESTAMP),
+                        object.getString(PFMessage.TABLE_ENTRY_NAME),
+                        object.getString(PFMessage.TABLE_ENTRY_BODY),
+                        object.getString(PFMessage.TABLE_ENTRY_GROUPID)));
             }
         } catch (ParseException e) {
         }
