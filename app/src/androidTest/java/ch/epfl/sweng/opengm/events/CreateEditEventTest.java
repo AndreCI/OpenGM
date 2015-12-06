@@ -89,7 +89,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         }
         e = PFEvent.createEvent(group, "eventName2_CreateEditEvent", "eventPlace_CreateEditEvent", new Date(2000, 0, 1, 10, 10), new ArrayList<PFMember>(), "eventDescription_CreateEditEvent", PFUtils.pathNotSpecified, PFUtils.nameNotSpecified, null);
     }
-    
+
     public void testNoName() throws PFException {
 
         CreateEditEventActivity act = getActivity();
@@ -136,7 +136,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         String time = hour+":"+min;
         onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
         closeSoftKeyboard();
-       onView(withId(R.id.CreateEditEventTimeText)).perform()
+       onView(withId(R.id.CreateEditEventTimeText)).perform();
         closeSoftKeyboard();
         onView(withId(R.id.CreateEditEventDateText)).perform(typeText(date));
         onView(withId(R.id.CreateEditOkButton)).perform(click());

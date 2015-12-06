@@ -1,14 +1,11 @@
 package ch.epfl.sweng.opengm.events;
 
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.TextView;
 
 import junit.framework.Assert;
 
 import org.junit.After;
-import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,18 +19,20 @@ import ch.epfl.sweng.opengm.parse.PFUser;
 import ch.epfl.sweng.opengm.parse.PFUtils;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 import static ch.epfl.sweng.opengm.parse.PFGroup.createNewGroup;
 import static ch.epfl.sweng.opengm.parse.PFUser.createNewUser;
 
-
-public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventActivity>{
-    public ShowEventTest() {
-        super(ShowEventActivity.class);
+/**
+ * Created by André on 06/12/2015.
+ */
+public class AddParticipantTest  extends ActivityInstrumentationTestCase2<AddRemoveParticipantsActivity>  {
+    public AddParticipantTest() {
+        super(AddRemoveParticipantsActivity.class);
     }
 
     private final String EMAIL = "ShowEvent@caramail.co.uk";
@@ -45,16 +44,6 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
     private PFGroup group;
     private PFUser user;
     private String id;
-
-
- /*   @Before
-    public void newIds() {
-        e = null;
-        group = null;
-        id = null;
-        user = null;
-    }*/
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -71,17 +60,15 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         e = PFEvent.createEvent(group, "eventName_ShowEvent", "eventPlace_ShowEvent", new Date(1994, 5, 6, 2, 4), new ArrayList<PFMember>(), "eventDescription_ShowEvent", PFUtils.pathNotSpecified, PFUtils.nameNotSpecified, null);
     }
 
-   public void testPreFillWithEventInIntent() throws PFException {
-       Intent intent = new Intent(null, ShowEventActivity.class);
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
-        ShowEventActivity activity = getActivity();
-       setActivityIntent(intent);
-        onView(withId(R.id.ShowEventNameText)).check(matches(withText("eventName_ShowEvent")));
-        onView(withId(R.id.ShowEventPlaceText)).check(matches(withText("eventPlace_ShowEvent")));
-        onView(withId(R.id.ShowEventDescriptionText)).check(matches(withText("Description:\neventDescription_ShowEvent")));
-        assertEquals("2 : 04", ((TextView) activity.findViewById(R.id.ShowEventHourText)).getText());
-        assertEquals("6/06/1994", ((TextView) activity.findViewById(R.id.ShowEventDateText)).getText());
-        onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Participants:")));
+    public void testCanClickOnOkayButton(){
+        getActivity();
+        onView(withId(R.id.AddRemoveParticipantOkayButton)).perform(click());
+    }
+
+    public void testCanSearchOnSearchView(){
+        getActivity();
+        onView(withId(R.id.AddRemoveParticipantSearchMember)).perform(click());
+        onView(withId(R.id.AddRemoveParticipantSearchMember)).perform(typeText("a simple text"));
     }
 
     @After

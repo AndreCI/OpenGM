@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,7 +74,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
             }
         });
 
-        final SearchView sv = (SearchView) findViewById(R.id.searchMember);
+        final SearchView sv = (SearchView) findViewById(R.id.AddRemoveParticipantSearchMember);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
