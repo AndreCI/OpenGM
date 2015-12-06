@@ -1,12 +1,10 @@
 package ch.epfl.sweng.opengm.messages;
 
-import android.util.Log;
-
 import java.util.Date;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 
-public class ChatMessage {
+public class ChatMessage implements Comparable<ChatMessage> {
     private final String senderId;
     private final String body;
     private final long sendDate;
@@ -44,5 +42,10 @@ public class ChatMessage {
 
     public long getSendDate() {
         return sendDate;
+    }
+
+    @Override
+    public int compareTo(ChatMessage another) {
+        return Long.compare(sendDate, another.sendDate);
     }
 }
