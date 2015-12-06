@@ -29,7 +29,6 @@ public class MessageAdapter extends ArrayAdapter<ChatMessage> {
         ViewHolder holder;
 
         LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Log.d("USER", chatMessage.getSenderId() + "\t" + chatMessage.wasSent());
         if (chatMessage.wasSent()) {
             convertView = vi.inflate(R.layout.chat_item_sent, null);
         } else {

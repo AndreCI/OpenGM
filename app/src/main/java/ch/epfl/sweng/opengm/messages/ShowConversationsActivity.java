@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -67,6 +66,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 Log.v("ShowConversation", conversationName);
                 Intent intent = new Intent(ShowConversationsActivity.this, ShowMessagesActivity.class);
                 intent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversationName);
+                intent.putExtra(Utils.NOTIF_INTENT_MESSAGE, true);
                 startActivity(intent);
             }
         });
