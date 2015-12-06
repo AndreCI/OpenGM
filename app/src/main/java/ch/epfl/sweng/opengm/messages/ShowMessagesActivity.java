@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,6 +34,7 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFMessage;
+import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -66,6 +68,16 @@ public class ShowMessagesActivity extends AppCompatActivity {
         Log.v("ShowMessages", conversation);
         new DisplayMessages().execute(conversation);
         messageList = (ListView) findViewById(R.id.message_list);
+
+        messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MessageAdapter ma = adapter.getItem(position);
+                startActivity(new Intent(ShowMessagesActivity.this, MemberProfileActivity.class).
+                        putExtra(MemberProfileActivity.MEMBER_KEY, ma.getSenderId()));
+            }
+        });
+
         adapter = new CustomAdapter(this, R.id.message_list);
         messageList.setAdapter(adapter);
         textBar = (EditText) findViewById(R.id.message_text_bar);
@@ -97,6 +109,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     public void clickOnSendButton(View view) {
         String message = textBar.getText().toString();
         if (!message.isEmpty()) {
+            textBar.setText("");
             sendMessage(message);
             MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getId(),
                     Long.toString(Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis()), message);
