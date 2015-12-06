@@ -257,11 +257,6 @@ public class EventListActivity extends AppCompatActivity {
                 gd.setColor(getResources().getColor(R.color.bluegreen));
                 b.setBackground(gd);
                 b.setTextColor(Color.WHITE);
-
-                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    b.setBackground(getDrawable(R.drawable.rounded_buttons));
-                    b.setTextColor(Color.WHITE);
-                }*/
                 SpannableString name = new SpannableString(String.format("%s \n %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 name.setSpan(new RelativeSizeSpan(2f),0,event.getName().length(),0);
                 b.setText(name);
@@ -279,7 +274,7 @@ public class EventListActivity extends AppCompatActivity {
     }
 
     private void showEvent(PFEvent currentEvent) {
-        if(currentEvent.getPicturePath()==PFUtils.pathNotSpecified) {
+        if(currentEvent.getPicturePath().equals(PFUtils.pathNotSpecified)) {
             try {
                 String imageName = currentEvent.getId() + "_event";
                 currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.

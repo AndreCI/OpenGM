@@ -13,6 +13,7 @@ import org.junit.Before;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -64,7 +65,11 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         String description = "groupDescription_ShowEvent";
         try {
             user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
+            OpenGMApplication.setCurrentUser(user);
+            Thread.sleep(2000);
             group = createNewGroup(user, name, description, null);
+            Thread.sleep(2000);
+            OpenGMApplication.setCurrentGroup(0);
         } catch (PFException e) {
             Assert.fail("Network error");
         }
@@ -72,16 +77,16 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
     }
 
    public void testPreFillWithEventInIntent() throws PFException {
-       Intent intent = new Intent(null, ShowEventActivity.class);
+        Intent intent = new Intent();
         intent.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
+        setActivityIntent(intent);
         ShowEventActivity activity = getActivity();
-       setActivityIntent(intent);
-        onView(withId(R.id.ShowEventNameText)).check(matches(withText("eventName_ShowEvent")));
-        onView(withId(R.id.ShowEventPlaceText)).check(matches(withText("eventPlace_ShowEvent")));
-        onView(withId(R.id.ShowEventDescriptionText)).check(matches(withText("Description:\neventDescription_ShowEvent")));
-        assertEquals("2 : 04", ((TextView) activity.findViewById(R.id.ShowEventHourText)).getText());
-        assertEquals("6/06/1994", ((TextView) activity.findViewById(R.id.ShowEventDateText)).getText());
-        onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Participants:")));
+        onView(withId(R.id.ShowEventNameText)).check(matches(withText(" " + "eventName_ShowEvent"+" ")));
+        onView(withId(R.id.ShowEventPlaceText)).check(matches(withText("      A lieu à : "+"eventPlace_ShowEvent"+"  ")));
+        onView(withId(R.id.ShowEventDescriptionText)).check(matches(withText("Description de l'evenement :\n"+"eventDescription_ShowEvent")));
+        assertEquals("      A "+"2 : 04"+ "  ", ((TextView) activity.findViewById(R.id.ShowEventHourText)).getText());
+        assertEquals("      Le : "+"6/06/1994"+"  ", ((TextView) activity.findViewById(R.id.ShowEventDateText)).getText());
+        onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Liste des participants:")));
     }
 
     @After
