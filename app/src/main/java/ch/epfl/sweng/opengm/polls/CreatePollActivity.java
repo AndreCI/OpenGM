@@ -206,7 +206,11 @@ public final class CreatePollActivity extends AppCompatActivity {
 
         if (requestCode == PARTICIPANTS_ACT_KEY) {
             if (resultCode == Activity.RESULT_OK) {
-                participants = new ArrayList<>(data.<PFMember>getParcelableArrayListExtra(PARTICIPANTS_KEY));
+                List<String> ids = data.getStringArrayListExtra(PARTICIPANTS_KEY);
+                participants = new ArrayList<>();
+                for(String id : ids){
+                    participants.add(currentGroup.getMember(id));
+                }
                 mParticipantsButton.setText(String.format(getString(R.string.participant_poll), participants.size()).concat(participants.size() > 1 ? "s" : ""));
             }
         }

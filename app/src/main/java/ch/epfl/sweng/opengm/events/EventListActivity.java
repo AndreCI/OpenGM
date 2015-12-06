@@ -170,7 +170,7 @@ public class EventListActivity extends AppCompatActivity {
      * @param v The View.
      */
     public void clickOnAddButton(View v){
-        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
+        if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
             startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
         }else{
