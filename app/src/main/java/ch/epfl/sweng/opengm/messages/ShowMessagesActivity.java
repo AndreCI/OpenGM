@@ -25,10 +25,8 @@ import com.parse.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMember;
@@ -130,7 +128,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         protected List<MessageAdapter> doInBackground(String... params) {
             List<MessageAdapter> messageAdapters = new ArrayList<>();
             for (PFMessage message : Utils.getMessagesForConversationName(params[0])) {
-                messageAdapters.add(new MessageAdapter(message.getSenderId(), (new Date(message.getTimestamp())).toString(), message.getBody()));
+                messageAdapters.add(new MessageAdapter(message.getSenderId(), message.getTimestamp().toString(), message.getBody()));
             }
             return messageAdapters;
         }
@@ -160,11 +158,12 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             MessageAdapter messageAdapter = messages.get(position);
+            boolean isSender = messageAdapter.getSenderId().equals(getCurrentUser().getId());
 
             ViewHolder holder;
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                if (messageAdapter.getSenderId().equals(getCurrentUser().getId())) {
+                if (isSender) {
                     convertView = vi.inflate(R.layout.chat_item_rcv, null);
                 } else {
                     convertView = vi.inflate(R.layout.chat_item_sent, null);
@@ -180,12 +179,17 @@ public class ShowMessagesActivity extends AppCompatActivity {
             }
 
             PFMember member = getCurrentGroup().getMember(messageAdapter.getSenderId());
-
-            if (member.getPicture() != null) {
-                holder.image.setBackground(null);
-                holder.image.setImageBitmap(member.getPicture());
+            if (member != null) {
+                if (member.getPicture() != null) {
+                    holder.image.setBackground(null);
+                    holder.image.setImageBitmap(member.getPicture());
+                }
+                if (isSender) {
+                    holder.sender.setText(String.format("(%s %s) %s", member.getFirstName(), member.getLastName(), member.getNickname()));
+                } else {
+                    holder.sender.setText(String.format("%s (%s %s)", member.getNickname(), member.getFirstName(), member.getLastName()));
+                }
             }
-            holder.sender.setText(String.format("%s (%s %s)", member.getNickname(), member.getFirstName(), member.getLastName()));
             holder.message.setText(messageAdapter.getMessage());
             holder.date.setText(getDateFromTimestamp(messageAdapter.getSendDate()));
             return convertView;

@@ -51,7 +51,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
-                intent.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, currentGroup.getId());
                 startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
             }
         });
@@ -116,7 +115,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         private class ViewHolder {
             TextView textView;
-            //RadioButton radioButton;
         }
 
         @Override
@@ -127,7 +125,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 convertView = vi.inflate(R.layout.conversation_info, null);
                 holder = new ViewHolder();
                 holder.textView = (TextView) convertView.findViewById(R.id.conversation_title);
-                //holder.radioButton = (RadioButton) convertView.findViewById(R.id.conversation_updated);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -136,7 +133,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
             if (position < conversations.size()) {
                 String conversation = conversations.get(position);
                 holder.textView.setText(conversation);
-                //holder.radioButton.setChecked(false);
             }
             return convertView;
         }

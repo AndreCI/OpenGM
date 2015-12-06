@@ -16,15 +16,12 @@ import android.widget.Toast;
 import ch.epfl.sweng.opengm.R;
 
 public class CreateNewConversationActivity extends AppCompatActivity {
-    String groupId;
     EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_conversation);
-        Intent intent = getIntent();
-        groupId = intent.getStringExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE);
 
         editText = (EditText) findViewById(R.id.newConversationName);
         editText.addTextChangedListener(new TextWatcher() {

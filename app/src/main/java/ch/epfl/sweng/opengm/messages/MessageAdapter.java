@@ -1,5 +1,7 @@
 package ch.epfl.sweng.opengm.messages;
 
+import java.util.Date;
+
 public class MessageAdapter {
     private String senderId;
     private String body;
@@ -25,6 +27,6 @@ public class MessageAdapter {
 
     @Override
     public String toString() {
-        return sendDate +" : "+ senderId +" - "+body;
+        return new Date(sendDate) + " : " + senderId + " - " + body;
     }
 }
