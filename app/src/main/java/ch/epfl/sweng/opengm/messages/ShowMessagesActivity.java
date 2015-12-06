@@ -25,6 +25,7 @@ import com.parse.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
@@ -98,7 +99,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     public void clickOnSendButton(View view) {
         String message = textBar.getText().toString();
         sendMessage(message);
-        MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
+        MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getFirstName(), Calendar.getInstance().getTime().toString(), message);
         messages.add(messageAdapter);
         messageList.smoothScrollToPosition(messages.size() - 1);
     }
