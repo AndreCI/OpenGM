@@ -5,16 +5,17 @@ import java.util.Date;
 public class MessageAdapter {
     private final String senderId;
     private final String body;
-    private final String sendDate;
+    private final long sendDate;
 
     public MessageAdapter(String sender, String sendDate, String body) {
+        this(sender, Long.parseLong(sendDate), body);
+
+    }
+
+    public MessageAdapter(String sender, Long sendDate, String body) {
         this.senderId = sender;
         this.body = body;
         this.sendDate = sendDate;
-    }
-
-    public String getSendDate() {
-        return sendDate;
     }
 
     public String getSenderId() {
@@ -28,5 +29,9 @@ public class MessageAdapter {
     @Override
     public String toString() {
         return new Date(sendDate) + " : " + senderId + " - " + body;
+    }
+
+    public long getSendDate() {
+        return sendDate;
     }
 }
