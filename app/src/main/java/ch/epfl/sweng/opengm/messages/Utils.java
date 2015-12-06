@@ -15,9 +15,6 @@ import java.util.TimeZone;
 
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
-/**
- * Created by virgile on 18/11/2015.
- */
 public class Utils {
     public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.file_info";
     public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.conv_info";

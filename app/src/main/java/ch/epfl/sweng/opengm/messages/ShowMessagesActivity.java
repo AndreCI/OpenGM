@@ -10,12 +10,9 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -33,9 +30,6 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
-/**
- * Created by virgile on 18/11/2015.
- */
 public class ShowMessagesActivity extends AppCompatActivity {
     private static String INTENT_CONVERSATION_NAME = "ch.epfl.sweng.opengm.intent_conv_name";
     private static String BROADCAST_ACTION = "ch.epfl.sweng.opengm.broadcast_action";
@@ -91,7 +85,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         protected MessageAdapter doInBackground(String... params) {
             try {
                 PFMessage.writeMessage(conversation, OpenGMApplication.getCurrentGroup().getId(), OpenGMApplication.getCurrentUser().getUsername(), params[0]);
-            } catch (IOException|ParseException|PFException e) {
+            } catch (IOException | ParseException | PFException e) {
                 e.printStackTrace();
             }
             Log.v("ShowMessage sendMessage", params[0]);
@@ -137,10 +131,17 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            MessageAdapter messageAdapter = messages.get(position);
+
             ViewHolder holder;
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = vi.inflate(R.layout.message_info, null);
+                //convertView = vi.inflate(R.layout.message_info, null);
+                if (messageAdapter.getSenderName().equals(OpenGMApplication.getCurrentUser().getUsername())) {
+                    convertView = vi.inflate(R.layout.chat_item_sent, null);
+                } else {
+                    convertView = vi.inflate(R.layout.chat_item_rcv, null);
+                }
                 holder = new ViewHolder();
                 holder.sender = (TextView) convertView.findViewById(R.id.message_sender_name);
                 holder.message = (TextView) convertView.findViewById(R.id.message_body);
@@ -148,7 +149,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            MessageAdapter messageAdapter = messages.get(position);
             holder.sender.setText(messageAdapter.getSenderName());
             holder.message.setText(messageAdapter.getMessage());
 
@@ -158,12 +158,13 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
     private class ResponseReceiver extends BroadcastReceiver {
 
-        private ResponseReceiver() {}
+        private ResponseReceiver() {
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
-            if(messagesFragmented.size()/3 > messages.size()) {
+            if (messagesFragmented.size() / 3 > messages.size()) {
                 ArrayList<MessageAdapter> messages = new ArrayList<>();
                 for (int i = 0; i < messagesFragmented.size() - 2; i += 3) {
                     Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
@@ -181,6 +182,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         public RefreshMessages() {
             super("RefreshMessagesService");
         }
+
         /**
          * Creates an IntentService.  Invoked by your subclass's constructor.
          *
@@ -200,7 +202,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                     result.add(message.getTimestamp().toString());
                     result.add(message.getBody());
                 }
-                Log.v("RefreshMessages","messages size: " + messages.size());
+                Log.v("RefreshMessages", "messages size: " + messages.size());
                 Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
             }

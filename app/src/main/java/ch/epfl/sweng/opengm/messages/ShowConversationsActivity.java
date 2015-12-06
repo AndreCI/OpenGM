@@ -24,9 +24,6 @@ import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
-/**
- * Created by virgile on 18/11/2015.
- */
 public class ShowConversationsActivity extends AppCompatActivity {
     private PFGroup currentGroup;
     private List<String> conversations;
