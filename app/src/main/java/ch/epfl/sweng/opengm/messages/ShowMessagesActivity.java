@@ -91,19 +91,18 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void sendMessage(String message) {
-        textBar.setText("");
-        if (!message.isEmpty()) {
-            new SendMessage().execute(message);
-        }
+        new SendMessage().execute(message);
     }
 
     public void clickOnSendButton(View view) {
         String message = textBar.getText().toString();
-        sendMessage(message);
-        MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getId(),
-                Long.toString(Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis()), message);
-        messages.add(messageAdapter);
-        messageList.smoothScrollToPosition(messages.size() - 1);
+        if (!message.isEmpty()) {
+            sendMessage(message);
+            MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getId(),
+                    Long.toString(Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis()), message);
+            messages.add(messageAdapter);
+            messageList.smoothScrollToPosition(messages.size() - 1);
+        }
     }
 
     class SendMessage extends AsyncTask<String, Void, MessageAdapter> {
