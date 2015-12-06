@@ -79,9 +79,9 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
         try {
             user = createNewUser(id, EMAIL, "0", USERNAME, FIRST_NAME, LAST_NAME);
             OpenGMApplication.setCurrentUser(user);
-            Thread.sleep(3000);
+            Thread.sleep(2500);
             group = createNewGroup(user, name, description, null);
-            Thread.sleep(3000);
+            Thread.sleep(2500);
             OpenGMApplication.setCurrentGroup(0);
         } catch (PFException e) {
             e.printStackTrace();
