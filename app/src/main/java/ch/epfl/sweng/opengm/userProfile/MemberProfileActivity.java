@@ -1,8 +1,11 @@
 package ch.epfl.sweng.opengm.userProfile;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,7 +39,7 @@ public class MemberProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        PFMember currentMember = OpenGMApplication.getCurrentGroup().getMember(getIntent().getStringExtra(MEMBER_KEY));
+        final PFMember currentMember = OpenGMApplication.getCurrentGroup().getMember(getIntent().getStringExtra(MEMBER_KEY));
 
         if (currentMember != null) {
 
@@ -44,7 +47,7 @@ public class MemberProfileActivity extends AppCompatActivity {
 
             // Display profile picture of user :
             ImageView photoImageView = (ImageView) findViewById(R.id.userPhoto);
-            if(currentMember.getPicture() != null){
+            if (currentMember.getPicture() != null) {
                 photoImageView.setImageBitmap(currentMember.getPicture());
             } else {
                 photoImageView.setImageResource(R.drawable.avatar_male1);
@@ -69,6 +72,14 @@ public class MemberProfileActivity extends AppCompatActivity {
             // Display phone number of user :
             TextView phoneNumberTextView = (TextView) findViewById(R.id.phoneTV);
             phoneNumberTextView.setText(currentMember.getPhoneNumber());
+            phoneNumberTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL,
+                            Uri.fromParts("tel", currentMember.getPhoneNumber(), null));
+                    startActivity(intent);
+                }
+            });
 
             // Display description of user :
             TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTV);
