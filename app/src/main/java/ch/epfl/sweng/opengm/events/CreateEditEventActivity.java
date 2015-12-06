@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,15 +72,16 @@ public class CreateEditEventActivity extends AppCompatActivity {
         if (event == null) {
             editing = false;
             participants = new HashMap<>();
-            setTitle("Adding new Event for the group : "+currentGroup.getName());
+            setTitle("Adding new Event for the group : " + currentGroup.getName());
         } else {
             this.event = event;
             editing = true;
             participants = this.event.getParticipants();
-            setTitle("Editing Event : "+event.getName() + " for the group : "+currentGroup.getName());
+            setTitle("Editing Event : " + event.getName() + " for the group : " + currentGroup.getName());
             fillTexts(event);
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -100,15 +100,14 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 ArrayList<PFMember> members = data.getParcelableArrayListExtra(AddRemoveParticipantsActivity.PARTICIPANTS_LIST_RESULT);
                 participants.clear();
-                for(PFMember member : members) {
+                for (PFMember member : members) {
                     participants.put(member.getId(), member);
                 }
                 Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
             }
-        }
-        else if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE_BROWSE_FOR_BITMAP) {
+        } else if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE_BROWSE_FOR_BITMAP) {
             if (resultCode == RESULT_OK) {
                 final boolean isCamera;
                 if (data == null) {
@@ -121,7 +120,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                         isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     }
                 }
-                TextView nText= (TextView) findViewById(R.id.CreateEditEventBitmapNameText);
+                TextView nText = (TextView) findViewById(R.id.CreateEditEventBitmapNameText);
                 if (isCamera) {
                     selectedImageUri = outputFileUri;
                     nText.setText("File From Camera");
@@ -129,7 +128,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     selectedImageUri = data == null ? null : data.getData();
                     nText.setText("File From Directory");//selectedImageUri.toString());
                 }
-                Button button= (Button) findViewById(R.id.CreateEditOkButton);
+                Button button = (Button) findViewById(R.id.CreateEditOkButton);
                 button.setClickable(false);
                 button.setText("WAIT");
                 new AsyncTask<ContentResolver, Integer, Bitmap>() {
@@ -137,17 +136,18 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     protected Bitmap doInBackground(ContentResolver... params) {
                         Bitmap result;
                         try {
-                             result = MediaStore.Images.Media.getBitmap(params[0], selectedImageUri);
+                            result = MediaStore.Images.Media.getBitmap(params[0], selectedImageUri);
                         } catch (IOException e) {
-                            result = BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.default_event);
+                            result = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_event);
                             Toast.makeText(getApplicationContext(), "Failed to add the image", Toast.LENGTH_SHORT).show();
                         }
                         result = Bitmap.createScaledBitmap(result, 399, 299, true);
                         return result;
                     }
+
                     @Override
-                    protected void onPostExecute(Bitmap result){
-                        Button button= (Button) findViewById(R.id.CreateEditOkButton);
+                    protected void onPostExecute(Bitmap result) {
+                        Button button = (Button) findViewById(R.id.CreateEditOkButton);
                         button.setClickable(true);
                         button.setText("OK");
                         b = result;
@@ -170,7 +170,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     setResult(Activity.RESULT_OK, intent);
                     Log.v("event send in CreateEd", event.getId());
                     finish();
-                } else{
+                } else {
                     findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(), "A problem occurred while trying to create the event.", Toast.LENGTH_SHORT).show();
                 }
@@ -190,7 +190,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         startActivityForResult(intent, CREATE_EDIT_EVENT_RESULT_CODE);
     }
 
-    public void onBrowseButtonClick(View v){
+    public void onBrowseButtonClick(View v) {
         // Determine Uri of camera image to save.
         final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MyDir" + File.separator);
         root.mkdirs();
@@ -203,7 +203,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         final PackageManager packageManager = getPackageManager();
         final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for(ResolveInfo res : listCam) {
+        for (ResolveInfo res : listCam) {
             final String packageName = res.activityInfo.packageName;
             final Intent intent = new Intent(captureIntent);
             intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
@@ -236,25 +236,26 @@ public class CreateEditEventActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.CreateEditEventDateText)).setText(dateString);
         TextView participantsList = ((TextView) findViewById(R.id.CreateEditEventParticipantsTextView));
         String participantsStringList = "";
-        for(PFMember member : event.getParticipants().values()) {
+        for (PFMember member : event.getParticipants().values()) {
             participantsStringList += member.getName() + "; ";
         }
-        if(participantsStringList.length() > 2) {
+        if (participantsStringList.length() > 2) {
             participantsStringList = participantsStringList.substring(0, participantsStringList.length() - 2);
         }
         participantsList.setText(participantsStringList);
     }
 
 
-    private String writeImageInFileAndGetPath(Bitmap b, String picName){
+    private String writeImageInFileAndGetPath(Bitmap b, String picName) {
         String path;
         try {
-            path= ch.epfl.sweng.opengm.utils.Utils.saveToInternalSorage(b,getApplicationContext(),picName);
+            path = ch.epfl.sweng.opengm.utils.Utils.saveToInternalStorage(b, getApplicationContext(), picName);
         } catch (IOException e) {
             path = PFUtils.pathNotSpecified;
         }
         return path;
     }
+
     private PFEvent createEditEvent() {
         if (editing) {
             return editEvent();
@@ -268,11 +269,11 @@ public class CreateEditEventActivity extends AppCompatActivity {
         Date date = getDateFromText();
         String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
-        String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
+        String place = ((EditText) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         try {
-          //  String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
+            //  String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
             String picName = String.format(Locale.getDefault(), "%1$10s", Calendar.getInstance().getTimeInMillis()) + "_event";
-            String imagePath=writeImageInFileAndGetPath(b, picName);
+            String imagePath = writeImageInFileAndGetPath(b, picName);
             return PFEvent.createEvent(currentGroup, name, place, date, new ArrayList<>(participants.values()), description, imagePath, picName, b);
         } catch (PFException e) {
             return null;
@@ -284,18 +285,18 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         String name = ((EditText) findViewById(R.id.CreateEditEventNameText)).getText().toString();
         String description = ((MultiAutoCompleteTextView) findViewById(R.id.CreateEditEventDescriptionText)).getText().toString();
-        String place = ((EditText)findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
+        String place = ((EditText) findViewById(R.id.CreateEditEventPlaceText)).getText().toString();
         event.setName(name);
         event.setDate(date);
         event.setDescription(description);
-        for(PFMember member : participants.values()) {
+        for (PFMember member : participants.values()) {
             event.removeParticipant(member.getId());
             event.addParticipant(member.getId(), member);
         }
 
         event.setPlace(place);
-        if(outputFileUri!=null) {
-            String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis())+"_event";
+        if (outputFileUri != null) {
+            String picName = String.format("%1$10s", Calendar.getInstance().getTimeInMillis()) + "_event";
             event.setPicturePath(writeImageInFileAndGetPath(b, picName));
             event.setPictureName(picName);
             event.setPicture(b);
@@ -320,7 +321,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
         return new Date(year, month, day, hours, minutes);
     }
 
-     /**
+    /**
      * @return true if all arguments except the list of participants are legal for building an event
      * display a toast while it's not.
      */
@@ -354,7 +355,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
             }
             Toast.makeText(this, getString(R.string.CreateEditEarlyDate), Toast.LENGTH_SHORT).show();
             return false;
-        }else if(date.before(currentDate) && editing){
+        } else if (date.before(currentDate) && editing) {
             Toast.makeText(this, "Careful, date is already past.", Toast.LENGTH_SHORT).show();
         }
         if (participants.isEmpty()) {
@@ -367,7 +368,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     public void showTimePickerDialog(View view) {
         DialogFragment dialogFragment = new TimePickerFragment();
         Date date = getDateFromText();
-        if(date != null) {
+        if (date != null) {
             dialogFragment.show(getFragmentManager(), dateToString(date));
         } else {
             dialogFragment.show(getFragmentManager(), "");
@@ -377,7 +378,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
     public void showDatePickerDialog(View view) {
         DialogFragment dialogFragment = new DatePickerFragment();
         Date date = getDateFromText();
-        if(date != null) {
+        if (date != null) {
             dialogFragment.show(getFragmentManager(), dateToString(date));
         } else {
             dialogFragment.show(getFragmentManager(), "");
