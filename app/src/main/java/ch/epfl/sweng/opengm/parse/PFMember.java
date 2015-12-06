@@ -279,7 +279,7 @@ public final class PFMember extends PFEntity implements Parcelable {
      */
     public void setPicture(Bitmap picture) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        picture.compress(Bitmap.CompressFormat.PNG, 50, out);
+        picture.compress(Bitmap.CompressFormat.PNG, 25, out);
         this.mPicture = picture;
     }
 
