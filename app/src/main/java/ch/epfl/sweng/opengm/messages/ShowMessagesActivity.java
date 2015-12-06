@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 
@@ -114,27 +115,25 @@ public class ShowMessagesActivity extends AppCompatActivity {
             MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getId(),
                     Long.toString(Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis()), message);
             messages.add(messageAdapter);
+            adapter.notifyDataSetChanged();
             messageList.smoothScrollToPosition(messages.size() - 1);
         }
     }
 
-    class SendMessage extends AsyncTask<String, Void, MessageAdapter> {
+    class SendMessage extends AsyncTask<String, Void, Boolean> {
 
         @Override
-        protected MessageAdapter doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
+            String message = params[0];
             try {
-                PFMessage.writeMessage(conversation, getCurrentGroup().getId(), getCurrentUser().getId(), params[0]);
+                PFMessage.writeMessage(conversation, getCurrentGroup().getId(), getCurrentUser().getId(), message);
+                return true;
             } catch (IOException | ParseException | PFException e) {
-                e.printStackTrace();
+                Toast.makeText(getBaseContext(), "Error, your message was not sent", Toast.LENGTH_LONG).show();
+                return false;
             }
-            Log.v("ShowMessage sendMessage", params[0]);
-            return null;
         }
 
-        @Override
-        protected void onPostExecute(MessageAdapter messageAdapter) {
-            super.onPostExecute(messageAdapter);
-        }
     }
 
     class DisplayMessages extends AsyncTask<String, Void, Void> {
