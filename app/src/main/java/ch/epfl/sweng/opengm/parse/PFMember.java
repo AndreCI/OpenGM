@@ -17,6 +17,7 @@ import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -277,6 +278,8 @@ public final class PFMember extends PFEntity implements Parcelable {
      * @param picture the new image for this member
      */
     public void setPicture(Bitmap picture) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        picture.compress(Bitmap.CompressFormat.PNG, 50, out);
         this.mPicture = picture;
     }
 

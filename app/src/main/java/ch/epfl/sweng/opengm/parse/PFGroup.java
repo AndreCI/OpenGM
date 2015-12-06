@@ -822,7 +822,7 @@ public final class PFGroup extends PFEntity {
 
 
     public void addConversation(String conversation) {
-        if(!conversation.isEmpty() && !mConversationNames.contains(conversation)) {
+        if (!conversation.isEmpty() && !mConversationNames.contains(conversation)) {
             ArrayList<String> oldConversationInformations = mConversationNames;
             mConversationNames.add(conversation);
             try {
@@ -873,10 +873,13 @@ public final class PFGroup extends PFEntity {
     public void setPicture(Bitmap picture) {
         if ((mPicture == null && picture != null) ||
                 (mPicture != null && !mPicture.equals(picture))) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.PNG, 50, out);
             Bitmap oldPicture = mPicture;
             mPicture = picture;
             try {
                 updateToServer(GROUP_ENTRY_PICTURE);
+                oldPicture = null;
             } catch (PFException e) {
                 mPicture = oldPicture;
             }
@@ -1051,7 +1054,7 @@ public final class PFGroup extends PFEntity {
         if (picture != null) {
             // convert bitmap to a bytes array to send it on the server (FREEZE THE APP)
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            picture.compress(Bitmap.CompressFormat.PNG, 50, stream);
             byte[] imageData = stream.toByteArray();
             ParseFile image = new ParseFile(name + ".png", imageData);
             object.put(GROUP_ENTRY_PICTURE, image);
