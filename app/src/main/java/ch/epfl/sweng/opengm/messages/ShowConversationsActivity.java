@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +38,13 @@ public class ShowConversationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_conversations);
         currentGroup = OpenGMApplication.getCurrentGroup();
         conversations = new ArrayList<>();
+
+        setTitle("Conversations of " + currentGroup.getName());
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         generateConversationList();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabNewConversation);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +73,18 @@ public class ShowConversationsActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return true;
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -95,7 +116,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         private class ViewHolder {
             TextView textView;
-            RadioButton radioButton;
+            //RadioButton radioButton;
         }
 
         @Override
@@ -106,16 +127,16 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 convertView = vi.inflate(R.layout.conversation_info, null);
                 holder = new ViewHolder();
                 holder.textView = (TextView) convertView.findViewById(R.id.conversation_title);
-                holder.radioButton = (RadioButton) convertView.findViewById(R.id.conversation_updated);
+                //holder.radioButton = (RadioButton) convertView.findViewById(R.id.conversation_updated);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             Log.v("showConversationsAct", String.valueOf(conversations.size()) + ':' + position);
-            if(position < conversations.size()) {
+            if (position < conversations.size()) {
                 String conversation = conversations.get(position);
                 holder.textView.setText(conversation);
-                holder.radioButton.setChecked(false);
+                //holder.radioButton.setChecked(false);
             }
             return convertView;
         }
@@ -126,9 +147,9 @@ public class ShowConversationsActivity extends AppCompatActivity {
         @Override
         protected List<String> doInBackground(PFGroup... params) {
             List<String> result = new ArrayList<>();
-            for(String s : params[0].getConversationInformations()) {
-                if(s != null && !s.isEmpty()) {
-                        result.add(s);
+            for (String s : params[0].getConversationInformations()) {
+                if (s != null && !s.isEmpty()) {
+                    result.add(s);
                 }
             }
             return result;
@@ -149,14 +170,14 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String conversation) {
-            if(conversation != null && !conversations.contains(conversation)) {
+            if (conversation != null && !conversations.contains(conversation)) {
                 List<String> oldConvs = new ArrayList<>(conversations);
                 oldConvs.add(conversation);
                 updateList(oldConvs);
                 currentGroup.addConversation(conversation);
                 Log.v("CreateNewConversation", conversation);
             } else {
-                Log.e("ShowConv res","coudln't create conversation");
+                Log.e("ShowConv res", "coudln't create conversation");
             }
         }
     }

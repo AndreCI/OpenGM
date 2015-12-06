@@ -7,14 +7,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,7 +31,12 @@ import java.util.List;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFMessage;
+
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
+import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+import static ch.epfl.sweng.opengm.messages.Utils.getDateFromTimestamp;
 
 public class ShowMessagesActivity extends AppCompatActivity {
     private static String INTENT_CONVERSATION_NAME = "ch.epfl.sweng.opengm.intent_conv_name";
@@ -48,6 +56,13 @@ public class ShowMessagesActivity extends AppCompatActivity {
         messages = new ArrayList<>();
         Intent intent = getIntent();
         conversation = intent.getStringExtra(Utils.FILE_INFO_INTENT_MESSAGE);
+
+        setTitle(conversation);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         Log.v("ShowMessages", conversation);
         new DisplayMessages().execute(conversation);
         messageList = (ListView) findViewById(R.id.message_list);
@@ -64,6 +79,17 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return true;
+        }
+    }
+
     private void sendMessage(String message) {
         textBar.setText("");
         if (!message.isEmpty()) {
@@ -74,7 +100,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     public void clickOnSendButton(View view) {
         String message = textBar.getText().toString();
         sendMessage(message);
-        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
+        MessageAdapter messageAdapter = new MessageAdapter(getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
         messages.add(messageAdapter);
         messageList.smoothScrollToPosition(messages.size() - 1);
     }
@@ -84,7 +110,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected MessageAdapter doInBackground(String... params) {
             try {
-                PFMessage.writeMessage(conversation, OpenGMApplication.getCurrentGroup().getId(), OpenGMApplication.getCurrentUser().getUsername(), params[0]);
+                PFMessage.writeMessage(conversation, getCurrentGroup().getId(), getCurrentUser().getId(), params[0]);
             } catch (IOException | ParseException | PFException e) {
                 e.printStackTrace();
             }
@@ -104,7 +130,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         protected List<MessageAdapter> doInBackground(String... params) {
             List<MessageAdapter> messageAdapters = new ArrayList<>();
             for (PFMessage message : Utils.getMessagesForConversationName(params[0])) {
-                messageAdapters.add(new MessageAdapter(message.getSender(), (new Date(message.getTimestamp())).toString(), message.getBody()));
+                messageAdapters.add(new MessageAdapter(message.getSenderId(), (new Date(message.getTimestamp())).toString(), message.getBody()));
             }
             return messageAdapters;
         }
@@ -125,6 +151,8 @@ public class ShowMessagesActivity extends AppCompatActivity {
         }
 
         private class ViewHolder {
+            ImageView image;
+            TextView date;
             TextView sender;
             TextView message;
         }
@@ -136,22 +164,30 @@ public class ShowMessagesActivity extends AppCompatActivity {
             ViewHolder holder;
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                //convertView = vi.inflate(R.layout.message_info, null);
-                if (messageAdapter.getSenderName().equals(OpenGMApplication.getCurrentUser().getUsername())) {
-                    convertView = vi.inflate(R.layout.chat_item_sent, null);
-                } else {
+                if (messageAdapter.getSenderId().equals(getCurrentUser().getId())) {
                     convertView = vi.inflate(R.layout.chat_item_rcv, null);
+                } else {
+                    convertView = vi.inflate(R.layout.chat_item_sent, null);
                 }
                 holder = new ViewHolder();
+                holder.image = (ImageView) convertView.findViewById(R.id.message_sender_image);
                 holder.sender = (TextView) convertView.findViewById(R.id.message_sender_name);
                 holder.message = (TextView) convertView.findViewById(R.id.message_body);
+                holder.date = (TextView) convertView.findViewById(R.id.message_sending_date);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder.sender.setText(messageAdapter.getSenderName());
-            holder.message.setText(messageAdapter.getMessage());
 
+            PFMember member = getCurrentGroup().getMember(messageAdapter.getSenderId());
+
+            if (member.getPicture() != null) {
+                holder.image.setBackground(null);
+                holder.image.setImageBitmap(member.getPicture());
+            }
+            holder.sender.setText(String.format("%s (%s %s)", member.getNickname(), member.getFirstName(), member.getLastName()));
+            holder.message.setText(messageAdapter.getMessage());
+            holder.date.setText(getDateFromTimestamp(messageAdapter.getSendDate()));
             return convertView;
         }
     }
@@ -198,7 +234,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 List<PFMessage> messages = Utils.getMessagesForConversationName(intent.getStringExtra(INTENT_CONVERSATION_NAME));
                 ArrayList<String> result = new ArrayList<>();
                 for (PFMessage message : messages) {
-                    result.add(message.getSender());
+                    result.add(message.getSenderId());
                     result.add(message.getTimestamp().toString());
                     result.add(message.getBody());
                 }
