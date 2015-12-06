@@ -4,36 +4,32 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@android:drawable/ic_menu_slideshow"
+            android:icon="@mipmap/ic_home_white_48dp"
             android:title="@string/group_menu_home" />
         <item
             android:id="@+id/nav_members"
-            android:icon="@android:drawable/ic_menu_gallery"
+            android:icon="@mipmap/ic_group_white_48dp"
             android:title="@string/group_menu_members" />
         <item
-            android:id="@+id/nav_events"
-            android:icon="@android:drawable/ic_menu_my_calendar"
-            android:title="@string/group_menu_events" />
-        <item
             android:id="@+id/nav_messages"
-            android:icon="@android:drawable/ic_menu_more"
+            android:icon="@mipmap/ic_mail_white_48dp"
             android:title="@string/group_menu_messages" />
         <item
             android:id="@+id/nav_polls"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@mipmap/ic_poll_white_48dp"
             android:title="@string/group_menu_polls" />
         <item
+            android:id="@+id/nav_events"
+            android:icon="@mipmap/ic_insert_invitation_white_48dp"
+            android:title="@string/group_menu_events" />
+        <item
             android:id="@+id/nav_manage"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@mipmap/ic_settings_white_48dp"
             android:title="@string/group_menu_manage" />
         <item
             android:id="@+id/nav_leave"
-            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:icon="@mipmap/ic_clear_white_48dp"
             android:title="@string/group_menu_leave" />
-        <item
-            android:id="@+id/nav_my_settings"
-            android:icon="@android:drawable/ic_menu_share"
-            android:title="@string/group_menu_settings" />
     </group>
 
 

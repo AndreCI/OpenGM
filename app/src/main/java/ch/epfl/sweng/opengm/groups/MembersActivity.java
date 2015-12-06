@@ -44,8 +44,6 @@ public class MembersActivity extends AppCompatActivity {
     private List<PFMember> members;
     private boolean selectMode;
 
-    public static final String GROUP_INDEX = "ch.epfl.sweng.opengm.groups.members.groupindex";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +85,8 @@ public class MembersActivity extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                boolean canRemove = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.REMOVE_MEMBER);
-                boolean canManageRoles = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.MANAGE_ROLES);
+                boolean canRemove = group.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.REMOVE_MEMBER);
+                boolean canManageRoles = group.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.MANAGE_ROLES);
 
                 if (canRemove || canManageRoles) {
                     setSelectMode(true);
@@ -110,7 +108,7 @@ public class MembersActivity extends AppCompatActivity {
                     Intent i = new Intent(MembersActivity.this, MemberProfileActivity.class);
 //                    i.putExtra(UserProfileActivity.USER_ID, members.get(position).getId());
 //                    i.putExtra(UserProfileActivity.GROUP_INDEX, groupIndex);
-                    i.putExtra(MemberProfileActivity.MEMBER_KEY, members.get(position));
+                    i.putExtra(MemberProfileActivity.MEMBER_KEY, members.get(position).getId());
                     startActivity(i);
                 }
             }
@@ -140,10 +138,10 @@ public class MembersActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // display or not these option according to the select mode and the user permissions
-        boolean canRemove = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.REMOVE_MEMBER);
-        boolean canManageRoles = group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.MANAGE_ROLES);
+        boolean canRemove = group.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.REMOVE_MEMBER);
+        boolean canManageRoles = group.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.MANAGE_ROLES);
 
-        menu.findItem(R.id.action_add_person).setVisible(group.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER));
+        menu.findItem(R.id.action_add_person).setVisible(group.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.ADD_MEMBER));
         menu.findItem(R.id.action_remove_person).setVisible(selectMode && canRemove);
         menu.findItem(R.id.action_change_roles).setVisible(selectMode && canManageRoles);
         menu.findItem(R.id.action_members_select).setVisible(!selectMode && (canRemove || canManageRoles));

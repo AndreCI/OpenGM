@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class PollsListActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddPoll);
 
         // show the floating button (+) only if user can create a poll
-        if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
+        if (currentGroup.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
             fab.setVisibility(View.VISIBLE);
         } else {
             fab.setVisibility(View.GONE);
@@ -88,7 +89,7 @@ public class PollsListActivity extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
+                if (currentGroup.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.CREATE_POLL)) {
                     final PFPoll poll = mAdapter.getItem(position);
                     AlertDialog.Builder builder = new AlertDialog.Builder(PollsListActivity.this);
                     builder.setMessage(getString(R.string.confirm_deletion_poll))
@@ -143,7 +144,7 @@ public class PollsListActivity extends AppCompatActivity {
                         });
                     }
                 }
-                final List<PFPoll> groupsPoll = currentGroup.getPolls();
+                final Collection<PFPoll> groupsPoll = currentGroup.getPolls();
                 List<PFPoll> userPoll = new ArrayList<>();
 
                 for (PFPoll poll : groupsPoll) {
@@ -215,7 +216,7 @@ public class PollsListActivity extends AppCompatActivity {
         CheckBox box = (CheckBox) findViewById(R.id.pastPollsBox);
 
         polls.clear();
-        List<PFPoll> groupsPoll = currentGroup.getPolls();
+        Collection<PFPoll> groupsPoll = currentGroup.getPolls();
         List<PFPoll> userPoll = new ArrayList<>();
 
         if (!box.isChecked()) {

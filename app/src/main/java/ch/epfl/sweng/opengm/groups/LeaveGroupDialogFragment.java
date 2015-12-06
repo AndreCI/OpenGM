@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
@@ -30,7 +31,7 @@ public class LeaveGroupDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if(groupToLeave == null){
+        if (groupToLeave == null) {
             throw new UnsupportedOperationException();
         }
 
@@ -41,11 +42,11 @@ public class LeaveGroupDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.leaveTheGroup, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Remove the user from this group
-                        if(NetworkUtils.haveInternet(getActivity())) {
+                        if (NetworkUtils.haveInternet(getActivity())) {
                             try {
                                 getCurrentUser().removeFromGroup(groupToLeave.getId());
                             } catch (PFException e) {
-                                // TODO Toast?
+                                Toast.makeText(getActivity(), "Error while leaving the group. Operation aborted", Toast.LENGTH_LONG).show();
                             }
                             // Go back to MyGroupsActivity
                             Intent intent = new Intent(getActivity(), MyGroupsActivity.class);

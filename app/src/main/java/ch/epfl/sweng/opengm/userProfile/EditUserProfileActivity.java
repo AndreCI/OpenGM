@@ -29,6 +29,7 @@ import ch.epfl.sweng.opengm.identification.InputUtils;
 import ch.epfl.sweng.opengm.identification.RegisterActivity;
 import ch.epfl.sweng.opengm.identification.phoneNumber.PhoneAddingActivity;
 import ch.epfl.sweng.opengm.parse.PFException;
+import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUser;
 
 import static ch.epfl.sweng.opengm.identification.InputUtils.INPUT_CORRECT;
@@ -130,6 +131,9 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     currentUser.setAboutUser(mDescriptionEditText.getText().toString());
                     if (startingChangePicture) {
                         currentUser.setPicture(image);
+                        for(PFGroup group : currentUser.getGroups()){
+                            group.getMember(currentUser.getId()).setPicture(image);
+                        }
                     }
                     Toast.makeText(this, getString(R.string.success_edit_profile), Toast.LENGTH_LONG).show();
                     setResult(Activity.RESULT_OK, new Intent());
