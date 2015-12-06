@@ -22,12 +22,13 @@ public class Utils {
     public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.file_info";
     public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.weng.opengm.conv_info";
 
-    public static List<PFMessage> getMessagesForConversationName(String conversation) {
+    public static List<PFMessage> getMessagesForConversationName(String conversation, long lastTimestamp) {
         List<PFMessage> messages = new ArrayList<>();
         try {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).orderByAscending(PFMessage.TABLE_ENTRY_TIMESTAMP);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).whereGreaterThan(PFMessage.TABLE_ENTRY_TIMESTAMP, lastTimestamp).whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).orderByAscending(PFMessage.TABLE_ENTRY_TIMESTAMP);
             Log.v("Utils getMessages", "query size: " + query.count());
             List<ParseObject> objects = query.find();
+            Log.v("Utils getMessages", "query find: " + objects.size());
             for(ParseObject object : objects) {
                 messages.add(PFMessage.getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
                         (String) object.get(PFMessage.TABLE_ENTRY_SENDER),
@@ -41,11 +42,7 @@ public class Utils {
         return messages;
     }
 
-
-
-    public static String getNewStringDate() {
-        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        return dateFormat.format(Calendar.getInstance().getTime());
+    public static long getTimestamp() {
+        return Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis();
     }
 }

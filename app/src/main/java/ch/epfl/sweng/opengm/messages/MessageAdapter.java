@@ -6,12 +6,16 @@ package ch.epfl.sweng.opengm.messages;
 public class MessageAdapter {
     private String sender;
     private String body;
-    private String sendDate;
+    private Long sendDate;
 
-    public MessageAdapter(String sender, String sendDate, String body) {
+    public MessageAdapter(String sender, Long sendDate, String body) {
         this.sender = sender;
         this.body = body;
         this.sendDate = sendDate;
+    }
+
+    public Long getSendDate() {
+        return sendDate;
     }
 
     public String getSenderName() {

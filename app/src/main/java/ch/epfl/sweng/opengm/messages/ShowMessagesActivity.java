@@ -25,19 +25,24 @@ import com.parse.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
+import static ch.epfl.sweng.opengm.messages.Utils.getTimestamp;
+
 /**
  * Created by virgile on 18/11/2015.
  */
 public class ShowMessagesActivity extends AppCompatActivity {
     private static String INTENT_CONVERSATION_NAME = "ch.epfl.sweng.opengm.intent_conv_name";
+    private static String INTENT_CONVERSATION_LAST_REFRESH = "ch.epfl.sweng.opengm.intent_conv_last_refresh";
     private static String BROADCAST_ACTION = "ch.epfl.sweng.opengm.broadcast_action";
     private static final String EXTENDED_DATA_STATUS = "ch.epfl.sweng.opengm.status";
     private String conversation;
@@ -55,7 +60,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         conversation = intent.getStringExtra(Utils.FILE_INFO_INTENT_MESSAGE);
         Log.v("ShowMessages", conversation);
-        new DisplayMessages().execute(conversation);
+        new DisplayMessages().execute(conversation, "0");
         messageList = (ListView) findViewById(R.id.message_list);
         adapter = new CustomAdapter(this, R.id.message_list);
         messageList.setAdapter(adapter);
@@ -63,6 +68,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         mServiceIntent = new Intent(this, RefreshMessages.class);
         mServiceIntent.putExtra(INTENT_CONVERSATION_NAME, conversation);
+        mServiceIntent.putExtra(INTENT_CONVERSATION_LAST_REFRESH, getTimestamp());
         startService(mServiceIntent);
 
         ResponseReceiver mResponseReceiver = new ResponseReceiver();
@@ -80,9 +86,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
     public void clickOnSendButton(View view) {
         String message = textBar.getText().toString();
         sendMessage(message);
-        MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), Utils.getNewStringDate(), message);
+        /*MessageAdapter messageAdapter = new MessageAdapter(OpenGMApplication.getCurrentUser().getFirstName(), getTimestamp(), message);
         messages.add(messageAdapter);
-        messageList.smoothScrollToPosition(messages.size() - 1);
+        messageList.smoothScrollToPosition(messages.size() - 1);*/
     }
 
     class SendMessage extends AsyncTask<String, Void, MessageAdapter> {
@@ -97,11 +103,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
             Log.v("ShowMessage sendMessage", params[0]);
             return null;
         }
-
-        @Override
-        protected void onPostExecute(MessageAdapter messageAdapter) {
-            super.onPostExecute(messageAdapter);
-        }
     }
 
     class DisplayMessages extends AsyncTask<String, Void, List<MessageAdapter>> {
@@ -109,8 +110,8 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected List<MessageAdapter> doInBackground(String... params) {
             List<MessageAdapter> messageAdapters = new ArrayList<>();
-            for (PFMessage message : Utils.getMessagesForConversationName(params[0])) {
-                messageAdapters.add(new MessageAdapter(message.getSender(), (new Date(message.getTimestamp())).toString(), message.getBody()));
+            for (PFMessage message : Utils.getMessagesForConversationName(params[0], Long.valueOf(params[1]))) {
+                messageAdapters.add(new MessageAdapter(message.getSender(), getTimestamp(), message.getBody()));
             }
             return messageAdapters;
         }
@@ -163,21 +164,22 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
-            if(messagesFragmented.size()/3 > messages.size()) {
+            if(messagesFragmented.size() > 0) {
                 ArrayList<MessageAdapter> messages = new ArrayList<>();
-                for (int i = 0; i < messagesFragmented.size() - 2; i += 3) {
-                    Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
-                    messages.add(new MessageAdapter(messagesFragmented.get(i), messagesFragmented.get(i + 1), messagesFragmented.get(i + 2)));
+                for (int i = 0; messagesFragmented.size() > 0 && messagesFragmented.size() % 3 == 0 && i < messagesFragmented.size() - 2; i += 3) {
+                    if(Long.valueOf(messagesFragmented.get(i + 1)) > ShowMessagesActivity.this.messages.get(ShowMessagesActivity.this.messages.size() - 1).getSendDate()) {
+                        Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
+                        messages.add(new MessageAdapter(messagesFragmented.get(i), Long.valueOf(messagesFragmented.get(i + 1)), messagesFragmented.get(i + 2)));
+                    }
                 }
-                ShowMessagesActivity.this.messages.clear();
                 ShowMessagesActivity.this.messages.addAll(messages);
+                messageList.smoothScrollToPosition(ShowMessagesActivity.this.messages.size() - 1);
                 adapter.notifyDataSetChanged();
             }
         }
     }
 
     public static class RefreshMessages extends IntentService {
-
         public RefreshMessages() {
             super("RefreshMessagesService");
         }
@@ -192,17 +194,27 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         @Override
         protected void onHandleIntent(Intent intent) {
+            String conversationName = intent.getStringExtra(INTENT_CONVERSATION_NAME);
+            long lastRefresh = intent.getLongExtra(INTENT_CONVERSATION_LAST_REFRESH, 0);
             while (true) {
-                List<PFMessage> messages = Utils.getMessagesForConversationName(intent.getStringExtra(INTENT_CONVERSATION_NAME));
+                List<PFMessage> messages = Utils.getMessagesForConversationName(conversationName, lastRefresh);
                 ArrayList<String> result = new ArrayList<>();
                 for (PFMessage message : messages) {
                     result.add(message.getSender());
                     result.add(message.getTimestamp().toString());
                     result.add(message.getBody());
+                    lastRefresh = message.getTimestamp()+1;
                 }
-                Log.v("RefreshMessages","messages size: " + messages.size());
-                Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                Log.v("RefreshMessages", "messages size: " + messages.size());
+                if(messages.size() > 0){
+                    Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                }
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
