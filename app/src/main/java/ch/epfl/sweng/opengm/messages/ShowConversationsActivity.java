@@ -31,9 +31,6 @@ import ch.epfl.sweng.opengm.parse.PFConversation;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
-/**
- * Created by virgile on 18/11/2015.
- */
 public class ShowConversationsActivity extends AppCompatActivity {
     private PFGroup currentGroup;
     private List<PFConversation> conversations;
@@ -44,9 +41,7 @@ public class ShowConversationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_conversations);
-        Intent intent = getIntent();
-        int index = intent.getIntExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, -1);
-        currentGroup = OpenGMApplication.getCurrentUser().getGroups().get(index);
+        currentGroup = OpenGMApplication.getCurrentGroup();
         conversations = new ArrayList<>();
         generateConversationList();
         //TODO: in background start fetching the file on the serv and then read it and compare the lists

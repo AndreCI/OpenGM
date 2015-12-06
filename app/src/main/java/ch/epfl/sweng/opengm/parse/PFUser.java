@@ -236,7 +236,7 @@ public final class PFUser extends PFEntity {
      * @return the list of groups of the user
      */
     public List<PFGroup> getGroups() {
-        return Collections.unmodifiableList(mGroups);
+        return mGroups;
     }
 
     /**
