@@ -27,11 +27,11 @@ public class Utils {
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).
                     whereGreaterThan(PFMessage.TABLE_ENTRY_TIMESTAMP, lastTimestamp).
                     whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).
-                    orderByAscending(PFMessage.TABLE_ENTRY_TIMESTAMP);
+                    orderByDescending(PFMessage.TABLE_ENTRY_TIMESTAMP);
             query.setLimit(25);
             List<ParseObject> objects = query.find();
             for (ParseObject object : objects) {
-                messages.add(PFMessage.getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
+                messages.add(0, PFMessage.getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
                         object.getString(PFMessage.TABLE_ENTRY_SENDER),
                         object.getLong(PFMessage.TABLE_ENTRY_TIMESTAMP),
                         object.getString(PFMessage.TABLE_ENTRY_NAME),
