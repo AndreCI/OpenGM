@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFMessage;
@@ -196,7 +197,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
                     result.add(message.getSenderId());
                     result.add(message.getTimestamp().toString());
                     result.add(message.getBody());
-                    lastRefresh = message.getTimestamp() + 1;
+                    if(!message.getSenderId().equals(OpenGMApplication.getCurrentUser().getId())) {
+                        lastRefresh = message.getTimestamp();
+                    }
                 }
                 Log.v("RefreshMessages", "messages size: " + messages.size());
                 if (messages.size() > 0) {
