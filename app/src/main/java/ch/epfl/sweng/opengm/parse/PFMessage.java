@@ -20,7 +20,6 @@ public class PFMessage extends PFEntity {
     public static final String TABLE_ENTRY_BODY = "Body";
     public static final String TABLE_ENTRY_GROUPID = "GroupId";
     String senderId;
-    Long timestamp;
     String conversationName;
     String body;
     String groupId;
@@ -29,9 +28,6 @@ public class PFMessage extends PFEntity {
         return senderId;
     }
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
 
     public String getConversationName() {
         return conversationName;
@@ -44,7 +40,6 @@ public class PFMessage extends PFEntity {
     public PFMessage(Parcel in) {
         super(in, TABLE_NAME);
         senderId = in.readString();
-        timestamp = in.readLong();
         conversationName = in.readString();
         body = in.readString();
         groupId = in.readString();
@@ -53,7 +48,6 @@ public class PFMessage extends PFEntity {
     private PFMessage(String id, Date modifiedDate, String senderId, Long timestamp, String conversationName, String body, String groupId) {
         super(id, TABLE_NAME, modifiedDate);
         this.senderId = senderId;
-        this.timestamp = timestamp;
         this.conversationName = conversationName;
         this.body = body;
         this.groupId = groupId;
@@ -68,7 +62,6 @@ public class PFMessage extends PFEntity {
         long timestamp = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis();
         object.put(TABLE_ENTRY_BODY, body);
         object.put(TABLE_ENTRY_SENDER, senderId);
-        object.put(TABLE_ENTRY_TIMESTAMP, timestamp);
         object.put(TABLE_ENTRY_NAME, conversationName);
         object.put(TABLE_ENTRY_GROUPID, groupId);
         object.save();
@@ -95,7 +88,6 @@ public class PFMessage extends PFEntity {
         dest.writeString(getId());
         dest.writeString(dateToString(lastModified));
         dest.writeString(senderId);
-        dest.writeLong(timestamp);
         dest.writeString(conversationName);
         dest.writeString(body);
         dest.writeString(groupId);

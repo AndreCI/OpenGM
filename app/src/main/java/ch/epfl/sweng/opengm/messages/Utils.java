@@ -23,13 +23,13 @@ public class Utils {
 
 
     public static List<PFMessage> getMessagesForConversationName(String conversation, long lastTimestamp) {
-        List<PFMessage> messages = new ArrayList<>();
+        int queryLimit = 25;
+        List<PFMessage> messages = new ArrayList<>(queryLimit);
         try {
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).
-                    whereGreaterThan(PFMessage.TABLE_ENTRY_TIMESTAMP, lastTimestamp).
                     whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).
                     orderByDescending("UpdatedAt");
-            query.setLimit(25);
+            query.setLimit(queryLimit);
             List<ParseObject> objects = query.find();
             for (ParseObject object : objects) {
                 messages.add(0, PFMessage.getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
