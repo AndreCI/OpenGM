@@ -1,6 +1,9 @@
 package ch.epfl.sweng.opengm.messages;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +27,7 @@ import com.parse.ParseException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -47,6 +52,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private EditText textBar;
     private MessageAdapter adapter;
     private Intent mServiceIntent;
+    private NotificationManager manager;
+    private boolean playNotification;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +62,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_messages);
         Intent intent = getIntent();
         conversation = intent.getStringExtra(Utils.FILE_INFO_INTENT_MESSAGE);
+        playNotification = intent.getBooleanExtra(Utils.NOTIF_INTENT_MESSAGE, false);
 
         setTitle(conversation);
 
@@ -61,7 +70,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        Log.v("ShowMessages", conversation);
         new DisplayMessages().execute(conversation, "0");
         messageList = (ListView) findViewById(R.id.message_list);
 
@@ -86,6 +94,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         ResponseReceiver mResponseReceiver = new ResponseReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(mResponseReceiver, new IntentFilter(BROADCAST_ACTION));
 
+        manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -146,6 +155,49 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 });
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Collections.sort(messages);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                    displayNotification();
+                }
+            });
+        }
+    }
+
+    private void displayNotification() {
+        if (playNotification) {
+            NotificationCompat.Builder builder =
+                    (NotificationCompat.Builder) new NotificationCompat.Builder(ShowMessagesActivity.this)
+                            .setSmallIcon(R.drawable.avatar_male1)
+                            .setContentTitle("New message in " + conversation)
+                            .setContentText(messages.get(messages.size() - 1).getMessage());
+
+
+            Intent notificationIntent = new Intent(this, ShowMessagesActivity.class);
+            notificationIntent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversation);
+            notificationIntent.putExtra(Utils.NOTIF_INTENT_MESSAGE, false);
+
+            adapter.notifyDataSetChanged();
+            PendingIntent contentIntent = PendingIntent.getActivity(ShowMessagesActivity.this, 0, notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.setContentIntent(contentIntent);
+            builder.setAutoCancel(true);
+            builder.setLights(0xFF00AAAC, 500, 500);
+            long[] pattern = {500, 500, 500, 500};
+            builder.setVibrate(pattern);
+            builder.setStyle(new NotificationCompat.InboxStyle());
+
+            Notification notification = builder.build();
+            notification.defaults |= Notification.DEFAULT_SOUND;
+
+            manager.notify(1, notification);
         }
     }
 

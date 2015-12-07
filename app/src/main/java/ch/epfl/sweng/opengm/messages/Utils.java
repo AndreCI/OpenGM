@@ -14,6 +14,8 @@ import java.util.TimeZone;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
 public class Utils {
+
+    public static final String NOTIF_INTENT_MESSAGE = "ch.epfl.sweng.opengm.messages.notification";
     public static final String FILE_INFO_INTENT_MESSAGE = "ch.epfl.sweng.opengm.file_info";
     public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.sweng.opengm.conv_info";
 
