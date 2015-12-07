@@ -56,7 +56,7 @@ public class MessageAdapter extends ArrayAdapter<ChatMessage> {
             }
         }
         holder.message.setText(chatMessage.getMessage());
-        holder.date.setText(getDateFromTimestamp(chatMessage.getSendDate()));
+        holder.date.setText(getDateFromTimestamp(chatMessage.getSendDate().getTime()));
         return convertView;
     }
 

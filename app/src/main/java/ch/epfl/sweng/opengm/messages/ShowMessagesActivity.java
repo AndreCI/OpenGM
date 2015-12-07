@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -39,7 +40,6 @@ import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.messages.Utils.getTimestamp;
 
 public class ShowMessagesActivity extends AppCompatActivity {
     private static String INTENT_CONVERSATION_NAME = "ch.epfl.sweng.opengm.intent_conv_name";
@@ -121,8 +121,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         if (!message.isEmpty()) {
             textBar.setText("");
             sendMessage(message);
-            ChatMessage chatMessage = new ChatMessage(getCurrentUser().getId(),
-                    Long.toString(Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis()), message);
+            ChatMessage chatMessage = new ChatMessage(getCurrentUser().getId(), new Date(), message);
             messages.add(chatMessage);
             adapter.notifyDataSetChanged();
             messageList.smoothScrollToPosition(messages.size() - 1);
@@ -150,7 +149,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             for (PFMessage message : Utils.getMessagesForConversationName(params[0], Long.valueOf(params[1]))) {
-                messages.add(new ChatMessage(message.getSenderId(), message.getTimestamp().toString(), message.getBody()));
+                messages.add(new ChatMessage(message.getSenderId(), message.getLastModified(), message.getBody()));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -217,10 +216,10 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 boolean newMessageAdded = false;
                 ArrayList<ChatMessage> newMessages = new ArrayList<>();
                 for (int i = 0; messages.size() > 0 && messagesFragmented.size() > 0 && messagesFragmented.size() % 3 == 0 && i < messagesFragmented.size() - 2; i += 3) {
-                    if (Long.valueOf(messagesFragmented.get(i + 1)) > messages.get(messages.size() - 1).getSendDate() && !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
+                    if (new Date(Long.parseLong(messagesFragmented.get(i + 1))).after(messages.get(messages.size() - 1).getSendDate()) && !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
                         newMessageAdded = true;
                         Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
-                        newMessages.add(new ChatMessage(messagesFragmented.get(i), Long.valueOf(messagesFragmented.get(i + 1)), messagesFragmented.get(i + 2)));
+                        newMessages.add(new ChatMessage(messagesFragmented.get(i), new Date(Long.parseLong(messagesFragmented.get(i + 1))), messagesFragmented.get(i + 2)));
                     }
                 }
                 Log.v("ResponseReceiver", "new message ? " + newMessageAdded);
@@ -249,17 +248,13 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            long lastRefresh = 0;
             while (ShowConversationsActivity.refresh) {
                 List<PFMessage> messages = Utils.getMessagesForConversationName(ShowConversationsActivity.conversationToRefresh, 0);
                 ArrayList<String> result = new ArrayList<>();
                 for (PFMessage message : messages) {
                     result.add(message.getSenderId());
-                    result.add(message.getTimestamp().toString());
+                    result.add(Long.toString(message.getLastModified().getTime()));
                     result.add(message.getBody());
-                    if(!message.getSenderId().equals(OpenGMApplication.getCurrentUser().getId())) {
-                        lastRefresh = message.getTimestamp();
-                    }
                 }
                 Log.v("RefreshMessages", "messages size: " + messages.size());
                 if (messages.size() > 0) {

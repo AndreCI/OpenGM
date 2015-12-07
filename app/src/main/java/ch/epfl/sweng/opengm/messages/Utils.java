@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
+import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
 public class Utils {
@@ -27,7 +28,7 @@ public class Utils {
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).
                     whereGreaterThan(PFMessage.TABLE_ENTRY_TIMESTAMP, lastTimestamp).
                     whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).
-                    orderByDescending(PFMessage.TABLE_ENTRY_TIMESTAMP);
+                    orderByDescending("UpdatedAt");
             query.setLimit(25);
             List<ParseObject> objects = query.find();
             for (ParseObject object : objects) {
