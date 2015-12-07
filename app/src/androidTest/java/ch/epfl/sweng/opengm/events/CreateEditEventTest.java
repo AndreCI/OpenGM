@@ -91,7 +91,8 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     }
 
     public void testNoName() throws PFException {
-
+        Intent intent = new Intent();
+        setActivityIntent(intent);
         CreateEditEventActivity act = getActivity();
         ViewInteraction nameText = onView(withId(R.id.CreateEditEventNameText));
         nameText.perform(clearText());
@@ -100,6 +101,8 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     }
 
     public void testNameButNoTime() throws PFException {
+        Intent intent = new Intent();
+        setActivityIntent(intent);
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
         closeSoftKeyboard();
