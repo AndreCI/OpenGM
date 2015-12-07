@@ -64,7 +64,7 @@ public final class PFGroup extends PFEntity {
 
     private HashMap<String, PFPoll> mPolls;
 
-    private ArrayList<String> mConversationInformations;
+    private ArrayList<String> mConversationNames;
 
     private String mName;
     private String mDescription;
@@ -75,10 +75,9 @@ public final class PFGroup extends PFEntity {
 
     private final static String adminRole = "Administrator";
     private final static String userRole = "User";
-    private String[] conversationsInformations;
 
     public List<String> getConversationInformations() {
-        return new ArrayList<>(mConversationInformations);
+        return new ArrayList<>(mConversationNames);
     }
 
     public enum Permission {
@@ -151,7 +150,7 @@ public final class PFGroup extends PFEntity {
         mPicture = in.readParcelable(Bitmap.class.getClassLoader());
 
         List<String> rolesR = in.createStringArrayList();
-        mConversationInformations = in.createStringArrayList();
+        mConversationNames = in.createStringArrayList();
         List<List<Integer>> permissions = in.readArrayList(ArrayList.class.getClassLoader());
         mRolesPermissions = new HashMap<>();
         for (int i = 0; i < rolesR.size(); i++) {
@@ -204,7 +203,7 @@ public final class PFGroup extends PFEntity {
         mDescription = description;
         mPicture = picture;
         mRolesPermissions = new HashMap<>(rolesPermissions);
-        mConversationInformations = new ArrayList<>(conversationInformations);
+        mConversationNames = new ArrayList<>(conversationInformations);
     }
 
     private void fillMembersMap(List<String> users, List<String> nicknames, List<String[]> roles) {
@@ -415,7 +414,7 @@ public final class PFGroup extends PFEntity {
                             }
                             break;
                         case GROUP_ENTRY_CONVERSATIONS:
-                            object.put(GROUP_ENTRY_CONVERSATIONS, mConversationInformations);
+                            object.put(GROUP_ENTRY_CONVERSATIONS, mConversationNames);
                             break;
                         default:
                             return;
@@ -821,14 +820,27 @@ public final class PFGroup extends PFEntity {
         }
     }
 
-    public void setConversationInformations(List<String> conversationInformations) {
-        if (conversationInformations != null) {
-            ArrayList<String> oldConversationInformations = mConversationInformations;
-            this.mConversationInformations = new ArrayList<>(conversationInformations);
+
+    public void addConversation(String conversation) {
+        if(!conversation.isEmpty() && !mConversationNames.contains(conversation)) {
+            ArrayList<String> oldConversationInformations = mConversationNames;
+            mConversationNames.add(conversation);
             try {
                 updateToServer(GROUP_ENTRY_CONVERSATIONS);
             } catch (PFException e) {
-                this.mConversationInformations = oldConversationInformations;
+                this.mConversationNames = oldConversationInformations;
+            }
+        }
+    }
+
+    public void setConversationInformations(List<String> conversationInformations) {
+        if (conversationInformations != null) {
+            ArrayList<String> oldConversationInformations = mConversationNames;
+            this.mConversationNames = new ArrayList<>(conversationInformations);
+            try {
+                updateToServer(GROUP_ENTRY_CONVERSATIONS);
+            } catch (PFException e) {
+                this.mConversationNames = oldConversationInformations;
             }
         }
     }
@@ -861,10 +873,13 @@ public final class PFGroup extends PFEntity {
     public void setPicture(Bitmap picture) {
         if ((mPicture == null && picture != null) ||
                 (mPicture != null && !mPicture.equals(picture))) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.PNG, 50, out);
             Bitmap oldPicture = mPicture;
             mPicture = picture;
             try {
                 updateToServer(GROUP_ENTRY_PICTURE);
+                oldPicture = null;
             } catch (PFException e) {
                 mPicture = oldPicture;
             }
@@ -1039,7 +1054,7 @@ public final class PFGroup extends PFEntity {
         if (picture != null) {
             // convert bitmap to a bytes array to send it on the server (FREEZE THE APP)
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            picture.compress(Bitmap.CompressFormat.PNG, 50, stream);
             byte[] imageData = stream.toByteArray();
             ParseFile image = new ParseFile(name + ".png", imageData);
             object.put(GROUP_ENTRY_PICTURE, image);
@@ -1110,7 +1125,7 @@ public final class PFGroup extends PFEntity {
         }
         dest.writeStringList(rolesList);
         dest.writeList(permissions);
-        dest.writeStringList(mConversationInformations);
+        dest.writeStringList(mConversationNames);
         List<String> pollsKeys = new ArrayList<>();
         List<PFPoll> polls = new ArrayList<>();
         for (Map.Entry<String, PFPoll> entry : mPolls.entrySet()) {

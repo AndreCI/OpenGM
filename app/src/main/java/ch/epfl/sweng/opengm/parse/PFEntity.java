@@ -70,6 +70,10 @@ abstract class PFEntity implements Parcelable {
         this.lastModified = object.getUpdatedAt();
     }
 
+    public Date getLastModified() {
+        return lastModified;
+    }
+
     /**
      * This abstract method must be redefined by each entity to update the current entity by
      * reloading the object with the server information if needed

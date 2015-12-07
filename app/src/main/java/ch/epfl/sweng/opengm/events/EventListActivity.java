@@ -271,7 +271,7 @@ public class EventListActivity extends AppCompatActivity {
             try {
                 String imageName = currentEvent.getId() + "_event";
                 currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.
-                        saveToInternalSorage(currentEvent.getPicture(), getApplicationContext(),imageName));
+                        saveToInternalStorage(currentEvent.getPicture(), getApplicationContext(), imageName));
                 currentEvent.setPictureName(imageName);
             } catch (IOException e) {
                 Toast.makeText(getApplicationContext(), "Unable to write image or to retrieve image", Toast.LENGTH_SHORT).show();

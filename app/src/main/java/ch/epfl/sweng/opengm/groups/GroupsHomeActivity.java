@@ -186,8 +186,7 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
-                Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
-                startActivity(intent2);
+                startActivity(new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class));
                 break;
             case R.id.nav_manage:
                 Intent intent3 = new Intent(this, CreateEditGroupActivity.class);

@@ -6,36 +6,32 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.parse.ParseException;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.parse.PFConversation;
-import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class ShowConversationsActivity extends AppCompatActivity {
+    public static boolean refresh = false;
+    public static String conversationToRefresh = null;
     private PFGroup currentGroup;
-    private List<PFConversation> conversations;
+    private List<String> conversations;
     public static final int NEW_CONVERSATION_REQUEST_CODE = 1;
-    //TODO: model idea : group have a list of ids corresponding to text files in another parse table, 1 file per conv + 1 with all convInfo
+    private CustomAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,36 +39,55 @@ public class ShowConversationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_conversations);
         currentGroup = OpenGMApplication.getCurrentGroup();
         conversations = new ArrayList<>();
+
+        setTitle("Conversations of " + currentGroup.getName());
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         generateConversationList();
-        //TODO: in background start fetching the file on the serv and then read it and compare the lists
-
-        //TODO : check on serv which file is the most recent in background, use local one and then update if necessary
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabNewConversation);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
-                intent.putExtra(ch.epfl.sweng.opengm.events.Utils.GROUP_INTENT_MESSAGE, currentGroup.getId());
                 startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
             }
         });
 
         ListView listView = (ListView) findViewById(R.id.conversation_list);
-        listView.setAdapter(new CustomAdapter(this, R.layout.conversation_info, conversations));
+        adapter = new CustomAdapter(this, R.layout.conversation_info);
+        listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = (TextView) view.findViewById(R.id.conversation_title);
-                PFConversation conversationInformation = (PFConversation) textView.getTag();
+                String conversationName = textView.getText().toString();
+                Log.v("ShowConversation", conversationName);
                 Intent intent = new Intent(ShowConversationsActivity.this, ShowMessagesActivity.class);
-                intent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversationInformation);
+                intent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversationName);
+                intent.putExtra(Utils.NOTIF_INTENT_MESSAGE, true);
+                refresh = true;
+                conversationToRefresh = conversationName;
                 startActivity(intent);
             }
         });
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return true;
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -90,18 +105,20 @@ public class ShowConversationsActivity extends AppCompatActivity {
         new ReadIndex().execute(currentGroup);
     }
 
-    private class CustomAdapter extends ArrayAdapter<PFConversation> {
-        private List<PFConversation> conversations;
+    public void updateList(List<String> list) {
+        conversations.clear();
+        conversations.addAll(list);
+        adapter.notifyDataSetChanged();
+    }
 
-        public CustomAdapter(Context context, int resource, List<PFConversation> conversations) {
+    private class CustomAdapter extends ArrayAdapter<String> {
+
+        public CustomAdapter(Context context, int resource) {
             super(context, resource, conversations);
-            this.conversations = new ArrayList<>();
-            this.conversations.addAll(conversations);
         }
 
         private class ViewHolder {
             TextView textView;
-            RadioButton radioButton;
         }
 
         @Override
@@ -112,84 +129,56 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 convertView = vi.inflate(R.layout.conversation_info, null);
                 holder = new ViewHolder();
                 holder.textView = (TextView) convertView.findViewById(R.id.conversation_title);
-                holder.radioButton = (RadioButton) convertView.findViewById(R.id.conversation_updated);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             Log.v("showConversationsAct", String.valueOf(conversations.size()) + ':' + position);
-            if(position < conversations.size()) {
-                PFConversation conversationInformation = conversations.get(position);
-                holder.textView.setText(conversationInformation.getConversationName());
-                holder.radioButton.setChecked(false);
-                holder.textView.setTag(conversationInformation);
+            if (position < conversations.size()) {
+                String conversation = conversations.get(position);
+                holder.textView.setText(conversation);
             }
             return convertView;
         }
     }
 
-    class ReadIndex extends AsyncTask<PFGroup, Void, Void> {
+    class ReadIndex extends AsyncTask<PFGroup, Void, List<String>> {
 
         @Override
-        protected Void doInBackground(PFGroup... params) {
-            for(String s : params[0].getConversationInformations()) {
-                try {
-                    conversations.add(PFConversation.fetchExistingConversation(s));
-                } catch (PFException e) {
-                    Log.v("ShowConv read index", "coudln't add conversation " + s);
+        protected List<String> doInBackground(PFGroup... params) {
+            List<String> result = new ArrayList<>();
+            for (String s : params[0].getConversationInformations()) {
+                if (s != null && !s.isEmpty()) {
+                    result.add(s);
                 }
             }
-            return null;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
-            ListView listView = (ListView) findViewById(R.id.conversation_list);
-            listView.setAdapter(new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversations));
+        protected void onPostExecute(List<String> result) {
+            updateList(result);
         }
     }
 
-    class CreateNewConvResult extends AsyncTask<String, Void, PFConversation> {
+    class CreateNewConvResult extends AsyncTask<String, Void, String> {
 
         @Override
-        protected PFConversation doInBackground(String... params) {
-
-            PFConversation conversation = null;
-            try {
-                conversation = PFConversation.createNewConversation(params[0], currentGroup.getId(), ShowConversationsActivity.this);
-                conversation.writeConversationInformation();
-            } catch (FileNotFoundException e) {
-                Log.e("CreateNewConv", "couldn't createFile", e);
-            } catch (IOException|ParseException e) {
-                Log.e("CreateNewConv", "error with parse");
-            }
-            return conversation;
+        protected String doInBackground(String... params) {
+            return params[0];
         }
 
         @Override
-        protected void onPostExecute(PFConversation conversation) {
-            if(conversation != null) {
-                conversations.add(conversation);
-                ListView listView = (ListView) findViewById(R.id.conversation_list);
-                listView.setAdapter(new CustomAdapter(ShowConversationsActivity.this, R.layout.conversation_info, conversations));
-                new UpdateIndex().execute();
-                Log.v("CreateNewConversation", conversation.getConversationName());
+        protected void onPostExecute(String conversation) {
+            if (conversation != null && !conversations.contains(conversation)) {
+                List<String> oldConvs = new ArrayList<>(conversations);
+                oldConvs.add(conversation);
+                updateList(oldConvs);
+                currentGroup.addConversation(conversation);
+                Log.v("CreateNewConversation", conversation);
             } else {
-                Log.e("ShowConv res","coudln't create conversation");
+                Log.e("ShowConv res", "coudln't create conversation");
             }
-        }
-    }
-
-    class UpdateIndex extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            ArrayList<String> ids = new ArrayList<>();
-            for(PFConversation conversation : conversations) {
-                ids.add(conversation.getId());
-            }
-            currentGroup.setConversationInformations(ids);
-            return null;
         }
     }
 }

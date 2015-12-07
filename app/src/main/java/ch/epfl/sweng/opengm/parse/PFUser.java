@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.parse;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Parcel;
-import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -18,7 +17,6 @@ import org.json.JSONArray;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +54,7 @@ public final class PFUser extends PFEntity {
     private String mAboutUser;
     private Bitmap mPicture;
 
-    public PFUser(Parcel in){
+    public PFUser(Parcel in) {
         super(in, PARSE_TABLE_USER);
     }
 
@@ -115,7 +113,7 @@ public final class PFUser extends PFEntity {
                 List<String> groups = new ArrayList<>(Arrays.asList(groupsArray));
 
                 for (String groupId : groups) {
-                    if (!mGroupsId.contains(groupId)){
+                    if (!mGroupsId.contains(groupId)) {
                         try {
                             mGroups.add(PFGroup.fetchExistingGroup(groupId));
                             mGroupsId.add(groupId);
@@ -169,7 +167,7 @@ public final class PFUser extends PFEntity {
                                 break;
                             case USER_ENTRY_GROUPS:
                                 JSONArray array = new JSONArray();
-                                for(String groupId :mGroupsId){
+                                for (String groupId : mGroupsId) {
                                     array.put(groupId);
                                 }
                                 object.put(USER_ENTRY_GROUPS, array);
@@ -422,10 +420,13 @@ public final class PFUser extends PFEntity {
     public void setPicture(Bitmap picture) {
         if ((mPicture == null && picture != null) ||
                 (mPicture != null && !mPicture.equals(picture))) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            picture.compress(Bitmap.CompressFormat.PNG, 50, out);
             Bitmap oldPicture = mPicture;
             this.mPicture = picture;
             try {
                 updateToServer(USER_ENTRY_PICTURE);
+                oldPicture = null;
             } catch (PFException e) {
                 this.mPicture = oldPicture;
             }
