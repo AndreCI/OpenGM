@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
@@ -35,7 +36,7 @@ public class MemberProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        PFMember currentMember = getIntent().getParcelableExtra(MEMBER_KEY);
+        PFMember currentMember = OpenGMApplication.getCurrentGroup().getMember(getIntent().getStringExtra(MEMBER_KEY));
 
         if (currentMember != null) {
 
@@ -43,7 +44,11 @@ public class MemberProfileActivity extends AppCompatActivity {
 
             // Display profile picture of user :
             ImageView photoImageView = (ImageView) findViewById(R.id.userPhoto);
-            photoImageView.setImageResource(R.drawable.avatar_male1);
+            if(currentMember.getPicture() != null){
+                photoImageView.setImageBitmap(currentMember.getPicture());
+            } else {
+                photoImageView.setImageResource(R.drawable.avatar_male1);
+            }
 
             // Display first name of user :
             TextView firstNameTextView = (TextView) findViewById(R.id.firstNameTV);

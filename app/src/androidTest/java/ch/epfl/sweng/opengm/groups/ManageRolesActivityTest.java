@@ -361,7 +361,7 @@ public class ManageRolesActivityTest extends ActivityInstrumentationTestCase2<Ma
         onView(withId(R.id.button)).perform(click());
 
         updateReferencesFromDatabase();
-        assertTrue(!testGroup.userHavePermission(testUsers.get(0).getId(), PFGroup.Permission.ADD_MEMBER));
+        assertTrue(!testGroup.hasUserPermission(testUsers.get(0).getId(), PFGroup.Permission.ADD_MEMBER));
     }
 
     public void testClickOnNameChecksAndUnChecks() throws PFException, InterruptedException {

@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -153,7 +151,7 @@ public class EventListActivity extends AppCompatActivity {
      * @param v The View.
      */
     public void clickOnAddButton(View v){
-        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
+        if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
             intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
             startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
