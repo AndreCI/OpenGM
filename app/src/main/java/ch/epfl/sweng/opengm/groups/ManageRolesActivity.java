@@ -275,7 +275,7 @@ public class ManageRolesActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_modify_permissions).setVisible((selected != 0) && (currentGroup.userHavePermission(getCurrentUser().getId(), PFGroup.Permission.MODIFY_PERMISSIONS)));
+        menu.findItem(R.id.action_modify_permissions).setVisible((selected != 0) && (currentGroup.hasUserPermission(getCurrentUser().getId(), PFGroup.Permission.MODIFY_PERMISSIONS)));
         menu.findItem(R.id.action_remove_role).setVisible(selected != 0);
         return true;
     }
