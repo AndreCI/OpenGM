@@ -26,11 +26,9 @@ import com.parse.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
@@ -46,7 +44,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     private static String INTENT_CONVERSATION_LAST_REFRESH = "ch.epfl.sweng.opengm.intent_conv_last_refresh";
     private static String BROADCAST_ACTION = "ch.epfl.sweng.opengm.broadcast_action";
     private static final String EXTENDED_DATA_STATUS = "ch.epfl.sweng.opengm.status";
-    private String conversation;
+    private static String conversation;
     private ListView messageList;
     private final List<ChatMessage> messages = new ArrayList<>();
     private EditText textBar;
@@ -167,41 +165,39 @@ public class ShowMessagesActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     adapter.notifyDataSetChanged();
-                    displayNotification();
                 }
             });
         }
     }
 
     private void displayNotification() {
-        if (messages.size() > 0 && playNotification) {
-            NotificationCompat.Builder builder =
-                    (NotificationCompat.Builder) new NotificationCompat.Builder(ShowMessagesActivity.this)
-                            .setSmallIcon(R.drawable.avatar_male1)
-                            .setContentTitle("New message in " + conversation)
-                            .setContentText(messages.get(messages.size() - 1).getMessage());
+
+        NotificationCompat.Builder builder =
+                (NotificationCompat.Builder) new NotificationCompat.Builder(ShowMessagesActivity.this)
+                        .setSmallIcon(R.drawable.avatar_male1)
+                        .setContentTitle("New message in " + conversation)
+                        .setContentText(messages.get(messages.size() - 1).getMessage());
 
 
-            Intent notificationIntent = new Intent(this, ShowMessagesActivity.class);
-            notificationIntent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversation);
-            notificationIntent.putExtra(Utils.NOTIF_INTENT_MESSAGE, false);
+        Intent notificationIntent = new Intent(this, ShowMessagesActivity.class);
+        notificationIntent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversation);
+        notificationIntent.putExtra(Utils.NOTIF_INTENT_MESSAGE, false);
 
-            adapter.notifyDataSetChanged();
-            PendingIntent contentIntent = PendingIntent.getActivity(ShowMessagesActivity.this, 0, notificationIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+        adapter.notifyDataSetChanged();
+        PendingIntent contentIntent = PendingIntent.getActivity(ShowMessagesActivity.this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
-            builder.setContentIntent(contentIntent);
-            builder.setAutoCancel(true);
-            builder.setLights(0xFF00AAAC, 500, 500);
-            long[] pattern = {500, 500, 500, 500};
-            builder.setVibrate(pattern);
-            builder.setStyle(new NotificationCompat.InboxStyle());
+        builder.setContentIntent(contentIntent);
+        builder.setAutoCancel(true);
+        builder.setLights(0xFF00AAAC, 500, 500);
+        long[] pattern = {500, 500, 500, 500};
+        builder.setVibrate(pattern);
+        builder.setStyle(new NotificationCompat.InboxStyle());
 
-            Notification notification = builder.build();
-            notification.defaults |= Notification.DEFAULT_SOUND;
+        Notification notification = builder.build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
 
-            manager.notify(1, notification);
-        }
+        manager.notify(1, notification);
     }
 
     private class ResponseReceiver extends BroadcastReceiver {
@@ -223,10 +219,11 @@ public class ShowMessagesActivity extends AppCompatActivity {
                     }
                 }
                 Log.v("ResponseReceiver", "new message ? " + newMessageAdded);
-                if(newMessageAdded) {
+                if (newMessageAdded) {
                     messages.addAll(newMessages);
                     messageList.smoothScrollToPosition(messages.size() - 1);
                     adapter.notifyDataSetChanged();
+                    displayNotification();
                 }
             }
         }
