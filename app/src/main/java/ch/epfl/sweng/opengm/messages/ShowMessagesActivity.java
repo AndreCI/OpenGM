@@ -87,14 +87,18 @@ public class ShowMessagesActivity extends AppCompatActivity {
         textBar = (EditText) findViewById(R.id.message_text_bar);
 
         mServiceIntent = new Intent(this, RefreshMessages.class);
-        mServiceIntent.putExtra(INTENT_CONVERSATION_NAME, conversation);
-        mServiceIntent.putExtra(INTENT_CONVERSATION_LAST_REFRESH, getTimestamp());
         startService(mServiceIntent);
 
         ResponseReceiver mResponseReceiver = new ResponseReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(mResponseReceiver, new IntentFilter(BROADCAST_ACTION));
 
         manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ShowConversationsActivity.refresh = false;
     }
 
     @Override
@@ -171,7 +175,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     }
 
     private void displayNotification() {
-        if (playNotification) {
+        if (messages.size() > 0 && playNotification) {
             NotificationCompat.Builder builder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(ShowMessagesActivity.this)
                             .setSmallIcon(R.drawable.avatar_male1)
@@ -210,16 +214,21 @@ public class ShowMessagesActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
             if (messagesFragmented.size() > 0) {
+                boolean newMessageAdded = false;
                 ArrayList<ChatMessage> newMessages = new ArrayList<>();
-                for (int i = 0; messagesFragmented.size() > 0 && messagesFragmented.size() % 3 == 0 && i < messagesFragmented.size() - 2; i += 3) {
-                    if (Long.valueOf(messagesFragmented.get(i + 1)) > messages.get(messages.size() - 1).getSendDate()) {
+                for (int i = 0; messages.size() > 0 && messagesFragmented.size() > 0 && messagesFragmented.size() % 3 == 0 && i < messagesFragmented.size() - 2; i += 3) {
+                    if (Long.valueOf(messagesFragmented.get(i + 1)) > messages.get(messages.size() - 1).getSendDate() && !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
+                        newMessageAdded = true;
                         Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
                         newMessages.add(new ChatMessage(messagesFragmented.get(i), Long.valueOf(messagesFragmented.get(i + 1)), messagesFragmented.get(i + 2)));
                     }
                 }
-                messages.addAll(newMessages);
-                messageList.smoothScrollToPosition(messages.size() - 1);
-                adapter.notifyDataSetChanged();
+                Log.v("ResponseReceiver", "new message ? " + newMessageAdded);
+                if(newMessageAdded) {
+                    messages.addAll(newMessages);
+                    messageList.smoothScrollToPosition(messages.size() - 1);
+                    adapter.notifyDataSetChanged();
+                }
             }
         }
     }
@@ -240,10 +249,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            String conversationName = intent.getStringExtra(INTENT_CONVERSATION_NAME);
-            long lastRefresh = intent.getLongExtra(INTENT_CONVERSATION_LAST_REFRESH, 0);
-            while (true) {
-                List<PFMessage> messages = Utils.getMessagesForConversationName(conversationName, lastRefresh);
+            long lastRefresh = 0;
+            while (ShowConversationsActivity.refresh) {
+                List<PFMessage> messages = Utils.getMessagesForConversationName(ShowConversationsActivity.conversationToRefresh, 0);
                 ArrayList<String> result = new ArrayList<>();
                 for (PFMessage message : messages) {
                     result.add(message.getSenderId());

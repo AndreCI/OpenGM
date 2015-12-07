@@ -26,6 +26,8 @@ import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 
 public class ShowConversationsActivity extends AppCompatActivity {
+    public static boolean refresh = false;
+    public static String conversationToRefresh = null;
     private PFGroup currentGroup;
     private List<String> conversations;
     public static final int NEW_CONVERSATION_REQUEST_CODE = 1;
@@ -67,6 +69,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 Intent intent = new Intent(ShowConversationsActivity.this, ShowMessagesActivity.class);
                 intent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversationName);
                 intent.putExtra(Utils.NOTIF_INTENT_MESSAGE, true);
+                refresh = true;
+                conversationToRefresh = conversationName;
                 startActivity(intent);
             }
         });

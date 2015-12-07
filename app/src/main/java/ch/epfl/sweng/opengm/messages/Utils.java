@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
 public class Utils {
