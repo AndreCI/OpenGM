@@ -47,11 +47,13 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         setTitle("Adding participants for Event"); //DONOT ADD currentEvent.name() or it will probably fail
 
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
-        for(int i=0; i< participants.length; i++){
-            try {
-                membersToAdd.put(participants[i], PFMember.fetchExistingMember(participants[i]));
-            } catch (PFException e) {
-                Toast.makeText(getApplicationContext(), "Unable to retrieve participants", Toast.LENGTH_SHORT).show();
+        if(participants!=null) {
+            for (int i = 0; i < participants.length; i++) {
+                try {
+                    membersToAdd.put(participants[i], PFMember.fetchExistingMember(participants[i]));
+                } catch (PFException e) {
+                    Toast.makeText(getApplicationContext(), "Unable to retrieve participants", Toast.LENGTH_SHORT).show();
+                }
             }
         }
         HashMap<String, PFMember> allMembers = new HashMap<>();
@@ -118,7 +120,11 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
     public void clickOnOkayButton(View v) {
         Intent intent = new Intent();
         ArrayList<PFMember> result = participantsAdapter.checkList();
-        intent.putParcelableArrayListExtra(PARTICIPANTS_LIST_RESULT, result);
+        ArrayList<String> ids = new ArrayList<>();
+        for(PFMember m : result){
+            ids.add(m.getId()); //TODO : debug this we get null at the other end of the intent
+        }
+        intent.putExtra(PARTICIPANTS_LIST_RESULT, ids.toArray());
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
