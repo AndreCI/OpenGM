@@ -14,7 +14,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -178,10 +177,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         NotificationCompat.Builder builder =
                 (NotificationCompat.Builder) new NotificationCompat.Builder(ShowMessagesActivity.this)
-                        .setSmallIcon(R.drawable.avatar_male1)
+                        .setSmallIcon(R.drawable.ic_notif)
                         .setContentTitle("New message in " + conversation)
                         .setContentText(messages.get(messages.size() - 1).getMessage());
-
 
         Intent notificationIntent = new Intent(this, ShowMessagesActivity.class);
         notificationIntent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversation);
@@ -194,7 +192,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
         builder.setContentIntent(contentIntent);
         builder.setAutoCancel(true);
         builder.setLights(0xFF00AAAC, 500, 500);
-        long[] pattern = {500, 500, 500, 500};
+        long[] pattern = {500, 500};
         builder.setVibrate(pattern);
         builder.setStyle(new NotificationCompat.InboxStyle());
 
