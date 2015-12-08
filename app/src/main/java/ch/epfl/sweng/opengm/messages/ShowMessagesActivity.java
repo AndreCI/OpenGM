@@ -209,29 +209,33 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
-            if (messagesFragmented.size() > 0) {
-                boolean newMessageAdded = false;
-                int MESSAGE_FIELD = 4;
-                ArrayList<ChatMessage> newMessages = new ArrayList<>();
-                for (int i = 0; messages.size() > 0 && messagesFragmented.size() > 0 &&
-                        messagesFragmented.size() % MESSAGE_FIELD == 0 &&
-                        i < messagesFragmented.size() - 3; i += MESSAGE_FIELD) {
+            try {
+                ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
+                if (messagesFragmented.size() > 0) {
+                    boolean newMessageAdded = false;
+                    int MESSAGE_FIELD = 4;
+                    ArrayList<ChatMessage> newMessages = new ArrayList<>();
+                    for (int i = 0; messages.size() > 0 && messagesFragmented.size() > 0 &&
+                            messagesFragmented.size() % MESSAGE_FIELD == 0 &&
+                            i < messagesFragmented.size() - 3; i += MESSAGE_FIELD) {
 
-                    if (new Date(Long.parseLong(messagesFragmented.get(i + 2)))
-                            .after(messages.get(messages.size() - 1).getSendDate()) &&
-                            !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
-                        newMessageAdded = true;
-                        newMessages.add(new ChatMessage(messagesFragmented.get(i), messagesFragmented.get(i + 1), new Date(Long.parseLong(messagesFragmented.get(i + 2))), messagesFragmented.get(i + 3)));
+                        if (new Date(Long.parseLong(messagesFragmented.get(i + 2)))
+                                .after(messages.get(messages.size() - 1).getSendDate()) &&
+                                !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
+                            newMessageAdded = true;
+                            newMessages.add(new ChatMessage(messagesFragmented.get(i), messagesFragmented.get(i + 1), new Date(Long.parseLong(messagesFragmented.get(i + 2))), messagesFragmented.get(i + 3)));
+                        }
+                    }
+                    if (newMessageAdded) {
+                        messages.addAll(newMessages);
+                        Collections.sort(messages);
+                        messageList.smoothScrollToPosition(messages.size() - 1);
+                        adapter.notifyDataSetChanged();
+                        displayNotification();
                     }
                 }
-                if (newMessageAdded) {
-                    messages.addAll(newMessages);
-                    Collections.sort(messages);
-                    messageList.smoothScrollToPosition(messages.size() - 1);
-                    adapter.notifyDataSetChanged();
-                    displayNotification();
-                }
+            } catch (Throwable t) {
+                // do nothing
             }
         }
     }
@@ -253,22 +257,26 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected void onHandleIntent(Intent intent) {
             while (ShowConversationsActivity.refresh) {
-                List<PFMessage> newMessages = Utils.getMessagesForConversationName(ShowConversationsActivity.conversationToRefresh, messages);
-                ArrayList<String> result = new ArrayList<>();
-                for (PFMessage message : newMessages) {
-                    result.add(message.getId());
-                    result.add(message.getSenderId());
-                    result.add(Long.toString(message.getLastModified().getTime()));
-                    result.add(message.getBody());
-                }
-                if (newMessages.size() > 0) {
-                    Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-                }
                 try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    List<PFMessage> newMessages = Utils.getMessagesForConversationName(ShowConversationsActivity.conversationToRefresh, messages);
+                    ArrayList<String> result = new ArrayList<>();
+                    for (PFMessage message : newMessages) {
+                        result.add(message.getId());
+                        result.add(message.getSenderId());
+                        result.add(Long.toString(message.getLastModified().getTime()));
+                        result.add(message.getBody());
+                    }
+                    if (newMessages.size() > 0) {
+                        Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                    }
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Throwable t) {
+                    //Do nothing
                 }
             }
         }

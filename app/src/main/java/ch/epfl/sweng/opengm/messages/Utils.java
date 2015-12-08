@@ -14,6 +14,9 @@ import java.util.TimeZone;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
+import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
+import static ch.epfl.sweng.opengm.parse.PFMessage.*;
+
 public class Utils {
 
     public static final String NOTIF_INTENT_MESSAGE = "ch.epfl.sweng.opengm.messages.notification";
@@ -29,19 +32,18 @@ public class Utils {
             for (ChatMessage message : oldMessages) {
                 messagesIds.add(message.getId());
             }
-            ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).
-                    whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).
-                    whereNotContainedIn(PFConstants.OBJECT_ID, messagesIds).
-                    orderByDescending("UpdatedAt");
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(TABLE_NAME).
+                    whereEqualTo(TABLE_ENTRY_NAME, conversation).
+                    whereNotContainedIn(OBJECT_ID, messagesIds).
+                    orderByDescending("createdAt");
             query.setLimit(queryLimit);
             List<ParseObject> objects = query.find();
             for (ParseObject object : objects) {
-                messages.add(0, PFMessage.getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
-                        object.getString(PFMessage.TABLE_ENTRY_SENDER),
-                        object.getLong(PFMessage.TABLE_ENTRY_TIMESTAMP),
-                        object.getString(PFMessage.TABLE_ENTRY_NAME),
-                        object.getString(PFMessage.TABLE_ENTRY_BODY),
-                        object.getString(PFMessage.TABLE_ENTRY_GROUPID)));
+                messages.add(0, getExistingMessage(object.getObjectId(), object.getUpdatedAt(),
+                        object.getString(TABLE_ENTRY_SENDER),
+                        object.getString(TABLE_ENTRY_NAME),
+                        object.getString(TABLE_ENTRY_BODY),
+                        object.getString(TABLE_ENTRY_GROUPID)));
             }
         } catch (ParseException e) {
         }
