@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.parse.PFEvent;
+import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 
@@ -41,12 +43,16 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_remove_participants);
         Intent intent = getIntent();
         PFGroup currentGroup = getCurrentGroup();
-        PFEvent currentEvent = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        String[] participants = intent.getParcelableExtra(Utils.MEMBERS_INTENT_MESSAGE);
         setTitle("Adding participants for Event"); //DONOT ADD currentEvent.name() or it will probably fail
 
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
-        if (currentEvent != null && !currentEvent.getParticipants().isEmpty()) {
-            membersToAdd.putAll(currentEvent.getParticipants());
+        for(int i=0; i< participants.length; i++){
+            try {
+                membersToAdd.put(participants[i], PFMember.fetchExistingMember(participants[i]));
+            } catch (PFException e) {
+                Toast.makeText(getApplicationContext(), "Unable to retrieve participants", Toast.LENGTH_SHORT).show();
+            }
         }
         HashMap<String, PFMember> allMembers = new HashMap<>();
         if (currentGroup != null && currentGroup.hasMembers()) {
