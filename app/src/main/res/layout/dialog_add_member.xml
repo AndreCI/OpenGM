@@ -6,23 +6,27 @@
         android:id="@+id/dialog_add_member_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:text="@string/dialog_add_member_title"
         android:textSize="30dp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/dialog_add_member_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/dialog_add_member_title"
-        android:text="@string/dialog_add_member_text"/>
+        android:text="@string/dialog_add_member_text"
+        android:layout_marginLeft="10dp"
+        android:textIsSelectable="false"
+        android:gravity="center" />
 
     <EditText
         android:id="@+id/dialog_add_member_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/dialog_add_member_text"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:gravity="center" />
 
 </RelativeLayout>
