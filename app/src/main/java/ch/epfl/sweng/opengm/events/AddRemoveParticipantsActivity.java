@@ -124,9 +124,10 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         for(PFMember m : result){
             ids.add(m.getId()); //TODO : debug this we get null at the other end of the intent
         }
-        intent.putExtra(PARTICIPANTS_LIST_RESULT, ids.toArray());
-        setResult(Activity.RESULT_OK, intent);
-        finish();
+        intent.putStringArrayListExtra(PARTICIPANTS_LIST_RESULT, ids);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+
     }
 
     /**

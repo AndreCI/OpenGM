@@ -98,20 +98,19 @@ public class CreateEditEventActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_EDIT_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                String[] ids = data.getStringArrayExtra(AddRemoveParticipantsActivity.PARTICIPANTS_LIST_RESULT);
+                ArrayList<String> ids = data.getStringArrayListExtra(AddRemoveParticipantsActivity.PARTICIPANTS_LIST_RESULT);
                 if(ids!=null) {
                     try {
-                        for (int i = 0; i < ids.length; i++) {
-                            participants.put(ids[i], PFMember.fetchExistingMember(ids[i]));
+                        for (int i = 0; i < ids.size(); i++) {
+                            participants.put(ids.get(i), PFMember.fetchExistingMember(ids.get(i)));
                         }
                     }catch (PFException e) {
                         Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
                 }
-
-                Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.CreateEditFailToAddParticipants), Toast.LENGTH_SHORT).show();
             }
