@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/dialog_add_member_title"
         android:text="@string/dialog_add_member_text"
-        android:layout_marginLeft="10dp"
         android:textIsSelectable="false"
         android:gravity="center" />
 
