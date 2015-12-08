@@ -43,7 +43,7 @@ public class AddRemoveParticipantsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_remove_participants);
         Intent intent = getIntent();
         PFGroup currentGroup = getCurrentGroup();
-        String[] participants = intent.getParcelableExtra(Utils.MEMBERS_INTENT_MESSAGE);
+        String[] participants = intent.getStringArrayExtra(Utils.MEMBERS_INTENT_MESSAGE);
         setTitle("Adding participants for Event"); //DONOT ADD currentEvent.name() or it will probably fail
 
         HashMap<String, PFMember> membersToAdd = new HashMap<>();
