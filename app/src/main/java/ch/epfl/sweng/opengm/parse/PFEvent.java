@@ -163,6 +163,8 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     }
 
     public void setPicture(Bitmap mPicture) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mPicture.compress(Bitmap.CompressFormat.PNG, 40, out);
         this.mPicture = mPicture;
     }
 
