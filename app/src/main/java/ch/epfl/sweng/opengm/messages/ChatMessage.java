@@ -5,12 +5,14 @@ import java.util.Date;
 import ch.epfl.sweng.opengm.OpenGMApplication;
 
 public class ChatMessage implements Comparable<ChatMessage> {
+    private final String id;
     private final String senderId;
     private final String body;
     private final Date sendDate;
     private final boolean sent;
 
-    public ChatMessage(String sender, Date sendDate, String body) {
+    public ChatMessage(String id, String sender, Date sendDate, String body) {
+        this.id = id;
         this.senderId = sender;
         this.body = body;
         this.sendDate = sendDate;
@@ -41,5 +43,9 @@ public class ChatMessage implements Comparable<ChatMessage> {
     @Override
     public int compareTo(ChatMessage another) {
         return sendDate.compareTo(another.sendDate);
+    }
+
+    public String getId() {
+        return id;
     }
 }

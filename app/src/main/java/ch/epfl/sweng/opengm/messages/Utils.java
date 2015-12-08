@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFMessage;
 
@@ -22,12 +21,17 @@ public class Utils {
     public static final String CONVERSATION_INFO_INTENT_MESSAGE = "ch.epfl.sweng.opengm.conv_info";
 
 
-    public static List<PFMessage> getMessagesForConversationName(String conversation, long lastTimestamp) {
+    public static List<PFMessage> getMessagesForConversationName(String conversation, List<ChatMessage> oldMessages) {
         int queryLimit = 25;
         List<PFMessage> messages = new ArrayList<>(queryLimit);
         try {
+            List<String> messagesIds = new ArrayList<>();
+            for (ChatMessage message : oldMessages) {
+                messagesIds.add(message.getId());
+            }
             ParseQuery<ParseObject> query = ParseQuery.getQuery(PFMessage.TABLE_NAME).
                     whereEqualTo(PFMessage.TABLE_ENTRY_NAME, conversation).
+                    whereNotContainedIn(PFConstants.OBJECT_ID, messagesIds).
                     orderByDescending("UpdatedAt");
             query.setLimit(queryLimit);
             List<ParseObject> objects = query.find();

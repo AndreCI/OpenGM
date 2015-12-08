@@ -40,18 +40,15 @@ import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
 
 public class ShowMessagesActivity extends AppCompatActivity {
-    private static String INTENT_CONVERSATION_NAME = "ch.epfl.sweng.opengm.intent_conv_name";
-    private static String INTENT_CONVERSATION_LAST_REFRESH = "ch.epfl.sweng.opengm.intent_conv_last_refresh";
     private static String BROADCAST_ACTION = "ch.epfl.sweng.opengm.broadcast_action";
     private static final String EXTENDED_DATA_STATUS = "ch.epfl.sweng.opengm.status";
     private static String conversation;
     private ListView messageList;
-    private final List<ChatMessage> messages = new ArrayList<>();
+    private static final List<ChatMessage> messages = new ArrayList<>();
     private EditText textBar;
     private MessageAdapter adapter;
     private Intent mServiceIntent;
     private NotificationManager manager;
-    private boolean playNotification;
 
 
     @Override
@@ -60,7 +57,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_messages);
         Intent intent = getIntent();
         conversation = intent.getStringExtra(Utils.FILE_INFO_INTENT_MESSAGE);
-        playNotification = intent.getBooleanExtra(Utils.NOTIF_INTENT_MESSAGE, false);
 
         setTitle(conversation);
 
@@ -119,35 +115,43 @@ public class ShowMessagesActivity extends AppCompatActivity {
         if (!message.isEmpty()) {
             textBar.setText("");
             sendMessage(message);
-            ChatMessage chatMessage = new ChatMessage(getCurrentUser().getId(), new Date(), message);
-            messages.add(chatMessage);
-            adapter.notifyDataSetChanged();
-            messageList.smoothScrollToPosition(messages.size() - 1);
+
         }
     }
 
-    class SendMessage extends AsyncTask<String, Void, Boolean> {
+    class SendMessage extends AsyncTask<String, Void, PFMessage> {
 
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected PFMessage doInBackground(String... params) {
             String message = params[0];
             try {
-                PFMessage.writeMessage(conversation, getCurrentGroup().getId(), getCurrentUser().getId(), message);
-                return true;
+                return PFMessage.writeMessage(conversation, getCurrentGroup().getId(), getCurrentUser().getId(), message);
             } catch (IOException | ParseException | PFException e) {
                 Toast.makeText(getBaseContext(), "Error, your message was not sent", Toast.LENGTH_LONG).show();
-                return false;
+                return null;
             }
         }
 
+        @Override
+        protected void onPostExecute(PFMessage pfMessage) {
+            ChatMessage chatMessage = new ChatMessage(pfMessage.getId(), getCurrentUser().getId(), new Date(), pfMessage.getBody());
+            messages.add(chatMessage);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                    messageList.smoothScrollToPosition(messages.size() - 1);
+                }
+            });
+        }
     }
 
     class DisplayMessages extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
-            for (PFMessage message : Utils.getMessagesForConversationName(params[0], Long.valueOf(params[1]))) {
-                messages.add(new ChatMessage(message.getSenderId(), message.getLastModified(), message.getBody()));
+            for (PFMessage message : Utils.getMessagesForConversationName(params[0], messages)) {
+                messages.add(new ChatMessage(message.getId(), message.getSenderId(), message.getLastModified(), message.getBody()));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -210,17 +214,22 @@ public class ShowMessagesActivity extends AppCompatActivity {
             ArrayList<String> messagesFragmented = intent.getStringArrayListExtra(EXTENDED_DATA_STATUS);
             if (messagesFragmented.size() > 0) {
                 boolean newMessageAdded = false;
+                int MESSAGE_FIELD = 4;
                 ArrayList<ChatMessage> newMessages = new ArrayList<>();
-                for (int i = 0; messages.size() > 0 && messagesFragmented.size() > 0 && messagesFragmented.size() % 3 == 0 && i < messagesFragmented.size() - 2; i += 3) {
-                    if (new Date(Long.parseLong(messagesFragmented.get(i + 1))).after(messages.get(messages.size() - 1).getSendDate()) && !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
+                for (int i = 0; messages.size() > 0 && messagesFragmented.size() > 0 &&
+                        messagesFragmented.size() % MESSAGE_FIELD == 0 &&
+                        i < messagesFragmented.size() - 3; i += MESSAGE_FIELD) {
+
+                    if (new Date(Long.parseLong(messagesFragmented.get(i + 2)))
+                            .after(messages.get(messages.size() - 1).getSendDate()) &&
+                            !messagesFragmented.get(i).equals(OpenGMApplication.getCurrentUser().getId())) {
                         newMessageAdded = true;
-                        Log.v("ResponseReceiver", messagesFragmented.get(i) + " - " + messagesFragmented.get(i + 1) + " - " + messagesFragmented.get(i + 2));
-                        newMessages.add(new ChatMessage(messagesFragmented.get(i), new Date(Long.parseLong(messagesFragmented.get(i + 1))), messagesFragmented.get(i + 2)));
+                        newMessages.add(new ChatMessage(messagesFragmented.get(i), messagesFragmented.get(i + 1), new Date(Long.parseLong(messagesFragmented.get(i + 2))), messagesFragmented.get(i + 3)));
                     }
                 }
-                Log.v("ResponseReceiver", "new message ? " + newMessageAdded);
                 if (newMessageAdded) {
                     messages.addAll(newMessages);
+                    Collections.sort(messages);
                     messageList.smoothScrollToPosition(messages.size() - 1);
                     adapter.notifyDataSetChanged();
                     displayNotification();
@@ -246,15 +255,15 @@ public class ShowMessagesActivity extends AppCompatActivity {
         @Override
         protected void onHandleIntent(Intent intent) {
             while (ShowConversationsActivity.refresh) {
-                List<PFMessage> messages = Utils.getMessagesForConversationName(ShowConversationsActivity.conversationToRefresh, 0);
+                List<PFMessage> newMessages = Utils.getMessagesForConversationName(ShowConversationsActivity.conversationToRefresh, messages);
                 ArrayList<String> result = new ArrayList<>();
-                for (PFMessage message : messages) {
+                for (PFMessage message : newMessages) {
+                    result.add(message.getId());
                     result.add(message.getSenderId());
                     result.add(Long.toString(message.getLastModified().getTime()));
                     result.add(message.getBody());
                 }
-                Log.v("RefreshMessages", "messages size: " + messages.size());
-                if (messages.size() > 0) {
+                if (newMessages.size() > 0) {
                     Intent localIntent = new Intent(BROADCAST_ACTION).putStringArrayListExtra(EXTENDED_DATA_STATUS, result);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                 }
