@@ -78,6 +78,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             initialDescription = currentGroup.getDescription();
             image = currentGroup.getPicture();
             findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+            setTitle(getString(R.string.create_edit_group_edit_group));
         }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
