@@ -57,7 +57,7 @@ public class Utils {
 
     public static List<String[]> unzipRoles(List<String> rolesZip) {
         List<String[]> res = new ArrayList<>();
-        for(String s : rolesZip) {
+        for (String s : rolesZip) {
             res.add(s.split(" -- "));
         }
         return res;
@@ -69,12 +69,12 @@ public class Utils {
 
     public static String zipRole(List<String> roles) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(roles.size() > 0 ) {
+        if (roles.size() > 0) {
             for (int i = 0; i < roles.size() - 1; ++i) {
                 stringBuilder.append(roles.get(i));
                 stringBuilder.append(" -- ");
             }
-            stringBuilder.append(roles.get(roles.size()-1));
+            stringBuilder.append(roles.get(roles.size() - 1));
         }
         return stringBuilder.toString();
     }
@@ -91,7 +91,7 @@ public class Utils {
         return new SimpleDateFormat("dd/MM/yy").format(date);
     }
 
-    public static String saveToInternalSorage(Bitmap bitmapImage, Context appContext, String fileName) throws IOException {
+    public static String saveToInternalStorage(Bitmap bitmapImage, Context appContext, String fileName) throws IOException {
         ContextWrapper cw = new ContextWrapper(appContext);
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
@@ -119,8 +119,8 @@ public class Utils {
     public static String getRealPathFromURI(Uri contentUri, Activity activity) {
         Cursor cursor = null;
         try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = activity.getContentResolver().query(contentUri,  proj, null, null, null);
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = activity.getContentResolver().query(contentUri, proj, null, null, null);
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);
@@ -130,7 +130,6 @@ public class Utils {
             }
         }
     }
-
 
 
 }

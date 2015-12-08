@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ListView
+        android:id="@+id/message_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/message_list"
-        android:layout_alignParentTop="true"
+        android:layout_above="@+id/message_text_bar"
         android:layout_alignParentStart="true"
-        android:transcriptMode="alwaysScroll"
+        android:layout_alignParentTop="true"
+        android:clickable="false"
+        android:divider="@null"
+        android:dividerHeight="5dp"
         android:stackFromBottom="true"
-        android:layout_above="@+id/message_text_bar"/>
+        android:transcriptMode="alwaysScroll" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/message_text_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:layout_toStartOf="@+id/send_message_button"
-        android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-        android:hint="tap message here ..."
-        android:imeOptions="actionSend"
-        android:minLines="1"
-        android:maxLines="1"/>
+        android:hint=" Tap message here ..."
+        android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
         android:id="@+id/send_message_button"
+        android:layout_width="60dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:onClick="clickOnSendButton"/>
+        android:background="@drawable/ic_send"
+        android:onClick="clickOnSendButton" />
 </RelativeLayout>
