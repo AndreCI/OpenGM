@@ -33,7 +33,6 @@
         android:id="@+id/ScrollViewParentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/eventListBottomLayout"
         android:layout_below="@+id/eventListCheckboxLayout">
         <ScrollView
             android:id="@+id/scrollView4"
@@ -59,26 +58,6 @@
                 android:id="@+id/eventListCheckBoxForPastEvent"
                 android:onClick="clickOnCheckBoxForPastEvent"
                 android:text="Show past events" />
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/eventListBottomLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="36dp"
-            android:layout_marginLeft="16dp"
-            android:orientation="horizontal">
-            <Button
-                android:background="@drawable/rounded_buttons"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Refresh"
-                android:onClick="clickOnRefreshButton"
-                android:id="@+id/eventListRefreshButton"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"/>
         </LinearLayout>
 
     </RelativeLayout>

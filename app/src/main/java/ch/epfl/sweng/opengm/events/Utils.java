@@ -10,6 +10,7 @@ import java.util.Date;
 public class Utils {
 
     public static final String GROUP_INTENT_MESSAGE = "ch.epfl.opengm.group_intent_message";
+    public static final String MEMBERS_INTENT_MESSAGE = "ch.epfl.opengm.member_intent_message";
     public static final String EVENT_INTENT_MESSAGE = "ch.epfl.opengm.event_intent_message";
     public static final int DELETE_EVENT = 690;
     public static final int SHOWING_EVENT = 490;
