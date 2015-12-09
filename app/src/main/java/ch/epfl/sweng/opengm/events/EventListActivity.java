@@ -3,6 +3,7 @@ package ch.epfl.sweng.opengm.events;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.util.ArrayMap;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,14 +29,17 @@ import java.util.Map;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.identification.contacts.AppContactsActivity;
 import ch.epfl.sweng.opengm.parse.PFEvent;
 import ch.epfl.sweng.opengm.parse.PFException;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFUtils;
+import ch.epfl.sweng.opengm.userProfile.MyProfileActivity;
 import ch.epfl.sweng.opengm.utils.NetworkUtils;
 
 public class EventListActivity extends AppCompatActivity {
 
+    //TODO : Image is not optimal.
     public static final int EVENT_LIST_RESULT_CODE = 666;
 
     private Map<String,PFEvent> eventMap;
@@ -86,13 +91,27 @@ public class EventListActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_personal, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
-            default:
+            case R.id.action_refresh_user:
+                refresh();
                 return true;
+            case R.id.action_show_contacts:
+                startActivity(new Intent(this, AppContactsActivity.class));
+                return true;
+            case R.id.action_show_user_profile:
+                startActivity(new Intent(this, MyProfileActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -153,7 +172,6 @@ public class EventListActivity extends AppCompatActivity {
     public void clickOnAddButton(View v){
         if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.ADD_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
-            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
             startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
         }else{
             Toast.makeText(getApplicationContext(), "You don't have the permission to create a new event.", Toast.LENGTH_SHORT).show();
@@ -161,15 +179,12 @@ public class EventListActivity extends AppCompatActivity {
     }
     public void clickOnCheckBoxForPastEvent(View v){
         displayEvents();
-    }//TODO : Fix it
+    }
 
-    public void clickOnRefreshButton(View v){
+    public void refresh(){
         findViewById(R.id.EventListLoadingPanel).setVisibility(View.VISIBLE);
         findViewById(R.id.scrollView4).setVisibility(View.GONE);
         findViewById(R.id.eventListAddButton).setClickable(false);
-        Button re=(Button) findViewById(R.id.eventListRefreshButton);
-        re.setClickable(false);
-        re.setText("WAIT");
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void[] params){
@@ -195,9 +210,6 @@ public class EventListActivity extends AppCompatActivity {
             }
             @Override
             protected void onPostExecute(Boolean result){
-                Button re=(Button) findViewById(R.id.eventListRefreshButton);
-                re.setClickable(true);
-                re.setText("REFRESH");
                 findViewById(R.id.EventListLoadingPanel).setVisibility(View.GONE);
                 findViewById(R.id.scrollView4).setVisibility(View.VISIBLE);
                 findViewById(R.id.eventListAddButton).setClickable(true);
@@ -245,11 +257,6 @@ public class EventListActivity extends AppCompatActivity {
                 gd.setColor(getResources().getColor(R.color.bluegreen));
                 b.setBackground(gd);
                 b.setTextColor(Color.WHITE);
-
-                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    b.setBackground(getDrawable(R.drawable.rounded_buttons));
-                    b.setTextColor(Color.WHITE);
-                }*/
                 SpannableString name = new SpannableString(String.format("%s \n %d/%02d/%04d, %d : %02d", event.getName(), event.getDay(), event.getMonth(), event.getYear(), event.getHours(), event.getMinutes()));
                 name.setSpan(new RelativeSizeSpan(2f),0,event.getName().length(),0);
                 b.setText(name);
@@ -267,7 +274,7 @@ public class EventListActivity extends AppCompatActivity {
     }
 
     private void showEvent(PFEvent currentEvent) {
-        if(currentEvent.getPicturePath()==PFUtils.pathNotSpecified) {
+        if(currentEvent.getPicturePath().equals(PFUtils.pathNotSpecified)) {
             try {
                 String imageName = currentEvent.getId() + "_event";
                 currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.

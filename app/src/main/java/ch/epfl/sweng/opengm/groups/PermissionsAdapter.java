@@ -30,7 +30,7 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         View row = convertView;
-        PermissionHolder holder;
+        final PermissionHolder holder;
 
         if(row == null){
             row =((Activity) context).getLayoutInflater().inflate(resource, parent, false);
@@ -45,6 +45,12 @@ public class PermissionsAdapter extends ArrayAdapter<PFGroup.Permission>{
         }
 
         holder.textView.setText(permissions.get(position).toString());
+        holder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.checkBox.setChecked(!holder.checkBox.isChecked());
+            }
+        });
         holder.checkBox.setChecked(checks.get(position));
 
         return row;
