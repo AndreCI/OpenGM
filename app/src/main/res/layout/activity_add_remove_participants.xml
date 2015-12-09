@@ -9,7 +9,7 @@
     tools:context="ch.epfl.sweng.opengm.events.AddRemoveParticipantsActivity">
 
     <SearchView
-        android:id="@+id/searchMember"
+        android:id="@+id/AddRemoveParticipantSearchMember"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bluegreen"
@@ -20,14 +20,14 @@
         android:id="@+id/memberListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/okayButton"
-        android:layout_below="@+id/searchMember">
+        android:layout_above="@+id/AddRemoveParticipantOkayButton"
+        android:layout_below="@+id/AddRemoveParticipantSearchMember">
     </ListView>
 
     <Button
         android:background="@drawable/rounded_buttons"
         android:textColor="@color/white"
-        android:id="@+id/okayButton"
+        android:id="@+id/AddRemoveParticipantOkayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

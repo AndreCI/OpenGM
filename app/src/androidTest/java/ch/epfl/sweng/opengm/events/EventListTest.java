@@ -2,7 +2,10 @@ package ch.epfl.sweng.opengm.events;
 
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.NoMatchingViewException;
 import android.test.ActivityInstrumentationTestCase2;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,44 +27,56 @@ public class EventListTest extends ActivityInstrumentationTestCase2<EventListAct
     public EventListTest() {
         super(EventListActivity.class);
     }
-
+    private PFGroup group;
+    private PFUser user;
+    private String id;
     @Override
     public void setUp() throws Exception {
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
-
-    private PFGroup group;
-    private PFUser user;
-    private String id;
-
-    @Before
-    public void newIds() {
-        OpenGMApplication.logOut();
-        group = null;
-        user = null;
-        id = null;
-    }
-
-    // TODO : this is not as test as there is any check ;)
-    public void notestCanClickAddButton() throws InterruptedException {
-        Intent intent = new Intent();
         id = getRandomId();
         try {
-            user = PFUser.createNewUser(id, "testmail", "0", "testusername", "EventListTest", "testlastname");
+            user = PFUser.createNewUser(id, "userEmail@_EventListTest", "userPhoneNbr_EventListTest", "userUsername_EventListTest", "userFirstName_EventListTest", "userLastName_EventListTest");
         } catch (PFException e) {
             e.printStackTrace();
         }
         OpenGMApplication.setCurrentUser(user);
         Thread.sleep(2000);
         try {
-            group = PFGroup.createNewGroup(user, "EventListTest", "testDescription", null);
+            group = PFGroup.createNewGroup(user, "groupName_EventListTest", "groupDescription_EventListTest", null);
         } catch (PFException e) {
             e.printStackTrace();
         }
         Thread.sleep(2000);
         OpenGMApplication.setCurrentGroup(0);
-        setActivityIntent(intent);
+    }
+
+   /* @Before
+    public void newIds() {
+        OpenGMApplication.logOut();
+        group = null;
+        user = null;
+        id = null;
+    }*/
+    public void testCanClickOnCheckBox() {
+        getActivity();
+        onView(withId(R.id.eventListCheckBoxForPastEvent)).perform(click());
+    }
+    public void testCanClickOnRefresh() {
+        getActivity();
+        onView(withId(R.id.action_refresh_user)).perform(click());
+    }
+    public void testCanClickOnBack() {
+        try {
+            getActivity();
+            onView(withId(android.R.id.home)).perform(click());
+        }catch(NoMatchingViewException e){
+            Assert.assertTrue(true);
+        }
+    }
+
+    //TODO : how to test this strange button?
+    public void NotestCanClickAddButton() throws InterruptedException {
         getActivity();
         onView(withId(R.id.eventListAddButton)).perform(click());
     }

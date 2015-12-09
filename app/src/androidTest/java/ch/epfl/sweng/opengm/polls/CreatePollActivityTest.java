@@ -280,7 +280,7 @@ public class CreatePollActivityTest extends ActivityInstrumentationTestCase2<Cre
         onView(withId(R.id.plus_poll_answer)).perform(click());
 
         onView(withId(R.id.action_validate)).perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         try {
             PFUser u2 = PFUser.fetchExistingUser(currentUser.getId());
