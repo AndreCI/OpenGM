@@ -66,7 +66,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
             // Display profile picture of user :
             mPhotoImageView = (ImageView) findViewById(R.id.userPhoto);
             if (currentUser.getPicture() == null) {
-                mPhotoImageView.setImageResource(R.drawable.avatar_male1);
+                mPhotoImageView.setImageResource(R.drawable.avatar_male);
             } else {
                 mPhotoImageView.setImageBitmap(currentUser.getPicture());
             }

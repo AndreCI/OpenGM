@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="15dp"
         android:layout_weight="25"
-        android:background="@drawable/avatar_male1" />
+        android:background="@drawable/avatar_male" />
 
     <TextView
         android:id="@+id/member_name"
