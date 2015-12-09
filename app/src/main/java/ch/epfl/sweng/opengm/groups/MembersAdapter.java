@@ -35,22 +35,24 @@ public class MembersAdapter extends ArrayAdapter<PFMember> {
         MemberHolder holder;
 
         if (row == null) {
-            row = ((Activity)context).getLayoutInflater().inflate(ressource, parent, false);
+            row = ((Activity) context).getLayoutInflater().inflate(ressource, parent, false);
 
             holder = new MemberHolder();
-            holder.icon = (ImageView)row.findViewById(R.id.member_img);
-            holder.username = (TextView)row.findViewById(R.id.member_name);
-            holder.checkbox = (CheckBox)row.findViewById(R.id.member_checkbox);
+            holder.icon = (ImageView) row.findViewById(R.id.member_img);
+            holder.username = (TextView) row.findViewById(R.id.member_name);
+            holder.checkbox = (CheckBox) row.findViewById(R.id.member_checkbox);
 
             row.setTag(holder);
         } else {
             holder = (MemberHolder) row.getTag();
         }
 
-        PFMember user = objects.get(position);
-        if (user.getPicture() != null)
-            holder.icon.setImageBitmap(user.getPicture());
-        holder.username.setText(user.getUsername());
+        PFMember member = objects.get(position);
+        if (member.getPicture() != null) {
+            holder.icon.setBackground(null);
+            holder.icon.setImageBitmap(member.getPicture());
+        }
+        holder.username.setText(member.getUsername());
         if (selectMode)
             holder.checkbox.setVisibility(View.VISIBLE);
         else

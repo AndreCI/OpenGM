@@ -18,21 +18,24 @@
             android:layout_height="wrap_content"
             android:background="@drawable/createbackground">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/group_name"
-                android:layout_toEndOf="@+id/group_photo"
-                android:gravity="center"
-                android:layout_alignParentTop="true"
-                android:textSize="12sp" />
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_height="match_parent"
                 android:id="@+id/group_photo"
                 android:layout_alignParentTop="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_name"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:textSize="15dp"
+                android:background="@color/white"
+                android:text="test"/>
 
         </RelativeLayout>
 

@@ -156,9 +156,8 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     public void onEditButtonClick(View view) {
-        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
+        if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
-            intent.putExtra(Utils.GROUP_INTENT_MESSAGE, currentGroup);
             intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
         }else{
@@ -167,7 +166,7 @@ public class ShowEventActivity extends AppCompatActivity {
     }
 
     public void onDeleteButtonClick(View v){
-        if(currentGroup.userHavePermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
+        if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, ShowEventActivity.class);
             intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             setResult(Utils.DELETE_EVENT, intent);

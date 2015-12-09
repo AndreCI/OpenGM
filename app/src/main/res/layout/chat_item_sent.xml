@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="90"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_sender_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="end"
+            android:maxLines="1"
+            android:paddingEnd="20dp"
+            android:text="AURELIEN SOCCARD"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/message_body"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/chat_back_sent"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:minLines="2"
+            android:paddingEnd="30dp"
+            android:paddingStart="10dp"
+            android:text="This is the content of this message and it can't be longer than 2 lines"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/message_sending_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:maxLines="1"
+            android:paddingEnd="20dp"
+            android:text="10/10/10 at 14:15:30"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/message_sender_image"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="15dp"
+        android:layout_weight="10"
+        android:background="@drawable/avatar_male1" />
+
+</LinearLayout>

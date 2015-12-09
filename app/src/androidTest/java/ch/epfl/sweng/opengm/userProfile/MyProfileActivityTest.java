@@ -40,6 +40,7 @@ public class MyProfileActivityTest extends ActivityInstrumentationTestCase2<MyPr
     public void setUp() throws Exception {
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+        activity = getActivity();
 
         OpenGMApplication.logOut();
 
@@ -53,7 +54,6 @@ public class MyProfileActivityTest extends ActivityInstrumentationTestCase2<MyPr
     }
 
     public void testDisplayCorrectInformations() {
-        activity = getActivity();
         onView(withId(R.id.firstNameTV)).check(matches(withText(currentUser.getFirstName())));
         onView(withId(R.id.lastNameTV)).check(matches(withText(currentUser.getLastName())));
         onView(withId(R.id.emailTV)).check(matches(withText(currentUser.getEmail())));

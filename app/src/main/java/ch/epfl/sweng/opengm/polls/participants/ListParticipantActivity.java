@@ -3,9 +3,7 @@ package ch.epfl.sweng.opengm.polls.participants;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +28,8 @@ import ch.epfl.sweng.opengm.polls.CreatePollActivity;
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 
 public class ListParticipantActivity extends AppCompatActivity {
+
+    public static String EVERY_BODY = "Everybody";
 
     private PFGroup group;
 
@@ -115,8 +115,6 @@ public class ListParticipantActivity extends AppCompatActivity {
 
     private void checkCorrespondingBoxes() {
 
-        Log.d("CHILD COUNT", "" + list.getChildCount());
-
         for (int i = 0; i < list.getChildCount(); i++) {
             View row = list.getChildAt(i);
             Participant child = mAdapter.getItem(i);
@@ -178,6 +176,10 @@ public class ListParticipantActivity extends AppCompatActivity {
             participants.add(p);
         }
 
+        Participant p = new Participant(EVERY_BODY, new ArrayList<>(group.getMembers().values()));
+
+        participants.add(p);
+
         Collections.sort(participants);
     }
 
@@ -195,16 +197,16 @@ public class ListParticipantActivity extends AppCompatActivity {
                 return true;
             case R.id.action_validate:
 
-                List<PFMember> members = new ArrayList<>();
+                List<String> members = new ArrayList<>();
 
                 for (Map.Entry<String, Boolean> entry : membersEnrolled.entrySet()) {
                     if (entry.getValue()) {
-                        members.add(group.getMember(entry.getKey()));
+                        members.add(group.getMember(entry.getKey()).getId());
                     }
                 }
 
                 Intent returnIntent = new Intent();
-                returnIntent.putParcelableArrayListExtra(CreatePollActivity.PARTICIPANTS_KEY, new ArrayList<Parcelable>(members));
+                returnIntent.putStringArrayListExtra(CreatePollActivity.PARTICIPANTS_KEY, new ArrayList<>(members));
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
                 return true;

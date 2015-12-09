@@ -16,11 +16,15 @@
         android:largeHeap="true"
         android:theme="@style/TexturedBackgroundTheme" >
 
+        <service
+            android:name=".messages.ShowMessagesActivity$RefreshMessages"
+            android:exported="false" />
+
         <activity
             android:name=".identification.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,8 +53,7 @@
             android:name=".groups.MembersActivity"
             android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".groups.CreateEditGroupActivity"
             android:label="@string/title_activity_create_group"
@@ -73,8 +76,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".groups.GroupsHomeActivity"
-            android:parentActivityName=".groups.MyGroupsActivity"
             android:label="@string/title_activity_groups_home"
+            android:parentActivityName=".groups.MyGroupsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -96,26 +99,26 @@
         <activity
             android:name=".identification.contacts.PhoneContactsActivity"
             android:parentActivityName=".identification.contacts.AppContactsActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".userProfile.MyProfileActivity"
-            android:screenOrientation="portrait"
+            android:label="@string/title_activity_my_profile"
             android:parentActivityName=".groups.MyGroupsActivity"
-            android:label="@string/title_activity_my_profile" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".userProfile.EditUserProfileActivity"
             android:label="@string/title_activity_edit_user_profile"
-            android:screenOrientation="portrait"
             android:parentActivityName=".userProfile.MyProfileActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".userProfile.MemberProfileActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_member_profile" />
+            android:label="@string/title_activity_member_profile"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".polls.CreatePollActivity"
             android:label="@string/title_activity_create_poll"
@@ -127,8 +130,8 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".polls.PollVoteActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".polls.PollsListActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".polls.participants.ListParticipantActivity"
@@ -136,14 +139,14 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".messages.ShowConversationsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_show_conversation_activity" >
-        </activity>
+            android:label="@string/title_activity_show_conversation_activity"
+            android:parentActivityName=".groups.GroupsHomeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.ShowMessagesActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_show_messages_activity" >
-        </activity>
+            android:label="@string/title_activity_show_messages_activity"
+            android:parentActivityName=".messages.ShowConversationsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.CreateNewConversationActivity"
             android:label="@string/title_activity_create_new_conversation"
