@@ -21,7 +21,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +31,7 @@ import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
+import static ch.epfl.sweng.opengm.messages.ShowConversationsActivity.*;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFMessage.TABLE_ENTRY_BODY;
 import static ch.epfl.sweng.opengm.parse.PFMessage.TABLE_ENTRY_NAME;
@@ -41,8 +41,8 @@ import static ch.epfl.sweng.opengm.parse.PFMessage.TABLE_NAME;
 public class ShowMessagesActivity extends AppCompatActivity {
     private static String conversation;
     private ListView messageList;
-    private static final List<ChatMessage> messages = new ArrayList<>();
-    private static final List<String> messagesIds = new ArrayList<>();
+    private List<ChatMessage> messages;
+    private List<String> messagesIds;
     private EditText textBar;
     private MessageAdapter adapter;
     private NotificationManager manager;
@@ -58,6 +58,9 @@ public class ShowMessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_messages);
         Intent intent = getIntent();
         conversation = intent.getStringExtra(Utils.FILE_INFO_INTENT_MESSAGE);
+
+        messages = MESSAGES_FOR_CONV.get(conversation);
+        messagesIds = IDS_FOR_CONV.get(conversation);
 
         setTitle(conversation);
 
@@ -170,7 +173,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        ShowConversationsActivity.refresh = false;
+        refresh = false;
     }
 
     @Override
