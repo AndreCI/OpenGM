@@ -104,9 +104,4 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
-    }
-
 }
