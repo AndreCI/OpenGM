@@ -90,7 +90,7 @@ public class MyGroupsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_personal, menu);
+        getMenuInflater().inflate(R.menu.menu_my_groups, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
