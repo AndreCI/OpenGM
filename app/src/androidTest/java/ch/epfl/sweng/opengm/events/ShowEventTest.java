@@ -82,11 +82,11 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         setActivityIntent(intent);
         ShowEventActivity activity = getActivity();
         onView(withId(R.id.ShowEventNameText)).check(matches(withText(" " + "eventName_ShowEvent"+" ")));
-        onView(withId(R.id.ShowEventPlaceText)).check(matches(withText("      A lieu à : "+"eventPlace_ShowEvent"+"  ")));
-        onView(withId(R.id.ShowEventDescriptionText)).check(matches(withText("Description de l'evenement :\n"+"eventDescription_ShowEvent")));
-        assertEquals("      A "+"2 : 04"+ "  ", ((TextView) activity.findViewById(R.id.ShowEventHourText)).getText());
-        assertEquals("      Le : "+"6/06/1994"+"  ", ((TextView) activity.findViewById(R.id.ShowEventDateText)).getText());
-        onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Liste des participants:")));
+        onView(withId(R.id.ShowEventPlaceText)).check(matches(withText("      Place : "+"eventPlace_ShowEvent"+"  ")));
+        onView(withId(R.id.ShowEventDescriptionText)).check(matches(withText("Description :\n"+"eventDescription_ShowEvent")));
+        assertEquals("      Time : "+"2 : 04"+ "  ", ((TextView) activity.findViewById(R.id.ShowEventHourText)).getText());
+        assertEquals("      Date : "+"6/06/1994"+"  ", ((TextView) activity.findViewById(R.id.ShowEventDateText)).getText());
+        onView(withId(R.id.ShowEventParticipants)).check(matches(withText("Participants List :")));
     }
 
     @After
