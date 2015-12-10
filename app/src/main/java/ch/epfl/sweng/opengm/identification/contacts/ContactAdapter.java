@@ -5,7 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -48,11 +48,7 @@ class ContactAdapter extends ArrayAdapter<Contact> {
         Contact contact = objects.get(position);
         holder.name.setText(contact.getName());
         holder.number.setText(contact.getPhoneNumber());
-        if (appContact) {
-            holder.isUsingTheApp.setBackgroundResource(R.mipmap.ic_arrow_forward_white_24dp);
-        } else {
-            holder.isUsingTheApp.setText(contact.isIsUsingTheApp() ? "Y" : "N");
-        }
+        holder.isUsingTheApp.setImageResource(appContact || contact.isIsUsingTheApp() ? R.drawable.green_triangle : R.drawable.red_triangle);
         return row;
     }
 
@@ -60,12 +56,12 @@ class ContactAdapter extends ArrayAdapter<Contact> {
     private static class ContactHolder {
         private final TextView name;
         private final TextView number;
-        private final Button isUsingTheApp;
+        private final ImageView isUsingTheApp;
 
         private ContactHolder(View row) {
             name = (TextView) row.findViewById(R.id.contact_name);
             number = (TextView) row.findViewById(R.id.contact_number);
-            isUsingTheApp = (Button) row.findViewById(R.id.contact_useTheApp);
+            isUsingTheApp = (ImageView) row.findViewById(R.id.contact_useTheApp);
         }
 
     }

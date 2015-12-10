@@ -43,6 +43,9 @@ public class MyGroupsActivity extends AppCompatActivity {
     private GroupCardViewAdapter adapter;
     private final List<PFGroup> mGroups = new ArrayList<>();
 
+    private boolean canClickProfile = true;
+    private boolean canClickMembers = true;
+
     private ProgressBar progressBar;
     private TextView progressText;
 
@@ -112,10 +115,14 @@ public class MyGroupsActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.action_show_contacts:
-                startActivity(new Intent(MyGroupsActivity.this, AppContactsActivity.class));
+                if (canClickMembers) {
+                    startActivity(new Intent(MyGroupsActivity.this, AppContactsActivity.class));
+                }
                 return true;
             case R.id.action_show_user_profile:
-                startActivity(new Intent(MyGroupsActivity.this, MyProfileActivity.class));
+                if (canClickProfile) {
+                    startActivity(new Intent(MyGroupsActivity.this, MyProfileActivity.class));
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -180,9 +187,12 @@ public class MyGroupsActivity extends AppCompatActivity {
 
         @Override
         protected java.lang.Void doInBackground(Boolean... params) {
+            canClickProfile = false;
+            canClickMembers = false;
             boolean reloadGroups = params[0];
             try {
                 OpenGMApplication.setCurrentUserWithId(ParseUser.getCurrentUser().getObjectId());
+                canClickProfile = true;
             } catch (PFException e) {
                 showToast("Error while retrieving the your user information");
                 return null;
@@ -248,6 +258,7 @@ public class MyGroupsActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             progressText.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();
+            canClickMembers = true;
         }
 
         private void showToast(final String text) {
