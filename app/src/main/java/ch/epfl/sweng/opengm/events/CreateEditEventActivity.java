@@ -100,14 +100,30 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 ArrayList<String> ids = data.getStringArrayListExtra(AddRemoveParticipantsActivity.PARTICIPANTS_LIST_RESULT);
                 if(ids!=null) {
-                    try {
-                        for (int i = 0; i < ids.size(); i++) {
-                            participants.put(ids.get(i), PFMember.fetchExistingMember(ids.get(i)));
+                    Button button = (Button) findViewById(R.id.CreateEditOkButton);
+                    button.setClickable(false);
+                    button.setText("WAIT");
+                    new AsyncTask<List<String>, Void, Void>(){
+
+                        @Override
+                        protected Void doInBackground(List<String>... params) {
+                            try {
+                                for (int i = 0; i < params[0].size(); i++) {
+                                    participants.put(params[0].get(i), PFMember.fetchExistingMember(params[0].get(i)));
+                                }
+                            }catch (PFException e) {
+                                Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
+                            }
+                            return null;
                         }
-                    }catch (PFException e) {
-                        Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
-                    }
-                    Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
+                        @Override
+                        protected void onPostExecute(Void result) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
+                            Button button = (Button) findViewById(R.id.CreateEditOkButton);
+                            button.setClickable(true);
+                            button.setText("OK");
+                        }
+                    }.execute(ids);
                 }else{
                     Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
                 }
