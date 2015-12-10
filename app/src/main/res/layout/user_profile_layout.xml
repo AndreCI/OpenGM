@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/userPhoto"
-                android:src="@drawable/avatar_male1"
+                android:src="@drawable/avatar_male"
                 android:scaleType="centerCrop"
                 android:maxWidth="50dp"
                 android:layout_margin="10dp"

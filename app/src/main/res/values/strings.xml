@@ -112,7 +112,7 @@
     <string name="action_remove_person">Remove member</string>
     <string name="action_change_roles">Change roles</string>
     <string name="dialog_add_member_title">Add a member</string>
-    <string name="dialog_add_member_text">Enter username or mail:</string>
+    <string name="dialog_add_member_text">Enter username or email:</string>
     <string name="add">Add</string>
 
     <string name="title_activity_modify_group">ModifyGroup</string>

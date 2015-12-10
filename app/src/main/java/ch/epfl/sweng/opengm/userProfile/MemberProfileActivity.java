@@ -50,7 +50,7 @@ public class MemberProfileActivity extends AppCompatActivity {
             if (currentMember.getPicture() != null) {
                 photoImageView.setImageBitmap(currentMember.getPicture());
             } else {
-                photoImageView.setImageResource(R.drawable.avatar_male1);
+                photoImageView.setImageResource(R.drawable.avatar_male);
             }
 
             // Display first name of user :

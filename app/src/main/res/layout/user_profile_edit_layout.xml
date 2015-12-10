@@ -26,7 +26,7 @@
                 android:layout_weight="50"
                 android:maxWidth="50dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/avatar_male1" />
+                android:src="@drawable/avatar_male" />
 
             <Button
                 android:id="@+id/changePictureButton"
