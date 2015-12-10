@@ -12,6 +12,7 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
+import ch.epfl.sweng.opengm.UtilsTest;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
@@ -23,9 +24,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
 
-/**
- * Created by heinz on 11/9/15.
- */
 public class MemberActivityTest extends ActivityInstrumentationTestCase2<MembersActivity> {
 
     private MembersActivity activity;
@@ -51,7 +49,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         parseUsers = new ArrayList<>();
 
         ParseUser parseUser = new ParseUser();
-        parseUser.setUsername("testUsername");
+        parseUser.setUsername(UtilsTest.getRandomId());
         parseUser.setPassword("a");
         parseUser.setEmail("testUser@testUser.com");
         parseUsers.add(parseUser);
@@ -64,7 +62,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         testGroup = PFGroup.createNewGroup(user, "testGroup", "bla", null);
         OpenGMApplication.setCurrentGroup(testGroup);
 
-        for(int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             parseUser = new ParseUser();
             parseUser.setUsername("testUsername" + i);
             parseUser.setPassword("a");
@@ -77,7 +75,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             testGroup.addUserWithId(testUser.getId());
         }
 
-        for(int i = 6; i <= 10; i++) {
+        for (int i = 6; i <= 10; i++) {
             parseUser = new ParseUser();
             parseUser.setUsername("testUsername" + i);
             parseUser.setPassword("a");
@@ -134,7 +132,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
     private List<String> getDisplayedMembersNames() {
         List<String> names = new ArrayList<>();
         for (int i = 0; i < list.getCount(); i++) {
-            TextView t = (TextView)list.getChildAt(i).findViewById(R.id.member_name);
+            TextView t = (TextView) list.getChildAt(i).findViewById(R.id.member_name);
             names.add(t.getText().toString());
         }
         return names;
