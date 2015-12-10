@@ -174,7 +174,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
         NotificationCompat.Builder builder =
                 (NotificationCompat.Builder) new NotificationCompat.Builder(ShowMessagesActivity.this)
-                        .setSmallIcon(R.drawable.avatar_male1)
+                        .setSmallIcon(R.drawable.avatar_male)
                         .setContentTitle("New message in " + conversation)
                         .setContentText(messages.get(messages.size() - 1).getMessage());
 
