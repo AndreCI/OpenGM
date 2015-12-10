@@ -41,7 +41,7 @@ public class EventListActivity extends AppCompatActivity {
 
     //TODO : Image is not optimal.
     public static final int EVENT_LIST_RESULT_CODE = 666;
-
+    public static PFEvent currentEvent;
     private Map<String,PFEvent> eventMap;
     private PFGroup currentGroup;
 
@@ -119,7 +119,7 @@ public class EventListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent eventIntent) {
         if (requestCode == EVENT_LIST_RESULT_CODE) {
             if(resultCode == Activity.RESULT_OK){
-                PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+                PFEvent event = CreateEditEventActivity.newEvent;//eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 boolean edited = eventIntent.getBooleanExtra(Utils.EDIT_INTENT_MESSAGE, false);
 
                 if(NetworkUtils.haveInternet(getBaseContext())) {
@@ -143,7 +143,7 @@ public class EventListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), getString(R.string.EventListFailToAdd), Toast.LENGTH_SHORT).show();
             }
             if(resultCode == Utils.DELETE_EVENT){
-                PFEvent event = eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+                PFEvent event = currentEvent;//eventIntent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
 
                 if(NetworkUtils.haveInternet(getBaseContext())) {
                     try {
@@ -162,6 +162,7 @@ public class EventListActivity extends AppCompatActivity {
             }
             displayEvents();
         }
+        currentEvent=null;
     }
 
     /**
@@ -273,22 +274,23 @@ public class EventListActivity extends AppCompatActivity {
         }
     }
 
-    private void showEvent(PFEvent currentEvent) {
-        if(currentEvent.getPicturePath().equals(PFUtils.pathNotSpecified)) {
+    private void showEvent(PFEvent cliquedEvent) {
+        if(cliquedEvent.getPicturePath().equals(PFUtils.pathNotSpecified)) {
             try {
-                String imageName = currentEvent.getId() + "_event";
-                currentEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.
-                        saveToInternalStorage(currentEvent.getPicture(), getApplicationContext(), imageName));
-                currentEvent.setPictureName(imageName);
+                String imageName = cliquedEvent.getId() + "_event";
+                cliquedEvent.setPicturePath(ch.epfl.sweng.opengm.utils.Utils.
+                        saveToInternalStorage(cliquedEvent.getPicture(), getApplicationContext(), imageName));
+                cliquedEvent.setPictureName(imageName);
             } catch (IOException e) {
                 Toast.makeText(getApplicationContext(), "Unable to write image or to retrieve image", Toast.LENGTH_SHORT).show();
-                currentEvent.setPicturePath(PFUtils.pathNotSpecified);
-                currentEvent.setPictureName(PFUtils.nameNotSpecified);
+                cliquedEvent.setPicturePath(PFUtils.pathNotSpecified);
+                cliquedEvent.setPictureName(PFUtils.nameNotSpecified);
             }
         }
 
         Intent intent = new Intent(this, ShowEventActivity.class);
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, currentEvent);
+        currentEvent = cliquedEvent;
+      //  intent.putExtra(Utils.EVENT_INTENT_MESSAGE, cliquedEvent);
         startActivityForResult(intent, EVENT_LIST_RESULT_CODE);
     }
 }

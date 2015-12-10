@@ -38,7 +38,8 @@ public class ShowEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         currentGroup = getCurrentGroup();
-        event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+       event = EventListActivity.currentEvent;
+       // event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         setTitle("Event : "+event.getName() + " for the group : "+currentGroup.getName());
         if (getSupportActionBar() != null) {
@@ -63,7 +64,7 @@ public class ShowEventActivity extends AppCompatActivity {
 
         if (requestCode == SHOW_EVENT_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                event = data.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+                event = CreateEditEventActivity.newEvent;//data.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
                 modified=true;
                 Toast.makeText(this, "event successfully edited", Toast.LENGTH_SHORT).show();
                 Log.v("event received in Show", event.getId());
@@ -78,7 +79,7 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent();
         if(modified) {
-            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+            //intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             intent.putExtra(Utils.EDIT_INTENT_MESSAGE, true);
             setResult(Activity.RESULT_OK, intent);
         }else{
@@ -158,7 +159,7 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onEditButtonClick(View view) {
         if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, CreateEditEventActivity.class);
-            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+          //  intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             startActivityForResult(intent, SHOW_EVENT_RESULT_CODE);
         }else{
             Toast.makeText(getApplicationContext(), "You don't have the permission to edit this event", Toast.LENGTH_SHORT).show();
@@ -168,7 +169,7 @@ public class ShowEventActivity extends AppCompatActivity {
     public void onDeleteButtonClick(View v){
         if(currentGroup.hasUserPermission(OpenGMApplication.getCurrentUser().getId(), PFGroup.Permission.MANAGE_EVENT)) {
             Intent intent = new Intent(this, ShowEventActivity.class);
-            intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+            //intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
             setResult(Utils.DELETE_EVENT, intent);
             finish();
         }else{

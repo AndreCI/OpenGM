@@ -46,6 +46,7 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
+    public static PFEvent newEvent;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE_BROWSE_FOR_BITMAP = 69;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent event;
@@ -64,7 +65,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         currentGroup = getCurrentGroup();
-        PFEvent event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        PFEvent event = EventListActivity.currentEvent;//intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -189,7 +190,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 PFEvent event = createEditEvent();
                 if (event != null) {
-                    intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+                    newEvent = event;//intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
                     setResult(Activity.RESULT_OK, intent);
                     Log.v("event send in CreateEd", event.getId());
                     finish();
