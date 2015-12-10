@@ -28,11 +28,6 @@ public class PFMessage extends PFEntity {
         return senderId;
     }
 
-
-    public String getConversationName() {
-        return conversationName;
-    }
-
     public String getBody() {
         return body;
     }
@@ -45,7 +40,7 @@ public class PFMessage extends PFEntity {
         groupId = in.readString();
     }
 
-    private PFMessage(String id, Date modifiedDate, String senderId, Long timestamp, String conversationName, String body, String groupId) {
+    private PFMessage(String id, Date modifiedDate, String senderId, String conversationName, String body, String groupId) {
         super(id, TABLE_NAME, modifiedDate);
         this.senderId = senderId;
         this.conversationName = conversationName;
@@ -53,19 +48,18 @@ public class PFMessage extends PFEntity {
         this.groupId = groupId;
     }
 
-    public static PFMessage getExistingMessage(String id, Date modifiedDate, String sender, Long timestamp, String conversationName, String body, String groupId) {
-        return new PFMessage(id, modifiedDate, sender, timestamp, conversationName, body, groupId);
+    public static PFMessage getExistingMessage(String id, Date modifiedDate, String sender, String conversationName, String body, String groupId) {
+        return new PFMessage(id, modifiedDate, sender, conversationName, body, groupId);
     }
 
     public static PFMessage writeMessage(String conversationName, String groupId, String senderId, String body) throws IOException, PFException, ParseException {
         ParseObject object = new ParseObject(TABLE_NAME);
-        long timestamp = Calendar.getInstance(TimeZone.getTimeZone("GMT")).getTimeInMillis();
         object.put(TABLE_ENTRY_BODY, body);
         object.put(TABLE_ENTRY_SENDER, senderId);
         object.put(TABLE_ENTRY_NAME, conversationName);
         object.put(TABLE_ENTRY_GROUPID, groupId);
         object.save();
-        return new PFMessage(object.getObjectId(), object.getUpdatedAt(), senderId, timestamp, conversationName, body, groupId);
+        return new PFMessage(object.getObjectId(), object.getUpdatedAt(), senderId, conversationName, body, groupId);
     }
 
     @Override

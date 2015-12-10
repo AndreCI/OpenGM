@@ -2,6 +2,7 @@ package ch.epfl.sweng.opengm.parse;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -46,6 +47,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
     private String mPictureName;
     private Bitmap mPicture;
     private HashMap<String, PFMember> mParticipants;
+    private boolean participantsGet = false;
 
     public PFEvent(Parcel in) {
         super(in, PARSE_TABLE_EVENT);
@@ -56,7 +58,29 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         mPicturePath = in.readString();
         mPictureName = in.readString();
         mPicture=null;
-        List<String> participantKeys = in.createStringArrayList();
+        ArrayList<String> ids = in.createStringArrayList();
+        mParticipants = new HashMap<>();
+        for(String s : ids){
+            try {
+                mParticipants.put(s, PFMember.fetchExistingMember(s));
+            } catch (PFException e) {
+            }
+        }
+      /*  new AsyncTask<List<String>, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(List<String>... params) {
+                for(String s : params[0]){
+                    try {
+                        mParticipants.put(s, PFMember.fetchExistingMember(s));
+                    } catch (PFException e) {
+
+                    }
+                }
+                return null;
+            }
+        }.execute(ids);*/
+      /*  List<String> participantKeys = in.createStringArrayList();
         Parcelable[] array = in.readParcelableArray(PFMember.class.getClassLoader());
         List<PFMember> participants = new ArrayList<>();
         for(Parcelable parcelable : array) {
@@ -65,7 +89,7 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         mParticipants = new HashMap<>();
         for(int i = 0; i < participants.size(); ++i) {
             mParticipants.put(participantKeys.get(i), participants.get(i));
-        }
+        }*/
     }
 
     public static final Creator<PFEvent> CREATOR = new Creator<PFEvent>() {
@@ -408,14 +432,16 @@ public final class PFEvent extends PFEntity implements Parcelable, Comparable<PF
         dest.writeString(mPicturePath);
         dest.writeString(mPictureName);
         List<String> participantKeys = new ArrayList<>();
-        List<PFMember> participants = new ArrayList<>();
+        //List<PFMember> participants = new ArrayList<>();
+
+
         for(String s : mParticipants.keySet()) {
             participantKeys.add(s);
-            participants.add(mParticipants.get(s));
+          //  participants.add(mParticipants.get(s));
         }
         dest.writeStringList(participantKeys);
-        Parcelable[] array = new Parcelable[participants.size()];
-        dest.writeParcelableArray(participants.toArray(array), 0);
+        //Parcelable[] array = new Parcelable[participants.size()];
+        //dest.writeParcelableArray(participants.toArray(array), 0);
         //dest.writeTypedList(participants);
     }
 

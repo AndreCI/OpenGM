@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
@@ -31,6 +31,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
     private PFGroup currentGroup;
     private List<String> conversations;
     public static final int NEW_CONVERSATION_REQUEST_CODE = 1;
+    public static final HashMap<String, List<String>> IDS_FOR_CONV = new HashMap<>();
+    public static final HashMap<String, List<ChatMessage>> MESSAGES_FOR_CONV = new HashMap<>();
     private CustomAdapter adapter;
 
     @Override
@@ -65,7 +67,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView textView = (TextView) view.findViewById(R.id.conversation_title);
                 String conversationName = textView.getText().toString();
-                Log.v("ShowConversation", conversationName);
                 Intent intent = new Intent(ShowConversationsActivity.this, ShowMessagesActivity.class);
                 intent.putExtra(Utils.FILE_INFO_INTENT_MESSAGE, conversationName);
                 intent.putExtra(Utils.NOTIF_INTENT_MESSAGE, true);
@@ -95,8 +96,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 String conversationName = data.getStringExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE);
                 new CreateNewConvResult().execute(conversationName);
-            } else {
-                Log.v("ShowConversations", "activity result bad code");
             }
         }
     }
@@ -133,7 +132,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            Log.v("showConversationsAct", String.valueOf(conversations.size()) + ':' + position);
             if (position < conversations.size()) {
                 String conversation = conversations.get(position);
                 holder.textView.setText(conversation);
@@ -150,6 +148,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
             for (String s : params[0].getConversationInformations()) {
                 if (s != null && !s.isEmpty()) {
                     result.add(s);
+                    IDS_FOR_CONV.put(s, new ArrayList<String>());
+                    MESSAGES_FOR_CONV.put(s, new ArrayList<ChatMessage>());
                 }
             }
             return result;
@@ -175,9 +175,6 @@ public class ShowConversationsActivity extends AppCompatActivity {
                 oldConvs.add(conversation);
                 updateList(oldConvs);
                 currentGroup.addConversation(conversation);
-                Log.v("CreateNewConversation", conversation);
-            } else {
-                Log.e("ShowConv res", "coudln't create conversation");
             }
         }
     }
