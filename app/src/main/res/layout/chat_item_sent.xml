@@ -60,6 +60,6 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="15dp"
         android:layout_weight="10"
-        android:background="@drawable/avatar_male1" />
+        android:background="@drawable/avatar_male" />
 
 </LinearLayout>

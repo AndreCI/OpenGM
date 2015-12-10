@@ -22,17 +22,16 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
-import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 
-/**
- * Created by heinz on 11/9/15.
- */
 public class MemberActivityTest extends ActivityInstrumentationTestCase2<MembersActivity> {
+
+    private String random;
+
 
     private MembersActivity activity;
     private ListView list;
@@ -53,13 +52,15 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         OpenGMApplication.logOut();
 
+        random = getRandomId();
+
         testUsers = new ArrayList<>();
         parseUsers = new ArrayList<>();
 
         ParseUser parseUser = new ParseUser();
-        parseUser.setUsername("testUsername");
+        parseUser.setUsername(random);
         parseUser.setPassword("a");
-        parseUser.setEmail("testUser@testUser.com");
+        parseUser.setEmail(random + "@testUser.com");
         parseUsers.add(parseUser);
         parseUser.signUp();
 
@@ -72,9 +73,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         for(int i = 1; i <= 4; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername(random + i);
             parseUser.setPassword("a");
-            parseUser.setEmail("testUser" + i + "@testUser.com");
+            parseUser.setEmail(random + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
@@ -85,9 +86,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         for(int i = 5; i <= 10; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername(random + i);
             parseUser.setPassword("a");
-            parseUser.setEmail("testUser" + i + "@testUser.com");
+            parseUser.setEmail(random + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
@@ -104,13 +105,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
     protected void tearDown() throws Exception {
         OpenGMApplication.logOut();
         testGroup.deleteGroup();
-        for (PFUser users : testUsers) {
-            deleteUserWithId(users.getId());
-        }
         for (ParseUser user : parseUsers) {
             ParseUser.logIn(user.getUsername(), "a");
-            user.delete();
-            ParseUser.logOut();
+            deleteUserWithId(user.getObjectId());
         }
         super.tearDown();
     }
@@ -126,7 +123,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testAddMemberWithUsernameToGroup() {
         onView(withId(R.id.action_add_person)).perform(click());
-        onView(withId(R.id.dialog_add_member_username)).perform(typeText("testUsername" + 10));
+        onView(withId(R.id.dialog_add_member_username)).perform(typeText(random + 10));
         onView(withText(R.string.add)).perform(click());
         try {
             Thread.sleep(5000);
@@ -134,13 +131,13 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             e.printStackTrace();
         }
         List<String> l = getDisplayedMembersNames();
-        assertTrue(l.contains("testUsername10"));
-        assertFalse(l.contains("testUsername8"));
+        assertTrue(l.contains(random + 10));
+        assertFalse(l.contains(random + 8));
     }
 
     public void testAddMemberWithEmailToGroup() {
         onView(withId(R.id.action_add_person)).perform(click());
-        onView(withId(R.id.dialog_add_member_username)).perform(typeText("testUser" + 10 + "@testUser.com"));
+        onView(withId(R.id.dialog_add_member_username)).perform(typeText(random + 10 + "@testUser.com"));
         onView(withText(R.string.add)).perform(click());
         try {
             Thread.sleep(5000);
@@ -148,15 +145,15 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             e.printStackTrace();
         }
         List<String> l = getDisplayedMembersNames();
-        assertTrue(l.contains("testUsername10"));
-        assertFalse(l.contains("testUsername8"));
+        assertTrue(l.contains(random + 10));
+        assertFalse(l.contains(random + 8));
     }
 
     public void testCheckBoxAppearsOnLongClick() {
         View v = list.getChildAt(0);
         CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
         assertTrue(c.getVisibility() == View.GONE);
-        onView(withText("testUsername")).perform(longClick());
+        onView(withText(random)).perform(longClick());
         assertTrue(c.getVisibility() == View.VISIBLE);
     }
 
@@ -166,7 +163,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         View v2 = list.getChildAt(1);
         CheckBox c2 = (CheckBox)v2.findViewById(R.id.member_checkbox);
         assertTrue(c.getVisibility() == View.GONE);
-        onView(withText("testUsername")).perform(longClick());
+        onView(withText(random)).perform(longClick());
         assertTrue(c.getVisibility() == View.VISIBLE);
         assertTrue(c.isChecked());
         assertFalse(c2.isChecked());
@@ -176,7 +173,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         View v = list.getChildAt(0);
         CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
         assertTrue(c.getVisibility() == View.GONE);
-        onView(withText("testUsername")).perform(longClick());
+        onView(withText(random)).perform(longClick());
         assertTrue(c.getVisibility() == View.VISIBLE);
         pressBack();
         assertTrue(c.getVisibility() == View.GONE);
@@ -184,35 +181,35 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testRemoveOneMember() {
         List<String> l = getDisplayedMembersNames();
-        assertTrue(l.contains("testUsername4"));
-        onView(withText("testUsername4")).perform(longClick());
+        assertTrue(l.contains(random + 4));
+        onView(withText(random + 4)).perform(longClick());
         onView(withId(R.id.action_remove_person)).perform(click());
         l = getDisplayedMembersNames();
-        assertFalse(l.contains("testUsername4"));
-        assertTrue(l.contains("testUsername3"));
+        assertFalse(l.contains(random + 4));
+        assertTrue(l.contains(random + 3));
     }
 
     public void testRemoveMultipleMembers() {
         List<String> l = getDisplayedMembersNames();
-        assertTrue(l.contains("testUsername4"));
-        assertTrue(l.contains("testUsername1"));
-        assertTrue(l.contains("testUsername2"));
+        assertTrue(l.contains(random + 4));
+        assertTrue(l.contains(random + 1));
+        assertTrue(l.contains(random + 2));
 
-        onView(withText("testUsername4")).perform(longClick());
-        onView(withText("testUsername1")).perform(click());
-        onView(withText("testUsername2")).perform(click());
+        onView(withText(random + 4)).perform(longClick());
+        onView(withText(random + 1)).perform(click());
+        onView(withText(random + 2)).perform(click());
         onView(withId(R.id.action_remove_person)).perform(click());
 
         l = getDisplayedMembersNames();
-        assertFalse(l.contains("testUsername4"));
-        assertFalse(l.contains("testUsername1"));
-        assertFalse(l.contains("testUsername2"));
-        assertTrue(l.contains("testUsername3"));
+        assertFalse(l.contains(random + 4));
+        assertFalse(l.contains(random + 1));
+        assertFalse(l.contains(random + 2));
+        assertTrue(l.contains(random + 3));
     }
 
     public void testAddThenRemoveMember() {
         onView(withId(R.id.action_add_person)).perform(click());
-        onView(withId(R.id.dialog_add_member_username)).perform(typeText("testUser" + 9 + "@testUser.com"));
+        onView(withId(R.id.dialog_add_member_username)).perform(typeText(random + 9 + "@testUser.com"));
         onView(withText(R.string.add)).perform(click());
         try {
             Thread.sleep(5000);
@@ -220,11 +217,11 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             e.printStackTrace();
         }
         List<String> l = getDisplayedMembersNames();
-        assertTrue(l.contains("testUsername9"));
-        onView(withText("testUsername9")).perform(longClick());
+        assertTrue(l.contains(random + 9));
+        onView(withText(random + 9)).perform(longClick());
         onView(withId(R.id.action_remove_person)).perform(click());
         l = getDisplayedMembersNames();
-        assertFalse(l.contains("testUsername9"));
+        assertFalse(l.contains(random + 9));
     }
 
     public void testTryToAddWrongUsername() {
@@ -243,7 +240,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
     private List<String> getDisplayedMembersNames() {
         List<String> names = new ArrayList<>();
         for (int i = 0; i < list.getCount(); i++) {
-            TextView t = (TextView)list.getChildAt(i).findViewById(R.id.member_name);
+            TextView t = (TextView) list.getChildAt(i).findViewById(R.id.member_name);
             names.add(t.getText().toString());
         }
         return names;
