@@ -46,6 +46,7 @@ import static ch.epfl.sweng.opengm.events.Utils.dateToString;
 
 public class CreateEditEventActivity extends AppCompatActivity {
     public final static String CREATE_EDIT_EVENT_MESSAGE = "ch.epfl.sweng.opengm.events.CREATE_EDIT_EVENT";
+    public static PFEvent newEvent;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE_BROWSE_FOR_BITMAP = 69;
     public static final int CREATE_EDIT_EVENT_RESULT_CODE = 42;
     private PFEvent event;
@@ -62,9 +63,8 @@ public class CreateEditEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_edit_event);
         findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.GONE);
 
-        Intent intent = getIntent();
         currentGroup = getCurrentGroup();
-        PFEvent event = intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
+        PFEvent event = EventListActivity.currentEvent;//intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -100,14 +100,30 @@ public class CreateEditEventActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 ArrayList<String> ids = data.getStringArrayListExtra(AddRemoveParticipantsActivity.PARTICIPANTS_LIST_RESULT);
                 if(ids!=null) {
-                    try {
-                        for (int i = 0; i < ids.size(); i++) {
-                            participants.put(ids.get(i), PFMember.fetchExistingMember(ids.get(i)));
+                    Button button = (Button) findViewById(R.id.CreateEditOkButton);
+                    button.setClickable(false);
+                    button.setText("WAIT");
+                    new AsyncTask<List<String>, Void, Void>(){
+
+                        @Override
+                        protected Void doInBackground(List<String>... params) {
+                            try {
+                                for (int i = 0; i < params[0].size(); i++) {
+                                    participants.put(params[0].get(i), PFMember.fetchExistingMember(params[0].get(i)));
+                                }
+                            }catch (PFException e) {
+                                Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
+                            }
+                            return null;
                         }
-                    }catch (PFException e) {
-                        Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
-                    }
-                    Toast.makeText(this, getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
+                        @Override
+                        protected void onPostExecute(Void result) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.CreateEditSuccessfullAddParticipants), Toast.LENGTH_SHORT).show();
+                            Button button = (Button) findViewById(R.id.CreateEditOkButton);
+                            button.setClickable(true);
+                            button.setText("OK");
+                        }
+                    }.execute(ids);
                 }else{
                     Toast.makeText(getApplicationContext(), "Error retrieving Participants", Toast.LENGTH_SHORT).show();
                 }
@@ -137,7 +153,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 }
                 Button button = (Button) findViewById(R.id.CreateEditOkButton);
                 button.setClickable(false);
-                button.setText("WAIT");
+                button.setText("Wait");
                 new AsyncTask<ContentResolver, Integer, Bitmap>() {
                     @Override
                     protected Bitmap doInBackground(ContentResolver... params) {
@@ -156,7 +172,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     protected void onPostExecute(Bitmap result) {
                         Button button = (Button) findViewById(R.id.CreateEditOkButton);
                         button.setClickable(true);
-                        button.setText("OK");
+                        button.setText("Ok");
                         b = result;
                     }
                 }.execute(this.getContentResolver());
@@ -173,7 +189,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 PFEvent event = createEditEvent();
                 if (event != null) {
-                    intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
+                    newEvent = event;//intent.putExtra(Utils.EVENT_INTENT_MESSAGE, event);
                     setResult(Activity.RESULT_OK, intent);
                     Log.v("event send in CreateEd", event.getId());
                     finish();
