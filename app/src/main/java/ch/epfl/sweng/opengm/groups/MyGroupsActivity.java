@@ -192,7 +192,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     progressBar.setMax(max);
-                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your gxroups : 0 of %d ...", max));
+                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : 0 of %d ...", max));
                 }
             });
             int current = 0;
