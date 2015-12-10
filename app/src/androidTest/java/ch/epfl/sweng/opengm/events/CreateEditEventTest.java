@@ -101,8 +101,9 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
     }
 
     public void testNameButNoTime() throws PFException {
-        Intent intent = new Intent();
-        setActivityIntent(intent);
+        Intent i = new Intent();
+        EventListActivity.currentEvent = null;//i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
+        setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).perform(typeText("testName"));
         closeSoftKeyboard();
