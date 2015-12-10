@@ -63,7 +63,6 @@ public class CreateEditEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_edit_event);
         findViewById(R.id.CreateEditLoadingPanel).setVisibility(View.GONE);
 
-        Intent intent = getIntent();
         currentGroup = getCurrentGroup();
         PFEvent event = EventListActivity.currentEvent;//intent.getParcelableExtra(Utils.EVENT_INTENT_MESSAGE);
         Log.v("group members", Integer.toString(currentGroup.getMembers().size()));
@@ -154,7 +153,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                 }
                 Button button = (Button) findViewById(R.id.CreateEditOkButton);
                 button.setClickable(false);
-                button.setText("WAIT");
+                button.setText("Wait");
                 new AsyncTask<ContentResolver, Integer, Bitmap>() {
                     @Override
                     protected Bitmap doInBackground(ContentResolver... params) {
@@ -173,7 +172,7 @@ public class CreateEditEventActivity extends AppCompatActivity {
                     protected void onPostExecute(Bitmap result) {
                         Button button = (Button) findViewById(R.id.CreateEditOkButton);
                         button.setClickable(true);
-                        button.setText("OK");
+                        button.setText("Ok");
                         b = result;
                     }
                 }.execute(this.getContentResolver());
