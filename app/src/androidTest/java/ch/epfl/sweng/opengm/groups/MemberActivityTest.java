@@ -23,6 +23,7 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 
 public class MemberActivityTest extends ActivityInstrumentationTestCase2<MembersActivity> {
 
@@ -51,7 +52,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         ParseUser parseUser = new ParseUser();
         parseUser.setUsername(UtilsTest.getRandomId());
         parseUser.setPassword("a");
-        parseUser.setEmail("testUser@testUser.com");
+        parseUser.setEmail(getRandomId() + "@testUser.com");
         parseUsers.add(parseUser);
         parseUser.signUp();
 
@@ -66,7 +67,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             parseUser = new ParseUser();
             parseUser.setUsername("testUsername" + i);
             parseUser.setPassword("a");
-            parseUser.setEmail("testUser" + i + "@testUser.com");
+            parseUser.setEmail(getRandomId() + "i" + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
