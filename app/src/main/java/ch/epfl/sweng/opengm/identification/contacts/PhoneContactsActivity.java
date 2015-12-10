@@ -53,8 +53,6 @@ public class PhoneContactsActivity extends AppCompatActivity {
 
         list = (ListView) findViewById(R.id.contacts_list);
 
-        fillContacts();
-
         mAdapter = new ContactAdapter(this, mContacts, false);
         list.setAdapter(mAdapter);
 
@@ -91,8 +89,7 @@ public class PhoneContactsActivity extends AppCompatActivity {
                 }
             }
         });
-
-
+        fillContacts();
     }
 
     @Override
@@ -176,6 +173,10 @@ public class PhoneContactsActivity extends AppCompatActivity {
 
     private void fillContacts() {
 
+        mContacts.clear();
+
+        List<String> phones = new ArrayList<>();
+
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -190,16 +191,26 @@ public class PhoneContactsActivity extends AppCompatActivity {
                             null,
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                             new String[]{id}, null);
-                    while (pCur.moveToNext()) {
-                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        mContacts.add(new Contact(name, phoneNo, false));
+                    if (pCur != null) {
+                        while (pCur.moveToNext()) {
+                            String phoneNo = pCur.getString(pCur.
+                                    getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).
+                                    replaceAll(" ", "");
+                            if (!phones.contains(phoneNo)) {
+                                phones.add(phoneNo);
+                                Contact c = new Contact(name, phoneNo, false);
+                                mContacts.add(c);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }
                     }
                     pCur.close();
                 }
             }
+            cur.close();
         }
-        cur.close();
         Collections.sort(mContacts);
+        mAdapter.notifyDataSetChanged();
     }
 
 }
