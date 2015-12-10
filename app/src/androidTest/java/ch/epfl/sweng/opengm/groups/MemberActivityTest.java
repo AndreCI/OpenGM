@@ -22,8 +22,12 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 
 public class MemberActivityTest extends ActivityInstrumentationTestCase2<MembersActivity> {
+
+    private final static String random = getRandomId();
+
 
     private MembersActivity activity;
     private ListView list;
@@ -48,7 +52,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         parseUsers = new ArrayList<>();
 
         ParseUser parseUser = new ParseUser();
-        parseUser.setUsername("testUsername");
+        parseUser.setUsername(random);
         parseUser.setPassword("a");
         parseUser.setEmail("testUser@testUser.com");
         parseUsers.add(parseUser);
@@ -63,7 +67,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         for (int i = 1; i <= 5; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername(random + i);
             parseUser.setPassword("a");
             parseUser.setEmail("testUser" + i + "@testUser.com");
             parseUsers.add(parseUser);
@@ -76,7 +80,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         for (int i = 6; i <= 10; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername(random + i);
             parseUser.setPassword("a");
             parseUser.setEmail("testUser" + i + "@testUser.com");
             parseUsers.add(parseUser);
@@ -113,15 +117,15 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testAddMemberWithUsernameToGroup() {
         onView(withId(R.id.action_add_person)).perform(click());
-        onView(withId(R.id.dialog_add_member_username)).perform(typeText("testUsername" + 10));
+        onView(withId(R.id.dialog_add_member_username)).perform(typeText(random + 10));
         onView(withText(R.string.add)).perform(click());
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(getDisplayedMembersNames().contains("testUsername10"));
-        assertFalse(getDisplayedMembersNames().contains("testUsername8"));
+        assertTrue(getDisplayedMembersNames().contains(random + "10"));
+        assertFalse(getDisplayedMembersNames().contains(random + "8"));
     }
 
     private List<String> getDisplayedMembersNames() {
