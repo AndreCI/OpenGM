@@ -65,7 +65,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         for (int i = 1; i <= 5; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername("testUsername" + getRandomId() + i);
             parseUser.setPassword("a");
             parseUser.setEmail(getRandomId() + "i" + i + "@testUser.com");
             parseUsers.add(parseUser);
