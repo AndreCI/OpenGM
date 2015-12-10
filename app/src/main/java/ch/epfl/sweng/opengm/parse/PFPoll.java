@@ -316,6 +316,7 @@ public class PFPoll extends PFEntity implements Comparable<PFPoll> {
                     }
                     i++;
                 }
+                Log.d("POLLID", id);
                 return new PFPoll(id, object.getUpdatedAt(), name, deadline, description, answers, nAnswers, members, voters);
             } else {
                 throw new PFException("No object found for this idu");

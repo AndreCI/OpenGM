@@ -202,7 +202,7 @@ public class MyGroupsActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     progressBar.setMax(max);
-                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your mGroups : 0 of %d ...", max));
+                    progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : 0 of %d ...", max));
                 }
             });
             int current = 0;
@@ -246,7 +246,7 @@ public class MyGroupsActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(java.lang.Integer... values) {
             progressBar.setProgress(values[0]);
-            progressText.setText(String.format(Locale.getDefault(), "Retrieving your mGroups : %d of %d ...", values[0], progressBar.getMax()));
+            progressText.setText(String.format(Locale.getDefault(), "Retrieving your groups : %d of %d ...", values[0], progressBar.getMax()));
         }
 
         @Override
