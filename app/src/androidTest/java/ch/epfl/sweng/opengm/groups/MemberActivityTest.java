@@ -54,7 +54,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         ParseUser parseUser = new ParseUser();
         parseUser.setUsername(random);
         parseUser.setPassword("a");
-        parseUser.setEmail("testUser@testUser.com");
+        parseUser.setEmail(random + "@testUser.com");
         parseUsers.add(parseUser);
         parseUser.signUp();
 
@@ -82,7 +82,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             parseUser = new ParseUser();
             parseUser.setUsername(random + i);
             parseUser.setPassword("a");
-            parseUser.setEmail("testUser" + i + "@testUser.com");
+            parseUser.setEmail(random + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
