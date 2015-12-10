@@ -31,12 +31,11 @@ public class UtilsTest {
             ParseObject user1 = query1.getFirst();
             user1.delete();
 
-            ParseUser.logOut();
-
             // Remove from _User table
             ParseQuery<ParseUser> query2 = ParseUser.getQuery();
             ParseUser user2 = query2.get(id);
             user2.deleteInBackground();
+            ParseUser.logOut();
         } catch (ParseException e) {
             // Error while deleting the user but not so important
         }

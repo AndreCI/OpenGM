@@ -12,7 +12,6 @@ import java.util.List;
 
 import ch.epfl.sweng.opengm.OpenGMApplication;
 import ch.epfl.sweng.opengm.R;
-import ch.epfl.sweng.opengm.UtilsTest;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.parse.PFMember;
 import ch.epfl.sweng.opengm.parse.PFUser;
@@ -23,7 +22,6 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
-import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 
 public class MemberActivityTest extends ActivityInstrumentationTestCase2<MembersActivity> {
 
@@ -50,9 +48,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         parseUsers = new ArrayList<>();
 
         ParseUser parseUser = new ParseUser();
-        parseUser.setUsername(UtilsTest.getRandomId());
+        parseUser.setUsername("testUsername");
         parseUser.setPassword("a");
-        parseUser.setEmail(getRandomId() + "@testUser.com");
+        parseUser.setEmail("testUser@testUser.com");
         parseUsers.add(parseUser);
         parseUser.signUp();
 
@@ -65,9 +63,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         for (int i = 1; i <= 5; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + getRandomId() + i);
+            parseUser.setUsername("testUsername" + i);
             parseUser.setPassword("a");
-            parseUser.setEmail(getRandomId() + "i" + i + "@testUser.com");
+            parseUser.setEmail("testUser" + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
@@ -97,13 +95,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
     protected void tearDown() throws Exception {
         OpenGMApplication.logOut();
         testGroup.deleteGroup();
-        for (PFUser users : testUsers) {
-            deleteUserWithId(users.getId());
-        }
         for (ParseUser user : parseUsers) {
             ParseUser.logIn(user.getUsername(), "a");
-            user.delete();
-            ParseUser.logOut();
+            deleteUserWithId(user.getObjectId());
         }
         super.tearDown();
     }
