@@ -76,9 +76,9 @@ public class ShowEventTest extends ActivityInstrumentationTestCase2<ShowEventAct
         e = PFEvent.createEvent(group, "eventName_ShowEvent", "eventPlace_ShowEvent", new Date(1994, 5, 6, 2, 4), new ArrayList<PFMember>(), "eventDescription_ShowEvent", PFUtils.pathNotSpecified, PFUtils.nameNotSpecified, null);
     }
 
-   public void testPreFillWithEventInIntent() throws PFException {
+   public void testPreFillWithEvent() throws PFException {
         Intent intent = new Intent();
-        intent.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
+        EventListActivity.currentEvent = e;//intent.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(intent);
         ShowEventActivity activity = getActivity();
         onView(withId(R.id.ShowEventNameText)).check(matches(withText(" " + "eventName_ShowEvent"+" ")));

@@ -116,7 +116,7 @@ public class CreateEditEventTest extends ActivityInstrumentationTestCase2<Create
 
     public void testEventInIntent() throws PFException {
         Intent i = new Intent();
-        i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
+        EventListActivity.currentEvent = e;//i.putExtra(Utils.EVENT_INTENT_MESSAGE, e);
         setActivityIntent(i);
         CreateEditEventActivity act = getActivity();
         onView(withId(R.id.CreateEditEventNameText)).check(matches(withText("eventName2_CreateEditEvent")));
