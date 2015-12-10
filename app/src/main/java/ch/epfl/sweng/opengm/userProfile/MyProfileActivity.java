@@ -51,7 +51,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         // Display profile picture of user :
         if (currentUser.getPicture() == null) {
-            photoImageView.setImageResource(R.drawable.avatar_male1);
+            photoImageView.setImageResource(R.drawable.avatar_male);
         } else {
             photoImageView.setImageBitmap(currentUser.getPicture());
         }
@@ -102,11 +102,6 @@ public class MyProfileActivity extends AppCompatActivity {
                 updateFields();
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
     }
 
 }

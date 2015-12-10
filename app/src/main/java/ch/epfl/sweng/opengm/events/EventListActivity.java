@@ -3,7 +3,6 @@ package ch.epfl.sweng.opengm.events;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -92,7 +91,7 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_personal, menu);
+        getMenuInflater().inflate(R.menu.menu_my_groups, menu);
         return super.onCreateOptionsMenu(menu);
     }
     @Override

@@ -22,11 +22,12 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ch.epfl.sweng.opengm.UtilsTest.deleteUserWithId;
+import static ch.epfl.sweng.opengm.UtilsTest.getRandomId;
 
-/**
- * Created by heinz on 11/9/15.
- */
 public class MemberActivityTest extends ActivityInstrumentationTestCase2<MembersActivity> {
+
+    private final static String random = getRandomId();
+
 
     private MembersActivity activity;
     private ListView list;
@@ -51,9 +52,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         parseUsers = new ArrayList<>();
 
         ParseUser parseUser = new ParseUser();
-        parseUser.setUsername("testUsername");
+        parseUser.setUsername(random);
         parseUser.setPassword("a");
-        parseUser.setEmail("testUser@testUser.com");
+        parseUser.setEmail(random + "@testUser.com");
         parseUsers.add(parseUser);
         parseUser.signUp();
 
@@ -64,11 +65,11 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         testGroup = PFGroup.createNewGroup(user, "testGroup", "bla", null);
         OpenGMApplication.setCurrentGroup(testGroup);
 
-        for(int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 5; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername(random + i);
             parseUser.setPassword("a");
-            parseUser.setEmail("testUser" + i + "@testUser.com");
+            parseUser.setEmail(random + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
@@ -77,11 +78,11 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             testGroup.addUserWithId(testUser.getId());
         }
 
-        for(int i = 6; i <= 10; i++) {
+        for (int i = 6; i <= 10; i++) {
             parseUser = new ParseUser();
-            parseUser.setUsername("testUsername" + i);
+            parseUser.setUsername(random + i);
             parseUser.setPassword("a");
-            parseUser.setEmail("testUser" + i + "@testUser.com");
+            parseUser.setEmail(random + i + "@testUser.com");
             parseUsers.add(parseUser);
             parseUser.signUp();
 
@@ -98,13 +99,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
     protected void tearDown() throws Exception {
         OpenGMApplication.logOut();
         testGroup.deleteGroup();
-        for (PFUser users : testUsers) {
-            deleteUserWithId(users.getId());
-        }
         for (ParseUser user : parseUsers) {
             ParseUser.logIn(user.getUsername(), "a");
-            user.delete();
-            ParseUser.logOut();
+            deleteUserWithId(user.getObjectId());
         }
         super.tearDown();
     }
@@ -120,21 +117,21 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testAddMemberWithUsernameToGroup() {
         onView(withId(R.id.action_add_person)).perform(click());
-        onView(withId(R.id.dialog_add_member_username)).perform(typeText("testUsername" + 10));
+        onView(withId(R.id.dialog_add_member_username)).perform(typeText(random + 10));
         onView(withText(R.string.add)).perform(click());
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(getDisplayedMembersNames().contains("testUsername10"));
-        assertFalse(getDisplayedMembersNames().contains("testUsername8"));
+        assertTrue(getDisplayedMembersNames().contains(random + "10"));
+        assertFalse(getDisplayedMembersNames().contains(random + "8"));
     }
 
     private List<String> getDisplayedMembersNames() {
         List<String> names = new ArrayList<>();
         for (int i = 0; i < list.getCount(); i++) {
-            TextView t = (TextView)list.getChildAt(i).findViewById(R.id.member_name);
+            TextView t = (TextView) list.getChildAt(i).findViewById(R.id.member_name);
             names.add(t.getText().toString());
         }
         return names;
