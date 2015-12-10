@@ -11,10 +11,14 @@
     <application
         android:name=".OpenGMApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon_opengm"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/TexturedBackgroundTheme" >
+
+        <service
+            android:name=".messages.ShowMessagesActivity$RefreshMessages"
+            android:exported="false" />
 
         <activity
             android:name=".identification.LoginActivity"
@@ -49,8 +53,7 @@
             android:name=".groups.MembersActivity"
             android:label="@string/title_activity_members"
             android:parentActivityName=".groups.GroupsHomeActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".groups.CreateEditGroupActivity"
             android:label="@string/title_activity_create_group"
@@ -137,11 +140,13 @@
         <activity
             android:name=".messages.ShowConversationsActivity"
             android:label="@string/title_activity_show_conversation_activity"
-            android:screenOrientation="portrait"></activity>
+            android:parentActivityName=".groups.GroupsHomeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.ShowMessagesActivity"
             android:label="@string/title_activity_show_messages_activity"
-            android:screenOrientation="portrait"></activity>
+            android:parentActivityName=".messages.ShowConversationsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.CreateNewConversationActivity"
             android:label="@string/title_activity_create_new_conversation"

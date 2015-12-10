@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ import ch.epfl.sweng.opengm.messages.ShowConversationsActivity;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
+import ch.epfl.sweng.opengm.userProfile.MyProfileActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
@@ -47,6 +49,23 @@ public class GroupsHomeActivity extends AppCompatActivity
     private AlertDialog addMember;
 
     private final int RESULT_EDIT = 1326;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_groups_home, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_user_profile:
+                startActivity(new Intent(GroupsHomeActivity.this, MyProfileActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,10 +205,10 @@ public class GroupsHomeActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_messages:
-                Intent intent2 = new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class);
-                startActivity(intent2);
+                startActivity(new Intent(GroupsHomeActivity.this, ShowConversationsActivity.class));
                 break;
             case R.id.nav_manage:
+                onManageGroup(null);
                 Intent intent3 = new Intent(this, CreateEditGroupActivity.class);
                 startActivityForResult(intent3, RESULT_EDIT);
                 break;

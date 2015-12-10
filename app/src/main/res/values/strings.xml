@@ -72,7 +72,7 @@
     <string name="title_activity_join_group">Join Group</string>
     <string name="join_group_activity_enter_name_hint">Enter a group name</string>
     <string name="ok">Ok</string>
-    <string name="title_activity_create_group">CreateGroup</string>
+    <string name="title_activity_create_group">Create Group</string>
 
     <string name="enterGroupNameHint">Enter group\'s name</string>
     <string name="chooseGroupPhoto">Choose a group\'s photo</string>
@@ -112,7 +112,7 @@
     <string name="action_remove_person">Remove member</string>
     <string name="action_change_roles">Change roles</string>
     <string name="dialog_add_member_title">Add a member</string>
-    <string name="dialog_add_member_text">Enter username or mail:</string>
+    <string name="dialog_add_member_text">Enter username or email:</string>
     <string name="add">Add</string>
 
     <string name="title_activity_modify_group">ModifyGroup</string>
@@ -425,5 +425,6 @@
     <string name="past_poll">Show past polls</string>
 
     <string name="title_activity_create_new_conversation">CreateNewConversationActivity</string>
+    <string name="create_edit_group_edit_group">Manage Group</string>
 
 </resources>

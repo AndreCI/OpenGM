@@ -78,6 +78,7 @@ public class CreateEditGroupActivity extends AppCompatActivity {
             initialDescription = currentGroup.getDescription();
             image = currentGroup.getPicture();
             findViewById(R.id.createGroupsMembersButton).setVisibility(View.VISIBLE);
+            setTitle(getString(R.string.create_edit_group_edit_group));
         }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -176,8 +177,8 @@ public class CreateEditGroupActivity extends AppCompatActivity {
                     imSize.inJustDecodeBounds = true;
                     BitmapFactory.decodeFile(path, imSize);
                     BitmapFactory.Options opts = new BitmapFactory.Options();
-                    int sampleSize = ((imSize.outHeight / 1080) > (imSize.outWidth / 1920)) ? (imSize.outHeight / 1080) : (imSize.outWidth / 1920);
-                    opts.inSampleSize = sampleSize;
+                    opts.inSampleSize = ((imSize.outHeight / 1080) > (imSize.outWidth / 1920)) ?
+                            (imSize.outHeight / 540) : (imSize.outWidth / 960);
 
                     image = BitmapFactory.decodeFile(path, opts);
                 }
