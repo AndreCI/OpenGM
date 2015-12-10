@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -31,7 +32,9 @@ import ch.epfl.sweng.opengm.userProfile.MemberProfileActivity;
 
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentGroup;
 import static ch.epfl.sweng.opengm.OpenGMApplication.getCurrentUser;
-import static ch.epfl.sweng.opengm.messages.ShowConversationsActivity.*;
+import static ch.epfl.sweng.opengm.messages.ShowConversationsActivity.IDS_FOR_CONV;
+import static ch.epfl.sweng.opengm.messages.ShowConversationsActivity.MESSAGES_FOR_CONV;
+import static ch.epfl.sweng.opengm.messages.ShowConversationsActivity.refresh;
 import static ch.epfl.sweng.opengm.parse.PFConstants.OBJECT_ID;
 import static ch.epfl.sweng.opengm.parse.PFMessage.TABLE_ENTRY_BODY;
 import static ch.epfl.sweng.opengm.parse.PFMessage.TABLE_ENTRY_NAME;
@@ -116,7 +119,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             textBar.setText("");
         } catch (Exception e) {
-            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Error while sending your message ...", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -163,7 +166,7 @@ public class ShowMessagesActivity extends AppCompatActivity {
                                            if (isRunning)
                                                loadConversationList();
                                        }
-                                   }, 500);
+                                   }, 300);
                                }
                            }
 
@@ -189,11 +192,6 @@ public class ShowMessagesActivity extends AppCompatActivity {
 
     public void clickOnSendButton(View view) {
         sendMessage();
-        //String message = textBar.getText().toString();
-        //if (!message.isEmpty()) {
-        //    textBar.setText("");
-        //    sendMessage(message);
-        //}
     }
 
     private void displayNotification() {
