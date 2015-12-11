@@ -38,9 +38,9 @@ public class CreateNewConversationActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String string = s.toString();
-                for(int i = 0; i < string.length(); ++i) {
-                    if(string.charAt(i) == '|') {
-                        s.delete(i, i+1);
+                for (int i = 0; i < string.length(); ++i) {
+                    if (string.charAt(i) == '|') {
+                        s.delete(i, i + 1);
                     }
                 }
             }
@@ -66,7 +66,7 @@ public class CreateNewConversationActivity extends AppCompatActivity {
     private void sendBackResult() {
         Intent intent = new Intent();
         String conversationName = ((EditText) findViewById(R.id.newConversationName)).getText().toString();
-        if(!conversationName.isEmpty()) {
+        if (!conversationName.isEmpty()) {
             intent.putExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE, conversationName);
             setResult(Activity.RESULT_OK, intent);
             finish();
@@ -78,7 +78,7 @@ public class CreateNewConversationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         TextView textView = (TextView) findViewById(R.id.conversation_title);
-        if(textView != null && !textView.getText().toString().isEmpty()) {
+        if (textView != null && !textView.getText().toString().isEmpty()) {
             sendBackResult();
         } else {
             super.onBackPressed();
