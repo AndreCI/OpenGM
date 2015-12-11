@@ -1,7 +1,8 @@
 package ch.epfl.sweng.opengm.messages;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,10 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,10 +34,11 @@ public class ShowConversationsActivity extends AppCompatActivity {
     public static String conversationToRefresh = null;
     private PFGroup currentGroup;
     private List<String> conversations;
-    public static final int NEW_CONVERSATION_REQUEST_CODE = 1;
     public static final HashMap<String, List<String>> IDS_FOR_CONV = new HashMap<>();
     public static final HashMap<String, List<ChatMessage>> MESSAGES_FOR_CONV = new HashMap<>();
     private CustomAdapter adapter;
+
+    private AlertDialog addConv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +53,40 @@ public class ShowConversationsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_conversation, null);
+        final EditText edit = (EditText) dialogLayout.findViewById(R.id.dialog_add_conv_name);
+        builder.setView(dialogLayout)
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = String.valueOf(edit.getText());
+                        if (!name.isEmpty()) {
+                            if (!conversations.contains(name)) {
+                                conversations.add(name);
+                                Collections.sort(conversations);
+                                adapter.notifyDataSetChanged();
+                                currentGroup.addConversation(name);
+                                IDS_FOR_CONV.put(name, new ArrayList<String>());
+                                MESSAGES_FOR_CONV.put(name, new ArrayList<ChatMessage>());
+                            } else {
+                                Toast.makeText(getBaseContext(), "Conversation name already exists", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getBaseContext(), "Conversation name cannot be empty", Toast.LENGTH_SHORT).show();
+                        }
+                        edit.getText().clear();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null);
+        addConv = builder.create();
+
         generateConversationList();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabNewConversation);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ShowConversationsActivity.this, CreateNewConversationActivity.class);
-                startActivityForResult(intent, NEW_CONVERSATION_REQUEST_CODE);
+                addConv.show();
             }
         });
 
@@ -89,25 +121,8 @@ public class ShowConversationsActivity extends AppCompatActivity {
         }
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == NEW_CONVERSATION_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                String conversationName = data.getStringExtra(Utils.CONVERSATION_INFO_INTENT_MESSAGE);
-                new CreateNewConvResult().execute(conversationName);
-            }
-        }
-    }
-
     private void generateConversationList() {
         new ReadIndex().execute(currentGroup);
-    }
-
-    public void updateList(List<String> list) {
-        conversations.clear();
-        conversations.addAll(list);
-        adapter.notifyDataSetChanged();
     }
 
     private class CustomAdapter extends ArrayAdapter<String> {
@@ -157,25 +172,11 @@ public class ShowConversationsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<String> result) {
-            updateList(result);
+            conversations.clear();
+            conversations.addAll(result);
+            Collections.sort(conversations);
+            adapter.notifyDataSetChanged();
         }
     }
 
-    class CreateNewConvResult extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            return params[0];
-        }
-
-        @Override
-        protected void onPostExecute(String conversation) {
-            if (conversation != null && !conversations.contains(conversation)) {
-                List<String> oldConvs = new ArrayList<>(conversations);
-                oldConvs.add(conversation);
-                updateList(oldConvs);
-                currentGroup.addConversation(conversation);
-            }
-        }
-    }
 }
