@@ -38,7 +38,6 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
     private PFGroup testGroup;
     private List<PFUser> testUsers;
     private List<ParseUser> parseUsers;
-    private MembersAdapter adapter;
     private PFUser user;
 
     public MemberActivityTest() {
@@ -52,7 +51,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         OpenGMApplication.logOut();
 
-        random = getRandomId();
+        random = getRandomId() + getRandomId().hashCode();
 
         testUsers = new ArrayList<>();
         parseUsers = new ArrayList<>();
@@ -71,7 +70,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
         testGroup = PFGroup.createNewGroup(user, "testGroup", "bla", null);
         OpenGMApplication.setCurrentGroup(testGroup);
 
-        for(int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= 4; i++) {
             parseUser = new ParseUser();
             parseUser.setUsername(random + i);
             parseUser.setPassword("a");
@@ -84,7 +83,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
             testGroup.addUserWithId(testUser.getId());
         }
 
-        for(int i = 5; i <= 10; i++) {
+        for (int i = 5; i <= 10; i++) {
             parseUser = new ParseUser();
             parseUser.setUsername(random + i);
             parseUser.setPassword("a");
@@ -98,7 +97,6 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
         activity = getActivity();
         list = (ListView) activity.findViewById(R.id.member_list);
-        adapter = (MembersAdapter) list.getAdapter();
     }
 
     @Override
@@ -151,7 +149,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testCheckBoxAppearsOnLongClick() {
         View v = list.getChildAt(0);
-        CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
+        CheckBox c = (CheckBox) v.findViewById(R.id.member_checkbox);
         assertTrue(c.getVisibility() == View.GONE);
         onView(withText(random)).perform(longClick());
         assertTrue(c.getVisibility() == View.VISIBLE);
@@ -159,9 +157,9 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testCheckBoxAppearsAndCheckedOnLongClick() {
         View v = list.getChildAt(0);
-        CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
+        CheckBox c = (CheckBox) v.findViewById(R.id.member_checkbox);
         View v2 = list.getChildAt(1);
-        CheckBox c2 = (CheckBox)v2.findViewById(R.id.member_checkbox);
+        CheckBox c2 = (CheckBox) v2.findViewById(R.id.member_checkbox);
         assertTrue(c.getVisibility() == View.GONE);
         onView(withText(random)).perform(longClick());
         assertTrue(c.getVisibility() == View.VISIBLE);
@@ -171,7 +169,7 @@ public class MemberActivityTest extends ActivityInstrumentationTestCase2<Members
 
     public void testGoInSelectModeAndBack() {
         View v = list.getChildAt(0);
-        CheckBox c = (CheckBox)v.findViewById(R.id.member_checkbox);
+        CheckBox c = (CheckBox) v.findViewById(R.id.member_checkbox);
         assertTrue(c.getVisibility() == View.GONE);
         onView(withText(random)).perform(longClick());
         assertTrue(c.getVisibility() == View.VISIBLE);
