@@ -29,6 +29,7 @@ import com.parse.ParseQuery;
 import ch.epfl.sweng.opengm.R;
 import ch.epfl.sweng.opengm.events.EventListActivity;
 import ch.epfl.sweng.opengm.identification.InputUtils;
+import ch.epfl.sweng.opengm.messages.ShowConversationsActivity;
 import ch.epfl.sweng.opengm.parse.PFConstants;
 import ch.epfl.sweng.opengm.parse.PFGroup;
 import ch.epfl.sweng.opengm.polls.PollsListActivity;
