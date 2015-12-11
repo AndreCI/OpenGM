@@ -10,13 +10,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import ch.epfl.sweng.opengm.parse.PFConstants;
 
 import static ch.epfl.sweng.opengm.utils.Utils.stripAccents;
 import static ch.epfl.sweng.opengm.utils.Utils.unzipRoles;
 import static ch.epfl.sweng.opengm.utils.Utils.zipRole;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class UtilsTest {
@@ -87,8 +87,8 @@ public class UtilsTest {
 
         List<String[]> result = unzipRoles(l);
 
-        for(int i = 0; i < l.size(); ++i) {
-            for(int j = 0; j < 3; ++j) {
+        for (int i = 0; i < l.size(); ++i) {
+            for (int j = 0; j < 3; ++j) {
                 assertEquals(expected.get(i)[j], result.get(i)[j]);
             }
         }
