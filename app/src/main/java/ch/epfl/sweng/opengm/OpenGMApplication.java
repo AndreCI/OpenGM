@@ -11,8 +11,9 @@ import ch.epfl.sweng.opengm.parse.PFUser;
 
 public class OpenGMApplication extends Application {
 
-    private final static String PARSE_APP_ID = "LiaIqx4G3cgt0LSZ6aYcZB7mGI5V2zx3fek03HGc";
-    private final static String PARSE_KEY = "tQSqozHYj1d9hVhMAwKnEslDVXuzyATAQcOstEor";
+    // Replace with your own Parse keys
+    private final static String PARSE_APP_ID = "";
+    private final static String PARSE_KEY = "";
 
     private static PFUser currentUser = null;
     private static PFGroup currentGroup = null;
